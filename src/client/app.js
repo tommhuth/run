@@ -22,7 +22,7 @@ hem.groundColor = Color3.Green()
 scene.enablePhysics()
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
-scene.fogDensity = .04
+scene.fogDensity = .05
 scene.clearColor = new Color4(1, 1, 1, 0)
  
 light.autoUpdateExtends = false
@@ -44,8 +44,8 @@ player.receiveShadows = true
 shadowGenerator.getShadowMap().renderList.push(player)
 shadowGenerator.useBlurCloseExponentialShadowMap = true
 shadowGenerator.blurScale = 2
-shadowGenerator.bias = .0005
-shadowGenerator.normalBias = .075  
+shadowGenerator.bias = .000015
+shadowGenerator.normalBias = .0175  
 
 let lastWasLow = false
 
@@ -75,7 +75,6 @@ function makeBlock(forceLevel = false) {
     obstical.physicsImpostor = new PhysicsImpostor(obstical, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
     box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
     box.receiveShadows = true
-
     
     shadowGenerator.getShadowMap().renderList.push(obstical)
     shadowGenerator.getShadowMap().renderList.push(box)
@@ -102,12 +101,12 @@ document.body.addEventListener("keydown", e => {
         player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)
     }
     
-    if(e.keyCode == 37 || e.keyCode === 65){
+    if(e.keyCode == 37 || e.keyCode === 65){
         console.log("left")
         player.physicsImpostor.applyImpulse(new Vector3(0, 0, 3), player.position)
     }
     
-    if(e.keyCode == 39 || e.keyCode === 68){
+    if(e.keyCode == 39 || e.keyCode === 68){
         console.log("right")
         player.physicsImpostor.applyImpulse(new Vector3(0, 0, -3), player.position)
     }
@@ -118,13 +117,12 @@ document.body.addEventListener("keydown", e => {
     }
 
 })
-let speed = .1
-engine.runRenderLoop(() => { 
-    scene.render()
-    let removed = []
 
+engine.runRenderLoop(() => { 
+    let removed = []
+ 
     for (let block of blocks) {
-        block.position.x -= speed
+        block.position.x -= .1 
 
         if(player.intersectsMesh(block.getChildren()[0], true, false)){
             console.error("game over")
@@ -138,9 +136,12 @@ engine.runRenderLoop(() => {
 
     for (let block of removed) {   
         blocks = blocks.filter(b => b !== block)
+        shadowGenerator.removeShadowCaster(block.getChildren()[0])
         shadowGenerator.removeShadowCaster(block)
         block.dispose()
 
         makeBlock() 
     }
+
+    scene.render()
 })
