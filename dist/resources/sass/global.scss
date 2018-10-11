@@ -1,0 +1,47 @@
+body { 
+    font-size: 1.5em;
+    touch-action: none; 
+    background-image: linear-gradient(rgba(255,255, 255, 0), rgba(255, 255, 255, .051)); 
+    font-family: "Open Sans";
+    transition: background-color 1.75s;
+    font-weight: 300; 
+    background-color: #FFF;  
+} 
+
+@media (max-width: 50em) {
+    body {
+        font-size: 1.15em;
+    }
+}
+
+body, html {
+    height: 100vh;
+    margin: 0;
+    width: 100vw;
+    overflow: hidden; 
+    padding: 0; 
+}
+
+* {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: transparent;
+    border: none; 
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    -webkit-touch-callout: none;
+} 
+
+*:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+canvas {
+    width: 100vw !important;  
+    height: 100vh !important;
+    position: relative;
+    z-index: 2;
+}

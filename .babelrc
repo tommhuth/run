@@ -1,0 +1,38 @@
+{
+  "env": {
+    "node": {
+      "presets": [
+        "react",
+        "stage-2"
+      ],
+      "plugins": [
+        "transform-es2015-modules-commonjs"
+      ]
+    },
+    "client": {
+      "presets": [
+        "react",
+        "stage-2",
+        [
+          "env",
+          {
+            "targets": {
+              "browsers": [
+                "last 2 versions",
+                "not ie 5-11",
+                "not android <= 5"
+              ]
+            },
+            "debug": true,
+            "useBuiltIns": true,
+            "modules": false
+          }
+        ]
+      ],
+      "plugins": [
+        "transform-es2015-modules-commonjs",
+        "transform-async-to-generator"
+      ]
+    }
+  }
+}

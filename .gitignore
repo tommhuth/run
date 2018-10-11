@@ -1,0 +1,5 @@
+node_modules
+.vscode
+public/app.js
+public/app.js.map
+!/public/flare.png
