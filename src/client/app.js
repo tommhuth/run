@@ -54,7 +54,7 @@ shadowGenerator.useBlurCloseExponentialShadowMap = true
 shadowGenerator.blurScale = 2
 shadowGenerator.bias = .000015
 shadowGenerator.setDarkness(.7) 
-shadowGenerator.normalBias = .0175  
+shadowGenerator.normalBias = .0175   
  
 function getRandomBlock(){
     let types = Object.values(PathType)
@@ -80,11 +80,59 @@ function makeBlock(forceType) {
     }
 }
 
+let score = 0
+
+function makeCoin() {
+    const top = MeshBuilder.CreateCylinder("s", { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
+    const bottom = MeshBuilder.CreateCylinder("s", { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
+    const material = new StandardMaterial()
+    material.diffuseColor = Color3.Yellow()
+
+    top.convertToFlatShadedMesh()
+    bottom.convertToFlatShadedMesh() 
+     
+    bottom.material = material
+    top.material = material
+    bottom.parent = top
+    bottom.position.y = -1
+    bottom.rotate(new Vector3(1, 0, 0), Math.PI) 
+
+    top.scaling = new Vector3(.25, .25, .25)
+
+    top.registerBeforeRender(() => { 
+        top.rotate(new Vector3(0, 1, 0), top.rotation.x + .1) 
+
+        if(top.intersectsMesh(player, false, true)) {
+            score++
+            shadowGenerator.removeShadowCaster(top, true)
+
+            setTimeout(() => top.dispose(true, true), 1)
+            
+            //
+            console.info("score", score)
+        }
+    }) 
+
+    return top
+}
+
 function makeBridge() { 
     const box = MeshBuilder.CreateBox("box", { height: 1, width: DEPTH, depth: 1 }, scene)
+    const pillar = MeshBuilder.CreateBox("box", { height: HEIGHT, width: 2, depth: .75 }, scene)
+   
     const color = Math.max(Math.random(), .4)
     const last = blocks[blocks.length-1]
     const lastWasBridge = last && (last.type === PathType.BRIDGE || last.type === PathType.NARROW)
+
+    for(let i = 0; i < 3; i++) {
+        const coin = makeCoin()
+
+        coin.parent = box
+        coin.position.y = 1
+        coin.position.x = i * 1 - 1.5
+        shadowGenerator.getShadowMap().renderList.push(coin)
+    }
+
 
     box.material = new StandardMaterial("s", scene)
     box.material.diffuseColor = new Color3(color, color, color) 
@@ -96,7 +144,10 @@ function makeBridge() {
     box.type = PathType.BRIDGE
     box.width = 1
 
-    shadowGenerator.getShadowMap().renderList.push(box)
+    pillar.parent = box 
+    pillar.position.y = -HEIGHT/2
+
+    shadowGenerator.getShadowMap().renderList.push(box, pillar)
     blocks.push(box)   
 }
  
@@ -123,7 +174,7 @@ function makeFull(doObstacle) {
     const box = MeshBuilder.CreateBox("box", { height: HEIGHT, width: DEPTH, depth: WIDTH }, scene)
     const color = Math.max(Math.random(), .4)
 
-    if (doObstacle) { 
+    if (doObstacle && Math.random() > .5) { 
         const obstacle = MeshBuilder.CreateBox("box2", { height: 1 + Math.random() * 2, width: 1, depth: 1 }, scene) 
         
         obstacle.material = new StandardMaterial("s", scene)
