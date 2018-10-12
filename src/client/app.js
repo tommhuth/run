@@ -272,9 +272,11 @@ document.body.addEventListener("keydown", e => {
     
     if (e.keyCode == 39 || e.keyCode === 68) { 
         player.physicsImpostor.applyImpulse(new Vector3(4, 0, 0), player.position)
-    }   
+    }    
+}) 
 
-    cameraTarget.position.z +=1
+document.body.addEventListener("touchstart", () => {
+    player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)   
 })
 
 let speed = 5 
