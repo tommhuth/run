@@ -12,17 +12,21 @@ const SPEHER_SIZE = .35
 const PathType = {
     FULL: "full",
     BRIDGE: "bridge",
-    GAP: "gap"
+    GAP: "gap",
+    HIGH_ISLAND: "high-island"
 }
 const PathSettings = {
     [PathType.FULL]: {
         illegalNext: []
+    }, 
+    [PathType.HIGH_ISLAND]: {
+        illegalNext: [PathType.BRIDGE, PathType.GAP]
     },
     [PathType.GAP]: {
-        illegalNext: [PathType.GAP, PathType.BRIDGE]
+        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.HIGH_ISLAND]
     },
     [PathType.BRIDGE]: {
-        illegalNext: [PathType.GAP]
+        illegalNext: [PathType.GAP, PathType.HIGH_ISLAND]
     }
 }
 
@@ -70,13 +74,8 @@ shadowGenerator.setDarkness(.7)
 shadowGenerator.normalBias = .0175   
  
 function getRandomBlock(){
-    let types = Object.values(PathType)
-    let ra = Math.random()
-
-    if(ra >= .65){
-        return PathType.FULL
-    } 
-
+    let types = Object.values(PathType) 
+  
     return types[Math.floor(Math.random() * types.length)]
 }
 
@@ -84,14 +83,14 @@ function makeBlock(forceType) {
     let type = forceType || getRandomBlock()
     let previousBlock = blocks[blocks.length-1]
 
-    if (previousBlock && !forceType) { 
-        type = getRandomBlock()
-
+    if (previousBlock && !forceType) {  
         while (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type)) {
             console.log("illegal", previousBlock.type, type )
             type = getRandomBlock()
         }
     }
+    
+    console.log("buidling", type)
 
     switch(type) {
         case PathType.FULL:
@@ -100,6 +99,8 @@ function makeBlock(forceType) {
             return makeGap()
         case PathType.BRIDGE:
             return makeBridge()
+        case PathType.HIGH_ISLAND:
+            return makeHighIsland()
             /*
         case PathType.NARROW:
             return makeNarrow()*/
@@ -124,6 +125,8 @@ function makeCoin() {
     bottom.rotate(new Vector3(1, 0, 0), Math.PI) 
 
     top.scaling = new Vector3(.25, .25, .25)
+
+    shadowGenerator.getShadowMap().renderList.push(top, bottom)
 
     top.registerBeforeRender(() => { 
         top.rotate(new Vector3(0, 1, 0), top.rotation.x + .1) 
@@ -156,7 +159,6 @@ function makeBridge() {
         coin.parent = box
         coin.position.y = 1
         coin.position.z = i * 1 - 1.5
-        shadowGenerator.getShadowMap().renderList.push(coin, coin.getChildren()[0])
     }
 
     box.material = new StandardMaterial("s", scene)
@@ -176,23 +178,35 @@ function makeBridge() {
     shadowGenerator.getShadowMap().renderList.push(box, pillar)
     blocks.push(box)   
 }
+
+function makeHighIsland() { 
+    const box = MeshBuilder.CreateBox("box", { height: 1, width: WIDTH, depth: DEPTH * 1.5 }, scene)
+    const island = MeshBuilder.CreateBox("box", { height: HEIGHT , width: WIDTH - 2, depth: DEPTH -2 }, scene)
+    const color = Math.max(Math.random(), .4)
+
+    for(let i = 0; i < 3; i++) { 
+        const coin = makeCoin()
+
+        coin.parent = box
+        coin.position.y = HEIGHT + 1 + (i*.25)
+        coin.position.z = i * .6 - 4.5
+    }
  
-function makeNarrow() { 
-    const box = MeshBuilder.CreateBox("box", { height: HEIGHT, width: DEPTH, depth: WIDTH/2 }, scene)
-    const color = Math.max(Math.random(), .4) 
-    const last = blocks[blocks.length-1]
+    island.material = new StandardMaterial("s", scene)
+    island.material.diffuseColor = new Color3(color, color, color) 
+    box.position.y = -HEIGHT
+    box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH * 1.5 : 0
+    
+    island.receiveShadows = true 
+    island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
+    island.parent = box
+    box.type = PathType.HIGH_ISLAND
+    island.width = WIDTH
+    island.position.y = 13
+    island.position.z = -.5
+    island.position.x = 0
 
-    box.material = new StandardMaterial("s", scene)
-    box.material.diffuseColor = new Color3(color, color, color) 
-    box.position.y = -HEIGHT/2
-    box.position.x = last ? last.position.x  : 0
-    box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0
-    box.receiveShadows = true
-
-    box.type = PathType.NARROW
-    box.width = WIDTH/2
-
-    shadowGenerator.getShadowMap().renderList.push(box)
+    shadowGenerator.getShadowMap().renderList.push(island)
     blocks.push(box)   
 }
 
@@ -242,10 +256,12 @@ function makeGap() {
 }
  
 function init() { 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.FULL)  
+    makeBlock(PathType.FULL) 
+    makeBlock(PathType.FULL) 
+    makeBlock(PathType.HIGH_ISLAND) 
+    makeBlock(PathType.FULL) 
+    makeBlock(PathType.HIGH_ISLAND) 
+    makeBlock(PathType.HIGH_ISLAND) 
     makeBlock() 
     makeBlock()  
     makeBlock()  
@@ -253,9 +269,9 @@ function init() {
 
 init() 
   
-
+// && player.position.y > SPEHER_SIZE/2 - .05 && player.position.y < SPEHER_SIZE/2 + .05
 document.body.addEventListener("keydown", e => {
-    if (e.keyCode == 32 && player.position.y > SPEHER_SIZE/2 - .05 && player.position.y < SPEHER_SIZE/2 + .05) { 
+    if (e.keyCode == 32 ) { 
         player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.getAbsolutePosition())
     }
     
