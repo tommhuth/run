@@ -1,7 +1,7 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { Engine, Scene, FreeCamera, HemisphericLight, DirectionalLight, ShadowGenerator, PathCursor } from "babylonjs"
+import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, FollowCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
 import { MeshBuilder, StandardMaterial } from "babylonjs"
  
@@ -12,28 +12,39 @@ const SPEHER_SIZE = .35
 const PathType = {
     FULL: "full",
     BRIDGE: "bridge",
-    //GAP: "gap",
-    NARROW: "narrow"
+    GAP: "gap"
+}
+const PathSettings = {
+    [PathType.FULL]: {
+        illegalNext: []
+    },
+    [PathType.GAP]: {
+        illegalNext: [PathType.GAP, PathType.BRIDGE]
+    },
+    [PathType.BRIDGE]: {
+        illegalNext: [PathType.GAP]
+    }
 }
 
-let blocks = []
-let lastWasLow = false
-let jumping = false
-let movingLeft = false 
-let movingRight = false
+let blocks = []  
 
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
-const camera = new FreeCamera("cam", new Vector3(-4, 4, 0), scene)
-const light = new DirectionalLight("light", new Vector3(4, -8, 4), scene)
+const light = new DirectionalLight("light", new Vector3(4, -5, 4), scene)
 const shadowGenerator = new ShadowGenerator(1024, light)
 const hemisphere = new HemisphericLight("", new Vector3(0, 1, 0), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
+const camera = new FollowCamera("cam", new Vector3(0,0,0), scene)
+ 
+camera.radius = 10
+camera.heightOffset = 6
+camera.rotationOffset = 180
 
 hemisphere.diffuse = Color3.Blue()  
 hemisphere.groundColor = Color3.Green()
- 
+
+scene.enablePhysics()
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
 scene.fogDensity = .05
@@ -43,11 +54,13 @@ light.autoUpdateExtends = false
 light.shadowMaxZ = DEPTH * 6
 light.shadowMinZ = -DEPTH
  
-player.position.y = 4
-player.position.x = 2
+player.position.y = 4 
+player.position.x = 0
+player.position.z = 5
 player.material = new StandardMaterial("s", scene)
 player.material.diffuseColor = Color3.Red() 
 player.receiveShadows = true
+player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1 }, scene)
 
 shadowGenerator.getShadowMap().renderList.push(player)
 shadowGenerator.useBlurCloseExponentialShadowMap = true
@@ -69,14 +82,27 @@ function getRandomBlock(){
 
 function makeBlock(forceType) { 
     let type = forceType || getRandomBlock()
+    let previousBlock = blocks[blocks.length-1]
+
+    if (previousBlock && !forceType) { 
+        type = getRandomBlock()
+
+        while (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type)) {
+            console.log("illegal", previousBlock.type, type )
+            type = getRandomBlock()
+        }
+    }
 
     switch(type) {
         case PathType.FULL:
-            return makeFull(forceType ? false : true)
+            return makeFull(true)
+        case PathType.GAP:
+            return makeGap()
         case PathType.BRIDGE:
             return makeBridge()
+            /*
         case PathType.NARROW:
-            return makeNarrow()
+            return makeNarrow()*/
     }
 }
 
@@ -117,8 +143,8 @@ function makeCoin() {
 }
 
 function makeBridge() { 
-    const box = MeshBuilder.CreateBox("box", { height: 1, width: DEPTH, depth: 1 }, scene)
-    const pillar = MeshBuilder.CreateBox("box", { height: HEIGHT, width: 2, depth: .75 }, scene)
+    const box = MeshBuilder.CreateBox("box", { height: 1, width: 1, depth: DEPTH }, scene)
+    const pillar = MeshBuilder.CreateBox("box", { height: HEIGHT, width: .75, depth: .75 }, scene)
    
     const color = Math.max(Math.random(), .4)
     const last = blocks[blocks.length-1]
@@ -129,17 +155,17 @@ function makeBridge() {
 
         coin.parent = box
         coin.position.y = 1
-        coin.position.x = i * 1 - 1.5
-        shadowGenerator.getShadowMap().renderList.push(coin)
+        coin.position.z = i * 1 - 1.5
+        shadowGenerator.getShadowMap().renderList.push(coin, coin.getChildren()[0])
     }
-
 
     box.material = new StandardMaterial("s", scene)
     box.material.diffuseColor = new Color3(color, color, color) 
     box.position.y = -.5
-    box.position.z = lastWasBridge ? last.position.z : Math.random() * DEPTH/2 * (Math.random() > .5 ? -1 : 1)
-    box.position.x = blocks.length ? blocks[blocks.length - 1].position.x + DEPTH : 0
+    box.position.x = lastWasBridge ? last.position.x : (Math.random() * WIDTH/2 -1) * (Math.random() > .5 ? -1 : 1) 
+    box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0
     box.receiveShadows = true
+    box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass:0 }, scene)
 
     box.type = PathType.BRIDGE
     box.width = 1
@@ -159,8 +185,8 @@ function makeNarrow() {
     box.material = new StandardMaterial("s", scene)
     box.material.diffuseColor = new Color3(color, color, color) 
     box.position.y = -HEIGHT/2
-    box.position.z = last ? last.position.z  : 0
-    box.position.x = blocks.length ? blocks[blocks.length - 1].position.x + DEPTH : 0
+    box.position.x = last ? last.position.x  : 0
+    box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0
     box.receiveShadows = true
 
     box.type = PathType.NARROW
@@ -171,20 +197,21 @@ function makeNarrow() {
 }
 
 function makeFull(doObstacle) { 
-    const box = MeshBuilder.CreateBox("box", { height: HEIGHT, width: DEPTH, depth: WIDTH }, scene)
+    const box = MeshBuilder.CreateBox("box", { height: HEIGHT, width: WIDTH, depth: DEPTH }, scene)
     const color = Math.max(Math.random(), .4)
 
     if (doObstacle && Math.random() > .5) { 
-        const obstacle = MeshBuilder.CreateBox("box2", { height: 1 + Math.random() * 2, width: 1, depth: 1 }, scene) 
+        const obstacle = MeshBuilder.CreateBox("box2", { height: 2, width: 1, depth: 1 }, scene) 
         
         obstacle.material = new StandardMaterial("s", scene)
         obstacle.material.diffuseColor = new Color3(0, 0, 1)
         obstacle.receiveShadows = true 
         obstacle.parent = box
 
-        obstacle.position.y = HEIGHT/2
-        obstacle.position.x = 0
-        obstacle.position.z = DEPTH/2 * Math.random() * (Math.random() > .5 ? -1 : 1)
+        obstacle.position.y = HEIGHT/2 - Math.random() * 1.5
+        obstacle.position.z = 0
+        obstacle.position.x = (WIDTH/2 * Math.random() - .5) * (Math.random() > .5 ? -1 : 1)
+        obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
         shadowGenerator.getShadowMap().renderList.push(obstacle)
     }
@@ -192,8 +219,9 @@ function makeFull(doObstacle) {
     box.material = new StandardMaterial("s", scene)
     box.material.diffuseColor = new Color3(color, color, color) 
     box.position.y = -HEIGHT/2
-    box.position.x = blocks.length ? blocks[blocks.length - 1].position.x + DEPTH : 0
-    box.receiveShadows = true
+    box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0
+    box.receiveShadows = true 
+    box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
     box.type = PathType.FULL
     box.width = WIDTH
@@ -201,88 +229,68 @@ function makeFull(doObstacle) {
     shadowGenerator.getShadowMap().renderList.push(box)
     blocks.push(box)   
 }
+
+function makeGap() { 
+    const box = MeshBuilder.CreateBox("box", { height: 1, width: WIDTH, depth: DEPTH }, scene)
+  
+    box.position.y = -HEIGHT
+    box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0  
+    box.type = PathType.GAP
+    box.width = WIDTH
+ 
+    blocks.push(box)   
+}
  
 function init() { 
-    makeBlock(PathType.FULL) 
-    makeBlock(PathType.FULL) 
-    makeBlock(PathType.FULL) 
-    makeBlock(PathType.FULL)
     makeBlock(PathType.BRIDGE) 
     makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.FULL) 
-    makeBlock(PathType.NARROW) 
     makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.FULL)  
+    makeBlock() 
+    makeBlock()  
+    makeBlock()  
 }
 
-init()
-
-camera.setTarget(new Vector3(6, 0, 0))
-
-document.body.addEventListener("keyup", () => {
-    movingLeft = false 
-    movingRight = false 
-    jumping = false
-})
+init() 
+  
 
 document.body.addEventListener("keydown", e => {
     if (e.keyCode == 32 && player.position.y > SPEHER_SIZE/2 - .05 && player.position.y < SPEHER_SIZE/2 + .05) { 
-        jumping = true
+        player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.getAbsolutePosition())
     }
     
     if (e.keyCode == 37 || e.keyCode === 65) { 
-        movingLeft = true
+        player.physicsImpostor.applyImpulse(new Vector3(-4, 0, 0), player.position)
     } 
     
     if (e.keyCode == 39 || e.keyCode === 68) { 
-        movingRight = true 
+        player.physicsImpostor.applyImpulse(new Vector3(4, 0, 0), player.position)
     }   
 })
 
-let speed = .1
+let cameraTarget = MeshBuilder.CreateBox("", { size: .1}, scene)
+let speed = 5 
 let ticks = 0
-let gameOver = false
 
 engine.runRenderLoop(() => {   
-    let removed = []
-    let falling = true  
+    let removed = []  
     ticks++
 
     for (let block of blocks) {
-        let [obstacle] = block.getChildren()
-        block.position.x -= speed
-        
-        if (player.intersectsMesh(block)) {
-            falling = false
-        }
-
-        if (obstacle && player.intersectsMesh(obstacle) && ticks > 1) {
-            gameOver = true
-        }
-        
-        if (block.position.x <= -DEPTH/2) {
+        if (player.position.z >= block.position.z + DEPTH) {
             removed.push(block) 
         }  
     }  
+    
+    let vel = player.physicsImpostor.getLinearVelocity().clone()
+    vel.z = ticks > 50 ? speed : 0
+    vel.x *= .95
 
-    if (player.position.y < 0) {
-        gameOver = true
-    }
+    player.physicsImpostor.setLinearVelocity(vel)
+    light.position.z = player.position.z 
 
-    if (gameOver) {
-        speed = 0
-        console.error("game over")
-    }
-
-    if (falling) {
-        player.position.y -= .045
-    }  
-  
-    if (movingLeft) {
-        player.position.z += .05
-    }
-    if (movingRight) {
-        player.position.z -= .05
-    }
+    cameraTarget.position = new Vector3(0, 0, player.position.z + 4)
+    camera.lockedTarget = cameraTarget
 
     for (let block of removed) {   
         blocks = blocks.filter(b => b !== block) 
