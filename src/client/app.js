@@ -1,7 +1,7 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, FollowCamera } from "babylonjs"
+import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, FollowCamera, ArcRotateCamera, CubeMapToSphericalPolynomialTools } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
 import { MeshBuilder, StandardMaterial } from "babylonjs"
  
@@ -30,6 +30,7 @@ const PathSettings = {
     }
 }
 
+let score = 0
 let blocks = []  
 
 const canvas = document.getElementById("app")
@@ -37,14 +38,11 @@ const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
 const light = new DirectionalLight("light", new Vector3(4, -5, 4), scene)
 const shadowGenerator = new ShadowGenerator(1024, light)
-const hemisphere = new HemisphericLight("", new Vector3(0, 1, 0), scene) 
+const hemisphere = new HemisphericLight("", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
-const camera = new FollowCamera("cam", new Vector3(0,0,0), scene)
- 
-camera.radius = 10
-camera.heightOffset = 6
-camera.rotationOffset = 180
-
+const cameraTarget = MeshBuilder.CreateBox("", { size: .1}, scene)
+const camera = new ArcRotateCamera("cam",  -Math.PI/2, Math.PI/3, 10, cameraTarget, scene)
+  
 hemisphere.diffuse = Color3.Blue()  
 hemisphere.groundColor = Color3.Green()
 
@@ -64,7 +62,7 @@ player.position.z = 5
 player.material = new StandardMaterial("s", scene)
 player.material.diffuseColor = Color3.Red() 
 player.receiveShadows = true
-player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1 }, scene)
+player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, disableBidirectionalTransformation: true }, scene)
 
 shadowGenerator.getShadowMap().renderList.push(player)
 shadowGenerator.useBlurCloseExponentialShadowMap = true
@@ -85,7 +83,6 @@ function makeBlock(forceType) {
 
     if (previousBlock && !forceType) {  
         while (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type)) {
-            console.log("illegal", previousBlock.type, type )
             type = getRandomBlock()
         }
     }
@@ -100,14 +97,9 @@ function makeBlock(forceType) {
         case PathType.BRIDGE:
             return makeBridge()
         case PathType.HIGH_ISLAND:
-            return makeHighIsland()
-            /*
-        case PathType.NARROW:
-            return makeNarrow()*/
+            return makeHighIsland() 
     }
 }
-
-let score = 0
 
 function makeCoin() {
     const top = MeshBuilder.CreateCylinder("s", { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
@@ -135,9 +127,8 @@ function makeCoin() {
             score++
             shadowGenerator.removeShadowCaster(top, true)
 
-            setTimeout(() => top.dispose(true, true), 1)
-            
-            //
+            setTimeout(() => top.dispose(false, true), 1)
+             
             console.info("score", score)
         }
     }) 
@@ -167,7 +158,7 @@ function makeBridge() {
     box.position.x = lastWasBridge ? last.position.x : (Math.random() * WIDTH/2 -1) * (Math.random() > .5 ? -1 : 1) 
     box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0
     box.receiveShadows = true
-    box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass:0 }, scene)
+    box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass:0, disableBidirectionalTransformation: true }, scene)
 
     box.type = PathType.BRIDGE
     box.width = 1
@@ -225,7 +216,7 @@ function makeFull(doObstacle) {
         obstacle.position.y = HEIGHT/2 - Math.random() * 1.5
         obstacle.position.z = 0
         obstacle.position.x = (WIDTH/2 * Math.random() - .5) * (Math.random() > .5 ? -1 : 1)
-        obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
+        obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.BoxImpostor, { mass: 0, disableBidirectionalTransformation: true }, scene)
 
         shadowGenerator.getShadowMap().renderList.push(obstacle)
     }
@@ -258,13 +249,13 @@ function makeGap() {
 function init() { 
     makeBlock(PathType.FULL) 
     makeBlock(PathType.FULL) 
-    makeBlock(PathType.HIGH_ISLAND) 
     makeBlock(PathType.FULL) 
-    makeBlock(PathType.HIGH_ISLAND) 
-    makeBlock(PathType.HIGH_ISLAND) 
-    makeBlock() 
-    makeBlock()  
-    makeBlock()  
+    makeBlock(PathType.FULL) 
+    makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.BRIDGE)  
 }
 
 init() 
@@ -272,7 +263,7 @@ init()
 // && player.position.y > SPEHER_SIZE/2 - .05 && player.position.y < SPEHER_SIZE/2 + .05
 document.body.addEventListener("keydown", e => {
     if (e.keyCode == 32 ) { 
-        player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.getAbsolutePosition())
+        player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)
     }
     
     if (e.keyCode == 37 || e.keyCode === 65) { 
@@ -282,15 +273,15 @@ document.body.addEventListener("keydown", e => {
     if (e.keyCode == 39 || e.keyCode === 68) { 
         player.physicsImpostor.applyImpulse(new Vector3(4, 0, 0), player.position)
     }   
+
+    cameraTarget.position.z +=1
 })
 
-let cameraTarget = MeshBuilder.CreateBox("", { size: .1}, scene)
 let speed = 5 
-let ticks = 0
+ 
 
 engine.runRenderLoop(() => {   
-    let removed = []  
-    ticks++
+    let removed = []   
 
     for (let block of blocks) {
         if (player.position.z >= block.position.z + DEPTH) {
@@ -298,20 +289,22 @@ engine.runRenderLoop(() => {
         }  
     }  
     
-    let vel = player.physicsImpostor.getLinearVelocity().clone()
-    vel.z = ticks > 50 ? speed : 0
-    vel.x *= .95
+    let velocity = player.physicsImpostor.getLinearVelocity().clone()
 
-    player.physicsImpostor.setLinearVelocity(vel)
+    velocity.z = speed
+    velocity.x *= .95
+
+    player.physicsImpostor.setLinearVelocity(velocity)
     light.position.z = player.position.z 
 
-    cameraTarget.position = new Vector3(0, 0, player.position.z + 4)
-    camera.lockedTarget = cameraTarget
+    cameraTarget.position.z = player.position.z + 3
 
     for (let block of removed) {   
         blocks = blocks.filter(b => b !== block) 
-        shadowGenerator.removeShadowCaster(block, true)
-        block.dispose()
+        setTimeout(() => {
+            shadowGenerator.removeShadowCaster(block, true)
+            block.dispose(false, true)
+        }, 1)
 
         makeBlock() 
     }
