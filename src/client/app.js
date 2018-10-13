@@ -49,7 +49,7 @@ hemisphere.groundColor = Color3.Green()
 scene.enablePhysics()
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
-scene.fogDensity = .05
+scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 0)
  
 light.autoUpdateExtends = false
@@ -294,11 +294,10 @@ engine.runRenderLoop(() => {
     let velocity = player.physicsImpostor.getLinearVelocity().clone()
 
     velocity.z = speed
-    velocity.x *= .95
-
+    velocity.x *= .95 
     player.physicsImpostor.setLinearVelocity(velocity)
-    light.position.z = player.position.z 
 
+    light.position.z = player.position.z 
     cameraTarget.position.z = player.position.z + 3
 
     for (let block of removed) {   
