@@ -43,7 +43,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // static files
-app.use(serveStatic("public", { maxAge: config.NODE_ENV === "production" ?  "10 years" : 0 }))
+app.use(serveStatic("public", { maxAge: config.NODE_ENV === "production" && config.CACHE_BUST === "true" ?  "10 years" : 0 }))
 
 // routes
 app.use("/", routes)
