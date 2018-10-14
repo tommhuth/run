@@ -1,7 +1,7 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, CubeMapToSphericalPolynomialTools } from "babylonjs"
+import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
 import { MeshBuilder, StandardMaterial } from "babylonjs"
 import uuid from "uuid" 
@@ -31,37 +31,39 @@ const PathSettings = {
     }
 }
 
-let score = 0
-let blocks = []  
-
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
-const light = new DirectionalLight("light", new Vector3(4, -5, 4), scene)
+const light = new DirectionalLight("directionalLight", new Vector3(4, -5, 4), scene)
 const shadowGenerator = new ShadowGenerator(1024, light)
-const hemisphere = new HemisphericLight("", new Vector3(3, 2, 1), scene) 
+const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
-const cameraTarget = MeshBuilder.CreateBox("", { size: .1}, scene)
-const camera = new ArcRotateCamera("cam",  -Math.PI/2, Math.PI/3, 10, cameraTarget, scene)
+const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
+const camera = new ArcRotateCamera("camera",  -Math.PI/2, Math.PI/3, 10, cameraTarget, scene)
+const physicsPlugin = new CannonJSPlugin(true, 15)
+
+let score = 0
+let potentialScore = 0
+let blocks = []   
+let speed = 2 
   
 hemisphere.diffuse = Color3.Blue()  
 hemisphere.groundColor = Color3.Green()
 
-let p = new CannonJSPlugin(true, 15)
-scene.enablePhysics(undefined, p)
+scene.enablePhysics(undefined, physicsPlugin)
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 0)
  
 light.autoUpdateExtends = false
-light.shadowMaxZ = DEPTH * 6
+light.shadowMaxZ = DEPTH * 5
 light.shadowMinZ = -DEPTH
  
 player.position.y = 4 
 player.position.x = 0
 player.position.z = 5
-player.material = new StandardMaterial("s", scene)
+player.material = new StandardMaterial(uuid.v4(), scene)
 player.material.diffuseColor = Color3.Red() 
 player.receiveShadows = true
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
@@ -87,9 +89,7 @@ function makeBlock(forceType) {
         while (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type)) {
             type = getRandomBlock()
         }
-    }
-    
-    console.log("buidling", type)
+    } 
 
     switch(type) {
         case PathType.FULL:
@@ -103,9 +103,9 @@ function makeBlock(forceType) {
     }
 }
 
-function makeCoin() {
-    const top = MeshBuilder.CreateCylinder("s", { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
-    const bottom = MeshBuilder.CreateCylinder("s", { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
+function makeCoin(index) {
+    const top = MeshBuilder.CreateCylinder(uuid.v4(), { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
+    const bottom = MeshBuilder.CreateCylinder(uuid.v4(), { diameterBottom: 1.25, diameterTop: 0, height: 1, tessellation: 4, subdivisions: 4 }, scene)
     const material = new StandardMaterial()
     material.diffuseColor = Color3.Yellow()
 
@@ -119,6 +119,7 @@ function makeCoin() {
     bottom.rotate(new Vector3(1, 0, 0), Math.PI) 
 
     top.scaling = new Vector3(.25, .25, .25)
+    top.rotate(new Vector3(0, 1, 0), index * .9)
 
     shadowGenerator.getShadowMap().renderList.push(top, bottom)
 
@@ -135,26 +136,28 @@ function makeCoin() {
         }
     }) 
 
+    potentialScore++
+
     return top
 }
 
 function makeBridge() { 
-    const box = MeshBuilder.CreateBox("box", { height: 1, width: 1, depth: DEPTH }, scene)
-    const pillar = MeshBuilder.CreateBox("box", { height: HEIGHT, width: .75, depth: .75 }, scene)
+    const box = MeshBuilder.CreateBox(uuid.v4(), { height: 1, width: 1, depth: DEPTH }, scene)
+    const pillar = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: .75, depth: .75 }, scene)
    
     const color = Math.max(Math.random(), .4)
     const last = blocks[blocks.length-1]
     const lastWasBridge = last && (last.type === PathType.BRIDGE || last.type === PathType.NARROW)
 
     for(let i = 0; i < 3; i++) {
-        const coin = makeCoin()
+        const coin = makeCoin(i)
 
         coin.parent = box
         coin.position.y = 1
         coin.position.z = i * 1 - 1.5
     }
 
-    box.material = new StandardMaterial("s", scene)
+    box.material = new StandardMaterial(uuid.v4(), scene)
     box.material.diffuseColor = new Color3(color, color, color) 
     box.position.y = -.5
     box.position.x = lastWasBridge ? last.position.x : (Math.random() * WIDTH/2 -1) * (Math.random() > .5 ? -1 : 1) 
@@ -173,8 +176,8 @@ function makeBridge() {
 }
 
 function makeHighIsland() { 
-    const box = MeshBuilder.CreateBox("box", { height: 1, width: WIDTH, depth: DEPTH * 1.5 }, scene)
-    const island = MeshBuilder.CreateBox("box", { height: HEIGHT , width: WIDTH - 2, depth: DEPTH -2 }, scene)
+    const box = MeshBuilder.CreateBox(uuid.v4(), { height: 1, width: WIDTH, depth: DEPTH * 1.5 }, scene)
+    const island = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT , width: WIDTH - 2, depth: DEPTH -2 }, scene)
     const color = Math.max(Math.random(), .4)
 
     for(let i = 0; i < 3; i++) { 
@@ -185,7 +188,7 @@ function makeHighIsland() {
         coin.position.z = i * .6 - 4.5
     }
  
-    island.material = new StandardMaterial("s", scene)
+    island.material = new StandardMaterial(uuid.v4(), scene)
     island.material.diffuseColor = new Color3(color, color, color) 
     box.position.y = -HEIGHT
     box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH * 1.5 : 0
@@ -204,13 +207,13 @@ function makeHighIsland() {
 }
 
 function makeFull(doObstacle) { 
-    const box = MeshBuilder.CreateBox("box", { height: HEIGHT, width: WIDTH, depth: DEPTH }, scene)
+    const box = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: WIDTH, depth: DEPTH }, scene)
     const color = Math.max(Math.random(), .4)
 
     if (doObstacle && Math.random() > .5) { 
-        const obstacle = MeshBuilder.CreateBox("box2", { height: 2, width: 1, depth: 1 }, scene) 
+        const obstacle = MeshBuilder.CreateBox(uuid.v4(), { height: 2, width: 1, depth: 1 }, scene) 
         
-        obstacle.material = new StandardMaterial("s", scene)
+        obstacle.material = new StandardMaterial(uuid.v4(), scene)
         obstacle.material.diffuseColor = new Color3(0, 0, 1)
         obstacle.receiveShadows = true 
         obstacle.parent = box
@@ -223,7 +226,7 @@ function makeFull(doObstacle) {
         shadowGenerator.getShadowMap().renderList.push(obstacle)
     }
 
-    box.material = new StandardMaterial("s", scene)
+    box.material = new StandardMaterial(uuid.v4(), scene)
     box.material.diffuseColor = new Color3(color, color, color) 
     box.position.y = -HEIGHT/2
     box.position.z = blocks.length ? blocks[blocks.length - 1].position.z + DEPTH : 0
@@ -251,7 +254,9 @@ function makeGap() {
 function init() { 
     makeBlock(PathType.FULL) 
     makeBlock(PathType.FULL) 
-    makeBlock(PathType.FULL) 
+    makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.BRIDGE)  
+    makeBlock(PathType.FULL)  
     makeBlock(PathType.FULL)  
     makeBlock(PathType.FULL)  
     makeBlock(PathType.FULL)  
@@ -277,27 +282,24 @@ document.body.addEventListener("keydown", e => {
 document.body.addEventListener("touchstart", () => {
     player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)   
 })
-
-let speed = 5 
  
 
 scene.beforeRender = () => {   
     let removed = []   
+    let velocity = player.physicsImpostor.getLinearVelocity().clone() 
+
+    velocity.z = player.position. y < -1 ? 0 : speed
+    velocity.x *= .95 
+    player.physicsImpostor.setLinearVelocity(velocity)
+
+    light.position.z = player.position.z 
+    cameraTarget.position.z = player.position.z + 3
 
     for (let block of blocks) {
         if (player.position.z >= block.position.z + DEPTH) {
             removed.push(block) 
         }  
     }  
-    
-    let velocity = player.physicsImpostor.getLinearVelocity().clone()
-    //console.log(velocity.z)
-    velocity.z = player.position. y < 0 ? 0 : speed
-    velocity.x *= .95 
-    player.physicsImpostor.setLinearVelocity(velocity)
-
-    light.position.z = player.position.z 
-    cameraTarget.position.z = player.position.z + 3
 
     for (let block of removed) {   
         blocks = blocks.filter(b => b !== block) 
@@ -306,7 +308,7 @@ scene.beforeRender = () => {
         block.dispose(false, true)
         
         makeBlock() 
-    }
+    } 
 }
 
 engine.runRenderLoop(() => {   
