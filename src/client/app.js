@@ -1,10 +1,11 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, FollowCamera, ArcRotateCamera, CubeMapToSphericalPolynomialTools } from "babylonjs"
+import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, CubeMapToSphericalPolynomialTools } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
 import { MeshBuilder, StandardMaterial } from "babylonjs"
- 
+import uuid from "uuid" 
+
 const WIDTH = 6
 const HEIGHT = 25
 const DEPTH = 4
@@ -46,7 +47,8 @@ const camera = new ArcRotateCamera("cam",  -Math.PI/2, Math.PI/3, 10, cameraTarg
 hemisphere.diffuse = Color3.Blue()  
 hemisphere.groundColor = Color3.Green()
 
-scene.enablePhysics()
+let p = new CannonJSPlugin(true, 15)
+scene.enablePhysics(undefined, p)
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
@@ -62,7 +64,7 @@ player.position.z = 5
 player.material = new StandardMaterial("s", scene)
 player.material.diffuseColor = Color3.Red() 
 player.receiveShadows = true
-player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, disableBidirectionalTransformation: true }, scene)
+player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
 
 shadowGenerator.getShadowMap().renderList.push(player)
 shadowGenerator.useBlurCloseExponentialShadowMap = true
@@ -250,17 +252,14 @@ function init() {
     makeBlock(PathType.FULL) 
     makeBlock(PathType.FULL) 
     makeBlock(PathType.FULL) 
-    makeBlock(PathType.FULL) 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.BRIDGE) 
-    makeBlock(PathType.BRIDGE)  
+    makeBlock(PathType.FULL)  
+    makeBlock(PathType.FULL)  
+    makeBlock(PathType.FULL)  
+    makeBlock(PathType.FULL)  
 }
 
 init() 
-  
-// && player.position.y > SPEHER_SIZE/2 - .05 && player.position.y < SPEHER_SIZE/2 + .05
+   
 document.body.addEventListener("keydown", e => {
     if (e.keyCode == 32 ) { 
         player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)
@@ -281,8 +280,8 @@ document.body.addEventListener("touchstart", () => {
 
 let speed = 5 
  
-
-engine.runRenderLoop(() => {   
+player.physicsImpostor.setLinearVelocity(new Vector3(0, 0, speed))
+scene.beforeRender = () => {   
     let removed = []   
 
     for (let block of blocks) {
@@ -291,24 +290,25 @@ engine.runRenderLoop(() => {
         }  
     }  
     
-    let velocity = player.physicsImpostor.getLinearVelocity().clone()
-
-    velocity.z = speed
-    velocity.x *= .95 
-    player.physicsImpostor.setLinearVelocity(velocity)
+    //let velocity = player.physicsImpostor.getLinearVelocity().clone()
+    //console.log(velocity.z)
+    //velocity.z = player.position. y < 0 ? 0 : velocity.z
+    //velocity.x *= .95 
+    //player.physicsImpostor.setLinearVelocity(velocity)
 
     light.position.z = player.position.z 
     cameraTarget.position.z = player.position.z + 3
 
     for (let block of removed) {   
         blocks = blocks.filter(b => b !== block) 
-        setTimeout(() => {
-            shadowGenerator.removeShadowCaster(block, true)
-            block.dispose(false, true)
-        }, 1)
-
+        
+        shadowGenerator.removeShadowCaster(block, true)
+        block.dispose(false, true)
+        
         makeBlock() 
     }
+}
 
-    scene.render()
+engine.runRenderLoop(() => {   
+    scene.render()  
 })
