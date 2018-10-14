@@ -280,7 +280,7 @@ document.body.addEventListener("touchstart", () => {
 
 let speed = 5 
  
-player.physicsImpostor.setLinearVelocity(new Vector3(0, 0, speed))
+
 scene.beforeRender = () => {   
     let removed = []   
 
@@ -290,11 +290,11 @@ scene.beforeRender = () => {
         }  
     }  
     
-    //let velocity = player.physicsImpostor.getLinearVelocity().clone()
+    let velocity = player.physicsImpostor.getLinearVelocity().clone()
     //console.log(velocity.z)
-    //velocity.z = player.position. y < 0 ? 0 : velocity.z
-    //velocity.x *= .95 
-    //player.physicsImpostor.setLinearVelocity(velocity)
+    velocity.z = player.position. y < 0 ? 0 : speed
+    velocity.x *= .95 
+    player.physicsImpostor.setLinearVelocity(velocity)
 
     light.position.z = player.position.z 
     cameraTarget.position.z = player.position.z + 3
