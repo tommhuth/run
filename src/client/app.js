@@ -1,10 +1,12 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { FreeCamera, Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
+import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
-import { MeshBuilder, Mesh, StandardMaterial } from "babylonjs"
+import { FreeCamera,SSAORenderingPipeline, MeshBuilder, StandardMaterial, Texture } from "babylonjs"
+import { FurMaterial } from "babylonjs-materials"
 import uuid from "uuid" 
+ 
 
 const WIDTH = 6
 const HEIGHT = 25
@@ -34,15 +36,18 @@ const PathSettings = {
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
-const light = new DirectionalLight("directionalLight", new Vector3(4, -5, 4), scene)
-const shadowGenerator = new ShadowGenerator(1024, light)
+const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.1), scene)
+const shadowGenerator =  new ShadowGenerator(1024, light)
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
-const camera = new ArcRotateCamera("camera", -Math.PI/2, Math.PI/3, 10, cameraTarget, scene)
-//const camera2 = new FreeCamera("camera", new Vector3(4, 7,0), scene)
-//camera2.attachControl(canvas) 
-const physicsPlugin = new CannonJSPlugin(true, 15)
+const camera = new ArcRotateCamera("camera", -Math.PI/2, Math.PI/3, 10, cameraTarget, scene) 
+const physicsPlugin = new CannonJSPlugin(true, 15) 
+ 
+light.position.x = 0
+light.position.y = 0
+light.position.z = 0
+
 
 let score = 0
 let potentialScore = 0
@@ -55,15 +60,16 @@ hemisphere.groundColor = Color3.Green()
 cameraTarget.visibility = 0
 
 scene.enablePhysics(undefined, physicsPlugin)
-scene.fogMode = Scene.FOGMODE_NONE
+scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 0)
  
 light.autoUpdateExtends = false
 light.shadowMaxZ = DEPTH * 5
-light.shadowMinZ = -DEPTH
- 
+light.shadowMinZ = -DEPTH 
+
+
 player.position.y = 4
 player.position.x = 0
 player.position.z = 0
@@ -71,13 +77,22 @@ player.material = new StandardMaterial(uuid.v4(), scene)
 player.material.diffuseColor = Color3.Red() 
 player.receiveShadows = true
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
-
+ 
+ 
 shadowGenerator.addShadowCaster(player)
-shadowGenerator.useBlurCloseExponentialShadowMap = true
-shadowGenerator.blurScale = 2
-shadowGenerator.bias = .000015
-shadowGenerator.setDarkness(.7) 
-shadowGenerator.normalBias = .0175   
+shadowGenerator.usePercentageCloserFiltering = true
+shadowGenerator.forceBackFacesOnly = true
+shadowGenerator.frustumEdgeFalloff =  1
+shadowGenerator.setDarkness(.8) 
+//shadowGenerator.blurScale = 2
+//shadowGenerator.bias = .01
+//shadowGenerator.normalBias = -.051
+//light.shadowFrustumSize = 30
+//light.shadowOrthoScale = .1
+// blurKernel 
+//light.useKernelBlur = true 
+//light.blurKernel= 2
+//shadowGenerator.contactHardeningLightSizeUVRatio = .5
  
 function getZPosition(currentDepth) {
     const previousBlock = blocks[blocks.length - 1]
@@ -147,7 +162,7 @@ function makeCoin(index) {
     top.scaling = new Vector3(.25, .25, .25)
     top.rotate(new Vector3(0, 1, 0), index * .25)
     top.registerBeforeRender(() => { 
-        top.rotate(new Vector3(0, 1, 0), top.rotation.x + .1) 
+        top.rotate(new Vector3(0, 1, 0), top.rotation.x + .075) 
 
         if (top.intersectsMesh(player, false, true)) {
             score++
@@ -197,7 +212,7 @@ function makeBridge() {
     pillar.parent = block 
     pillar.position.y = -HEIGHT/2
 
-    shadowGenerator.getShadowMap().renderList.push(block, pillar)
+    shadowGenerator.addShadowCaster(block, true)
     
     blocks.push({
         width: WIDTH,
@@ -230,8 +245,7 @@ function makeHighIsland() {
         coin.position.y = height/2+.5
         coin.position.x = 0
         coin.position.z = i * 1 - 1.5
-    }
-    
+    } 
  
     block.material = new StandardMaterial(uuid.v4(), scene)
     block.material.diffuseColor = new Color3(color, color, color)   
@@ -259,13 +273,13 @@ function makeHighIsland() {
         }
     })    
 }
-
+ 
 function makeFull(doObstacle) { 
     const depth = DEPTH + Math.random() * 4
     const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: WIDTH, depth }, scene)
     const color = Math.max(Math.random(), .4) 
 
-    if (doObstacle && Math.random() > .5) { 
+    if (true || doObstacle && Math.random() > .5) { 
         const obstacle = MeshBuilder.CreateBox(uuid.v4(), { height: 2, width: 1, depth: 1 }, scene) 
         
         obstacle.material = new StandardMaterial(uuid.v4(), scene)
@@ -328,12 +342,12 @@ function init() {
     makeBlock(PathType.FULL)     
     makeBlock(PathType.FULL)     
     makeBlock(PathType.FULL)     
-    makeBlock(PathType.FULL)     
-    makeBlock(PathType.HIGH_ISLAND)  
-    makeBlock(PathType.HIGH_ISLAND)  
-    makeBlock(PathType.HIGH_ISLAND)  
-    makeBlock(PathType.HIGH_ISLAND)  
-    makeBlock(PathType.HIGH_ISLAND)     
+    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)         
 }
 
 init() 
