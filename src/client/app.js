@@ -1,7 +1,7 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
+import { FreeCamera, Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
 import { MeshBuilder, Mesh, StandardMaterial } from "babylonjs"
 import uuid from "uuid" 
@@ -40,6 +40,8 @@ const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1),
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
 const camera = new ArcRotateCamera("camera", -Math.PI/2, Math.PI/3, 10, cameraTarget, scene)
+//const camera2 = new FreeCamera("camera", new Vector3(4, 7,0), scene)
+//camera2.attachControl(canvas) 
 const physicsPlugin = new CannonJSPlugin(true, 15)
 
 let score = 0
@@ -53,7 +55,7 @@ hemisphere.groundColor = Color3.Green()
 cameraTarget.visibility = 0
 
 scene.enablePhysics(undefined, physicsPlugin)
-scene.fogMode = Scene.FOGMODE_EXP2
+scene.fogMode = Scene.FOGMODE_NONE
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 0)
@@ -143,7 +145,7 @@ function makeCoin(index) {
     bottom.rotate(new Vector3(1, 0, 0), Math.PI) 
 
     top.scaling = new Vector3(.25, .25, .25)
-    top.rotate(new Vector3(0, 1, 0), index * .4)
+    top.rotate(new Vector3(0, 1, 0), index * .25)
     top.registerBeforeRender(() => { 
         top.rotate(new Vector3(0, 1, 0), top.rotation.x + .1) 
 
@@ -158,7 +160,7 @@ function makeCoin(index) {
     }) 
 
     shadowGenerator.addShadowCaster(top, true) 
-    potentialScore++
+    potentialScore++ 
 
     return top
 }
@@ -221,16 +223,15 @@ function makeHighIsland() {
     const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth: islandDepth }, scene)
     const color = Math.max(Math.random(), .4)
 
-    /*
     for (let i = 0; i < 3; i++) { 
-        const coin = makeCoin()
+        const coin = makeCoin(i)
 
         coin.parent = block
-        coin.position.y = 3
+        coin.position.y = height/2+.5
         coin.position.x = 0
-        coin.position.z = 0  
+        coin.position.z = i * 1 - 1.5
     }
-    */
+    
  
     block.material = new StandardMaterial(uuid.v4(), scene)
     block.material.diffuseColor = new Color3(color, color, color)   
@@ -323,14 +324,15 @@ function makeGap() {
     })   
 }
  
-function init() { 
-    makeBlock(PathType.FULL) 
-    makeBlock(PathType.FULL)  
+function init() {  
+    makeBlock(PathType.FULL)     
+    makeBlock(PathType.FULL)     
+    makeBlock(PathType.FULL)     
+    makeBlock(PathType.FULL)     
     makeBlock(PathType.HIGH_ISLAND)  
-    makeBlock(PathType.FULL)     
-    makeBlock(PathType.BRIDGE)     
-    makeBlock(PathType.FULL)     
-    makeBlock(PathType.GAP)     
+    makeBlock(PathType.HIGH_ISLAND)  
+    makeBlock(PathType.HIGH_ISLAND)  
+    makeBlock(PathType.HIGH_ISLAND)  
     makeBlock(PathType.HIGH_ISLAND)     
 }
 
