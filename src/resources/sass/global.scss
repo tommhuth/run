@@ -8,12 +8,6 @@ body {
     background-color: #FFF;  
 } 
 
-@media (max-width: 50em) {
-    body {
-        font-size: 1.15em;
-    }
-}
-
 body, html {
     height: 100vh;
     margin: 0;
@@ -43,5 +37,6 @@ canvas {
     width: 100vw !important;  
     height: 100vh !important;
     position: relative;
-    z-index: 2;
+    overflow: hidden;
+    z-index: 1;
 }
