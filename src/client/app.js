@@ -350,13 +350,14 @@ document.body.addEventListener("keydown", e => {
     }    
 }) 
 
-document.body.addEventListener("touchstart", (e) => {
-    player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)   
+document.body.addEventListener("touchstart", () => {
+    player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position) 
+})
 
+document.body.addEventListener("touchmove", (e) => { 
     e.preventDefault()
 })
  
-
 scene.beforeRender = () => {   
     let removed = []   
     let velocity = player.physicsImpostor.getLinearVelocity().clone() 
