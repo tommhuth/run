@@ -358,6 +358,7 @@ document.body.addEventListener("touchstart", () => {
 
 document.body.addEventListener("touchmove", (e) => { 
     e.preventDefault()
+    e.stopPropagation()
 })
  
 scene.beforeRender = () => {   
