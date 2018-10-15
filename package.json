@@ -7,6 +7,7 @@
       "node": "10.12.0"
   },
   "scripts": {
+      "ngrok": "ngrok http 3000",
     "postinstall": "npm run build-server:prod && npm run build-client:prod",
     "test": "cross-env NODE_ENV=test mocha tests --ui qunit --recursive --require babel-core/register",
     "build-client": "cross-env BABEL_ENV=client webpack --mode development --watch",
