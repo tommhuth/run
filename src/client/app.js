@@ -319,8 +319,7 @@ function makeGap() {
         get position() {
             return position
         },
-        dispose() { 
-        }
+        dispose() { }
     })   
 }
  
@@ -351,8 +350,10 @@ document.body.addEventListener("keydown", e => {
     }    
 }) 
 
-document.body.addEventListener("touchstart", () => {
+document.body.addEventListener("touchstart", (e) => {
     player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)   
+
+    e.preventDefault()
 })
  
 
