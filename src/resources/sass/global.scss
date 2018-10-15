@@ -36,7 +36,9 @@ body, html {
 canvas {
     width: 100vw !important;  
     height: 100vh !important;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     overflow: hidden;
     z-index: 1;
 }
