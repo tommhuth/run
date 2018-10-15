@@ -3,8 +3,7 @@ import "../resources/resources"
 
 import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
-import { FreeCamera,SSAORenderingPipeline, MeshBuilder, StandardMaterial, Texture } from "babylonjs"
-import { FurMaterial } from "babylonjs-materials"
+import { MeshBuilder, StandardMaterial } from "babylonjs" 
 import uuid from "uuid" 
  
 
