@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/server/server.js",
-  "engines": {},
+  "engines": {
+      "node": "10.12.0"
+  },
   "scripts": {
     "postinstall": "npm run build-server:prod && npm run build-client:prod",
     "test": "cross-env NODE_ENV=test mocha tests --ui qunit --recursive --require babel-core/register",
