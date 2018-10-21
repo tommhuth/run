@@ -1,14 +1,14 @@
 import "babel-polyfill"
 import "../resources/resources"
 
-import { Engine, Scene, HemisphericLight, DirectionalLight, ShadowGenerator, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
+import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
+//import { DefaultRenderingPipeline, SSAORenderingPipeline, SSAO2RenderingPipeline } from "babylonjs"
 import { MeshBuilder, StandardMaterial } from "babylonjs" 
-import uuid from "uuid" 
- 
+import uuid from "uuid"
 
 const WIDTH = 6
-const HEIGHT = 25
+const HEIGHT = 5
 const DEPTH = 4
 const SPEHER_SIZE = .35
 const PathType = {
@@ -35,68 +35,81 @@ const PathSettings = {
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
-const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.1), scene)
-const shadowGenerator =  new ShadowGenerator(1024, light)
+const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.1), scene) 
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
 const camera = new ArcRotateCamera("camera", -Math.PI/2, Math.PI/3, 10, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(true, 15) 
- 
+
+scene.autoClear = false // Color buffer
+scene.autoClearDepthAndStencil = false // Depth and stencil, obviously
+scene.blockMaterialDirtyMechanism = true
+
 light.position.x = 0
 light.position.y = 0
 light.position.z = 0
 
+/*
+var ssao = new  SSAO2RenderingPipeline("ssao", scene, {
+    ssaoRatio: 0.45, // Ratio of the SSAO post-process, in a lower resolution
+    blurRatio: 1 // Ratio of the combine post-process (combines the SSAO and the scene)
+})
+ssao.radius = 1.5
+ssao.totalStrength = .9
+ssao.expensiveBlur = false
+ssao.samples = 16
+ssao.maxZ = 30
+
+var ssaoRatio = {
+    ssaoRatio: 0.5, // Ratio of the SSAO post-process, in a lower resolution
+    combineRatio: 1.0 // Ratio of the combine post-process (combines the SSAO and the scene)
+}
+var ssao = new SSAORenderingPipeline("ssao", scene, ssaoRatio)
+ssao.fallOff = 0.000001;
+    ssao.area = 1;
+    ssao.radius = 0.0001;
+    ssao.totalStrength = 1.0;
+    ssao.base = 0.5;
+
+scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", camera)
+
+var defaultpipeline = new  DefaultRenderingPipeline("default", true, scene, [camera])
+defaultpipeline.fxaaEnabled = true
+*/
+ 
 
 let score = 0
 let potentialScore = 0
 let blocks = []   
-let speed = 5
+let speed = 5.5
 
 hemisphere.diffuse = Color3.Blue()  
 hemisphere.groundColor = Color3.Green()
  
 cameraTarget.visibility = 0
 
-scene.enablePhysics(undefined, physicsPlugin)
+scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 0)
- 
-light.autoUpdateExtends = false
-light.shadowMaxZ = DEPTH * 5
-light.shadowMinZ = -DEPTH 
-
-
+  
 player.position.y = 4
 player.position.x = 0
 player.position.z = 0
 player.material = new StandardMaterial(uuid.v4(), scene)
-player.material.diffuseColor = Color3.Red() 
-player.receiveShadows = true
+player.material.diffuseColor = Color3.Red()  
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
- 
- 
-shadowGenerator.addShadowCaster(player)
-shadowGenerator.usePercentageCloserFiltering = true
-shadowGenerator.forceBackFacesOnly = true
-shadowGenerator.frustumEdgeFalloff =  1
-shadowGenerator.setDarkness(.8) 
-//shadowGenerator.blurScale = 2
-//shadowGenerator.bias = .01
-//shadowGenerator.normalBias = -.051
-//light.shadowFrustumSize = 30
-//light.shadowOrthoScale = .1
-// blurKernel 
-//light.useKernelBlur = true 
-//light.blurKernel= 2
-//shadowGenerator.contactHardeningLightSizeUVRatio = .5
  
 function getZPosition(currentDepth) {
     const previousBlock = blocks[blocks.length - 1]
 
-    return previousBlock ? previousBlock.position.z + previousBlock.depth / 2 + currentDepth / 2 : 0
+    if (previousBlock) {
+        return previousBlock.position.z + previousBlock.depth / 2 + currentDepth / 2
+    }
+
+    return 0
 }
 
 function flip() {
@@ -131,6 +144,8 @@ function makeBlock(forceType) {
     }
 }
 
+let rotateY = new Vector3(0, 1, 0)
+
 function makeCoin(index) {
     const top = MeshBuilder.CreateCylinder(uuid.v4(), { 
         diameterBottom: 1.25, 
@@ -161,19 +176,17 @@ function makeCoin(index) {
     top.scaling = new Vector3(.25, .25, .25)
     top.rotate(new Vector3(0, 1, 0), index * .25)
     top.registerBeforeRender(() => { 
-        top.rotate(new Vector3(0, 1, 0), top.rotation.x + .075) 
+        top.rotate(rotateY, top.rotation.x + .075) 
 
         if (top.intersectsMesh(player, false, true)) {
-            score++
-            shadowGenerator.removeShadowCaster(top, true)
+            score++ 
 
             setTimeout(() => top.dispose(false, true), 1)
              
-            console.info("score", score)
+            console.info("score", score, "of", potentialScore)
         }
     }) 
-
-    shadowGenerator.addShadowCaster(top, true) 
+ 
     potentialScore++ 
 
     return top
@@ -186,8 +199,7 @@ function makeBridge() {
     const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth }, scene)
     const pillar = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: .75, depth: .75 }, scene)
     const previousBlock = blocks[blocks.length - 1]
-    const lastWasBridge = previousBlock && previousBlock.type === PathType.BRIDGE 
-    const color = Math.max(Math.random(), .4)
+    const lastWasBridge = previousBlock && previousBlock.type === PathType.BRIDGE  
     const xPosition = (Math.random() * width / 2 - 1) * flip()
 
     if (Math.random() < .5){
@@ -196,22 +208,21 @@ function makeBridge() {
     
             coin.parent = block
             coin.position.y = 1
-            coin.position.z = i * 1 - 1.5
+            coin.position.z = i * 1 - 1.5 
         }
     }
 
     block.material = new StandardMaterial(uuid.v4(), scene)
-    block.material.diffuseColor = new Color3(color, color, color) 
+    block.material.diffuseColor = Color3.White() 
     block.position.y = -.5
     block.position.x = lastWasBridge ? previousBlock.position.x : xPosition
-    block.position.z = getZPosition(depth)
-    block.receiveShadows = true
+    block.position.z = getZPosition(depth) 
     block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
    
     pillar.parent = block 
-    pillar.position.y = -HEIGHT/2
-
-    shadowGenerator.addShadowCaster(block, true)
+    pillar.position.y = -HEIGHT/2 
+    pillar.freezeWorldMatrix()
+    block.freezeWorldMatrix()
     
     blocks.push({
         width: WIDTH,
@@ -223,8 +234,7 @@ function makeBridge() {
             return block.position
         },
         dispose() {
-            block.dispose()
-            shadowGenerator.removeShadowCaster(block, true) 
+            block.dispose() 
         }
     }) 
 }
@@ -234,8 +244,7 @@ function makeHighIsland() {
     const totalDepth = islandDepth + 4.25
     const width = WIDTH - Math.random() * 4
     const height = 2 + Math.random() * 1.5
-    const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth: islandDepth }, scene)
-    const color = Math.max(Math.random(), .4)
+    const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth: islandDepth }, scene) 
 
     for (let i = 0; i < 3; i++) { 
         const coin = makeCoin(i)
@@ -247,15 +256,14 @@ function makeHighIsland() {
     } 
  
     block.material = new StandardMaterial(uuid.v4(), scene)
-    block.material.diffuseColor = new Color3(color, color, color)   
+    block.material.diffuseColor = Color3.White()    
     
     block.position.y = -1
     block.position.z = getZPosition(totalDepth)
-    block.position.x = Math.random() * flip()
-    block.receiveShadows = true 
+    block.position.x = Math.random() * flip() 
     block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene) 
-
-    shadowGenerator.addShadowCaster(block)
+ 
+    block.freezeWorldMatrix()
 
     blocks.push({
         width,
@@ -267,42 +275,36 @@ function makeHighIsland() {
             return block.position
         },
         dispose() {
-            block.dispose()
-            shadowGenerator.removeShadowCaster(block, true)
+            block.dispose() 
         }
     })    
 }
  
 function makeFull(doObstacle) { 
     const depth = DEPTH + Math.random() * 4
-    const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: WIDTH, depth }, scene)
-    const color = Math.max(Math.random(), .4) 
+    const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: WIDTH, depth }, scene) 
 
-    if (true || doObstacle && Math.random() > .5) { 
+    if (doObstacle && Math.random() > .5) { 
         const obstacle = MeshBuilder.CreateBox(uuid.v4(), { height: 2, width: 1, depth: 1 }, scene) 
         
         obstacle.material = new StandardMaterial(uuid.v4(), scene)
-        obstacle.material.diffuseColor = new Color3(0, 0, 1)
-        obstacle.receiveShadows = true 
+        obstacle.material.diffuseColor = new Color3(0, 0, 1) 
         obstacle.parent = block
 
-        obstacle.position.y = HEIGHT/2 - Math.random() * 1.5
+        obstacle.position.y = HEIGHT/2 - Math.random() 
         obstacle.position.z = 0
         obstacle.position.x = (WIDTH/2 * Math.random() - .5) * (Math.random() > .5 ? -1 : 1)
         obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
-
-        shadowGenerator.addShadowCaster(obstacle)
+        obstacle.freezeWorldMatrix()
     }
 
     block.material = new StandardMaterial(uuid.v4(), scene)
-    block.material.diffuseColor = new Color3(color, color, color) 
+    block.material.diffuseColor = Color3.White() 
     block.position.y = -HEIGHT/2
-    block.position.z = getZPosition(depth)
-    block.receiveShadows = true 
+    block.position.z = getZPosition(depth) 
     block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
-    shadowGenerator.addShadowCaster(block)
-
+    block.freezeWorldMatrix()
     blocks.push({
         width: WIDTH,
         height: HEIGHT,
@@ -314,7 +316,6 @@ function makeFull(doObstacle) {
         },
         dispose() {
             block.dispose()
-            shadowGenerator.removeShadowCaster(block, true)
         }
     }) 
 }
@@ -343,10 +344,7 @@ function init() {
     makeBlock(PathType.FULL)     
     makeBlock(PathType.BRIDGE)         
     makeBlock(PathType.BRIDGE)         
-    makeBlock(PathType.BRIDGE)         
-    makeBlock(PathType.BRIDGE)         
-    makeBlock(PathType.BRIDGE)         
-    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)           
 }
 
 init() 
@@ -382,7 +380,6 @@ scene.beforeRender = () => {
     velocity.x *= .9
     player.physicsImpostor.setLinearVelocity(velocity)
 
-    light.position.z = player.position.z 
     cameraTarget.position.z = player.position.z + 3
  
     for (let block of blocks) {
