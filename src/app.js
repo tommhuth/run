@@ -35,6 +35,8 @@ let potentialScore = 0
 let blocks = []   
 let speed = 5
 let rotation = 0
+let started = false 
+let gameOver = false
 
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
@@ -43,8 +45,8 @@ const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
-const camera = new ArcRotateCamera("camera", -Math.PI/2, Math.PI/3, 10, cameraTarget, scene) 
-const physicsPlugin = new CannonJSPlugin(true, 15) 
+const camera = new ArcRotateCamera("camera", 0, Math.PI / 3, 40, cameraTarget, scene) 
+const physicsPlugin = new CannonJSPlugin(true, 20) 
 
 const baseMaterial = new StandardMaterial()
 baseMaterial.diffuseColor = new Color3(1,1,1)
@@ -61,7 +63,8 @@ light.diffuse = Color3.Yellow()
 hemisphere.diffuse = Color3.Red()  
 hemisphere.groundColor = Color3.Blue()
  
-cameraTarget.visibility = 0
+cameraTarget.visibility = 0 
+cameraTarget.position.z = 30
 
 scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
 scene.fogMode = Scene.FOGMODE_EXP2
@@ -311,67 +314,83 @@ function makeGap() {
 function init() {  
     makeBlock(PathType.FULL)     
     makeBlock(PathType.FULL)      
-    makeBlock(PathType.FULL)     
-    makeBlock(PathType.FULL)     
+    makeBlock(PathType.FULL)      
     makeBlock(PathType.BRIDGE)          
     makeBlock(PathType.BRIDGE)           
     makeBlock()           
     makeBlock()           
+    makeBlock()           
+    makeBlock()            
 }
 
-init() 
- 
-   
-document.body.addEventListener("keydown", e => {
+init()  
+
+canvas.addEventListener("keydown", e => {
     if (e.keyCode == 32 ) { 
         player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position)
     }
     
     if (e.keyCode == 37 || e.keyCode === 65) { 
-        player.physicsImpostor.applyImpulse(new Vector3(-3, 0, 0), player.position)
+        rotation = -60
     } 
     
     if (e.keyCode == 39 || e.keyCode === 68) { 
-        player.physicsImpostor.applyImpulse(new Vector3(3, 0, 0), player.position)
+        rotation = 60
     }    
 })  
 
+canvas.addEventListener("click", (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!started) {
+        started = true 
+        document.getElementById("intro").remove()
+    } else {
+        player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position) 
+    }
+})
+ 
 window.addEventListener("deviceorientation", (e) => {
     rotation = e.gamma
 }, false)
-
-
-document.body.addEventListener("touchstart", () => {
-    player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position) 
-})
 
 document.body.addEventListener("touchmove", (e) => { 
     e.preventDefault()
     e.stopPropagation()
 })
  
-scene.beforeRender = () => {   
-    let removed = []   
-    let velocity = player.physicsImpostor.getLinearVelocity().clone() 
+scene.beforeRender = () => {    
+    if (!started) { 
+        camera.radius += (10- camera.radius ) / 60
+        camera.alpha += (-Math.PI / 2- camera.alpha) / 60 
+        cameraTarget.position.z += (0 - cameraTarget.position.z) / 120 
+    } else { 
+        let removed = []   
+        let velocity = player.physicsImpostor.getLinearVelocity().clone() 
 
-    velocity.z = player.position. y < -1 ? 0 : speed
-    velocity.x = rotation / 90 * 4
-    player.physicsImpostor.setLinearVelocity(velocity)
+        velocity.z = player.position. y < -1 ? 0 : speed
+        velocity.x = rotation / 90 * 4
+        rotation *= .95
+        player.physicsImpostor.setLinearVelocity(velocity)
 
-    cameraTarget.position.z = player.position.z + 3 
- 
-    for (let block of blocks) {
-        if (player.position.z >= block.position.z + block.depth) {
-            removed.push(block) 
+        cameraTarget.position.z += (player.position.z + 5 - cameraTarget.position.z) / 30
+        camera.radius += (10- camera.radius ) / 60
+        camera.alpha += (-Math.PI / 2- camera.alpha) / 60 
+
+        for (let block of blocks) {
+            if (player.position.z >= block.position.z + block.depth + 4) {
+                removed.push(block) 
+            }  
         }  
-    }  
 
-    for (let block of removed) {   
-        blocks = blocks.filter(b => b !== block) 
-        
-        block.dispose() 
-        makeBlock() 
-    } 
+        for (let block of removed) {   
+            blocks = blocks.filter(b => b !== block) 
+            
+            block.dispose() 
+            makeBlock() 
+        } 
+    }
 }
 
 engine.runRenderLoop(() => {   
