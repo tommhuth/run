@@ -1,5 +1,4 @@
-import "babel-polyfill"
-import "../resources/resources"
+import "babel-polyfill" 
 
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"

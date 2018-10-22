@@ -14,10 +14,6 @@
         },
         "sourceType": "module"
     },
-    "plugins": [
-        "react",
-        "mocha"
-    ],
     "rules": {
         "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
         "react/jsx-uses-react": "error",

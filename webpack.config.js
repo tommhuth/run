@@ -1,18 +1,16 @@
 const webpack = require("webpack") 
 const { version } = require("./package.json")
-const path = require("path")
-const MiniCssExtractPlugin = require("mini-css-extract-plugin") 
+const path = require("path") 
 
 let plugins = [ 
     new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
         "process.env.APP_VERSION": JSON.stringify(version)
     }),
-    new MiniCssExtractPlugin({ allChunks: true, filename: "./css/app.bundle.css" }),
 ] 
 
 module.exports = {
-    entry: "./src/client/app.js",
+    entry: "./src/app.js",
     output: {
         path: path.resolve(__dirname, "public"),
         filename: "js/client.bundle.js"
@@ -27,35 +25,7 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.json$/, loader: "json" },
-            {
-
-                test: /\.svg$/,
-                use: [
-                    {
-                        loader: "svg-sprite-loader",
-                        options: {
-                            extract: true,
-                            spriteFilename: "/gfx/iconset.bundle.svg",
-                        },
-                    },
-                    {
-                        loader: "svgo-loader",
-                        options: {
-                        },
-                    },
-                ],
-            },
-            {
-                test: /\.scss$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    "css-loader",
-                    {
-                        loader: "sass-loader"
-                    },
-                ],
-            },
+            { test: /\.json$/, loader: "json" },  
             {
                 test: /\.js$/,
                 exclude: /(node_modules)/,
