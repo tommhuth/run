@@ -31,6 +31,12 @@ const PathSettings = {
     }
 }
 
+let score = 0
+let potentialScore = 0
+let blocks = []   
+let speed = 5
+let rotation = 0
+
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
@@ -52,11 +58,6 @@ light.position.x = 0
 light.position.y = 0
 light.position.z = 0
 light.diffuse = Color3.Yellow()
-
-let score = 0
-let potentialScore = 0
-let blocks = []   
-let speed = 5
 
 hemisphere.diffuse = Color3.Red()  
 hemisphere.groundColor = Color3.Blue()
@@ -334,7 +335,12 @@ document.body.addEventListener("keydown", e => {
     if (e.keyCode == 39 || e.keyCode === 68) { 
         player.physicsImpostor.applyImpulse(new Vector3(3, 0, 0), player.position)
     }    
-}) 
+})  
+
+window.addEventListener("deviceorientation", (e) => {
+    rotation = e.gamma
+}, false)
+
 
 document.body.addEventListener("touchstart", () => {
     player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position) 
@@ -350,7 +356,7 @@ scene.beforeRender = () => {
     let velocity = player.physicsImpostor.getLinearVelocity().clone() 
 
     velocity.z = player.position. y < -1 ? 0 : speed
-    velocity.x *= .9
+    velocity.x = rotation / 90 * 4
     player.physicsImpostor.setLinearVelocity(velocity)
 
     cameraTarget.position.z = player.position.z + 3 
