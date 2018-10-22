@@ -1,8 +1,7 @@
 const webpack = require("webpack") 
 const { version } = require("./package.json")
 const path = require("path")
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const SpriteLoaderPlugin =require("svg-sprite-loader/plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin") 
 
 let plugins = [ 
     new webpack.DefinePlugin({
@@ -10,7 +9,6 @@ let plugins = [
         "process.env.APP_VERSION": JSON.stringify(version)
     }),
     new MiniCssExtractPlugin({ allChunks: true, filename: "./css/app.bundle.css" }),
-    new SpriteLoaderPlugin({ plainSprite: true }),
 ] 
 
 module.exports = {

@@ -3,12 +3,11 @@ import "../resources/resources"
 
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
-//import { DefaultRenderingPipeline, SSAORenderingPipeline, SSAO2RenderingPipeline } from "babylonjs"
 import { MeshBuilder, StandardMaterial } from "babylonjs" 
 import uuid from "uuid"
 
 const WIDTH = 6
-const HEIGHT = 5
+const HEIGHT = 40
 const DEPTH = 4
 const SPEHER_SIZE = .35
 const PathType = {
@@ -42,6 +41,9 @@ const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
 const camera = new ArcRotateCamera("camera", -Math.PI/2, Math.PI/3, 10, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(true, 15) 
 
+const baseMaterial = new StandardMaterial()
+baseMaterial.diffuseColor = new Color3(1,1,1)
+
 scene.autoClear = false // Color buffer
 scene.autoClearDepthAndStencil = false // Depth and stencil, obviously
 scene.blockMaterialDirtyMechanism = true
@@ -49,43 +51,15 @@ scene.blockMaterialDirtyMechanism = true
 light.position.x = 0
 light.position.y = 0
 light.position.z = 0
-
-/*
-var ssao = new  SSAO2RenderingPipeline("ssao", scene, {
-    ssaoRatio: 0.45, // Ratio of the SSAO post-process, in a lower resolution
-    blurRatio: 1 // Ratio of the combine post-process (combines the SSAO and the scene)
-})
-ssao.radius = 1.5
-ssao.totalStrength = .9
-ssao.expensiveBlur = false
-ssao.samples = 16
-ssao.maxZ = 30
-
-var ssaoRatio = {
-    ssaoRatio: 0.5, // Ratio of the SSAO post-process, in a lower resolution
-    combineRatio: 1.0 // Ratio of the combine post-process (combines the SSAO and the scene)
-}
-var ssao = new SSAORenderingPipeline("ssao", scene, ssaoRatio)
-ssao.fallOff = 0.000001;
-    ssao.area = 1;
-    ssao.radius = 0.0001;
-    ssao.totalStrength = 1.0;
-    ssao.base = 0.5;
-
-scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", camera)
-
-var defaultpipeline = new  DefaultRenderingPipeline("default", true, scene, [camera])
-defaultpipeline.fxaaEnabled = true
-*/
- 
+light.diffuse = Color3.Yellow()
 
 let score = 0
 let potentialScore = 0
 let blocks = []   
-let speed = 5.5
+let speed = 5
 
-hemisphere.diffuse = Color3.Blue()  
-hemisphere.groundColor = Color3.Green()
+hemisphere.diffuse = Color3.Red()  
+hemisphere.groundColor = Color3.Blue()
  
 cameraTarget.visibility = 0
 
@@ -93,7 +67,7 @@ scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
 scene.fogMode = Scene.FOGMODE_EXP2
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
-scene.clearColor = new Color4(1, 1, 1, 0)
+scene.clearColor = new Color4(1, 1, 1, 1)
   
 player.position.y = 4
 player.position.x = 0
@@ -212,8 +186,7 @@ function makeBridge() {
         }
     }
 
-    block.material = new StandardMaterial(uuid.v4(), scene)
-    block.material.diffuseColor = Color3.White() 
+    block.material = baseMaterial
     block.position.y = -.5
     block.position.x = lastWasBridge ? previousBlock.position.x : xPosition
     block.position.z = getZPosition(depth) 
@@ -255,8 +228,7 @@ function makeHighIsland() {
         coin.position.z = i * 1 - 1.5
     } 
  
-    block.material = new StandardMaterial(uuid.v4(), scene)
-    block.material.diffuseColor = Color3.White()    
+    block.material = baseMaterial 
     
     block.position.y = -1
     block.position.z = getZPosition(totalDepth)
@@ -284,22 +256,20 @@ function makeFull(doObstacle) {
     const depth = DEPTH + Math.random() * 4
     const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: WIDTH, depth }, scene) 
 
-    if (doObstacle && Math.random() > .5) { 
+    if (doObstacle) { 
         const obstacle = MeshBuilder.CreateBox(uuid.v4(), { height: 2, width: 1, depth: 1 }, scene) 
         
-        obstacle.material = new StandardMaterial(uuid.v4(), scene)
-        obstacle.material.diffuseColor = new Color3(0, 0, 1) 
+        obstacle.material = baseMaterial
         obstacle.parent = block
 
-        obstacle.position.y = HEIGHT/2 - Math.random() 
-        obstacle.position.z = 0
-        obstacle.position.x = (WIDTH/2 * Math.random() - .5) * (Math.random() > .5 ? -1 : 1)
+        obstacle.position.y = Math.random() * flip()
+        obstacle.position.z = getZPosition(depth) +  (Math.random() * depth/2 - 1) * flip() 
+        obstacle.position.x =  (WIDTH/2 * Math.random() - .5) * flip()
         obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
         obstacle.freezeWorldMatrix()
     }
 
-    block.material = new StandardMaterial(uuid.v4(), scene)
-    block.material.diffuseColor = Color3.White() 
+    block.material = baseMaterial
     block.position.y = -HEIGHT/2
     block.position.z = getZPosition(depth) 
     block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
@@ -340,14 +310,17 @@ function makeGap() {
  
 function init() {  
     makeBlock(PathType.FULL)     
+    makeBlock(PathType.FULL)      
     makeBlock(PathType.FULL)     
     makeBlock(PathType.FULL)     
-    makeBlock(PathType.BRIDGE)         
-    makeBlock(PathType.BRIDGE)         
+    makeBlock(PathType.BRIDGE)          
     makeBlock(PathType.BRIDGE)           
+    makeBlock()           
+    makeBlock()           
 }
 
 init() 
+ 
    
 document.body.addEventListener("keydown", e => {
     if (e.keyCode == 32 ) { 
@@ -380,7 +353,7 @@ scene.beforeRender = () => {
     velocity.x *= .9
     player.physicsImpostor.setLinearVelocity(velocity)
 
-    cameraTarget.position.z = player.position.z + 3
+    cameraTarget.position.z = player.position.z + 3 
  
     for (let block of blocks) {
         if (player.position.z >= block.position.z + block.depth) {
