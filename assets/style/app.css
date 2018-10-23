@@ -22,6 +22,7 @@ body {
 #intro {
     position: absolute;
     pointer-events: none;
+    max-width: 6em;
     left: 50%;
     top: 50%;  
     transform: translate(-50%, -50%);

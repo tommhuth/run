@@ -1,11 +1,12 @@
-import "babel-polyfill" 
-
+import "babel-polyfill"
+ 
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
-import { MeshBuilder, StandardMaterial } from "babylonjs" 
+import { MeshBuilder, StandardMaterial, SceneLoader } from "babylonjs"  
+import "babylonjs-loaders"
 import uuid from "uuid"
-
-const WIDTH = 6
+   
+const WIDTH = 4
 const HEIGHT = 40
 const DEPTH = 4
 const SPEHER_SIZE = .35
@@ -35,7 +36,8 @@ let potentialScore = 0
 let blocks = []   
 let speed = 5
 let rotation = 0
-let started = false 
+let loading = true
+let started = false  
 let gameOver = false
 
 const canvas = document.getElementById("app")
@@ -45,11 +47,37 @@ const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
-const camera = new ArcRotateCamera("camera", 0, Math.PI / 3, 40, cameraTarget, scene) 
-const physicsPlugin = new CannonJSPlugin(true, 20) 
-
+const camera = new ArcRotateCamera("camera", 3, Math.PI / 3, 40, cameraTarget, scene) 
+const physicsPlugin = new CannonJSPlugin(false, 8) 
+ 
+const models = {
+    rock: null,
+    rockface: null
+}
 const baseMaterial = new StandardMaterial()
 baseMaterial.diffuseColor = new Color3(1,1,1)
+
+function load(){
+    SceneLoader.LoadAssetContainerAsync("rocks.babylon")
+        .then(({ meshes }) => {
+            for(let mesh of meshes) { 
+                mesh.material = baseMaterial
+                mesh.convertToFlatShadedMesh() 
+
+                models[mesh.id] = mesh
+            } 
+
+            init()   
+
+            loading = false
+        }).catch(e => {
+            console.error(e)
+        })
+}
+ 
+load()
+
+  
 
 scene.autoClear = false // Color buffer
 scene.autoClearDepthAndStencil = false // Depth and stencil, obviously
@@ -99,7 +127,7 @@ function getRandomBlock(){
     return types[Math.floor(Math.random() * types.length)]
 }
 
-function makeBlock(forceType) { 
+function makeBlock(forceType, ...params) { 
     let type = forceType || getRandomBlock()
     let previousBlock = blocks[blocks.length-1]
 
@@ -111,13 +139,13 @@ function makeBlock(forceType) {
 
     switch (type) {
         case PathType.FULL:
-            return makeFull(true)
+            return makeFull(...params)
         case PathType.GAP:
-            return makeGap()
+            return makeGap(...params)
         case PathType.BRIDGE:
-            return makeBridge()
+            return makeBridge(...params)
         case PathType.HIGH_ISLAND:
-            return makeHighIsland() 
+            return makeHighIsland(...params) 
     }
 }
 
@@ -218,7 +246,7 @@ function makeBridge() {
 function makeHighIsland() { 
     const islandDepth = DEPTH - Math.random() * 1.5
     const totalDepth = islandDepth + 4.25
-    const width = WIDTH - Math.random() * 4
+    const width = WIDTH - Math.random() * 2
     const height = 2 + Math.random() * 1.5
     const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth: islandDepth }, scene) 
 
@@ -255,31 +283,49 @@ function makeHighIsland() {
     })    
 }
  
-function makeFull(doObstacle) { 
+function makeFull(noObstacle = false) { 
     const depth = DEPTH + Math.random() * 4
-    const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: WIDTH, depth }, scene) 
+    const width = WIDTH  
+    const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width, depth }, scene) 
+    const face1 =  models[Math.random() > .5 ? "rockface" : "rockface2"].createInstance()
+    const face2 =  models[Math.random() > .5 ? "rockface" : "rockface2"].createInstance()
 
-    if (doObstacle) { 
-        const obstacle = MeshBuilder.CreateBox(uuid.v4(), { height: 2, width: 1, depth: 1 }, scene) 
-        
-        obstacle.material = baseMaterial
+    if (!noObstacle) { 
+        const obstacle = models.rock.createInstance("3") 
+        const scale = Math.max(Math.random(), .45)
+  
         obstacle.parent = block
-
-        obstacle.position.y = Math.random() * flip()
-        obstacle.position.z = getZPosition(depth) +  (Math.random() * depth/2 - 1) * flip() 
-        obstacle.position.x =  (WIDTH/2 * Math.random() - .5) * flip()
-        obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
-        obstacle.freezeWorldMatrix()
+        obstacle.scaling.set(scale, scale, scale)
+        obstacle.position.y = HEIGHT/2 
+        obstacle.position.z = 0  
+        obstacle.position.x = (width/2 * Math.random() - .5) * flip()
+        obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.SphereImpostor, { mass: 0 }, scene)  
     }
-
+ 
     block.material = baseMaterial
     block.position.y = -HEIGHT/2
     block.position.z = getZPosition(depth) 
     block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
-
-    block.freezeWorldMatrix()
+ 
+    face1.parent = block
+    face1.scaling.y = 10
+    face1.scaling.z = depth * .50118
+    face1.scaling.x = 2
+    face1.position.y = HEIGHT/2  - 10
+    face1.position.z = 0
+    face1.position.x = width/2 - .3
+ 
+    face2.parent = block 
+    face2.rotate(new Vector3(0, 1, 0), Math.PI)
+    face2.scaling.y = 10
+    face2.scaling.z = depth * .5011
+    face2.scaling.x = 2
+    face2.position.y = HEIGHT/2  - 10
+    face2.position.z = 0
+    face2.position.x = -width/2 - .3
+  
     blocks.push({
-        width: WIDTH,
+        width,
         height: HEIGHT,
         depth,
         main: block,
@@ -312,18 +358,16 @@ function makeGap() {
 }
  
 function init() {  
-    makeBlock(PathType.FULL)     
+    makeBlock(PathType.FULL, true)           
+    makeBlock(PathType.FULL, true)           
+    makeBlock(PathType.BRIDGE)    
+    makeBlock(PathType.FULL,)            
+    makeBlock(PathType.BRIDGE)   
     makeBlock(PathType.FULL)      
-    makeBlock(PathType.FULL)      
-    makeBlock(PathType.BRIDGE)          
-    makeBlock(PathType.BRIDGE)           
-    makeBlock()           
-    makeBlock()           
-    makeBlock()           
-    makeBlock()            
+    makeBlock(PathType.FULL)            
+    makeBlock(PathType.BRIDGE)   
+    makeBlock(PathType.FULL)          
 }
-
-init()  
 
 canvas.addEventListener("keydown", e => {
     if (e.keyCode == 32 ) { 
@@ -360,10 +404,14 @@ document.body.addEventListener("touchmove", (e) => {
     e.stopPropagation()
 })
  
-scene.beforeRender = () => {    
+scene.afterRender = () => {    
+    if(loading) {
+        return 
+    }
+
     if (!started) { 
         camera.radius += (10- camera.radius ) / 60
-        camera.alpha += (-Math.PI / 2- camera.alpha) / 60 
+        camera.alpha += (-Math.PI / 2- camera.alpha) / 160 
         cameraTarget.position.z += (0 - cameraTarget.position.z) / 120 
     } else { 
         let removed = []   

@@ -13,6 +13,7 @@ const app = express()
 app.use(compression())
 app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
 app.use(serveStatic(path.join(__dirname, "assets/style"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
+app.use(serveStatic(path.join(__dirname, "assets/models"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
 app.set("views", path.join(__dirname, "assets/views"))
 app.set("view engine", "pug")
 

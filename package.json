@@ -38,6 +38,7 @@
         "babel-preset-stage-2": "^6.24.1",
         "babel-preset-stage-3": "^6.24.1",
         "babylonjs": "^3.3.0",
+        "babylonjs-loaders": "^3.3.0",
         "body-parser": "^1.18.3",
         "cannon": "^0.6.2",
         "compression": "^1.7.3",
