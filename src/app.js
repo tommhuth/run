@@ -7,7 +7,7 @@ import "babylonjs-loaders"
 import uuid from "uuid"
    
 const WIDTH = 4
-const HEIGHT = 40
+const HEIGHT = 3
 const DEPTH = 4
 const SPEHER_SIZE = .35
 const PathType = {
@@ -49,6 +49,13 @@ const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEH
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
 const camera = new ArcRotateCamera("camera", 3, Math.PI / 3, 40, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(false, 8) 
+const ground = MeshBuilder.CreateGround(1, { width: 80, height: 80, subdivisions: 1}, scene)
+
+const waterMaterial = new StandardMaterial()
+waterMaterial.diffuseColor = Color3.Blue()
+
+ground.material = waterMaterial
+ground.position.y = -3
  
 const models = {
     rock: null,
@@ -57,20 +64,35 @@ const models = {
 const baseMaterial = new StandardMaterial()
 baseMaterial.diffuseColor = new Color3(1,1,1)
 
-function load(){
-    SceneLoader.LoadAssetContainerAsync("rocks.babylon")
-        .then(({ meshes }) => {
-            for(let mesh of meshes) { 
+
+
+function load(){  
+    let allResoucers = Promise.all([
+        SceneLoader.LoadAssetContainerAsync("rocks.babylon")
+    ])
+
+    allResoucers
+        .then(scenes => {
+            let meshes = [] 
+
+            for (let scene of scenes) {
+                meshes.push(...scene.meshes)
+            }
+
+            return meshes
+        })
+        .then(meshes => { 
+            for (let mesh of meshes) { 
                 mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
 
                 models[mesh.id] = mesh
             } 
 
-            init()   
-
+            init()    
             loading = false
-        }).catch(e => {
+        })
+        .catch(e => {
             console.error(e)
         })
 }
@@ -308,19 +330,19 @@ function makeFull(noObstacle = false) {
     block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
  
     face1.parent = block
-    face1.scaling.y = 10
+    face1.scaling.y = HEIGHT
     face1.scaling.z = depth * .50118
     face1.scaling.x = 2
-    face1.position.y = HEIGHT/2  - 10
+    face1.position.y = -HEIGHT/2   
     face1.position.z = 0
     face1.position.x = width/2 - .3
  
     face2.parent = block 
     face2.rotate(new Vector3(0, 1, 0), Math.PI)
-    face2.scaling.y = 10
+    face2.scaling.y = HEIGHT
     face2.scaling.z = depth * .5011
     face2.scaling.x = 2
-    face2.position.y = HEIGHT/2  - 10
+    face2.position.y = -HEIGHT/2   
     face2.position.z = 0
     face2.position.x = -width/2 - .3
   
@@ -424,7 +446,9 @@ scene.afterRender = () => {
 
         cameraTarget.position.z += (player.position.z + 5 - cameraTarget.position.z) / 30
         camera.radius += (10- camera.radius ) / 60
-        camera.alpha += (-Math.PI / 2- camera.alpha) / 60 
+        camera.alpha += (-Math.PI / 2- camera.alpha) / 60  
+
+        ground.position.z = player.position.z
 
         for (let block of blocks) {
             if (player.position.z >= block.position.z + block.depth + 4) {
