@@ -6,10 +6,10 @@ import { MeshBuilder, StandardMaterial, SceneLoader } from "babylonjs"
 import "babylonjs-loaders"
 import uuid from "uuid"
    
-const WIDTH = 4
+const WIDTH = 4.5
 const HEIGHT = 3
 const DEPTH = 4
-const SPEHER_SIZE = .35
+const SPEHER_SIZE = .5
 const PathType = {
     FULL: "full",
     BRIDGE: "bridge",
@@ -34,7 +34,7 @@ const PathSettings = {
 let score = 0
 let potentialScore = 0
 let blocks = []   
-let speed = 5
+let speed = 4 //4.25
 let rotation = 0
 let loading = true
 let started = false  
@@ -49,26 +49,31 @@ const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEH
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
 const camera = new ArcRotateCamera("camera", 3, Math.PI / 3, 40, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(false, 8) 
-const ground = MeshBuilder.CreateGround(1, { width: 80, height: 80, subdivisions: 1}, scene)
+//const ground = MeshBuilder.CreateGround(1, { width: 80, height: 80, subdivisions: 1}, scene)
 
 const waterMaterial = new StandardMaterial()
 waterMaterial.diffuseColor = Color3.Blue()
+//waterMaterial.specularPower = 1.5
+waterMaterial.roughness = 1
 
-ground.material = waterMaterial
-ground.position.y = -3
+//ground.material = waterMaterial
+//ground.position.y = -30
  
 const models = {
     rock: null,
-    rockface: null
+    rockFace: null,
+    stone: null,
 }
 const baseMaterial = new StandardMaterial()
 baseMaterial.diffuseColor = new Color3(1,1,1)
+//baseMaterial.specularPower = 1.5
+baseMaterial.roughness = 1
 
 
 
 function load(){  
     let allResoucers = Promise.all([
-        SceneLoader.LoadAssetContainerAsync("rocks.babylon")
+        SceneLoader.LoadAssetContainerAsync("world.babylon") 
     ])
 
     allResoucers
@@ -83,6 +88,11 @@ function load(){
         })
         .then(meshes => { 
             for (let mesh of meshes) { 
+                let { extendSize } = mesh.getBoundingInfo().boundingBox
+
+                mesh.width = extendSize.x  * 2
+                mesh.height = extendSize.y * 2
+                mesh.depth = extendSize.z * 2
                 mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
 
@@ -109,20 +119,22 @@ light.position.x = 0
 light.position.y = 0
 light.position.z = 0
 light.diffuse = Color3.Yellow()
+light.intensity = 1
 
 hemisphere.diffuse = Color3.Red()  
 hemisphere.groundColor = Color3.Blue()
  
-cameraTarget.visibility = 0 
-cameraTarget.position.z = 30
+cameraTarget.isVisible = false 
+cameraTarget.position.z = -2
 
 scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
-scene.fogMode = Scene.FOGMODE_EXP2
+scene.getPhysicsEngine().setTimeStep(1 / 45)
+scene.fogMode = Scene.FOGMODE_NONE
 scene.fogColor = Color3.White()
 scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 1)
   
-player.position.y = 4
+player.position.y = 0
 player.position.x = 0
 player.position.z = 0
 player.material = new StandardMaterial(uuid.v4(), scene)
@@ -265,106 +277,108 @@ function makeBridge() {
     }) 
 }
 
-function makeHighIsland() { 
-    const islandDepth = DEPTH - Math.random() * 1.5
-    const totalDepth = islandDepth + 4.25
-    const width = WIDTH - Math.random() * 2
-    const height = 2 + Math.random() * 1.5
-    const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth: islandDepth }, scene) 
 
+function makeGroup(){
+    const mesh = MeshBuilder.CreateGround("", { width: 1, height: 1, subdivisions: 1}, scene)
+
+    mesh.isVisible = false
+
+    return mesh
+}
+
+function clone(model) {
+    let instance = models[model].createInstance()
+
+    instance.width = models[model].width
+    instance.height = models[model].height
+    instance.depth = models[model].depth
+
+    return instance
+}
+
+function resize(mesh, width, height, depth) {
+    mesh.scaling.set(1/mesh.width * width, 1/mesh.height * height, 1/mesh.depth * depth)
+}
+  
+function makeHighIsland() {   
+    const islandSize = Math.max(WIDTH *  Math.random(), 2.5)
+    const gap = Math.random() * 2.5
+    const height = HEIGHT + Math.random()  
+    const depth = islandSize + gap*2
+    const group = makeGroup()
+    const island = clone("island") 
+
+    /*
     for (let i = 0; i < 3; i++) { 
         const coin = makeCoin(i)
 
         coin.parent = block
-        coin.position.y = height/2+.5
+        coin.position.y = height/2 + 1
         coin.position.x = 0
         coin.position.z = i * 1 - 1.5
-    } 
- 
-    block.material = baseMaterial 
-    
-    block.position.y = -1
-    block.position.z = getZPosition(totalDepth)
-    block.position.x = Math.random() * flip() 
-    block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene) 
- 
-    block.freezeWorldMatrix()
+    } */
 
-    blocks.push({
-        width,
+    resize(island, islandSize, height, islandSize)
+  
+    group.position.x = 0
+    group.position.y = 0
+    group.position.z = getZPosition(depth)
+    
+    island.rotate(rotateY, Math.random()*Math.PI * flip())
+    island.position.set(Math.random() * 2 * flip(), -height/2,  0) 
+    island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
+
+    island.parent = group
+  
+    blocks.push({ 
         height,
-        depth: totalDepth,
-        main: block,
+        depth,
+        main: group,
         type: PathType.HIGH_ISLAND,
         get position() {
-            return block.position
+            return group.position
         },
         dispose() {
-            block.dispose() 
+            group.dispose() 
         }
     })    
 }
+function makeFull(obstacle = true) { 
+    const depth = DEPTH + Math.random() * 1.5
+    const width = WIDTH + Math.random() * 2.5
+    const height = HEIGHT + Math.random() * 1.5
+    const group = makeGroup() 
+    const path = clone("path")
  
-function makeFull(noObstacle = false) { 
-    const depth = DEPTH + Math.random() * 4
-    const width = WIDTH  
-    const block = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width, depth }, scene) 
-    const face1 =  models[Math.random() > .5 ? "rockface" : "rockface2"].createInstance()
-    const face2 =  models[Math.random() > .5 ? "rockface" : "rockface2"].createInstance()
+    resize(path, width, height, depth) 
+     
+    group.position.x = 0
+    group.position.y = 0
+    group.position.z = getZPosition(depth)
+    path.position.set(0, -depth/2,  0) 
+    path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
-    if (!noObstacle) { 
-        const obstacle = models.rock.createInstance("3") 
-        const scale = Math.max(Math.random(), .45)
-  
-        obstacle.parent = block
-        obstacle.scaling.set(scale, scale, scale)
-        obstacle.position.y = HEIGHT/2 
-        obstacle.position.z = 0  
-        obstacle.position.x = (width/2 * Math.random() - .5) * flip()
-        obstacle.physicsImpostor = new PhysicsImpostor(obstacle, PhysicsImpostor.SphereImpostor, { mass: 0 }, scene)  
-    }
- 
-    block.material = baseMaterial
-    block.position.y = -HEIGHT/2
-    block.position.z = getZPosition(depth) 
-    block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
- 
-    face1.parent = block
-    face1.scaling.y = HEIGHT
-    face1.scaling.z = depth * .50118
-    face1.scaling.x = 2
-    face1.position.y = -HEIGHT/2   
-    face1.position.z = 0
-    face1.position.x = width/2 - .3
- 
-    face2.parent = block 
-    face2.rotate(new Vector3(0, 1, 0), Math.PI)
-    face2.scaling.y = HEIGHT
-    face2.scaling.z = depth * .5011
-    face2.scaling.x = 2
-    face2.position.y = -HEIGHT/2   
-    face2.position.z = 0
-    face2.position.x = -width/2 - .3
+    path.parent = group
   
     blocks.push({
         width,
-        height: HEIGHT,
-        depth,
-        main: block,
+        height,
+        depth: depth,
+        main: group,
         type: PathType.FULL,
         get position() {
-            return block.position
+            return group.position
         },
         dispose() {
-            block.dispose()
+            group.dispose()
         }
     }) 
 }
 
 function makeGap() {  
-    const depth = Math.max(Math.random() * (DEPTH + 1), 2) 
+    const depth = Math.max(Math.random() * DEPTH, 2) 
     const position = new Vector3()
-
+    
     position.z = getZPosition(depth)
     
     blocks.push({
@@ -380,15 +394,19 @@ function makeGap() {
 }
  
 function init() {  
-    makeBlock(PathType.FULL, true)           
-    makeBlock(PathType.FULL, true)           
-    makeBlock(PathType.BRIDGE)    
-    makeBlock(PathType.FULL,)            
-    makeBlock(PathType.BRIDGE)   
-    makeBlock(PathType.FULL)      
-    makeBlock(PathType.FULL)            
-    makeBlock(PathType.BRIDGE)   
-    makeBlock(PathType.FULL)          
+    makeBlock(PathType.FULL, true)   
+    makeBlock(PathType.FULL, true)              
+    makeBlock(PathType.HIGH_ISLAND, true)              
+    makeBlock(PathType.HIGH_ISLAND, true)         
+    makeBlock(PathType.HIGH_ISLAND, true)         
+    makeBlock(PathType.HIGH_ISLAND, true)         
+    makeBlock(PathType.FULL, true)              
+    makeBlock(PathType.GAP, true)    
+    makeBlock(PathType.FULL, true)              
+    makeBlock(PathType.FULL, true)              
+    makeBlock(PathType.GAP, true)   
+    makeBlock(PathType.FULL, true)            
+
 }
 
 canvas.addEventListener("keydown", e => {
@@ -448,7 +466,7 @@ scene.afterRender = () => {
         camera.radius += (10- camera.radius ) / 60
         camera.alpha += (-Math.PI / 2- camera.alpha) / 60  
 
-        ground.position.z = player.position.z
+        //ground.position.z = player.position.z
 
         for (let block of blocks) {
             if (player.position.z >= block.position.z + block.depth + 4) {
