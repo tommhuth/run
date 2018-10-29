@@ -2,14 +2,13 @@ import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
 import { Color3, Color4, Vector3 } from "babylonjs"
-import { MeshBuilder, StandardMaterial, SceneLoader } from "babylonjs"  
-import "babylonjs-loaders"
+import { MeshBuilder, StandardMaterial, SceneLoader } from "babylonjs"   
 import uuid from "uuid"
    
 const WIDTH = 4.5
 const HEIGHT = 3
 const DEPTH = 4
-const SPEHER_SIZE = .5
+const SPEHER_SIZE = .35
 const PathType = {
     FULL: "full",
     BRIDGE: "bridge",
@@ -34,7 +33,7 @@ const PathSettings = {
 let score = 0
 let potentialScore = 0
 let blocks = []   
-let speed = 4 //4.25
+let speed = 4.25
 let rotation = 0
 let loading = true
 let started = false  
@@ -49,15 +48,15 @@ const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEH
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
 const camera = new ArcRotateCamera("camera", 3, Math.PI / 3, 40, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(false, 8) 
-//const ground = MeshBuilder.CreateGround(1, { width: 80, height: 80, subdivisions: 1}, scene)
+const ground = MeshBuilder.CreateGround(1, { width: 180, height: 180, subdivisions: 1}, scene)
 
 const waterMaterial = new StandardMaterial()
 waterMaterial.diffuseColor = Color3.Blue()
 //waterMaterial.specularPower = 1.5
 waterMaterial.roughness = 1
 
-//ground.material = waterMaterial
-//ground.position.y = -30
+ground.material = waterMaterial
+ground.position.y = -3
  
 const models = {
     rock: null,
@@ -125,7 +124,7 @@ hemisphere.diffuse = Color3.Red()
 hemisphere.groundColor = Color3.Blue()
  
 cameraTarget.isVisible = false 
-cameraTarget.position.z = -2
+cameraTarget.position.z = 0
 
 scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
 scene.getPhysicsEngine().setTimeStep(1 / 45)
@@ -134,7 +133,7 @@ scene.fogColor = Color3.White()
 scene.fogDensity = .055
 scene.clearColor = new Color4(1, 1, 1, 1)
   
-player.position.y = 0
+player.position.y = 5
 player.position.x = 0
 player.position.z = 0
 player.material = new StandardMaterial(uuid.v4(), scene)
@@ -301,9 +300,9 @@ function resize(mesh, width, height, depth) {
 }
   
 function makeHighIsland() {   
-    const islandSize = Math.max(WIDTH *  Math.random(), 2.5)
-    const gap = Math.random() * 2.5
-    const height = HEIGHT + Math.random()  
+    const islandSize = Math.max((WIDTH - 1) *  Math.random(), 2.5)
+    const gap = Math.random() * 2.25
+    const height = HEIGHT + Math.random() * 2.5
     const depth = islandSize + gap*2
     const group = makeGroup()
     const island = clone("island") 
@@ -325,7 +324,7 @@ function makeHighIsland() {
     group.position.z = getZPosition(depth)
     
     island.rotate(rotateY, Math.random()*Math.PI * flip())
-    island.position.set(Math.random() * 2 * flip(), -height/2,  0) 
+    island.position.set(Math.random() * 2 * flip(), -height/2 - .5,  0) 
     island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
 
     island.parent = group
@@ -343,19 +342,40 @@ function makeHighIsland() {
         }
     })    
 }
+
+function getRandomRotation(){
+    return Math.PI * 2 * Math.random() * flip();
+}
+
 function makeFull(obstacle = true) { 
-    const depth = DEPTH + Math.random() * 1.5
-    const width = WIDTH + Math.random() * 2.5
-    const height = HEIGHT + Math.random() * 1.5
+    const width = WIDTH  
+    const height = HEIGHT  
+    const depth = DEPTH  
     const group = makeGroup() 
-    const path = clone("path")
+    const path = clone("path" + (Math.random() > .5 ? "" : "2"))
+    const previousBlock = blocks[blocks.length -1]
+    const wasLastFull = previousBlock && previousBlock.type === PathType.FULL
  
     resize(path, width, height, depth) 
      
     group.position.x = 0
     group.position.y = 0
-    group.position.z = getZPosition(depth)
+    group.position.z = getZPosition(depth) + (wasLastFull ? -.5 : 0)
+
+    if (obstacle) { 
+        const rock = clone("rock")
+        const size = Math.random() * 1 + .5
+        
+        resize(rock, size, size, size)
+        rock.position.set((width/2 - 1) * flip() * Math.random(), -Math.random() * .5 -.35, 0)
+        rock.rotation.set(getRandomRotation(), getRandomRotation(), getRandomRotation())
+        rock.physicsImpostor = new PhysicsImpostor(rock, PhysicsImpostor.SphereImpostor, { mass: 0 }, scene)
+        rock.parent = group 
+    }
+
+
     path.position.set(0, -depth/2,  0) 
+    path.rotate(rotateY, Math.random() < .5 ? -Math.PI : 0)
     path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
     path.parent = group
@@ -394,11 +414,14 @@ function makeGap() {
 }
  
 function init() {  
-    makeBlock(PathType.FULL, true)   
-    makeBlock(PathType.FULL, true)              
-    makeBlock(PathType.HIGH_ISLAND, true)              
-    makeBlock(PathType.HIGH_ISLAND, true)         
-    makeBlock(PathType.HIGH_ISLAND, true)         
+    makeBlock(PathType.FULL, false)   
+    makeBlock(PathType.FULL, false)                 
+    makeBlock(PathType.FULL, true)                 
+    makeBlock(PathType.FULL, true)                 
+    makeBlock(PathType.FULL, true)                 
+    makeBlock(PathType.FULL, true)                 
+    makeBlock(PathType.FULL, true)                 
+    makeBlock(PathType.FULL, true)                 
     makeBlock(PathType.HIGH_ISLAND, true)         
     makeBlock(PathType.FULL, true)              
     makeBlock(PathType.GAP, true)    
@@ -445,28 +468,26 @@ document.body.addEventListener("touchmove", (e) => {
 })
  
 scene.afterRender = () => {    
-    if(loading) {
+    if(loading || gameOver) {
         return 
     }
 
+
     if (!started) { 
-        camera.radius += (10- camera.radius ) / 60
-        camera.alpha += (-Math.PI / 2- camera.alpha) / 160 
-        cameraTarget.position.z += (0 - cameraTarget.position.z) / 120 
+       // camera.radius += (10- camera.radius ) / 60
+      //  camera.alpha += (-Math.PI / 2- camera.alpha) / 160 
+       // cameraTarget.position.z += (0 - cameraTarget.position.z) / 120 
     } else { 
         let removed = []   
         let velocity = player.physicsImpostor.getLinearVelocity().clone() 
+ 
 
         velocity.z = player.position. y < -1 ? 0 : speed
         velocity.x = rotation / 90 * 4
         rotation *= .95
         player.physicsImpostor.setLinearVelocity(velocity)
 
-        cameraTarget.position.z += (player.position.z + 5 - cameraTarget.position.z) / 30
-        camera.radius += (10- camera.radius ) / 60
-        camera.alpha += (-Math.PI / 2- camera.alpha) / 60  
-
-        //ground.position.z = player.position.z
+        ground.position.z = player.position.z
 
         for (let block of blocks) {
             if (player.position.z >= block.position.z + block.depth + 4) {
@@ -481,6 +502,10 @@ scene.afterRender = () => {
             makeBlock() 
         } 
     }
+
+    cameraTarget.position.z += (player.position.z - cameraTarget.position.z + 5) / 30
+    camera.radius += (10 - camera.radius ) / 30
+    camera.alpha += (-Math.PI / 2- camera.alpha) / 30  
 }
 
 engine.runRenderLoop(() => {   
