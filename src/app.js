@@ -46,7 +46,7 @@ const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
-const camera = new ArcRotateCamera("camera", 3, Math.PI / 3, 40, cameraTarget, scene) 
+const camera = new ArcRotateCamera("camera", -2, Math.PI / 3.5, 10, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(false, 8) 
 const ground = MeshBuilder.CreateGround(1, { width: 180, height: 180, subdivisions: 1}, scene)
 
@@ -135,7 +135,7 @@ scene.clearColor = new Color4(1, 1, 1, 1)
   
 player.position.y = 5
 player.position.x = 0
-player.position.z = 0
+player.position.z = 3
 player.material = new StandardMaterial(uuid.v4(), scene)
 player.material.diffuseColor = Color3.Red()  
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
@@ -344,13 +344,13 @@ function makeHighIsland() {
 }
 
 function getRandomRotation(){
-    return Math.PI * 2 * Math.random() * flip();
+    return Math.PI * 2 * Math.random() * flip()
 }
 
 function makeFull(obstacle = true) { 
-    const width = WIDTH  
+    const width = WIDTH  + Math.random() * 1.5
     const height = HEIGHT  
-    const depth = DEPTH  
+    const depth = DEPTH  + Math.random()
     const group = makeGroup() 
     const path = clone("path" + (Math.random() > .5 ? "" : "2"))
     const previousBlock = blocks[blocks.length -1]
@@ -367,14 +367,14 @@ function makeFull(obstacle = true) {
         const size = Math.random() * 1 + .5
         
         resize(rock, size, size, size)
-        rock.position.set((width/2 - 1) * flip() * Math.random(), -Math.random() * .5 -.35, 0)
+        rock.position.set((width/2 - 1) * flip() * Math.random(), -Math.random() * .5 , 0)
         rock.rotation.set(getRandomRotation(), getRandomRotation(), getRandomRotation())
         rock.physicsImpostor = new PhysicsImpostor(rock, PhysicsImpostor.SphereImpostor, { mass: 0 }, scene)
         rock.parent = group 
     }
 
 
-    path.position.set(0, -depth/2,  0) 
+    path.position.set(0, -height/2, 0) 
     path.rotate(rotateY, Math.random() < .5 ? -Math.PI : 0)
     path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
@@ -420,16 +420,9 @@ function init() {
     makeBlock(PathType.FULL, true)                 
     makeBlock(PathType.FULL, true)                 
     makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.HIGH_ISLAND, true)         
-    makeBlock(PathType.FULL, true)              
-    makeBlock(PathType.GAP, true)    
-    makeBlock(PathType.FULL, true)              
-    makeBlock(PathType.FULL, true)              
-    makeBlock(PathType.GAP, true)   
-    makeBlock(PathType.FULL, true)            
-
+    makeBlock(PathType.HIGH_ISLAND, true)            
+    makeBlock(PathType.HIGH_ISLAND, true)            
+    makeBlock(PathType.HIGH_ISLAND, true)   
 }
 
 canvas.addEventListener("keydown", e => {
@@ -471,8 +464,7 @@ scene.afterRender = () => {
     if(loading || gameOver) {
         return 
     }
-
-
+ 
     if (!started) { 
        // camera.radius += (10- camera.radius ) / 60
       //  camera.alpha += (-Math.PI / 2- camera.alpha) / 160 
@@ -503,9 +495,9 @@ scene.afterRender = () => {
         } 
     }
 
-    cameraTarget.position.z += (player.position.z - cameraTarget.position.z + 5) / 30
+    cameraTarget.position.z = player.position.z + 2 
     camera.radius += (10 - camera.radius ) / 30
-    camera.alpha += (-Math.PI / 2- camera.alpha) / 30  
+    camera.alpha += (-Math.PI / 2 - camera.alpha) / 30  
 }
 
 engine.runRenderLoop(() => {   
