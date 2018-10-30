@@ -1,7 +1,7 @@
 import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera } from "babylonjs"
-import { Color3, Color4, Vector3 } from "babylonjs"
+import { Color3, Color4, Vector3, Axis } from "babylonjs"
 import { MeshBuilder, StandardMaterial, SceneLoader } from "babylonjs"   
 import uuid from "uuid"
    
@@ -180,9 +180,7 @@ function makeBlock(forceType, ...params) {
         case PathType.HIGH_ISLAND:
             return makeHighIsland(...params) 
     }
-}
-
-let rotateY = new Vector3(0, 1, 0)
+} 
 
 function makeCoin(index) {
     const top = MeshBuilder.CreateCylinder(uuid.v4(), { 
@@ -214,7 +212,7 @@ function makeCoin(index) {
     top.scaling = new Vector3(.25, .25, .25)
     top.rotate(new Vector3(0, 1, 0), index * .25)
     top.registerBeforeRender(() => { 
-        top.rotate(rotateY, top.rotation.x + .075) 
+        top.rotate(Axis.Y, top.rotation.x + .075) 
 
         if (top.intersectsMesh(player, false, true)) {
             score++ 
@@ -276,7 +274,6 @@ function makeBridge() {
     }) 
 }
 
-
 function makeGroup(){
     const mesh = MeshBuilder.CreateGround("", { width: 1, height: 1, subdivisions: 1}, scene)
 
@@ -299,13 +296,17 @@ function resize(mesh, width, height, depth) {
     mesh.scaling.set(1/mesh.width * width, 1/mesh.height * height, 1/mesh.depth * depth)
 }
   
+function randomList(...args) {
+    return args[Math.floor(Math.random() * args.length)]
+}
+
 function makeHighIsland() {   
     const islandSize = Math.max((WIDTH - 1) *  Math.random(), 2.5)
     const gap = Math.random() * 2.25
     const height = HEIGHT + Math.random() * 2.5
     const depth = islandSize + gap*2
     const group = makeGroup()
-    const island = clone("island") 
+    const island = clone(randomList("island", "island2", "island3")) 
 
     /*
     for (let i = 0; i < 3; i++) { 
@@ -323,7 +324,7 @@ function makeHighIsland() {
     group.position.y = 0
     group.position.z = getZPosition(depth)
     
-    island.rotate(rotateY, Math.random()*Math.PI * flip())
+    island.rotate(Axis.Y, Math.random()*Math.PI * flip())
     island.position.set(Math.random() * 2 * flip(), -height/2 - .5,  0) 
     island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
 
@@ -375,7 +376,7 @@ function makeFull(obstacle = true) {
 
 
     path.position.set(0, -height/2, 0) 
-    path.rotate(rotateY, Math.random() < .5 ? -Math.PI : 0)
+    path.rotate(Axis.Y, Math.random() < .5 ? -Math.PI : 0)
     path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
     path.parent = group
@@ -416,10 +417,9 @@ function makeGap() {
 function init() {  
     makeBlock(PathType.FULL, false)   
     makeBlock(PathType.FULL, false)                 
-    makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.FULL, true)                 
+    makeBlock(PathType.FULL, true)                   
+    makeBlock(PathType.HIGH_ISLAND, true)            
+    makeBlock(PathType.HIGH_ISLAND, true)            
     makeBlock(PathType.HIGH_ISLAND, true)            
     makeBlock(PathType.HIGH_ISLAND, true)            
     makeBlock(PathType.HIGH_ISLAND, true)   
