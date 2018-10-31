@@ -20,19 +20,34 @@ const PathType = {
 }
 const PathSettings = {
     [PathType.FULL]: {
-        illegalNext: []
+        illegalNext: [],
+        isLegal() {
+            return true
+        }
     }, 
     [PathType.HIGH_ISLAND]: {
-        illegalNext: [PathType.BRIDGE, PathType.GAP]
+        illegalNext: [PathType.BRIDGE, PathType.GAP],
+        isLegal() {
+            return true
+        }
     },
     [PathType.GAP]: {
-        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.HIGH_ISLAND]
+        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.HIGH_ISLAND],
+        isLegal() {
+            return true
+        }
     },
     [PathType.BRIDGE]: {
-        illegalNext: [PathType.GAP, PathType.HIGH_ISLAND]
+        illegalNext: [PathType.GAP, PathType.HIGH_ISLAND],
+        isLegal() {
+            return true
+        }
     },
     [PathType.RUINS]: {
-        illegalNext: [PathType.RUINS, PathType.GAP]
+        illegalNext: [PathType.RUINS, PathType.GAP],
+        isLegal() {
+            return blocks.every(i => i.type !== PathType.RUINS)
+        }
     }
 }
 
@@ -212,10 +227,11 @@ function getRandomBlock(){
 
 function makeBlock(forceType, ...params) { 
     let type = forceType || getRandomBlock()
-    let previousBlock = blocks[blocks.length-1]
+    let previousBlock = blocks[blocks.length - 1]
 
     if (previousBlock && !forceType) {  
-        while (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type)) {
+        while (!PathSettings[type].isLegal(type) || (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type))) {
+            console.log("cant use", type, PathSettings[type].isLegal(type))
             type = getRandomBlock()
         }
     } 
@@ -294,11 +310,12 @@ function makeRuins(){
     group.position.z = getZPosition(depth) + (wasLastFull ? -.75 : 0)
 
     for (let k = 0; k < 2; k++) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             let foot = clone("pillarFoot")
             let xPosition = (width/2 - 3.5) * (k === 0 ? -1 : 1)
-            let zPosition = i * (foot.depth + 2) - (foot.depth + 3)
-            let isStatic = Math.random() > .5
+            let zPosition = i * (foot.depth + 2) - (foot.depth + 1.5)
+            let isStatic = Math.random() > .4
+            let isSecondStatic = isStatic && Math.random() > .5
     
             foot.position.set(xPosition, foot.height/2, zPosition)
             foot.rotate(Axis.Y, getRandomRotation())
@@ -315,7 +332,9 @@ function makeRuins(){
                 pillar.scaling.y = scaleY
                 pillar.position.set(foot.position.x, accu + height/2, foot.position.z)
                 pillar.rotate(Axis.Y, getRandomRotation())
-                pillar.physicsImpostor = new PhysicsImpostor(pillar, PhysicsImpostor.CylinderImpostor, { mass: isStatic && j === 0 ? 0 : 200 }, scene) 
+                pillar.physicsImpostor = new PhysicsImpostor(pillar, PhysicsImpostor.CylinderImpostor, { 
+                    mass: (isStatic && j === 0) || (isSecondStatic && j === 1) ? 0 : 200 
+                }, scene) 
      
                 pillar.parent = group
     
@@ -345,8 +364,8 @@ function makeRuins(){
                 return 
             } 
 
-            explode(new Vector3(-7, 1, group.position.z), 7, 15000)
-            explode(new Vector3(7.5, 1, group.position.z), 7, 15000, 500)
+            explode(new Vector3(-7, 2, group.position.z), 7, 15000, 0, true)
+            explode(new Vector3(7.5, 2, group.position.z), 7, 15000, 500, true)
 
             this.beforeRender = null
         },
