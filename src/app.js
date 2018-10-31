@@ -315,7 +315,7 @@ function makeRuins(){
                 pillar.scaling.y = scaleY
                 pillar.position.set(foot.position.x, accu + height/2, foot.position.z)
                 pillar.rotate(Axis.Y, getRandomRotation())
-                pillar.physicsImpostor = new PhysicsImpostor(pillar, PhysicsImpostor.CylinderImpostor, { mass: isStatic ? 0 : 200 }, scene) 
+                pillar.physicsImpostor = new PhysicsImpostor(pillar, PhysicsImpostor.CylinderImpostor, { mass: isStatic && j === 0 ? 0 : 200 }, scene) 
      
                 pillar.parent = group
     
