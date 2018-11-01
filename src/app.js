@@ -364,8 +364,8 @@ function makeRuins(){
                 return 
             } 
 
-            explode(new Vector3(-7, 2, group.position.z), 7, 15000, 0, true)
-            explode(new Vector3(7.5, 2, group.position.z), 7, 15000, 500, true)
+            explode(new Vector3(-7, 2, group.position.z), 7, 15000)
+            explode(new Vector3(7.5, 2, group.position.z), 7, 15000, 500)
 
             this.beforeRender = null
         },
