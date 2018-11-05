@@ -2,7 +2,7 @@ import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, PhysicsRadialImpulseFalloff } from "babylonjs"
 import { Color3, Color4, Vector3, Axis } from "babylonjs"
-import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper } from "babylonjs"   
+import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper } from "babylonjs"  
 import uuid from "uuid"
    
 const WIDTH = 4.5
@@ -10,6 +10,18 @@ const HEIGHT = 3
 const DEPTH = 4
 const SPEHER_SIZE = .35
 const MAX_JUMP_DISTANCE = 4
+
+let startAlpha = Math.PI / 2 // LEFT RIGHT
+let startBeta =  1.55 ///Math.PI / 3.5 UP DOWN
+let startRadius = 50
+
+let targetSpeed = 120
+
+let targetAlpha = Math.PI / 2 + Math.PI / 4  
+let targetBeta = 1.2  
+let targetRadius = 25 
+let targetY = 0
+let fogEnd = 48
 
 const PathType = {
     FULL: "full",
@@ -48,7 +60,7 @@ const PathSettings = {
         isLegal() {
             return blocks.every(i => i.type !== PathType.RUINS)
         }
-    }
+    },
 }
 
 let score = 0
@@ -67,16 +79,20 @@ const light = new DirectionalLight("directionalLight", new Vector3(4.5, -5.1, 4.
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(3, 2, 1), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1}, scene)
-const camera = new ArcRotateCamera("camera", -2, Math.PI / 3.5, 10, cameraTarget, scene) 
+const camera =  new ArcRotateCamera("camera", startAlpha, startBeta, startRadius, cameraTarget, scene) 
 const physicsPlugin = new CannonJSPlugin(false, 8) 
-const ground = MeshBuilder.CreateGround(1, { width: 180, height: 180, subdivisions: 1}, scene)
+const ground = MeshBuilder.CreateGround(1, { width: 300, height: 300, subdivisions: 1}, scene)
 
 const waterMaterial = new StandardMaterial()
 waterMaterial.diffuseColor = Color3.Blue()
 waterMaterial.roughness = 1
 
+//
+//camera.lockedTarget = new Vector3(0, 0, -10)
+
 ground.material = waterMaterial
 ground.position.y = -3
+ground.visibility = 1
  
 const models = {
     rock: null,
@@ -125,6 +141,8 @@ function load(){
  
 load()
 
+engine.renderEvenInBackground = false
+
 scene.autoClear = false
 scene.autoClearDepthAndStencil = false
 scene.blockMaterialDirtyMechanism = true
@@ -135,25 +153,27 @@ light.position.z = 0
 light.diffuse = Color3.Yellow()
 light.intensity = 1
 
-hemisphere.diffuse = Color3.Red()  
-hemisphere.groundColor = Color3.Blue()
+hemisphere.diffuse =Color3.Blue() 
+hemisphere.groundColor = Color3.Red()  
  
 cameraTarget.isVisible = false 
 cameraTarget.position.z = 0
+cameraTarget.position.y = 30
 
 scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
 scene.getPhysicsEngine().setTimeStep(1 / 45)
-scene.fogMode = Scene.FOGMODE_NONE
-scene.fogColor = Color3.White()
-scene.fogDensity = .055
-scene.clearColor = new Color4(1, 1, 1, 1)
+scene.fogMode = Scene.FOGMODE_LINEAR
+scene.fogColor = Color3.Blue()
+scene.fogStart = 6
+scene.fogEnd = fogEnd
+scene.clearColor = Color3.Blue()
   
-player.position.y = 5
+player.position.y = 50
 player.position.x = 0
-player.position.z = 3
+player.position.z = DEPTH/2
 player.material = new StandardMaterial(uuid.v4(), scene)
 player.material.diffuseColor = Color3.Red()  
-player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
+player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
 player.registerBeforeRender(() => { 
     if (loading || gameOver || !started) {
         return
@@ -246,7 +266,7 @@ function makeBlock(forceType, ...params) {
         case PathType.HIGH_ISLAND:
             return makeHighIsland(...params) 
         case PathType.RUINS:
-            return makeRuins(...params) 
+            return makeRuins(...params)  
     }
 } 
 
@@ -296,7 +316,71 @@ function makeCoin(index) {
     return top
 }
 
-function makeRuins(){
+function makeHub(){
+    const width = WIDTH * 2 + 2
+    const height = HEIGHT  + 1
+    const depth = DEPTH * 2  + 2
+    const group = makeGroup() 
+    const path = clone("hub") 
+    const box = clone("box") 
+
+    resize(path, width, height, depth)
+    //const p1 = clone("pillar2") 
+   /* const p2 = clone("pillar2") 
+    const p3 = clone("pillar2") 
+    const p4 = clone("pillar2") */
+    //const hub = clone("hub") 
+
+    //hub.parent = group 
+   /// hub.scaling.set(1,1,1)
+   // hub.position.set(0, hub.height/2 - height, 4) 
+     
+    //path.rotate(Axis.Y, Math.PI * .5 - .21)
+    //resize(path, width, 2, depth)
+
+    path.position.set(0, .5, 1)
+    path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
+    path.parent = group 
+ /*
+    p1.position.set(-6, .75, -3.5)
+    p1.rotate(Axis.Y, getRandomRotation())
+    p1.parent = group 
+
+    p2.position.set(16, .75, -23.5)
+    p2.rotate(Axis.Y, getRandomRotation())
+    p2.parent = group
+
+    p3.position.set(6, 1.5, -60.5)
+    p3.rotate(Axis.Y, getRandomRotation())
+    p3.parent = group
+    p4.position.set(-6, 1.5, -60.5)
+    p4.rotate(Axis.Y, getRandomRotation())
+    p4.parent = group */
+
+    resize(box, 5, 2, 5)
+    box.position.set(0, 3, 0)
+    box.parent = group
+
+    group.position.x = 0
+    group.position.y = -height/2
+    group.position.z = 0
+
+    blocks.push({
+        width,
+        height,
+        depth,
+        main: group,
+        type: PathType.FULL,
+        get position() {
+            return group.position
+        }, 
+        dispose() {
+            group.dispose()
+        }
+    }) 
+}
+
+function makeRuins(collapsable = true){
     const width = WIDTH  * 3
     const height = HEIGHT  
     const depth = DEPTH  * 4
@@ -314,12 +398,12 @@ function makeRuins(){
             let foot = clone("pillarFoot")
             let xPosition = (width/2 - 3.5) * (k === 0 ? -1 : 1)
             let zPosition = i * (foot.depth + 2) - (foot.depth + 1.5)
-            let isStatic = Math.random() > .4
+            let isStatic = Math.random() > .4 
             let isSecondStatic = isStatic && Math.random() > .5
     
             foot.position.set(xPosition, foot.height/2, zPosition)
             foot.rotate(Axis.Y, getRandomRotation())
-            foot.physicsImpostor = new PhysicsImpostor(foot, PhysicsImpostor.CylinderImpostor, { mass: Math.random() > .5 }, scene) 
+            foot.physicsImpostor = new PhysicsImpostor(foot, PhysicsImpostor.CylinderImpostor, { mass: isStatic || !collapsable ? 0 : 200 }, scene) 
             foot.parent = group
     
             let accu = foot.height
@@ -333,7 +417,7 @@ function makeRuins(){
                 pillar.position.set(foot.position.x, accu + height/2, foot.position.z)
                 pillar.rotate(Axis.Y, getRandomRotation())
                 pillar.physicsImpostor = new PhysicsImpostor(pillar, PhysicsImpostor.CylinderImpostor, { 
-                    mass: (isStatic && j === 0) || (isSecondStatic && j === 1) ? 0 : 200 
+                    mass: (isStatic && j === 0) || (isSecondStatic && j === 1) || !collapsable ? 0 : 200 
                 }, scene) 
      
                 pillar.parent = group
@@ -364,8 +448,8 @@ function makeRuins(){
                 return 
             } 
 
-            explode(new Vector3(-7, 2, group.position.z), 7, 15000)
-            explode(new Vector3(7.5, 2, group.position.z), 7, 15000, 500)
+            explode(new Vector3(-7 - Math.random() * .5, 2 + Math.random() * .25, group.position.z), 7, 15000)
+            explode(new Vector3(7.5 + Math.random() * .5, 2 + Math.random() * .25, group.position.z), 7, 15000, 500)
 
             this.beforeRender = null
         },
@@ -545,6 +629,16 @@ function makeGap() {
 }
  
 function init() {  
+    makeHub()                
+    makeBlock(PathType.FULL, false)     
+    makeBlock(PathType.FULL)   
+    makeBlock(PathType.FULL)   
+    makeBlock(PathType.RUINS, false)    
+    makeBlock(PathType.BRIDGE)    
+    makeBlock(PathType.BRIDGE)    
+    makeBlock(PathType.FULL)     
+    /*
+    makeBlock(PathType.HUB, false)   
     makeBlock(PathType.FULL, false)                   
     makeBlock(PathType.FULL, false)                   
     makeBlock(PathType.FULL, true)                 
@@ -555,7 +649,19 @@ function init() {
     makeBlock(PathType.FULL, true)                      
     makeBlock(PathType.FULL, true)                      
     makeBlock(PathType.FULL, true)                      
+*/
+}
 
+function start() { 
+    targetAlpha = -Math.PI / 2 
+    targetBeta = Math.PI / 3.5
+    targetRadius = 12
+    targetSpeed = 30
+    targetY = 0
+    fogEnd = 30
+
+    player.position.y = 4
+    player.physicsImpostor.setMass(1)
 }
 
 canvas.addEventListener("keydown", e => {
@@ -576,9 +682,11 @@ canvas.addEventListener("click", (e) => {
     e.preventDefault()
     e.stopPropagation()
 
+
     if (!started) {
         started = true 
-        document.getElementById("intro").remove()
+        document.getElementById("intro").remove() 
+        start()
     } else {
         player.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), player.position) 
     }
@@ -598,15 +706,13 @@ scene.afterRender = () => {
         return 
     }
  
-    if (!started) { 
-       // camera.radius += (10- camera.radius ) / 60
-      //  camera.alpha += (-Math.PI / 2- camera.alpha) / 160 
-       // cameraTarget.position.z += (0 - cameraTarget.position.z) / 120 
-    } else {
+    if (started) { 
         let removed = []   
 
         for (let block of blocks) {
-            block.beforeRender && block.beforeRender()
+            if (block.beforeRender) {
+                block.beforeRender()
+            } 
 
             if (player.position.z >= block.position.z + block.depth + 4) {
                 removed.push(block) 
@@ -620,10 +726,14 @@ scene.afterRender = () => {
             makeBlock() 
         } 
     }
-
+    
     cameraTarget.position.z = player.position.z + 2 
-    camera.radius += (13 - camera.radius ) / 30
-    camera.alpha  += (-Math.PI / 2 - camera.alpha) / 60  
+    cameraTarget.position.y += (targetY - cameraTarget.position.y) / targetSpeed * 2
+    camera.radius += (targetRadius - camera.radius ) / targetSpeed / 2
+    camera.alpha += (targetAlpha - camera.alpha) / targetSpeed  
+    camera.beta += (targetBeta - camera.beta) / targetSpeed  
+
+    scene.fogEnd += (fogEnd - scene.fogEnd) / 30 
 }
 
 engine.runRenderLoop(() => {   

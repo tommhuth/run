@@ -4,7 +4,8 @@ body {
     font-family: "Open Sans";
     transition: background-color 1.75s;
     font-weight: 300; 
-    background-color: #FFF;  
+    color: #FFF;
+    background-color: #00F;  
 } 
 
 #test {
