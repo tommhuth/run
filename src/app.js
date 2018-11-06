@@ -21,7 +21,7 @@ let targetAlpha = Math.PI / 2 + Math.PI / 4
 let targetBeta = 1.2  
 let targetRadius = 25 
 let targetY = 0
-let fogEnd = 48
+let fogEnd = 56
 
 const PathType = {
     FULL: "full",
@@ -101,7 +101,7 @@ const models = {
 }
 const baseMaterial = new StandardMaterial()
 baseMaterial.diffuseColor = new Color3(1,1,1)
-baseMaterial.roughness = 1
+baseMaterial.roughness = .5
 
 function load(){  
     let allResoucers = Promise.all([
@@ -163,14 +163,14 @@ cameraTarget.position.y = 30
 scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
 scene.getPhysicsEngine().setTimeStep(1 / 45)
 scene.fogMode = Scene.FOGMODE_LINEAR
-scene.fogColor = Color3.Blue()
+scene.fogColor = Color3.White()
 scene.fogStart = 6
 scene.fogEnd = fogEnd
-scene.clearColor = Color3.Blue()
+scene.clearColor = Color3.White()
   
 player.position.y = 50
 player.position.x = 0
-player.position.z = DEPTH/2
+player.position.z = DEPTH 
 player.material = new StandardMaterial(uuid.v4(), scene)
 player.material.diffuseColor = Color3.Red()  
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
@@ -381,9 +381,9 @@ function makeHub(){
 }
 
 function makeRuins(collapsable = true){
-    const width = WIDTH  * 3
+    const width = WIDTH  * 2 + 4
     const height = HEIGHT  
-    const depth = DEPTH  * 4
+    const depth = DEPTH  * 2
     const group = makeGroup() 
     const path = clone(randomList("path"))
     const previousBlock = blocks[blocks.length -1]
@@ -396,8 +396,8 @@ function makeRuins(collapsable = true){
     for (let k = 0; k < 2; k++) {
         for (let i = 0; i < 2; i++) {
             let foot = clone("pillarFoot")
-            let xPosition = (width/2 - 3.5) * (k === 0 ? -1 : 1)
-            let zPosition = i * (foot.depth + 2) - (foot.depth + 1.5)
+            let xPosition = (width/2 - 2.25) * (k === 0 ? -1 : 1)
+            let zPosition = i * (foot.depth + 2) - (foot.depth/2) - .5
             let isStatic = Math.random() > .4 
             let isSecondStatic = isStatic && Math.random() > .5
     
@@ -630,6 +630,7 @@ function makeGap() {
  
 function init() {  
     makeHub()                
+    makeBlock(PathType.RUINS, false)  
     makeBlock(PathType.FULL, false)     
     makeBlock(PathType.FULL)   
     makeBlock(PathType.FULL)   
@@ -637,19 +638,6 @@ function init() {
     makeBlock(PathType.BRIDGE)    
     makeBlock(PathType.BRIDGE)    
     makeBlock(PathType.FULL)     
-    /*
-    makeBlock(PathType.HUB, false)   
-    makeBlock(PathType.FULL, false)                   
-    makeBlock(PathType.FULL, false)                   
-    makeBlock(PathType.FULL, true)                 
-    makeBlock(PathType.RUINS, false)                  
-    makeBlock(PathType.FULL, true)                      
-    makeBlock(PathType.FULL, true)                      
-    makeBlock(PathType.FULL, true)                      
-    makeBlock(PathType.FULL, true)                      
-    makeBlock(PathType.FULL, true)                      
-    makeBlock(PathType.FULL, true)                      
-*/
 }
 
 function start() { 
@@ -681,7 +669,6 @@ canvas.addEventListener("keydown", e => {
 canvas.addEventListener("click", (e) => {
     e.preventDefault()
     e.stopPropagation()
-
 
     if (!started) {
         started = true 
