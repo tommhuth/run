@@ -12,8 +12,8 @@ const SPEHER_SIZE = .35
 const MAX_JUMP_DISTANCE = 4
 
 let startAlpha = Math.PI / 2 // LEFT RIGHT
-let startBeta =  1.55 ///Math.PI / 3.5 UP DOWN
-let startRadius = 50
+let startBeta =  1.55 /// UP DOWN
+let startRadius = 35
 
 let targetSpeed = 120
 
@@ -63,6 +63,13 @@ const PathSettings = {
     },
 }
 
+const models = {
+    rock: null,
+    rockFace: null,
+    stone: null,
+    // blah
+}
+
 let score = 0
 let potentialScore = 0
 let blocks = []   
@@ -83,25 +90,19 @@ const camera =  new ArcRotateCamera("camera", startAlpha, startBeta, startRadius
 const physicsPlugin = new CannonJSPlugin(false, 8) 
 const ground = MeshBuilder.CreateGround(1, { width: 300, height: 300, subdivisions: 1}, scene)
 
+const baseMaterial = new StandardMaterial()
 const waterMaterial = new StandardMaterial()
+
+baseMaterial.diffuseColor = new Color3(1,1,1)
+baseMaterial.roughness = .5
+
 waterMaterial.diffuseColor = Color3.Blue()
 waterMaterial.roughness = 1
-
-//
-//camera.lockedTarget = new Vector3(0, 0, -10)
 
 ground.material = waterMaterial
 ground.position.y = -3
 ground.visibility = 1
  
-const models = {
-    rock: null,
-    rockFace: null,
-    stone: null,
-}
-const baseMaterial = new StandardMaterial()
-baseMaterial.diffuseColor = new Color3(1,1,1)
-baseMaterial.roughness = .5
 
 function load(){  
     let allResoucers = Promise.all([
@@ -142,6 +143,7 @@ function load(){
 load()
 
 engine.renderEvenInBackground = false
+engine.setHardwareScalingLevel(.75)
 
 scene.autoClear = false
 scene.autoClearDepthAndStencil = false
