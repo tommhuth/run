@@ -62,7 +62,6 @@ const PathSettings = {
         }
     },
 }
-
 const models = {
     rock: null,
     rockFace: null,
@@ -107,15 +106,15 @@ scene.blockMaterialDirtyMechanism = true
  
 // light
 
-light.diffuse = Color3.Yellow()
-light.intensity = 1
+light.diffuse = Color3.White()
+light.intensity = .5
 
-light2.diffuse = Color3.Red()
-light2.intensity = 1
+light2.diffuse = Color3.White()
+light2.intensity = .2
 
-hemisphere.diffuse = Color3.Blue()   
-hemisphere.groundColor = Color3.Red() 
-hemisphere.intensity = .8
+hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
+hemisphere.groundColor = Color3.White() 
+hemisphere.intensity = .5
  
 cameraTarget.isVisible = false 
 cameraTarget.position.z = 0
@@ -127,7 +126,7 @@ scene.fogMode = Scene.FOGMODE_LINEAR
 scene.fogColor = Color3.White()
 scene.fogStart = 6
 scene.fogEnd = fogEnd
-scene.clearColor = Color3.Black()
+scene.clearColor = Color3.White()
   
 player.position.y = 50
 player.position.x = 0
@@ -155,13 +154,13 @@ function makeRocks(amount, width, depth){
     let group = makeGroup()
 
     for(let i = 0; i < amount; i++) {
-        let rock = clone("rock")
+        let rock = clone(randomList("rock", "rock2"))
         let scaling = Math.random() * 1.5 + .5
 
         rock.scaling.set(scaling, Math.random() * 1 + .5, scaling)
         rock.rotate(Axis.Y, getRandomRotation())
-        rock.rotate(Axis.X, getRandomRotation())
-        rock.rotate(Axis.Z, getRandomRotation())
+        rock.rotate(Axis.X, Math.random() * .5 * flip())
+        rock.rotate(Axis.Z, Math.random() * .5 * flip())
         rock.position.x = (width/2 + Math.random() * 8) * flip()
         rock.position.y = 0
         rock.position.z = depth * Math.random() / 2 * flip()
@@ -170,37 +169,36 @@ function makeRocks(amount, width, depth){
 
     return group
 }
+ 
 
 function makeFog(){
     const max = 10
     const fogMaterial = new StandardMaterial()
     const wrap = MeshBuilder.CreateBox("", { size: 200, sideOrientation: Mesh.BACKSIDE }, scene)
-    
-    let xmaterial = new StandardMaterial()
-    xmaterial.diffuseColor = Color3.Red()
-
-    wrap.material = xmaterial
-
+  
+    wrap.material = fogMaterial 
     wrap.position.set(0,0,0)
     wrap.parent = ground
+
     fogMaterial.diffuseColor = Color3.White() 
     fogMaterial.roughness = 0
+    fogMaterial.emissiveColor = Color3.White()
     fogMaterial.specularPower = 0
     fogMaterial.fogEnabled = true
 
-    for(let i = 0; i < max; i++) { 
-        const layer = MeshBuilder.CreateGround(1, { width: 300, height: 300, subdivisions: 1 }, scene)
+    for (let i = 0; i < max; i++) { 
+        const layer = MeshBuilder.CreateGround(1, { width: 30, height: 50, subdivisions: 1 }, scene)
 
         layer.material = fogMaterial
         layer.position.x = 0
         layer.position.z = 0
-        layer.position.y =  i * .15
-        layer.visibility = .3
+        layer.position.y =  -i * .15
+        layer.visibility = .25
 
         layer.parent = ground
     }
 
-    ground.position.y = -6
+    ground.position.y = -DEPTH  
 }
  
 
@@ -228,6 +226,10 @@ function load(){
                 mesh.depth = extendSize.z * 2
                 mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
+
+                if(mesh.id === "plant"){
+                    mesh.re
+                }
 
                 models[mesh.id] = mesh
             } 
@@ -283,7 +285,6 @@ function makeGroup(){
 
     mesh.isVisible = false 
             
-
     return mesh
 }
 
@@ -392,7 +393,7 @@ function makeHub(){
     box.parent = group
 
     rocks.parent = group
-    rocks.position.y = -4
+    rocks.position.y = -DEPTH
 
     group.position.x = 0
     group.position.y = -height/2
@@ -424,7 +425,7 @@ function makeRuins(collapsable = true){
     const rocks = makeRocks(Math.random() * 4 + 1, width - 3, depth)
  
     rocks.parent = group
-    rocks.position.y = -5
+    rocks.position.y = -DEPTH
     
     group.position.x = 0
     group.position.y = 0
@@ -554,6 +555,41 @@ function makeBridge() {
     }) 
 }
 
+function makePlants(amount){
+    const group = makeGroup()
+    const basePlant = clone("plant")
+    const baseScale = Math.random() + .25
+    const baseR = basePlant.depth * baseScale / 2
+    const rotations = []
+
+    basePlant.rotate(Axis.Y, getRandomRotation())
+    basePlant.parent = group 
+    basePlant.position.set(0, 0, 0)
+    basePlant.scaling.x = baseScale
+    basePlant.scaling.z = baseScale
+
+    for (let i = 0; i < amount - 1; i++) {
+        const plant = clone("plant")
+        const ownScale = Math.random() * .5 + .15
+        const ownR = plant.depth * ownScale / 2
+        const diff = Math.random() * .5
+        const rotation = 360/(amount - 1) * i
+        
+        plant.rotate(Axis.Y, getRandomRotation())
+        plant.parent = group
+        plant.scaling.x = ownScale
+        plant.scaling.z = ownScale
+        plant.position.x = (baseR + ownR + diff) * Math.cos(rotation)
+        plant.position.z = (baseR + ownR + diff) * Math.sin(rotation)
+        plant.position.y = 0
+        plant.i = 0
+ 
+        rotations.push(rotation)
+    }
+
+    return group
+}   
+
 function makeHighIsland() {   
     const lastBlock = blocks[blocks.lenght-1]
     const lastWasIsland = lastBlock && lastBlock.type === PathType.HIGH_ISLAND
@@ -562,10 +598,11 @@ function makeHighIsland() {
     const gapSize = Math.max(MAX_JUMP_DISTANCE * Math.random(), 2)
     const gap1 = lastWasIsland ? 0 : gapSize
     const gap2 = gapSize 
-    const height = HEIGHT + Math.random() * 2.5
+    const height = HEIGHT //+ Math.random() * 2.5
     const depth = islandSize + gap1 + gap2  
     const group = makeGroup()
     const island = clone(randomList("island", "island2", "island3")) 
+    const plants = makePlants(Math.floor(Math.random() * 3) + 1)
    
     resize(island, islandSize, height, islandSize)
   
@@ -581,8 +618,11 @@ function makeHighIsland() {
     island.rotate(Axis.Y, Math.random() * Math.PI * flip())
     island.position.set(Math.random() * 2 * flip(), -height / 2 - .5, 0) 
     island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
-
     island.parent = group
+
+    plants.parent = group
+    plants.rotate(Axis.Y, getRandomRotation())
+    plants.position.set(island.position.x + (islandSize + Math.random() * 1 + 2) * flip(), -DEPTH, 0)
   
     blocks.push({ 
         height,
@@ -603,7 +643,7 @@ function makeHighIsland() {
 function makeFull(obstacle = true) { 
     const width = WIDTH  + Math.random() * 1.5
     const height = HEIGHT  
-    const depth = DEPTH  + Math.random()
+    const depth = DEPTH 
     const group = makeGroup() 
     const path = clone(randomList("path", "path2"))
     const previousBlock = blocks[blocks.length -1]
@@ -613,7 +653,7 @@ function makeFull(obstacle = true) {
     resize(path, width, height, depth) 
      
     rocks.parent = group
-    rocks.position.y = -5
+    rocks.position.y = -DEPTH
 
     group.position.x = 0
     group.position.y = 0
@@ -671,15 +711,15 @@ function makeGap() {
  
 function init() {  
     makeFog()
-    makeHub()                
+    makeHub()      
     makeBlock(PathType.RUINS, false)  
-    makeBlock(PathType.FULL, false)     
-    makeBlock(PathType.FULL)   
-    makeBlock(PathType.FULL)   
+    makeBlock(PathType.FULL)    
+    makeBlock(PathType.HIGH_ISLAND)     
+    makeBlock(PathType.FULL)    
+    makeBlock(PathType.HIGH_ISLAND)       
+    makeBlock(PathType.FULL)    
     makeBlock(PathType.RUINS, false)    
-    makeBlock(PathType.BRIDGE)    
-    makeBlock(PathType.BRIDGE)    
-    makeBlock(PathType.FULL)     
+    makeBlock(PathType.BRIDGE) 
 }
 
 function start() { 
