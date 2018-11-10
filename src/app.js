@@ -1,7 +1,7 @@
 import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, PhysicsRadialImpulseFalloff, Mesh } from "babylonjs"
-import { Color3, Color4, Vector3, Axis } from "babylonjs"
+import { Color3, Vector3, Axis } from "babylonjs"
 import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper } from "babylonjs"  
 import uuid from "uuid"
    
@@ -27,7 +27,7 @@ const PathType = {
     FULL: "full",
     BRIDGE: "bridge",
     GAP: "gap",
-    HIGH_ISLAND: "high-island",
+    ISLAND: "island",
     RUINS: "ruins"
 }
 const PathSettings = {
@@ -37,26 +37,26 @@ const PathSettings = {
             return true
         }
     }, 
-    [PathType.HIGH_ISLAND]: {
+    [PathType.ISLAND]: {
         illegalNext: [PathType.BRIDGE, PathType.GAP],
         isLegal() {
             return true
         }
     },
     [PathType.GAP]: {
-        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.ISLAND],
         isLegal() {
             return true
         }
     },
     [PathType.BRIDGE]: {
-        illegalNext: [PathType.GAP, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.GAP, PathType.ISLAND],
         isLegal() {
             return true
         }
     },
     [PathType.RUINS]: {
-        illegalNext: [PathType.RUINS, PathType.GAP, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.RUINS, PathType.GAP, PathType.ISLAND],
         isLegal() {
             return blocks.every(i => i.type !== PathType.RUINS)
         }
@@ -70,7 +70,6 @@ const models = {
 }
 
 let score = 0
-let potentialScore = 0
 let blocks = []   
 let speed = 4
 let rotation = 0
@@ -252,7 +251,7 @@ function getZPosition(currentDepth = 0, type) {
     const previousBlock = blocks[blocks.length - 1]
 
     if (previousBlock) {
-        if (previousBlock.type === type && type === PathType.HIGH_ISLAND) {
+        if (previousBlock.type === type && type === PathType.ISLAND) {
             return previousBlock.position.z + previousBlock.islandSize/2
         }
 
@@ -320,8 +319,8 @@ function makeBlock(forceType, ...params) {
             return makeGap(...params)
         case PathType.BRIDGE:
             return makeBridge(...params)
-        case PathType.HIGH_ISLAND:
-            return makeHighIsland(...params) 
+        case PathType.ISLAND:
+            return makeIsland(...params) 
         case PathType.RUINS:
             return makeRuins(...params)  
     }
@@ -455,7 +454,7 @@ function makeRuins(collapsable = true){
                 pillar.position.set(foot.position.x, accu + height/2, foot.position.z)
                 pillar.rotate(Axis.Y, getRandomRotation())
                 pillar.physicsImpostor = new PhysicsImpostor(pillar, PhysicsImpostor.CylinderImpostor, { 
-                    mass: (isStatic && j === 0) || (isSecondStatic && j === 1) || !collapsable ? 0 : 200 
+                    mass: (isStatic && j === 0) || (isSecondStatic && j === 1) || !collapsable ? 0 : 200 
                 }, scene) 
      
                 pillar.parent = group
@@ -631,9 +630,9 @@ function makePlants(amount){
     return group
 }   
 
-function makeHighIsland() {   
+function makeIsland() {   
     const lastBlock = blocks[blocks.lenght-1]
-    const lastWasIsland = lastBlock && lastBlock.type === PathType.HIGH_ISLAND
+    const lastWasIsland = lastBlock && lastBlock.type === PathType.ISLAND
 
     const islandSize =  Math.max((WIDTH - .5) *  Math.random(), 2.25)
     const gapSize = Math.max(MAX_JUMP_DISTANCE  * Math.random(), 2.5)
@@ -651,9 +650,9 @@ function makeHighIsland() {
     group.position.y = 0
 
     if (lastWasIsland) {
-        group.position.z = getZPosition(0, PathType.HIGH_ISLAND) + islandSize/2
+        group.position.z = getZPosition(0, PathType.ISLAND) + islandSize/2
     } else { 
-        group.position.z = getZPosition(0, PathType.HIGH_ISLAND) + islandSize/2 + gap1
+        group.position.z = getZPosition(0, PathType.ISLAND) + islandSize/2 + gap1
     }
     
     island.rotate(Axis.Y, Math.random() * Math.PI * flip())
@@ -671,7 +670,7 @@ function makeHighIsland() {
         gap1,
         gap2,islandSize,
         main: group,
-        type: PathType.HIGH_ISLAND,
+        type: PathType.ISLAND,
         get position() {
             return group.position
         },
@@ -757,9 +756,9 @@ function init() {
     makeBlock(PathType.BRIDGE)  
     makeBlock(PathType.BRIDGE)     
     makeBlock(PathType.FULL)     
-    makeBlock(PathType.HIGH_ISLAND)     
+    makeBlock(PathType.ISLAND)     
     makeBlock(PathType.FULL)    
-    makeBlock(PathType.HIGH_ISLAND)       
+    makeBlock(PathType.ISLAND)       
     makeBlock(PathType.FULL)      
     makeBlock(PathType.BRIDGE) 
 }
