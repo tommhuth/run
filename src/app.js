@@ -159,8 +159,9 @@ function makeRocks(amount, width, depth){
     for(let i = 0; i < amount; i++) {
         let rock = clone(randomList("rock", "rock2"))
         let scaling = Math.random() * 1.5 + .5
+        let scalingY = Math.max(Math.random() * 1.5 + .5, .85)
 
-        rock.scaling.set(scaling, Math.random() * 1 + .5, scaling)
+        rock.scaling.set(scaling, scalingY, scaling)
         rock.rotate(Axis.Y, getRandomRotation())
         rock.rotate(Axis.X, Math.random() * .5 * flip())
         rock.rotate(Axis.Z, Math.random() * .5 * flip())
@@ -169,6 +170,8 @@ function makeRocks(amount, width, depth){
         rock.position.z = depth * Math.random() / 2 * flip()
         rock.parent = group
     }
+
+    group.position.y = -DEPTH - .75
 
     return group
 }
@@ -391,8 +394,7 @@ function makeHub(){
     box.position.set(0, height/2  + 1, 0)
     box.parent = group
 
-    rocks.parent = group
-    rocks.position.y = -DEPTH
+    rocks.parent = group 
 
     group.position.x = 0
     group.position.y = -height/2
@@ -423,8 +425,7 @@ function makeRuins(collapsable = true){
     const wasLastFull = previousBlock && previousBlock.type === PathType.FULL
     const rocks = makeRocks(Math.random() * 4 + 1, width - 3, depth)
  
-    rocks.parent = group
-    rocks.position.y = -DEPTH
+    rocks.parent = group 
     
     group.position.x = 0
     group.position.y = 0
@@ -564,11 +565,13 @@ function makeBridge() {
         main: group,
         type: PathType.BRIDGE,
         bridgeX: xPosition,
+        isCollapsable: Math.random() > .5,
+        collapseTriggerDistance: group.position.z - (Math.random() * 3 + 12),
         get position() {
             return group.position
         },
         beforeRender() { 
-            if (player.position.z < group.position.z - 10) {
+            if (player.position.z < this.collapseTriggerDistance || !this.isCollapsable) {
                 return 
             }  
 
@@ -690,8 +693,7 @@ function makeFull(obstacle = true) {
  
     resize(path, width, height, depth) 
      
-    rocks.parent = group
-    rocks.position.y = -DEPTH
+    rocks.parent = group 
 
     group.position.x = 0
     group.position.y = 0
