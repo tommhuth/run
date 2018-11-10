@@ -9,7 +9,7 @@ const WIDTH = 4.5
 const HEIGHT = 6
 const DEPTH = 4
 const SPEHER_SIZE = .35
-const MAX_JUMP_DISTANCE = 4
+const MAX_JUMP_DISTANCE = 3.75
 
 let startAlpha = Math.PI / 2 // LEFT RIGHT
 let startBeta =  1.55 /// UP DOWN
@@ -636,7 +636,7 @@ function makeHighIsland() {
     const lastWasIsland = lastBlock && lastBlock.type === PathType.HIGH_ISLAND
 
     const islandSize =  Math.max((WIDTH - .5) *  Math.random(), 2.25)
-    const gapSize = Math.max(MAX_JUMP_DISTANCE * Math.random(), 2)
+    const gapSize = Math.max(MAX_JUMP_DISTANCE  * Math.random(), 2.5)
     const gap1 = lastWasIsland ? 0 : gapSize
     const gap2 = gapSize 
     const height = HEIGHT //+ Math.random() * 2.5
