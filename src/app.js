@@ -90,11 +90,14 @@ const camera =  new ArcRotateCamera("camera", startAlpha, startBeta, startRadius
 const physicsPlugin = new CannonJSPlugin(false, 8) 
 const ground = makeGroup()
 
+const plantMaterial = new StandardMaterial()
 const baseMaterial = new StandardMaterial()
 
 baseMaterial.diffuseColor = Color3.White()
 baseMaterial.roughness = .5
 
+plantMaterial.diffuseColor = new Color3(209/255, 252/255, 241/255)
+plantMaterial.roughness = .1
  
 
 engine.renderEvenInBackground = false
@@ -170,7 +173,6 @@ function makeRocks(amount, width, depth){
     return group
 }
  
-
 function makeFog(){
     const max = 10
     const fogMaterial = new StandardMaterial()
@@ -201,7 +203,6 @@ function makeFog(){
     ground.position.y = -DEPTH  
 }
  
-
 function load(){  
     let allResoucers = Promise.all([
         SceneLoader.LoadAssetContainerAsync("world.babylon") 
@@ -228,7 +229,7 @@ function load(){
                 mesh.convertToFlatShadedMesh() 
 
                 if(mesh.id === "plant"){
-                    mesh.re
+                    mesh.material = plantMaterial
                 }
 
                 models[mesh.id] = mesh
@@ -360,9 +361,7 @@ function makeCoin(index) {
         if (top.intersectsMesh(player, false, true)) {
             score++ 
 
-            setTimeout(() => top.dispose(false, true), 1)
-             
-            console.info("score", score, "of", potentialScore)
+            setTimeout(() => top.dispose(false, true), 1) 
         }
     }) 
 
@@ -509,48 +508,87 @@ function explode(position, radius, strength, delay = 0, debug = false) {
     }, delay)
 }
 
+function getFlipRotation(){
+    const rotations = [0, Math.PI, -Math.PI, Math.PI * 2, Math.PI * -2]
+    
+    return rotations[Math.floor(Math.random() * rotations.length) ]
+}
+
 function makeBridge() { 
-    const depth = DEPTH
-    const height = 1
+    const bridgeBlocks = []
+    const depth = Math.ceil(Math.random() * (DEPTH + 2)) + 4
+    const height = .65
     const width = 1
-    const block = MeshBuilder.CreateBox(uuid.v4(), { height, width, depth }, scene)
-    const pillar = MeshBuilder.CreateBox(uuid.v4(), { height: HEIGHT, width: .75, depth: .75 }, scene)
+    const group = makeGroup()
     const previousBlock = blocks[blocks.length - 1]
     const lastWasBridge = previousBlock && previousBlock.type === PathType.BRIDGE  
-    const xPosition = (Math.random() * width / 2 - 1) * flip()
+    const xPosition = lastWasBridge ? previousBlock.bridgeX : (Math.random() * width / 2 - 1) * flip() 
+    const pillarStart = clone("bridgeEnd")
+    const pillarEnd = clone("bridgeEnd")
 
-    if (Math.random() < .5){
-        for (let i = 0; i < 3; i++) {
-            const coin = makeCoin(i)
-    
-            coin.parent = block
-            coin.position.y = 1
-            coin.position.z = i * 1 - 1.5 
-        }
+    pillarStart.scaling.z = .5
+    pillarStart.position.set(xPosition, -.75, -depth/2)
+    pillarStart.rotate(Axis.Y, Math.PI/2)
+    pillarStart.parent = group
+
+    pillarEnd.scaling.z = .5
+    pillarEnd.position.set(xPosition, -.75, depth/2)
+    pillarEnd.rotate(Axis.Y, -Math.PI/2)
+    pillarEnd.parent = group
+ 
+    group.position.x = 0
+    group.position.y = 0
+    group.position.z = getZPosition(depth)
+
+    for (let i = 0; i < depth; i++) {
+        const block = clone(randomList("bridgeMid", "bridgeMid2", "bridgeMid3"))
+
+        resize(block, width, height, width)
+
+        block.rotate(Axis.Y, getFlipRotation() * (Math.random() > .5 ? .5 : 1))
+        block.rotate(Axis.Z, getFlipRotation())
+        block.rotate(Axis.X, getFlipRotation())
+        block.position.y = -width/2
+        block.position.x = xPosition
+        block.position.z = i - depth/2 + width/2
+        block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
+        block.parent = group
+
+        bridgeBlocks.push(block)
     }
 
-    block.material = baseMaterial
-    block.position.y = -.5
-    block.position.x = lastWasBridge ? previousBlock.position.x : xPosition
-    block.position.z = getZPosition(depth) 
-    block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
-   
-    pillar.parent = block 
-    pillar.position.y = -HEIGHT/2 
-    pillar.freezeWorldMatrix()
-    block.freezeWorldMatrix()
-    
     blocks.push({
         width: WIDTH,
         height: HEIGHT,
         depth,
-        main: block,
+        main: group,
         type: PathType.BRIDGE,
+        bridgeX: xPosition,
         get position() {
-            return block.position
+            return group.position
+        },
+        beforeRender() { 
+            if (player.position.z < group.position.z - 10) {
+                return 
+            }  
+
+            let hasPushed = false
+
+            for (let i = 3; i < bridgeBlocks.length - 2 && i -3 < 3; i++) {
+                const bridgeBlock = bridgeBlocks[i] 
+ 
+                bridgeBlock.physicsImpostor.setMass(10)  
+
+                if (!hasPushed) { 
+                    bridgeBlock.physicsImpostor.applyImpulse(new Vector3(0, 45, 0), player.getAbsolutePosition()) 
+                    hasPushed = true 
+                }    
+            }
+
+            this.beforeRender = null
         },
         dispose() {
-            block.dispose() 
+            group.dispose() 
         }
     }) 
 }
@@ -711,14 +749,16 @@ function makeGap() {
  
 function init() {  
     makeFog()
-    makeHub()      
-    makeBlock(PathType.RUINS, false)  
-    makeBlock(PathType.FULL)    
+    makeHub()       
+    makeBlock(PathType.RUINS, false) 
+    makeBlock(PathType.FULL)      
+    makeBlock(PathType.BRIDGE)  
+    makeBlock(PathType.BRIDGE)     
+    makeBlock(PathType.FULL)     
     makeBlock(PathType.HIGH_ISLAND)     
     makeBlock(PathType.FULL)    
     makeBlock(PathType.HIGH_ISLAND)       
-    makeBlock(PathType.FULL)    
-    makeBlock(PathType.RUINS, false)    
+    makeBlock(PathType.FULL)      
     makeBlock(PathType.BRIDGE) 
 }
 
