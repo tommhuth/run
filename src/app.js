@@ -162,8 +162,8 @@ function makeRocks(amount, width, depth){
 
         rock.scaling.set(scaling, scalingY, scaling)
         rock.rotate(Axis.Y, getRandomRotation())
-        rock.rotate(Axis.X, Math.random() * .5 * flip())
-        rock.rotate(Axis.Z, Math.random() * .5 * flip())
+        rock.rotate(Axis.X, Math.random() * .25 * flip())
+        rock.rotate(Axis.Z, Math.random() * .25 * flip())
         rock.position.x = (width/2 + Math.random() * 8) * flip()
         rock.position.y = 0
         rock.position.z = depth * Math.random() / 2 * flip()
@@ -531,6 +531,9 @@ function makeBridge() {
     const pillarEnd = clone("bridgeEnd") 
     const plant = makePlant(Math.random() * 3 + 4, true)
     const plantScale = Math.random() * .35 + .4
+    const rocks = makeRocks(Math.random() * 4 + 2, 1, depth)
+
+    rocks.parent = group
 
     plant.scaling.set(plantScale, plantScale, plantScale)
     plant.position.x = xPosition + flip() * (Math.random() * 3 + 2)
