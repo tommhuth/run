@@ -9,7 +9,7 @@ const WIDTH = 4.5
 const HEIGHT = 6
 const DEPTH = 4
 const SPEHER_SIZE = .35
-const MAX_JUMP_DISTANCE = 3.75
+const MAX_JUMP_DISTANCE = 3.5
 
 let startAlpha = Math.PI / 2 // LEFT RIGHT
 let startBeta =  1.55 /// UP DOWN
@@ -667,7 +667,7 @@ function makeIsland() {
     }
     
     island.rotate(Axis.Y, Math.random() * Math.PI * flip())
-    island.position.set(Math.random() * 2 * flip(), -height / 2 - .5, 0) 
+    island.position.set(Math.random() * 1.5 * flip(), -height / 2 - .5, 0) 
     island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
     island.parent = group
 
@@ -781,7 +781,7 @@ function makeFull(obstacle = true) {
 
 function makeGap() {  
     const group = makeGroup()
-    const depth = Math.max(Math.random() * DEPTH, 2)  
+    const depth = Math.max(Math.random() * MAX_JUMP_DISTANCE, 2)  
     
     group.position.z = getZPosition(depth)
     group.position.x = (WIDTH + 3) / 2 * Math.random()
