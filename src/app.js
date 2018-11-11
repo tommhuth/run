@@ -2,7 +2,7 @@ import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, PhysicsRadialImpulseFalloff, Mesh } from "babylonjs"
 import { Color3, Vector3, Axis } from "babylonjs"
-import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper } from "babylonjs"  
+import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper, Angle } from "babylonjs"  
 import uuid from "uuid"
    
 const WIDTH = 4.5
@@ -207,7 +207,7 @@ function makeFog(){
  
 function load(){  
     let allResoucers = Promise.all([
-        SceneLoader.LoadAssetContainerAsync("world.babylon") 
+        SceneLoader.LoadAssetContainerAsync("world.babylon")
     ])
 
     allResoucers
@@ -230,7 +230,7 @@ function load(){
                 mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
 
-                if(mesh.id === "plant"){
+                if(mesh.id === "plant" || mesh.id === "leaf"){
                     mesh.material = plantMaterial
                 }
 
@@ -283,10 +283,14 @@ function randomList(...args) {
     return args[Math.floor(Math.random() * args.length)]
 }
 
-function makeGroup(){
+function makeGroup(visible = false){
     const mesh = MeshBuilder.CreateGround("", { width: 1, height: 1, subdivisions: 1 }, scene)
 
-    mesh.isVisible = false 
+    if (visible) { 
+        mesh.visibility = .0001
+    } else {
+        mesh.isVisible = false 
+    }
             
     return mesh
 }
@@ -524,7 +528,14 @@ function makeBridge() {
     const lastWasBridge = previousBlock && previousBlock.type === PathType.BRIDGE  
     const xPosition = lastWasBridge ? previousBlock.bridgeX : (Math.random() * width / 2 - 1) * flip() 
     const pillarStart = clone("bridgeEnd")
-    const pillarEnd = clone("bridgeEnd")
+    const pillarEnd = clone("bridgeEnd") 
+    const plant = makePlant(Math.random() * 3 + 4, true)
+    const plantScale = Math.random() * .35 + .4
+
+    plant.scaling.set(plantScale, plantScale, plantScale)
+    plant.position.x = xPosition + flip() * (Math.random() * 3 + 2)
+    plant.position.z = (Math.random() * (depth/2 - 2)) * flip()
+    plant.parent = group
 
     pillarStart.scaling.z = .5
     pillarStart.position.set(xPosition, -.75, -depth/2)
@@ -638,7 +649,7 @@ function makeIsland() {
     const gapSize = Math.max(MAX_JUMP_DISTANCE  * Math.random(), 2.5)
     const gap1 = lastWasIsland ? 0 : gapSize
     const gap2 = gapSize 
-    const height = HEIGHT //+ Math.random() * 2.5
+    const height = HEIGHT
     const depth = islandSize + gap1 + gap2  
     const group = makeGroup()
     const island = clone(randomList("island", "island2", "island3")) 
@@ -678,6 +689,44 @@ function makeIsland() {
             group.dispose() 
         }
     })    
+}
+
+function makePlant(leafCount = 6, moves = true, radius = 360){
+    let group = makeGroup(moves) 
+    let leafs = []
+
+    for (let i = 0; i < leafCount; i++) { 
+        let leaf = clone("leaf")
+        let perLeaf = radius / leafCount
+        let scale =  Math.random() * .75 + .5
+        let rotation = Angle.FromDegrees(perLeaf * i)
+
+        leaf.position.x = Math.random() * .25 * flip()   
+        leaf.position.z = Math.random() * .25 * flip() 
+        leaf.position.y = Math.random() * -.5
+        leaf.scaling.set(scale, scale, scale)
+        leaf.rotate(Axis.Y, rotation.radians()) 
+        leaf.rotate(Axis.Z, Math.random() / 100 * flip()) 
+        leaf.parent = group
+
+        leaf.time = Math.random() / 100 * flip()
+
+        leafs.push(leaf)
+    }
+
+    if (moves) { 
+        group.registerBeforeRender(() => {
+            for (let leaf of leafs) {
+                leaf.time += .01
+                leaf.addRotation(0, 0, Math.sin(leaf.time) / 2000)
+            }
+        })
+    }
+
+    group.rotate(Axis.Y, getRandomRotation())
+    group.position.y = -DEPTH - 1
+
+    return group
 }
 
 function makeFull(obstacle = true) { 
@@ -731,10 +780,11 @@ function makeFull(obstacle = true) {
 }
 
 function makeGap() {  
-    const depth = Math.max(Math.random() * DEPTH, 2) 
-    const position = new Vector3()
+    const group = makeGroup()
+    const depth = Math.max(Math.random() * DEPTH, 2)  
     
-    position.z = getZPosition(depth)
+    group.position.z = getZPosition(depth)
+    group.position.x = (WIDTH + 3) / 2 * Math.random()
     
     blocks.push({
         width: WIDTH,
@@ -742,25 +792,25 @@ function makeGap() {
         depth, 
         type: PathType.GAP,
         get position() {
-            return position
+            return group.position
         },
-        dispose() { }
+        dispose() {
+            group.dispose()
+        }
     })   
 }
  
 function init() {  
     makeFog()
     makeHub()       
-    makeBlock(PathType.RUINS, false) 
-    makeBlock(PathType.FULL)      
-    makeBlock(PathType.BRIDGE)  
-    makeBlock(PathType.BRIDGE)     
-    makeBlock(PathType.FULL)     
-    makeBlock(PathType.ISLAND)     
+    makeBlock(PathType.RUINS, false)  
     makeBlock(PathType.FULL)    
-    makeBlock(PathType.ISLAND)       
+    makeBlock(PathType.BRIDGE)    
+    makeBlock(PathType.BRIDGE)     
+    makeBlock(PathType.FULL)    
+    makeBlock(PathType.ISLAND)     
     makeBlock(PathType.FULL)      
-    makeBlock(PathType.BRIDGE) 
+    makeBlock(PathType.BRIDGE)       
 }
 
 function start() { 
