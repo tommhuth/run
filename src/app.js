@@ -398,6 +398,7 @@ function makeHub(){
     box.parent = group
 
     rocks.position.y += 3
+    rocks.position.z -= 4
     rocks.parent = group
 
     group.position.x = 0
