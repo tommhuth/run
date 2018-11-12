@@ -380,12 +380,12 @@ function makeCoin(index) {
 
 function makeHub(){
     const width = WIDTH * 2 + 2
-    const height = HEIGHT  + 1
-    const depth = DEPTH * 2  + 2
+    const height = HEIGHT + 1
+    const depth = DEPTH * 2 + 2
     const group = makeGroup() 
     const path = clone("hub") 
     const box = clone("box")  
-    const rocks = makeRocks(Math.random() * 5 + 2, width, depth)
+    const rocks = makeRocks(12, width, depth + 4)
 
     resize(path, width, height, depth) 
     resize(box, 5, 2, 5)
@@ -397,7 +397,8 @@ function makeHub(){
     box.position.set(0, height/2  + 1, 0)
     box.parent = group
 
-    rocks.parent = group 
+    rocks.position.y += 3
+    rocks.parent = group
 
     group.position.x = 0
     group.position.y = -height/2
@@ -657,6 +658,7 @@ function makeIsland() {
     const group = makeGroup()
     const island = clone(randomList("island", "island2", "island3")) 
     const plants = makePlants(Math.floor(Math.random() * 3) + 1)
+    const platsXSide = flip()
    
     resize(island, islandSize, height, islandSize)
   
@@ -676,7 +678,15 @@ function makeIsland() {
 
     plants.parent = group
     plants.rotate(Axis.Y, getRandomRotation())
-    plants.position.set(island.position.x + (islandSize + Math.random() * 1 + 2) * flip(), -DEPTH, 0)
+    plants.position.set(island.position.x + (islandSize + Math.random() * 1.5 + .5) * platsXSide, -DEPTH, 0)
+
+    if (Math.random() > .5) { 
+        const plants2 = makePlants(Math.floor(Math.random() * 3) + 1)
+
+        plants2.parent = group
+        plants2.rotate(Axis.Y, getRandomRotation())
+        plants2.position.set(island.position.x + (islandSize + Math.random() * 1.5 + .5) * -platsXSide, -DEPTH, 0)
+    }
   
     blocks.push({ 
         height,
