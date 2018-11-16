@@ -99,8 +99,11 @@ const ground = makeGroup()
 const plantMaterial = new StandardMaterial()
 const baseMaterial = new StandardMaterial()
 const redMaterial = new StandardMaterial()
+const yellowMaterial = new StandardMaterial()
 
 redMaterial.diffuseColor = Color3.Red()
+
+yellowMaterial.diffuseColor = Color3.Yellow()
 
 baseMaterial.diffuseColor = Color3.White()
 baseMaterial.roughness = .5
@@ -108,7 +111,6 @@ baseMaterial.roughness = .5
 plantMaterial.diffuseColor = new Color3(209/255, 252/255, 241/255)
 plantMaterial.roughness = .1
  
-
 engine.renderEvenInBackground = false
 engine.setHardwareScalingLevel(.75)
 
@@ -142,7 +144,7 @@ scene.clearColor = Color3.White()
   
 player.position.y = 50
 player.position.x = 0
-player.position.z = DEPTH 
+player.position.z = 0 
 player.material = new StandardMaterial(uuid.v4(), scene)
 player.material.diffuseColor = Color3.Blue()  
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
@@ -240,11 +242,16 @@ function load(){
                 mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
 
-                if (mesh.id === "plant" || mesh.id === "leaf") {
-                    mesh.material = plantMaterial
-                }
-                if (mesh.id === "coin") {
-                    mesh.material = redMaterial
+                switch (mesh.id) {
+                    case "plant":
+                    case "leaf":
+                        mesh.material = plantMaterial
+                        break
+                    case "coin":
+                        mesh.material = yellowMaterial
+                        break
+                    default:
+                        mesh.material = baseMaterial
                 }
 
                 models[mesh.id] = mesh
@@ -791,9 +798,11 @@ function makeHighIsland() {
         const island = clone(randomList("island", "island2"))
         const height = HEIGHT + i
         const diameter = 2 + Math.random()
+        const rock = clone(randomList("rock", "rock2"))
 
+        resize(rock, diameter + 1.5, diameter + 2, diameter + 1.5)
         resize(island, diameter, height, diameter)
-    
+
         island.diameter = diameter
         island.height = height
         island.rotate(Axis.Y, getRandomRotation()) 
@@ -803,6 +812,33 @@ function makeHighIsland() {
         island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
         island.parent = group
 
+        rock.rotate(Axis.Y, getRandomRotation()) 
+        rock.position = island.position.clone()
+        rock.position.y = -HEIGHT/2 - 2
+        rock.parent = group
+
+        if (Math.random() < .5) { 
+            const plant = makePlant(Math.random() * 4 + 2, false)
+            const scale = Math.random() * .4 + .4
+            
+            plant.rotate(Axis.Y, getRandomRotation()) 
+            plant.position.z = island.position.z
+            plant.position.y = -HEIGHT/2 - 2
+            plant.position.x = island.position.x + (4 * flip())
+            plant.parent = group 
+            plant.scaling.set(scale, scale, scale)
+
+            if (Math.random() < .5) {
+                const plant2 = makePlants(Math.random() * 3)
+
+                plant2.rotate(Axis.Y, getRandomRotation()) 
+                plant2.position = plant.position.clone()
+                plant2.position.x *= -1.25
+                plant2.position.y += 1
+                plant2.parent = group
+            }
+        }
+
         islands.push(island)
     }
 
@@ -811,7 +847,7 @@ function makeHighIsland() {
         const y = Math.cos(Math.PI / coinCount * i) 
         const island = islands[islands.length - 1]
         
-        resize(coin, .4, .8, .4)
+        resize(coin, .3, .6, .3)
  
         coin.time = i * .01
         coin.position.y = y + island.position.y + island.height / 2
@@ -855,22 +891,19 @@ function makeHighIsland() {
 }
  
 function init() {  
+    // setup
     makeFog()    
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.FULL, false)      
+
+    // path
+    makeBlock(PathType.FULL, true)      
+    makeBlock(PathType.FULL, true)      
     makeBlock(PathType.FULL, false)      
     makeBlock(PathType.HIGH_ISLAND, false)    
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.FULL, false)      /*
-    makeBlock(PathType.HIGH_ISLAND, false)  
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.HIGH_ISLAND, false)  
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.HIGH_ISLAND, false)  */
+    makeBlock(PathType.FULL, false)         
+    makeBlock()      
+    makeBlock()      
+    makeBlock()      
+    makeBlock()      
 }
 
 function start() { 
