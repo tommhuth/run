@@ -530,17 +530,17 @@ function makeBridge() {
     group.position.y = 0
     group.position.z = getZPosition(depth)
 
-    for (let i = 0; i < depth; i++) {
+    for (let i = 0; i < depth + 1; i++) {
         const block = clone(randomList("bridgeMid", "bridgeMid2", "bridgeMid3"))
 
         resize(block, width, height, width)
 
-        block.rotate(Axis.Y, getFlipRotation() * (Math.random() > .5 ? .5 : 1))
+        block.rotate(Axis.Y, getFlipRotation())
         block.rotate(Axis.Z, getFlipRotation())
         block.rotate(Axis.X, getFlipRotation())
         block.position.y = -width/2
         block.position.x = xPosition
-        block.position.z = i - depth/2 + width/2
+        block.position.z = i - depth/2 + width/2 - .5
         block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
         block.parent = group
 
