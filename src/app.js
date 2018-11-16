@@ -2,7 +2,7 @@ import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, PhysicsRadialImpulseFalloff, Mesh } from "babylonjs"
 import { Color3, Vector3, Axis } from "babylonjs"
-import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper, Angle } from "babylonjs"  
+import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper, Angle, PhysicsUpdraftMode, ParticleSystem, Texture, Color4 } from "babylonjs"  
 import uuid from "uuid"
    
 const WIDTH = 4.5
@@ -28,9 +28,16 @@ const PathType = {
     BRIDGE: "bridge",
     GAP: "gap",
     ISLAND: "island",
-    RUINS: "ruins"
+    RUINS: "ruins",
+    HIGH_ISLAND: "high-island",
 }
 const PathSettings = {
+    [PathType.HIGH_ISLAND]: { 
+        illegalNext: [PathType.GAP, PathType.RUINS, PathType.ISLAND,PathType.BRIDGE],
+        isLegal() {
+            return true
+        }
+    },
     [PathType.FULL]: {
         illegalNext: [],
         isLegal() {
@@ -38,25 +45,25 @@ const PathSettings = {
         }
     }, 
     [PathType.ISLAND]: {
-        illegalNext: [PathType.BRIDGE, PathType.GAP],
+        illegalNext: [PathType.BRIDGE, PathType.GAP, PathType.HIGH_ISLAND],
         isLegal() {
             return true
         }
     },
     [PathType.GAP]: {
-        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.ISLAND],
+        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.ISLAND, PathType.HIGH_ISLAND],
         isLegal() {
             return true
         }
     },
     [PathType.BRIDGE]: {
-        illegalNext: [PathType.GAP, PathType.ISLAND],
+        illegalNext: [PathType.GAP, PathType.ISLAND, PathType.HIGH_ISLAND],
         isLegal() {
             return true
         }
     },
     [PathType.RUINS]: {
-        illegalNext: [PathType.RUINS, PathType.GAP, PathType.ISLAND],
+        illegalNext: [PathType.RUINS, PathType.GAP, PathType.ISLAND, PathType.HIGH_ISLAND],
         isLegal() {
             return blocks.every(i => i.type !== PathType.RUINS)
         }
@@ -91,6 +98,9 @@ const ground = makeGroup()
 
 const plantMaterial = new StandardMaterial()
 const baseMaterial = new StandardMaterial()
+const redMaterial = new StandardMaterial()
+
+redMaterial.diffuseColor = Color3.Red()
 
 baseMaterial.diffuseColor = Color3.White()
 baseMaterial.roughness = .5
@@ -230,8 +240,11 @@ function load(){
                 mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
 
-                if(mesh.id === "plant" || mesh.id === "leaf"){
+                if (mesh.id === "plant" || mesh.id === "leaf") {
                     mesh.material = plantMaterial
+                }
+                if (mesh.id === "coin") {
+                    mesh.material = redMaterial
                 }
 
                 models[mesh.id] = mesh
@@ -255,7 +268,7 @@ function getZPosition(currentDepth = 0, type) {
             return previousBlock.position.z + previousBlock.islandSize/2
         }
 
-        return previousBlock.position.z + previousBlock.depth / 2 +   currentDepth / 2  
+        return previousBlock.position.z + previousBlock.depth / 2 + currentDepth / 2  
     }
 
     return 0
@@ -326,57 +339,11 @@ function makeBlock(forceType, ...params) {
         case PathType.ISLAND:
             return makeIsland(...params) 
         case PathType.RUINS:
-            return makeRuins(...params)  
+            return makeRuins(...params)   
+        case PathType.HIGH_ISLAND:
+            return makeHighIsland(...params)  
     }
 } 
-
-function makeCoin(index) {
-    const top = MeshBuilder.CreateCylinder(uuid.v4(), { 
-        diameterBottom: 1.25, 
-        diameterTop: 0, 
-        height: 1, 
-        tessellation: 4, 
-        subdivisions: 4 
-    }, scene)
-    const bottom = MeshBuilder.CreateCylinder(uuid.v4(), { 
-        diameterBottom: 1.25, 
-        diameterTop: 0, 
-        height: 1, 
-        tessellation: 4, 
-        subdivisions: 4 
-    }, scene)
-    const material = new StandardMaterial()
-    
-    material.diffuseColor = Color3.Blue()
-    material.emissiveColor = new Color3(0, .2, .8)
-
-    top.material = material
-    top.convertToFlatShadedMesh()
-    bottom.convertToFlatShadedMesh() 
-    bottom.material = material
-    bottom.parent = top
-    bottom.position.y = -1
-    bottom.rotate(new Vector3(1, 0, 0), Math.PI) 
-    bottom.visibility = .35
-
-    top.scaling = new Vector3(.25, .25, .25)
-    top.rotate(new Vector3(0, 1, 0), index * .25)
-    top.registerBeforeRender(() => { 
-        top.rotate(Axis.Y, top.rotation.x + .075) 
-
-        if (top.intersectsMesh(player, false, true)) {
-            score++ 
-
-            setTimeout(() => top.dispose(false, true), 1) 
-        }
-    }) 
-
-    top.visibility = .35
- 
-    potentialScore++ 
-
-    return top
-}
 
 function makeHub(){
     const width = WIDTH * 2 + 2
@@ -797,8 +764,7 @@ function makeGap() {
     const group = makeGroup()
     const depth = Math.max(Math.random() * MAX_JUMP_DISTANCE, 2)  
     
-    group.position.z = getZPosition(depth)
-    group.position.x = (WIDTH + 3) / 2 * Math.random()
+    group.position.z = getZPosition(depth) 
     
     blocks.push({
         width: WIDTH,
@@ -814,17 +780,97 @@ function makeGap() {
     })   
 }
  
+function makeHighIsland() {  
+    const group = makeGroup()
+    const depth =  MAX_JUMP_DISTANCE * 4.5
+    const islands = []
+    const coinCount = 5
+    let coins = []
+
+    for (let i = 0; i < 3; i++) {
+        const island = clone(randomList("island", "island2"))
+        const height = HEIGHT + i
+        const diameter = 2 + Math.random()
+
+        resize(island, diameter, height, diameter)
+    
+        island.diameter = diameter
+        island.height = height
+        island.rotate(Axis.Y, getRandomRotation()) 
+        island.position.y = -height/2 + (i/2 + .5)
+        island.position.x = i === 0 ? 0 : Math.random() * flip()
+        island.position.z = -depth/2 + i * (MAX_JUMP_DISTANCE + diameter/2) + diameter/2 + 1
+        island.physicsImpostor = new PhysicsImpostor(island, PhysicsImpostor.CylinderImpostor, { mass: 0 }, scene)
+        island.parent = group
+
+        islands.push(island)
+    }
+
+    for (let i = 0; i < coinCount; i++) {
+        const coin = clone("coin")
+        const y = Math.cos(Math.PI / coinCount * i) 
+        const island = islands[islands.length - 1]
+        
+        resize(coin, .4, .8, .4)
+ 
+        coin.time = i * .01
+        coin.position.y = y + island.position.y + island.height / 2
+        coin.position.z = island.position.z + island.diameter / 2 + i + .5
+        coin.position.x = 0
+        coin.parent = group
+
+        coins.push(coin)
+    }
+   
+    group.position.z = getZPosition(depth) 
+    group.position.y = 0
+    group.position.x = 0
+    
+    blocks.push({
+        width: WIDTH,
+        height: HEIGHT,
+        depth, 
+        type: PathType.HIGH_ISLAND,
+        get position() {
+            return group.position
+        },
+        beforeRender() {
+            for (const coin of coins) {
+                const distance = Vector3.Distance(coin.getAbsolutePosition(), player.getAbsolutePosition())
+
+                coin.rotate(Axis.Y, coin.rotation.y + .075)
+
+                if (distance < .5 ){
+                    score++
+                    console.log("score", score)
+                    coin.dispose()
+                    coins = coins.filter(i => i !== coin)
+                }
+            }
+        },
+        dispose() { 
+            group.dispose() 
+        }
+    })   
+}
+ 
 function init() {  
-    makeFog()
-    makeHub()       
-    makeBlock(PathType.RUINS, false)  
-    makeBlock(PathType.FULL)    
-    makeBlock(PathType.BRIDGE)    
-    makeBlock(PathType.BRIDGE)     
-    makeBlock(PathType.FULL)    
-    makeBlock(PathType.ISLAND)     
-    makeBlock(PathType.FULL)      
-    makeBlock(PathType.BRIDGE)       
+    makeFog()    
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.HIGH_ISLAND, false)    
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.FULL, false)      /*
+    makeBlock(PathType.HIGH_ISLAND, false)  
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.HIGH_ISLAND, false)  
+    makeBlock(PathType.FULL, false)      
+    makeBlock(PathType.HIGH_ISLAND, false)  */
 }
 
 function start() { 
