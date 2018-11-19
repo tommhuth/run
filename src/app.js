@@ -352,47 +352,6 @@ function makeBlock(forceType, ...params) {
     }
 } 
 
-function makeHub(){
-    const width = WIDTH * 2 + 2
-    const height = HEIGHT + 1
-    const depth = DEPTH * 2 + 2
-    const group = makeGroup() 
-    const path = clone("hub") 
-    const box = clone("box")  
-    const rocks = makeRocks(12, width, depth + 4)
-
-    resize(path, width, height, depth) 
-    resize(box, 5, 2, 5)
-
-    path.position.set(0, .5, 1)
-    path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
-    path.parent = group  
-
-    box.position.set(0, height/2  + 1, 0)
-    box.parent = group
-
-    rocks.position.y += 3
-    rocks.position.z -= 4
-    rocks.parent = group
-
-    group.position.x = 0
-    group.position.y = -height/2
-    group.position.z = 0
-
-    blocks.push({
-        width,
-        height,
-        depth,
-        main: group,
-        type: PathType.FULL,
-        get position() {
-            return group.position
-        }, 
-        dispose() {
-            group.dispose()
-        }
-    }) 
-}
 
 function makeRuins(collapsable = true){
     const width = WIDTH  * 2 + 2
