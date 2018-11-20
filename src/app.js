@@ -937,10 +937,12 @@ function makeStart(){
         new Vector3(3, -DEPTH - 1, 1),
         new Vector3(-3, -DEPTH - 1, 4),
         new Vector3(1, -DEPTH - 1, 9),
+        new Vector3(-8, -DEPTH - 1, 3),
         new Vector3(4, -DEPTH - 1, 6),
         new Vector3(1, -DEPTH - 1, 1),
         new Vector3(1, -DEPTH - 1, 18),
         new Vector3(4, -DEPTH -1 , 12),
+        new Vector3(-12, -DEPTH - 1, 5),
         new Vector3(8, -DEPTH - 1, 2),
         new Vector3(12, -DEPTH - 1, 5),
     ]
@@ -968,20 +970,22 @@ function makeStart(){
     plant2.rotate(Axis.Y, getRandomRotation()) 
     plant2.parent = group
 
-    plant3.position.set(4, -DEPTH, 9)
-    plant3.scaling.set(1.15, 1.15, 1.15)
+    // UN
+    plant3.position.set(4, -DEPTH + 1.5, 9)
+    plant3.scaling.set(1.25, 1.25, 1.25)
     plant3.rotate(Axis.Y, getRandomRotation()) 
     plant3.parent = group
 
-    plant4.position.set(-3, -DEPTH, 2)
-    plant4.scaling.set(.6, .6, .6)
+    //RU
+    plant4.position.set(-3, -DEPTH - 1 , 2)
+    plant4.scaling.set(1, 1, 1)
     plant4.rotate(Axis.Y, getRandomRotation()) 
     plant4.parent = group
 
-    plant4.position.set(10, -DEPTH, 9)
-    plant4.scaling.set(1.6, 1.6, 1.6)
-    plant4.rotate(Axis.Y, getRandomRotation()) 
-    plant4.parent = group
+    plant5.position.set(11, -DEPTH, 9)
+    plant5.scaling.set(2, 2, 2)
+    plant5.rotate(Axis.Y, getRandomRotation()) 
+    plant5.parent = group
 
     island1.position.set(.5, -height + 1, 5) 
     island2.position.set(-2, -height + .5, 8) 
