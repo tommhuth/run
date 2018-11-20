@@ -13,15 +13,19 @@ const MAX_JUMP_DISTANCE = 3.5
 
 let startAlpha = Math.PI / 2 // LEFT RIGHT
 let startBeta =  1.55 /// UP DOWN
-let startRadius = 35
+let startRadius = 0
 
-let targetSpeed = 120
+let targetSpeed = 15
+let logoOpacity = 1
+ 
 
-let targetAlpha = Math.PI / 2 + Math.PI / 4  
-let targetBeta = 1.2  
-let targetRadius = 25 
+let targetAlpha = .75 // Math.PI / 2 + Math.PI / 4  left/right => left === closer to zero
+let targetBeta = 0 //Math.PI /2 - .25  // up down,,, up === closer to zero
+let targetRadius = 22 
 let targetY = 0
-let fogEnd = 56
+let targetX = 0
+let targetZ = 8
+let fogEnd = 55
 
 const PathType = {
     FULL: "full",
@@ -100,8 +104,11 @@ const plantMaterial = new StandardMaterial()
 const baseMaterial = new StandardMaterial()
 const redMaterial = new StandardMaterial()
 const yellowMaterial = new StandardMaterial()
+const blackMaterial = new StandardMaterial()
 
 redMaterial.diffuseColor = Color3.Red()
+
+blackMaterial.diffuseColor = Color3.Black() 
 
 yellowMaterial.diffuseColor = Color3.Yellow()
 
@@ -109,6 +116,7 @@ baseMaterial.diffuseColor = Color3.White()
 baseMaterial.roughness = .5
 
 plantMaterial.diffuseColor = new Color3(209/255, 252/255, 241/255)
+///plantMaterial.emissiveColor = new Color3(22/255, 239/255, 255/255)
 plantMaterial.roughness = .1
  
 engine.renderEvenInBackground = false
@@ -246,6 +254,9 @@ function load(){
                     case "plant":
                     case "leaf":
                         mesh.material = plantMaterial
+                        break 
+                    case "logo":
+                        mesh.material = blackMaterial
                         break
                     case "coin":
                         mesh.material = yellowMaterial
@@ -351,6 +362,47 @@ function makeBlock(forceType, ...params) {
             return makeHighIsland(...params)  
     }
 } 
+
+let logo
+
+function getLogoScale(){
+    if (window.matchMedia("(min-width: 1900px)").matches) {
+        return 4
+    }
+    if (window.matchMedia("(min-width: 1600px)").matches) {
+        return 3
+    }
+    if (window.matchMedia("(min-width: 1300px)").matches) {
+        return 2.5
+    }
+    if (window.matchMedia("(min-width: 1000px)").matches) {
+        return 2.35
+    }
+    if (window.matchMedia("(min-width: 800px)").matches) {
+        return 2
+    }
+    if (window.matchMedia("(min-width: 400px)").matches) {
+        return 1.75
+    }
+
+    return 1.35
+}
+
+function makeLogo(){
+    logo = models.logo.clone()
+    let s = getLogoScale()
+
+    console.log(s)
+
+    logo.scaling.set(s, s, s)
+    //logo.billboardMode = Mesh.BILLBOARDMODE_ALL
+    logo.rotate(Axis.X, Math.PI/2)
+    logo.rotate(Axis.Y, -Math.PI/2)
+    logo.position.z = 8
+    logo.position.x = 0
+    logo.position.y = 1
+
+}
 
 
 function makeRuins(collapsable = true){
@@ -579,7 +631,7 @@ function makePlants(amount){
     return group
 }   
 
-function makeIsland() {   
+function makeIsland(forcePlant = false) {   
     const lastBlock = blocks[blocks.lenght-1]
     const lastWasIsland = lastBlock && lastBlock.type === PathType.ISLAND
 
@@ -614,7 +666,7 @@ function makeIsland() {
     plants.rotate(Axis.Y, getRandomRotation())
     plants.position.set(island.position.x + (islandSize + Math.random() * 1.5 + .5) * platsXSide, -DEPTH, 0)
 
-    if (Math.random() > .5) { 
+    if (forcePlant || Math.random() > .5) { 
         const plants2 = makePlants(Math.floor(Math.random() * 3) + 1)
 
         plants2.parent = group
@@ -851,30 +903,125 @@ function makeHighIsland() {
  
 function init() {  
     // setup
+    makeLogo()
     makeFog()    
 
-    // path
-    makeBlock(PathType.FULL, true)      
-    makeBlock(PathType.FULL, true)      
-    makeBlock(PathType.FULL, false)      
-    makeBlock(PathType.HIGH_ISLAND, false)    
-    makeBlock(PathType.FULL, false)         
-    makeBlock()      
-    makeBlock()      
-    makeBlock()      
-    makeBlock()      
+    // init logo area
+    makeStart() 
+    // actual game path
+    makeBlock(PathType.FULL, false)       
+    makeBlock(PathType.FULL, false)        
+    makeBlock(PathType.FULL, false)    
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.GAP, true)  
+    makeBlock(PathType.FULL, true)       
+    makeBlock(PathType.ISLAND, true)     
+    makeBlock(PathType.FULL, true)          
+    makeBlock(PathType.ISLAND, false)        
+}
+
+function makeStart(){
+    const group = makeGroup()
+    const depth = 30
+    const size = 4
+    const height = HEIGHT
+    const island1 = clone("island")
+    const island2 = clone("island2")
+    const island3 = clone("island3")
+    const plant1 = makePlants(3)
+    const plant2 = makePlants(2)
+    const plant3 = makePlant(7, false)
+    const plant4 = makePlant(6, false)
+    const rocks = [
+        new Vector3(3, -DEPTH - 1, 1),
+        new Vector3(-3, -DEPTH - 1, 4),
+        new Vector3(1, -DEPTH - 1, 9),
+        new Vector3(4, -DEPTH - 1, 6),
+        new Vector3(1, -DEPTH - 1, 1),
+        new Vector3(1, -DEPTH - 1, 18),
+        new Vector3(4, -DEPTH -1 , 12),
+        new Vector3(8, -DEPTH - 1, 2),
+        new Vector3(12, -DEPTH - 1, 5),
+    ]
+
+    for (let i = 0; i < rocks.length; i++) {
+        const rock = clone(randomList("rock", "rock2"))
+        const scale = i/rocks.length + 1
+
+        rock.position = rocks[i]
+        rock.scaling.set(scale,scale,scale)
+        rock.rotate(Axis.Y, getRandomRotation())
+        rock.parent = group
+    }
+
+    resize(island1, size + 1,height, size + 1)
+    resize(island2, size - 1, height, size - .8)
+    resize(island3, size ,height, size) 
+
+    plant1.position.set(-7, -DEPTH, 7)
+    plant1.scaling.set(1.75, 1, 1.75)
+    plant1.parent = group
+
+    plant2.position.set(8, -DEPTH, 10)
+    plant2.scaling.set(1.5, 1, 1.5)
+    plant2.rotate(Axis.Y, getRandomRotation()) 
+    plant2.parent = group
+
+    plant3.position.set(4, -DEPTH, 9)
+    plant3.scaling.set(1.15, 1.15, 1.15)
+    plant3.rotate(Axis.Y, getRandomRotation()) 
+    plant3.parent = group
+
+    plant4.position.set(-3, -DEPTH, 2)
+    plant4.scaling.set(.6, .6, .6)
+    plant4.rotate(Axis.Y, getRandomRotation()) 
+    plant4.parent = group
+
+    island1.position.set(.5, -height + 1, 5) 
+    island2.position.set(-2, -height + .5, 8) 
+    island3.position.set(1, -height, 12) 
+
+    island2.rotate(Axis.X, .1)
+    island2.rotate(Axis.Z, .1)
+
+    island1.parent = group
+    island2.parent = group
+    island3.parent = group
+
+    rocks.parent = group
+    
+    group.position.z = getZPosition(depth) 
+    
+    blocks.push({
+        width: WIDTH,
+        height: HEIGHT,
+        depth, 
+        type: PathType.GAP,
+        get position() {
+            return group.position
+        },
+        dispose() {
+            group.dispose()
+        }
+    })
 }
 
 function start() { 
     targetAlpha = -Math.PI / 2 
     targetBeta = Math.PI / 3.5
     targetRadius = 12
-    targetSpeed = 30
+    targetSpeed = 30  
     targetY = 0
     fogEnd = 30
 
     player.position.y = 4
+    player.position.z = 16
     player.physicsImpostor.setMass(1)
+
+    logoOpacity = 0
+
+    //logo.billboardMode = Mesh.BILLBOARDMODE_NONE
+    //logoDistance = -2
 }
 
 canvas.addEventListener("keydown", e => {
@@ -912,21 +1059,21 @@ document.body.addEventListener("touchmove", (e) => {
     e.preventDefault()
     e.stopPropagation()
 })
- 
+  
 scene.afterRender = () => {    
     if (loading || gameOver) {
         return 
     }
  
     if (started) { 
-        let removed = []   
+        let removed = []     
 
         for (let block of blocks) {
             if (block.beforeRender) {
                 block.beforeRender()
             } 
 
-            if (player.position.z >= block.position.z + block.depth + 4) {
+            if (player.position.z >= block.position.z + block.depth + 4 && player.position.z > 30) {
                 removed.push(block) 
             }  
         }  
@@ -938,9 +1085,25 @@ scene.afterRender = () => {
             makeBlock() 
         } 
     }
+
+    /*
+    let target = camera.getFrontPosition(logoDistance)
     
-    cameraTarget.position.z = player.position.z + 2 
+    logo.position.x += (target.x - logo.position.x) / 7
+    logo.position.y += (target.y - logo.position.y) / 7
+    logo.position.z += (target.z - logo.position.z) / 7*/
+
+    logo.visibility += (logoOpacity - logo.visibility) / 16
+    logo.position.z += ((logoOpacity === 1 ? 8 : 32) - logo.position.z) / 16
+
+    if (started) {
+        cameraTarget.position.z += (player.position.z - cameraTarget.position.z  + 4) / 16
+    } else {
+        cameraTarget.position.z += (targetZ - cameraTarget.position.z) / targetSpeed * 2
+    }
+
     cameraTarget.position.y += (targetY - cameraTarget.position.y) / targetSpeed * 2
+    cameraTarget.position.x += (targetX - cameraTarget.position.x) / targetSpeed * 2
     camera.radius += (targetRadius - camera.radius ) / targetSpeed / 2
     camera.alpha += (targetAlpha - camera.alpha) / targetSpeed  
     camera.beta += (targetBeta - camera.beta) / targetSpeed  
