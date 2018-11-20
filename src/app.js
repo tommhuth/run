@@ -977,7 +977,7 @@ function makeStart(){
     plant3.parent = group
 
     //RU
-    plant4.position.set(-3, -DEPTH - 1 , 2)
+    plant4.position.set(-3, -DEPTH - 2 , 2)
     plant4.scaling.set(1, 1, 1)
     plant4.rotate(Axis.Y, getRandomRotation()) 
     plant4.parent = group
