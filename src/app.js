@@ -932,6 +932,7 @@ function makeStart(){
     const plant2 = makePlants(2)
     const plant3 = makePlant(7, false)
     const plant4 = makePlant(6, false)
+    const plant5 = makePlant(6, false)
     const rocks = [
         new Vector3(3, -DEPTH - 1, 1),
         new Vector3(-3, -DEPTH - 1, 4),
@@ -974,6 +975,11 @@ function makeStart(){
 
     plant4.position.set(-3, -DEPTH, 2)
     plant4.scaling.set(.6, .6, .6)
+    plant4.rotate(Axis.Y, getRandomRotation()) 
+    plant4.parent = group
+
+    plant4.position.set(10, -DEPTH, 9)
+    plant4.scaling.set(1.6, 1.6, 1.6)
     plant4.rotate(Axis.Y, getRandomRotation()) 
     plant4.parent = group
 
