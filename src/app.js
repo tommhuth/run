@@ -15,7 +15,7 @@ let startAlpha = Math.PI / 2 // LEFT RIGHT
 let startBeta =  1.55 /// UP DOWN
 let startRadius = 0
 
-let targetSpeed = 40
+let targetSpeed = 60
 let logoOpacity = 1
  
 
@@ -26,6 +26,7 @@ let targetY = 0
 let targetX = 0
 let targetZ = 8
 let fogEnd = 55
+let fogStart = 19
 
 const PathType = {
     FULL: "full",
@@ -108,7 +109,7 @@ const blackMaterial = new StandardMaterial()
 
 redMaterial.diffuseColor = Color3.Red()
 
-blackMaterial.diffuseColor = Color3.Black() 
+blackMaterial.diffuseColor = new Color3(.1, .1, .1)
 
 yellowMaterial.diffuseColor = Color3.Yellow()
 
@@ -148,6 +149,7 @@ scene.fogMode = Scene.FOGMODE_LINEAR
 scene.fogColor = Color3.White()
 scene.fogStart = 6
 scene.fogEnd = fogEnd
+scene.fogStart = fogStart
 scene.clearColor = Color3.White()
   
 player.position.y = 50
@@ -424,7 +426,7 @@ function makeRuins(collapsable = true){
             let xPosition = (width/2 - 2.25) * (k === 0 ? -1 : 1)
             let zPosition = i * (foot.depth + 2) - (foot.depth/2) - .5
             let isStatic = Math.random() > .4 
-            let isSecondStatic = isStatic && Math.random() > .5
+            let isSecondStatic = isStatic && Math.random() > .2
     
             foot.position.set(xPosition, foot.height/2, zPosition)
             foot.rotate(Axis.Y, getRandomRotation())
@@ -968,8 +970,8 @@ function makeStart(){
     plant2.parent = group
 
     // UN
-    plant3.position.set(4, -DEPTH + 1.5, 9)
-    plant3.scaling.set(1.25, 1.25, 1.25)
+    plant3.position.set(4, -DEPTH - 1.5, 9)
+    plant3.scaling.set(1, 1, 1)
     plant3.rotate(Axis.Y, getRandomRotation()) 
     plant3.parent = group
 
@@ -980,7 +982,7 @@ function makeStart(){
     plant4.parent = group
 
     plant5.position.set(11, -DEPTH, 9)
-    plant5.scaling.set(2, 2, 2)
+    plant5.scaling.set(1, 1, 1)
     plant5.rotate(Axis.Y, getRandomRotation()) 
     plant5.parent = group
 
@@ -1020,6 +1022,7 @@ function start() {
     targetSpeed = 30  
     targetY = 0
     fogEnd = 30
+    fogStart = 14
 
     player.position.y = 4
     player.position.z = 16
@@ -1116,6 +1119,7 @@ scene.afterRender = () => {
     camera.beta += (targetBeta - camera.beta) / targetSpeed  
 
     scene.fogEnd += (fogEnd - scene.fogEnd) / 30 
+    scene.fogStart += (fogStart - scene.fogStart) / 30 
 }
 
 engine.runRenderLoop(() => {   
