@@ -15,7 +15,7 @@ let startAlpha = Math.PI / 2 // LEFT RIGHT
 let startBeta =  1.55 /// UP DOWN
 let startRadius = 0
 
-let targetSpeed = 15
+let targetSpeed = 40
 let logoOpacity = 1
  
 
@@ -139,7 +139,7 @@ hemisphere.groundColor = Color3.White()
 hemisphere.intensity = .5
  
 cameraTarget.isVisible = false 
-cameraTarget.position.z = 0
+cameraTarget.position.z = -18
 cameraTarget.position.y = 30
 
 scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
@@ -390,9 +390,7 @@ function getLogoScale(){
 
 function makeLogo(){
     logo = models.logo.clone()
-    let s = getLogoScale()
-
-    console.log(s)
+    let s = getLogoScale() 
 
     logo.scaling.set(s, s, s)
     //logo.billboardMode = Mesh.BILLBOARDMODE_ALL
@@ -403,7 +401,6 @@ function makeLogo(){
     logo.position.y = 1
 
 }
-
 
 function makeRuins(collapsable = true){
     const width = WIDTH  * 2 + 2
