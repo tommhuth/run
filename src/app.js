@@ -132,7 +132,7 @@ light.diffuse = Color3.White()
 light.intensity = .5
 
 hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
-hemisphere.groundColor = Color3.White() 
+hemisphere.groundColor =  new Color3(209/255, 242/255, 1) 
 hemisphere.intensity = .5
  
 cameraTarget.isVisible = false 
