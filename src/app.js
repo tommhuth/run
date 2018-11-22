@@ -2,7 +2,7 @@ import "babel-polyfill"
  
 import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, PhysicsRadialImpulseFalloff, Mesh } from "babylonjs"
 import { Color3, Vector3, Axis } from "babylonjs"
-import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper, Angle, PhysicsUpdraftMode, ParticleSystem, Texture, Color4 } from "babylonjs"  
+import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper, Angle } from "babylonjs"  
 import uuid from "uuid"
    
 const WIDTH = 4.5
@@ -92,8 +92,7 @@ let gameOver = false
 const canvas = document.getElementById("app")
 const engine = new Engine(canvas, true, undefined, true)
 const scene = new Scene(engine)
-const light = new DirectionalLight("directionalLight", new Vector3(9, -6, -4), scene) 
-const light2 = new DirectionalLight("directionalLight", new Vector3(-9, -6, 4), scene) 
+const light = new DirectionalLight("directionalLight", new Vector3(-2, -2, 2), scene)  
 const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
 const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
 const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1 }, scene)
@@ -131,9 +130,6 @@ scene.blockMaterialDirtyMechanism = true
 
 light.diffuse = Color3.White()
 light.intensity = .5
-
-light2.diffuse = Color3.White()
-light2.intensity = .2
 
 hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
 hemisphere.groundColor = Color3.White() 
