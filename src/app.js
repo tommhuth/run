@@ -38,7 +38,7 @@ const PathType = {
 }
 const PathSettings = {
     [PathType.HIGH_ISLAND]: { 
-        illegalNext: [PathType.GAP, PathType.RUINS, PathType.ISLAND,PathType.BRIDGE],
+        illegalNext: [PathType.GAP, PathType.RUINS, PathType.ISLAND, PathType.HIGH_ISLAND, PathType.BRIDGE],
         isLegal() {
             return true
         }
@@ -50,25 +50,25 @@ const PathSettings = {
         }
     }, 
     [PathType.ISLAND]: {
-        illegalNext: [PathType.BRIDGE, PathType.GAP, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.BRIDGE, PathType.GAP, PathType.HIGH_ISLAND, PathType.RUINS],
         isLegal() {
             return true
         }
     },
     [PathType.GAP]: {
-        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.ISLAND, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.GAP, PathType.BRIDGE, PathType.ISLAND, PathType.HIGH_ISLAND, PathType.RUINS],
         isLegal() {
             return true
         }
     },
     [PathType.BRIDGE]: {
-        illegalNext: [PathType.GAP, PathType.ISLAND, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.GAP, PathType.ISLAND, PathType.HIGH_ISLAND, PathType.RUINS],
         isLegal() {
             return true
         }
     },
     [PathType.RUINS]: {
-        illegalNext: [PathType.RUINS, PathType.GAP, PathType.ISLAND, PathType.HIGH_ISLAND],
+        illegalNext: [PathType.RUINS, PathType.GAP, PathType.ISLAND, PathType.HIGH_ISLAND, PathType.BRIDGE],
         isLegal() {
             return blocks.every(i => i.type !== PathType.RUINS)
         }
@@ -155,8 +155,7 @@ scene.clearColor = Color3.White()
 player.position.y = 50
 player.position.x = 0
 player.position.z = 0 
-player.material = new StandardMaterial(uuid.v4(), scene)
-player.material.diffuseColor = Color3.Blue()  
+player.material = blackMaterial
 player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
 player.registerBeforeRender(() => { 
     if (loading || gameOver || !started) {
@@ -165,7 +164,6 @@ player.registerBeforeRender(() => {
 
     let velocity = player.physicsImpostor.getLinearVelocity().clone() 
  
-
     velocity.z = player.position. y < -1 ? 0 : speed
     velocity.x = rotation / 90 * 4
     rotation *= .95
@@ -261,7 +259,7 @@ function load(){
                         mesh.material = blackMaterial
                         break
                     case "coin":
-                        mesh.material = yellowMaterial
+                        mesh.material = blackMaterial
                         break
                     default:
                         mesh.material = baseMaterial
@@ -410,6 +408,8 @@ function makeRuins(collapsable = true){
     const depth = DEPTH  * 2
     const group = makeGroup() 
     const path = clone(randomList("path"))
+    const path2 = clone("path2")
+    const path3 = clone("path2")
     const previousBlock = blocks[blocks.length -1]
     const wasLastFull = previousBlock && previousBlock.type === PathType.FULL
     const rocks = makeRocks(Math.random() * 4 + 1, width - 3, depth)
@@ -454,8 +454,24 @@ function makeRuins(collapsable = true){
         }
     }
     
-    resize(path, width, height, depth) 
+    resize(path, width, height, depth)  
+    resize(path2, 4, height, 6)
+    resize(path3, 4, height + 2, 4)
+
+    path2.rotate(Axis.Y, Math.random() * .15 * flip())
+    path2.position.x = 4.5 + Math.random() * 1.5
+    path2.position.y = -height/2 - Math.random() * 2
+    path2.position.z = Math.random() * 3 * flip()
+    
+    path3.rotate(Axis.Y, Math.random() * .15 * flip())
+    path3.position.x = -6
+    path3.position.y = -height/2  - Math.random() * 3
+    path3.position.z = 0  
+
+    path2.parent = group
+    path3.parent = group
      
+    path.rotate(Axis.Y, Math.random() * .15 * flip())
     path.position.set(0, -height/2, 0)  
     path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
@@ -757,7 +773,8 @@ function makeFull(obstacle = true) {
     }
 
     path.position.set(0, -height/2, 0) 
-    path.rotate(Axis.Y, Math.random() < .5 ? -Math.PI : 0)
+    path.rotate(Axis.Y, Math.random() < .5 ? -Math.PI : 0) 
+    path.rotate(Axis.Y, Math.random() * .2 * flip())
     path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
     path.parent = group
@@ -907,12 +924,14 @@ function init() {
 
     // init logo area
     makeStart() 
-    // actual game path
-    makeBlock(PathType.FULL, false)       
-    makeBlock(PathType.FULL, false)        
-    makeBlock(PathType.FULL, false)    
+    // actual game path 
     makeBlock(PathType.FULL, true)    
-    makeBlock(PathType.GAP, true)  
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.RUINS, false)  
+    makeBlock(PathType.FULL, true)      
+    makeBlock(PathType.RUINS, false)    
     makeBlock(PathType.FULL, true)       
     makeBlock(PathType.ISLAND, true)     
     makeBlock(PathType.FULL, true)          
