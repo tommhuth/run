@@ -386,10 +386,9 @@ function getLogoScale(){
 
 function makeLogo(){
     logo = models.logo.clone()
-    let s = getLogoScale() 
+    let scale = getLogoScale() 
 
-    logo.scaling.set(s, s, s)
-    //logo.billboardMode = Mesh.BILLBOARDMODE_ALL
+    logo.scaling.set(scale, scale, scale) 
     logo.rotate(Axis.X, Math.PI/2)
     logo.rotate(Axis.Y, -Math.PI/2)
     logo.position.z = 8
@@ -408,7 +407,14 @@ function makeRuins(collapsable = true){
     const path3 = clone("path2")
     const previousBlock = blocks[blocks.length -1]
     const wasLastFull = previousBlock && previousBlock.type === PathType.FULL
-    const rocks = makeRocks(Math.random() * 4 + 1, width - 3, depth)
+    const rocks = makeRocks(Math.random() * 4 + 1, width - 3, depth) 
+    const gravel = clone("gravel")
+    const scale = Math.random() * 1 + 1.5
+
+    resize(gravel, depth - scale, .4, depth - scale)
+    gravel.position.set(scale / 2 * flip(), -.05, 0)
+    gravel.rotate(Axis.Y, getRandomRotation())
+    gravel.parent = group  
  
     rocks.parent = group 
     
@@ -560,7 +566,7 @@ function makeBridge() {
         block.rotate(Axis.Y, getFlipRotation())
         block.rotate(Axis.Z, getFlipRotation())
         block.rotate(Axis.X, getFlipRotation())
-        block.position.y = -width/2
+        block.position.y = -height/2 - .05
         block.position.x = xPosition
         block.position.z = i - depth/2 + width/2 - .5
         block.physicsImpostor = new PhysicsImpostor(block, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
@@ -738,6 +744,7 @@ function makePlant(leafCount = 6, moves = true, radius = 360){
 
     return group
 }
+ 
 
 function makeFull(obstacle = true) { 
     const width = WIDTH  + Math.random() * 1.5
@@ -748,6 +755,7 @@ function makeFull(obstacle = true) {
     const previousBlock = blocks[blocks.length -1]
     const wasLastFull = previousBlock && [PathType.FULL, PathType.RUINS].includes(previousBlock.type)
     const rocks = makeRocks(Math.random() * 3 + 1, width - 1, depth)
+    const pathRotation = Math.random() * .2 * flip()
  
     resize(path, width, height, depth) 
      
@@ -757,10 +765,20 @@ function makeFull(obstacle = true) {
     group.position.y = 0
     group.position.z = getZPosition(depth) + (wasLastFull ? -.5 : 0)
 
+    if (Math.random() > .85) {
+        const gravel = clone("gravel")
+        const scale = Math.random() * .85 + .5
+    
+        resize(gravel, width - scale, .225, depth - scale)
+        gravel.position.set(0, -.05, 0)
+        gravel.rotate(Axis.Y, pathRotation)
+        gravel.parent = group 
+    }
+
     if (obstacle) { 
         const rock = clone("rock")
         const size = Math.random() * 1 + .5
-        
+         
         resize(rock, size, size, size)
         rock.position.set((width/2 - 1) * flip() * Math.random(), -Math.random() * .5 , 0)
         rock.rotation.set(getRandomRotation(), getRandomRotation(), getRandomRotation())
@@ -770,7 +788,7 @@ function makeFull(obstacle = true) {
 
     path.position.set(0, -height/2, 0) 
     path.rotate(Axis.Y, Math.random() < .5 ? -Math.PI : 0) 
-    path.rotate(Axis.Y, Math.random() * .2 * flip())
+    path.rotate(Axis.Y, pathRotation)
     path.physicsImpostor = new PhysicsImpostor(path, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
 
     path.parent = group
