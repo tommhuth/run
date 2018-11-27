@@ -765,6 +765,7 @@ function makeFull(obstacle = true) {
     group.position.y = 0
     group.position.z = getZPosition(depth) + (wasLastFull ? -.5 : 0)
 
+    /* no big gravel
     if (Math.random() > .85) {
         const gravel = clone("gravel")
         const scale = Math.random() * .85 + .5
@@ -773,7 +774,7 @@ function makeFull(obstacle = true) {
         gravel.position.set(0, -.05, 0)
         gravel.rotate(Axis.Y, pathRotation)
         gravel.parent = group 
-    }
+    }*/
 
     if (obstacle) { 
         const rock = clone("rock")
