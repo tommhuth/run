@@ -1,33 +1,20 @@
 import "babel-polyfill"
  
-import { Engine, Scene, HemisphericLight, DirectionalLight, PhysicsImpostor, CannonJSPlugin, ArcRotateCamera, PhysicsRadialImpulseFalloff, Mesh } from "babylonjs"
-import { Color3, Vector3, Axis } from "babylonjs"
-import { MeshBuilder, StandardMaterial, SceneLoader, PhysicsHelper, Angle } from "babylonjs"  
-import uuid from "uuid"
-   
+import { PhysicsImpostor, ArcRotateCamera } from "babylonjs"
+import {  Vector3, Axis } from "babylonjs"
+import { MeshBuilder  } from "babylonjs"  
+import { scene, canvas, setSceneRunning } from "./scene"
+import { blackMaterial } from "./materials"
+import { load, clone, models } from "./models/utils"  
+import {      StandardMaterial, Color3, Mesh, Angle } from "babylonjs"
+import {   PhysicsHelper, PhysicsRadialImpulseFalloff } from "babylonjs" 
+import { randomList, getFlipRotation, getRandomRotation, resize, flip } from "./utils"
+ 
+const ground = makeGroup() 
 const WIDTH = 4.5
 const HEIGHT = 6
 const DEPTH = 4
-const SPEHER_SIZE = .35
-const MAX_JUMP_DISTANCE = 3.5
-
-let startAlpha = Math.PI / 2 // LEFT RIGHT
-let startBeta =  1.55 /// UP DOWN
-let startRadius = 0
-
-let targetSpeed = 60
-let logoOpacity = 1
- 
-
-let targetAlpha = .75 // Math.PI / 2 + Math.PI / 4  left/right => left === closer to zero
-let targetBeta = 0 //Math.PI /2 - .25  // up down,,, up === closer to zero
-let targetRadius = 22 
-let targetY = 0
-let targetX = 0
-let targetZ = 8
-let fogEnd = 55
-let fogStart = 19
-
+const MAX_JUMP_DISTANCE = 3.5 
 const PathType = {
     FULL: "full",
     BRIDGE: "bridge",
@@ -74,292 +61,12 @@ const PathSettings = {
         }
     },
 }
-const models = {
-    rock: null,
-    rockFace: null,
-    stone: null,
-    // blah
-}
 
-let score = 0
-let blocks = []   
-let speed = 4
-let rotation = 0
-let loading = true
-let started = false  
-let gameOver = false
-
-const canvas = document.getElementById("app")
-const engine = new Engine(canvas, true, undefined, true)
-const scene = new Scene(engine)
-const light = new DirectionalLight("directionalLight", new Vector3(-2, -2, 2), scene)  
-const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
-const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
-const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1 }, scene)
-const camera =  new ArcRotateCamera("camera", startAlpha, startBeta, startRadius, cameraTarget, scene) 
-const physicsPlugin = new CannonJSPlugin(false, 8) 
-const ground = makeGroup()
-
-const plantMaterial = new StandardMaterial()
-const baseMaterial = new StandardMaterial()
-const redMaterial = new StandardMaterial()
-const yellowMaterial = new StandardMaterial()
-const blackMaterial = new StandardMaterial()
-
-redMaterial.diffuseColor = Color3.Red()
-
-blackMaterial.diffuseColor = new Color3(.1, .1, .1)
-
-yellowMaterial.diffuseColor = Color3.Yellow()
-
-baseMaterial.diffuseColor = Color3.White()
-baseMaterial.roughness = .5
-
-plantMaterial.diffuseColor = new Color3(209/255, 252/255, 241/255)
-///plantMaterial.emissiveColor = new Color3(22/255, 239/255, 255/255)
-plantMaterial.roughness = .1
- 
-engine.renderEvenInBackground = false
-engine.setHardwareScalingLevel(.75)
-
-scene.autoClear = false
-scene.autoClearDepthAndStencil = false
-scene.blockMaterialDirtyMechanism = true
- 
-// light
-
-light.diffuse = Color3.White()
-light.intensity = .5
-
-hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
-hemisphere.groundColor =  new Color3(209/255, 242/255, 1) 
-hemisphere.intensity = .5
- 
-cameraTarget.isVisible = false 
-cameraTarget.position.z = -18
-cameraTarget.position.y = 30
-
-scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
-scene.getPhysicsEngine().setTimeStep(1 / 45)
-scene.fogMode = Scene.FOGMODE_LINEAR
-scene.fogColor = Color3.White()
-scene.fogStart = 6
-scene.fogEnd = fogEnd
-scene.fogStart = fogStart
-scene.clearColor = Color3.White()
-  
-player.position.y = 50
-player.position.x = 0
-player.position.z = 0 
-player.material = blackMaterial
-player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
-player.registerBeforeRender(() => { 
-    if (loading || gameOver || !started) {
-        return
-    }
-
-    let velocity = player.physicsImpostor.getLinearVelocity().clone() 
- 
-    velocity.z = player.position. y < -1 ? 0 : speed
-    velocity.x = rotation / 90 * 4
-    rotation *= .95
-    player.physicsImpostor.setLinearVelocity(velocity)
-
-    ground.position.z = player.position.z
-})
-
-function makeRocks(amount, width, depth){
-    let group = makeGroup()
-
-    for(let i = 0; i < amount; i++) {
-        let rock = clone(randomList("rock", "rock2"))
-        let scaling = Math.random() * 1.5 + .5
-        let scalingY = Math.max(Math.random() * 1.5 + .5, .85)
-
-        rock.scaling.set(scaling, scalingY, scaling)
-        rock.rotate(Axis.Y, getRandomRotation())
-        rock.rotate(Axis.X, Math.random() * .25 * flip())
-        rock.rotate(Axis.Z, Math.random() * .25 * flip())
-        rock.position.x = (width/2 + Math.random() * 8) * flip()
-        rock.position.y = 0
-        rock.position.z = depth * Math.random() / 2 * flip()
-        rock.parent = group
-    }
-
-    group.position.y = -DEPTH - .75
-
-    return group
-}
- 
-function makeFog(){
-    const max = 10
-    const fogMaterial = new StandardMaterial()
-    const wrap = MeshBuilder.CreateBox("", { size: 200, sideOrientation: Mesh.BACKSIDE }, scene)
-  
-    wrap.material = fogMaterial 
-    wrap.position.set(0,0,0)
-    wrap.parent = ground
-
-    fogMaterial.diffuseColor = Color3.White() 
-    fogMaterial.roughness = 0
-    fogMaterial.emissiveColor = Color3.White()
-    fogMaterial.specularPower = 0
-    fogMaterial.fogEnabled = true
-
-    for (let i = 0; i < max; i++) { 
-        const layer = MeshBuilder.CreateGround(1, { width: 30, height: 50, subdivisions: 1 }, scene)
-
-        layer.material = fogMaterial
-        layer.position.x = 0
-        layer.position.z = 0
-        layer.position.y =  -i * .15
-        layer.visibility = .25
-
-        layer.parent = ground
-    }
-
-    ground.position.y = -DEPTH  
-}
- 
-function load(){  
-    let allResoucers = Promise.all([
-        SceneLoader.LoadAssetContainerAsync("world.babylon")
-    ])
-
-    allResoucers
-        .then(scenes => {
-            let meshes = [] 
-
-            for (let scene of scenes) {
-                meshes.push(...scene.meshes)
-            }
-
-            return meshes
-        })
-        .then(meshes => { 
-            for (let mesh of meshes) { 
-                let { extendSize } = mesh.getBoundingInfo().boundingBox
-
-                mesh.width = extendSize.x  * 2
-                mesh.height = extendSize.y * 2
-                mesh.depth = extendSize.z * 2
-                mesh.material = baseMaterial
-                mesh.convertToFlatShadedMesh() 
-
-                switch (mesh.id) {
-                    case "plant":
-                    case "leaf":
-                        mesh.material = plantMaterial
-                        break 
-                    case "logo":
-                        mesh.material = blackMaterial
-                        break
-                    case "coin":
-                        mesh.material = blackMaterial
-                        break
-                    default:
-                        mesh.material = baseMaterial
-                }
-
-                models[mesh.id] = mesh
-            } 
-
-            init()    
-            loading = false
-        })
-        .catch(e => {
-            console.error(e)
-        })
-}
- 
-load()
-
-function getZPosition(currentDepth = 0, type) {
-    const previousBlock = blocks[blocks.length - 1]
-
-    if (previousBlock) {
-        if (previousBlock.type === type && type === PathType.ISLAND) {
-            return previousBlock.position.z + previousBlock.islandSize/2
-        }
-
-        return previousBlock.position.z + previousBlock.depth / 2 + currentDepth / 2  
-    }
-
-    return 0
-}
-
-function flip() {
-    return Math.random() > .5 ? 1 : -1
-}
-
-function clone(model) {
-    let instance = models[model].createInstance()
-
-    instance.width = models[model].width
-    instance.height = models[model].height
-    instance.depth = models[model].depth
-
-    return instance
-}
-
-function resize(mesh, width, height, depth) {
-    mesh.scaling.set(1/mesh.width * width, 1/mesh.height * height, 1/mesh.depth * depth)
-}
-  
-function randomList(...args) {
-    return args[Math.floor(Math.random() * args.length)]
-}
-
-function makeGroup(visible = false){
-    const mesh = MeshBuilder.CreateGround("", { width: 1, height: 1, subdivisions: 1 }, scene)
-
-    if (visible) { 
-        mesh.visibility = .0001
-    } else {
-        mesh.isVisible = false 
-    }
-            
-    return mesh
-}
-
-function getRandomRotation(){
-    return Math.PI * 2 * Math.random() * flip()
-}
-
-function getRandomBlock(){
-    let types = Object.values(PathType) 
-  
-    return types[Math.floor(Math.random() * types.length)]
-}
-
-function makeBlock(forceType, ...params) { 
-    let type = forceType || getRandomBlock()
-    let previousBlock = blocks[blocks.length - 1]
-
-    if (previousBlock && !forceType) {  
-        while (!PathSettings[type].isLegal(type) || (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type))) {
-            console.log("cant use", type, PathSettings[type].isLegal(type))
-            type = getRandomBlock()
-        }
-    } 
-
-    switch (type) {
-        case PathType.FULL:
-            return makeFull(...params)
-        case PathType.GAP:
-            return makeGap(...params)
-        case PathType.BRIDGE:
-            return makeBridge(...params)
-        case PathType.ISLAND:
-            return makeIsland(...params) 
-        case PathType.RUINS:
-            return makeRuins(...params)   
-        case PathType.HIGH_ISLAND:
-            return makeHighIsland(...params)  
-    }
-} 
-
+let blocks = [] 
 let logo
+
+export { PathType }
+
 
 function getLogoScale(){
     if (window.matchMedia("(min-width: 1900px)").matches) {
@@ -384,7 +91,103 @@ function getLogoScale(){
     return 1.35
 }
 
-function makeLogo(){
+export function makeStart(){
+    const group = makeGroup()
+    const depth = 30
+    const size = 4
+    const height = HEIGHT
+    const island1 = clone("island")
+    const island2 = clone("island2")
+    const island3 = clone("island3")
+    const plant1 = makePlants(3)
+    const plant2 = makePlants(2)
+    const plant3 = makePlant(7, false)
+    const plant4 = makePlant(6, false)
+    const plant5 = makePlant(6, false)
+    const rocks = [
+        new Vector3(3, -DEPTH - 1, 1),
+        new Vector3(-3, -DEPTH - 1, 4),
+        new Vector3(1, -DEPTH - 1, 9),
+        new Vector3(-8, -DEPTH - 1, 3),
+        new Vector3(4, -DEPTH - 1, 6),
+        new Vector3(1, -DEPTH - 1, 1),
+        new Vector3(1, -DEPTH - 1, 18),
+        new Vector3(4, -DEPTH -1 , 12),
+        new Vector3(-12, -DEPTH - 1, 5),
+        new Vector3(8, -DEPTH - 1, 2),
+        new Vector3(12, -DEPTH - 1, 5),
+    ]
+
+    for (let i = 0; i < rocks.length; i++) {
+        const rock = clone(randomList("rock", "rock2"))
+        const scale = i/rocks.length + 1
+
+        rock.position = rocks[i]
+        rock.scaling.set(scale,scale,scale)
+        rock.rotate(Axis.Y, getRandomRotation())
+        rock.parent = group
+    }
+
+    resize(island1, size + 1,height, size + 1)
+    resize(island2, size - 1, height, size - .8)
+    resize(island3, size ,height, size) 
+
+    plant1.position.set(-7, -DEPTH, 7)
+    plant1.scaling.set(1.75, 1, 1.75)
+    plant1.parent = group
+
+    plant2.position.set(8, -DEPTH, 10)
+    plant2.scaling.set(1.5, 1, 1.5)
+    plant2.rotate(Axis.Y, getRandomRotation()) 
+    plant2.parent = group
+
+    // UN
+    plant3.position.set(4, -DEPTH - 1.5, 9)
+    plant3.scaling.set(1, 1, 1)
+    plant3.rotate(Axis.Y, getRandomRotation()) 
+    plant3.parent = group
+
+    //RU
+    plant4.position.set(-3, -DEPTH - 2 , 2)
+    plant4.scaling.set(1, 1, 1)
+    plant4.rotate(Axis.Y, getRandomRotation()) 
+    plant4.parent = group
+
+    plant5.position.set(11, -DEPTH, 9)
+    plant5.scaling.set(1, 1, 1)
+    plant5.rotate(Axis.Y, getRandomRotation()) 
+    plant5.parent = group
+
+    island1.position.set(.5, -height + 1, 5) 
+    island2.position.set(-2, -height + .5, 8) 
+    island3.position.set(1, -height, 12) 
+
+    island2.rotate(Axis.X, .1)
+    island2.rotate(Axis.Z, .1)
+
+    island1.parent = group
+    island2.parent = group
+    island3.parent = group
+
+    rocks.parent = group
+    
+    group.position.z = getZPosition(depth) 
+    
+    blocks.push({
+        width: WIDTH,
+        height: HEIGHT,
+        depth, 
+        type: PathType.GAP,
+        get position() {
+            return group.position
+        },
+        dispose() {
+            group.dispose()
+        }
+    })
+}
+
+export function makeLogo(){
     logo = models.logo.clone()
     let scale = getLogoScale() 
 
@@ -396,8 +199,29 @@ function makeLogo(){
     logo.position.y = 1
 
 }
+ 
+export function init() {  
+    // setup
+    makeLogo()
+    makeFog()    
 
-function makeRuins(collapsable = true){
+    // init logo area
+    makeStart() 
+    // actual game path 
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.FULL, true)    
+    makeBlock(PathType.RUINS, false)  
+    makeBlock(PathType.FULL, true)      
+    makeBlock(PathType.RUINS, false)    
+    makeBlock(PathType.FULL, true)       
+    makeBlock(PathType.ISLAND, true)     
+    makeBlock(PathType.FULL, true)          
+    makeBlock(PathType.ISLAND, false)        
+}
+
+export function makeRuins(collapsable = true){
     const width = WIDTH  * 2 + 2
     const height = HEIGHT  
     const depth = DEPTH  * 2
@@ -504,7 +328,7 @@ function makeRuins(collapsable = true){
     }) 
 }
 
-function explode(position, radius, strength, delay = 0, debug = false) {
+export function explode(position, radius, strength, delay = 0, debug = false) {
     setTimeout(() => {
         const physicsHelper = new PhysicsHelper(scene)  
         const explosion = physicsHelper.applyRadialExplosionForce(position, radius, strength, PhysicsRadialImpulseFalloff.Linear) 
@@ -516,13 +340,7 @@ function explode(position, radius, strength, delay = 0, debug = false) {
     }, delay)
 }
 
-function getFlipRotation(){
-    const rotations = [0, Math.PI, -Math.PI, Math.PI * 2, Math.PI * -2]
-    
-    return rotations[Math.floor(Math.random() * rotations.length) ]
-}
-
-function makeBridge() { 
+export function makeBridge() { 
     const bridgeBlocks = []
     const depth = Math.ceil(Math.random() * (DEPTH + 2)) + 4
     const height = .65
@@ -613,7 +431,7 @@ function makeBridge() {
     }) 
 }
 
-function makePlants(amount){
+export function makePlants(amount){
     const group = makeGroup()
     const basePlant = clone("plant")
     const baseScale = Math.random() + .25
@@ -648,7 +466,7 @@ function makePlants(amount){
     return group
 }   
 
-function makeIsland(forcePlant = false) {   
+export function makeIsland(forcePlant = false) {   
     const lastBlock = blocks[blocks.lenght-1]
     const lastWasIsland = lastBlock && lastBlock.type === PathType.ISLAND
 
@@ -707,7 +525,7 @@ function makeIsland(forcePlant = false) {
     })    
 }
 
-function makePlant(leafCount = 6, moves = true, radius = 360){
+export function makePlant(leafCount = 6, moves = true, radius = 360){
     let group = makeGroup(moves) 
     let leafs = []
 
@@ -744,9 +562,8 @@ function makePlant(leafCount = 6, moves = true, radius = 360){
 
     return group
 }
- 
 
-function makeFull(obstacle = true) { 
+export function makeFull(obstacle = true) { 
     const width = WIDTH  + Math.random() * 1.5
     const height = HEIGHT  
     const depth = DEPTH 
@@ -764,17 +581,6 @@ function makeFull(obstacle = true) {
     group.position.x = 0
     group.position.y = 0
     group.position.z = getZPosition(depth) + (wasLastFull ? -.5 : 0)
-
-    /* no big gravel
-    if (Math.random() > .85) {
-        const gravel = clone("gravel")
-        const scale = Math.random() * .85 + .5
-    
-        resize(gravel, width - scale, .225, depth - scale)
-        gravel.position.set(0, -.05, 0)
-        gravel.rotate(Axis.Y, pathRotation)
-        gravel.parent = group 
-    }*/
 
     if (obstacle) { 
         const rock = clone("rock")
@@ -809,7 +615,7 @@ function makeFull(obstacle = true) {
     }) 
 }
 
-function makeGap() {  
+export function makeGap() {  
     const group = makeGroup()
     const depth = Math.max(Math.random() * MAX_JUMP_DISTANCE, 2)  
     
@@ -829,7 +635,7 @@ function makeGap() {
     })   
 }
  
-function makeHighIsland() {  
+export function makeHighIsland() {  
     const group = makeGroup()
     const depth =  MAX_JUMP_DISTANCE * 4.5
     const islands = []
@@ -919,8 +725,8 @@ function makeHighIsland() {
                 coin.rotate(Axis.Y, coin.rotation.y + .075)
 
                 if (distance < .5 ){
-                    score++
-                    console.log("score", score)
+                    // score++
+                    //console.log("score", score)
                     coin.dispose()
                     coins = coins.filter(i => i !== coin)
                 }
@@ -931,123 +737,183 @@ function makeHighIsland() {
         }
     })   
 }
- 
-function init() {  
-    // setup
-    makeLogo()
-    makeFog()    
 
-    // init logo area
-    makeStart() 
-    // actual game path 
-    makeBlock(PathType.FULL, true)    
-    makeBlock(PathType.FULL, true)    
-    makeBlock(PathType.FULL, true)    
-    makeBlock(PathType.FULL, true)    
-    makeBlock(PathType.RUINS, false)  
-    makeBlock(PathType.FULL, true)      
-    makeBlock(PathType.RUINS, false)    
-    makeBlock(PathType.FULL, true)       
-    makeBlock(PathType.ISLAND, true)     
-    makeBlock(PathType.FULL, true)          
-    makeBlock(PathType.ISLAND, false)        
-}
+export function makeRocks(amount, width, depth){
+    let group = makeGroup()
 
-function makeStart(){
-    const group = makeGroup()
-    const depth = 30
-    const size = 4
-    const height = HEIGHT
-    const island1 = clone("island")
-    const island2 = clone("island2")
-    const island3 = clone("island3")
-    const plant1 = makePlants(3)
-    const plant2 = makePlants(2)
-    const plant3 = makePlant(7, false)
-    const plant4 = makePlant(6, false)
-    const plant5 = makePlant(6, false)
-    const rocks = [
-        new Vector3(3, -DEPTH - 1, 1),
-        new Vector3(-3, -DEPTH - 1, 4),
-        new Vector3(1, -DEPTH - 1, 9),
-        new Vector3(-8, -DEPTH - 1, 3),
-        new Vector3(4, -DEPTH - 1, 6),
-        new Vector3(1, -DEPTH - 1, 1),
-        new Vector3(1, -DEPTH - 1, 18),
-        new Vector3(4, -DEPTH -1 , 12),
-        new Vector3(-12, -DEPTH - 1, 5),
-        new Vector3(8, -DEPTH - 1, 2),
-        new Vector3(12, -DEPTH - 1, 5),
-    ]
+    for (let i = 0; i < amount; i++) {
+        let rock = clone(randomList("rock", "rock2"))
+        let scaling = Math.random() * 1.5 + .5
+        let scalingY = Math.max(Math.random() * 1.5 + .5, .85)
 
-    for (let i = 0; i < rocks.length; i++) {
-        const rock = clone(randomList("rock", "rock2"))
-        const scale = i/rocks.length + 1
-
-        rock.position = rocks[i]
-        rock.scaling.set(scale,scale,scale)
+        rock.scaling.set(scaling, scalingY, scaling)
         rock.rotate(Axis.Y, getRandomRotation())
+        rock.rotate(Axis.X, Math.random() * .25 * flip())
+        rock.rotate(Axis.Z, Math.random() * .25 * flip())
+        rock.position.x = (width/2 + Math.random() * 8) * flip()
+        rock.position.y = 0
+        rock.position.z = depth * Math.random() / 2 * flip()
         rock.parent = group
     }
 
-    resize(island1, size + 1,height, size + 1)
-    resize(island2, size - 1, height, size - .8)
-    resize(island3, size ,height, size) 
+    group.position.y = -DEPTH - .75
 
-    plant1.position.set(-7, -DEPTH, 7)
-    plant1.scaling.set(1.75, 1, 1.75)
-    plant1.parent = group
-
-    plant2.position.set(8, -DEPTH, 10)
-    plant2.scaling.set(1.5, 1, 1.5)
-    plant2.rotate(Axis.Y, getRandomRotation()) 
-    plant2.parent = group
-
-    // UN
-    plant3.position.set(4, -DEPTH - 1.5, 9)
-    plant3.scaling.set(1, 1, 1)
-    plant3.rotate(Axis.Y, getRandomRotation()) 
-    plant3.parent = group
-
-    //RU
-    plant4.position.set(-3, -DEPTH - 2 , 2)
-    plant4.scaling.set(1, 1, 1)
-    plant4.rotate(Axis.Y, getRandomRotation()) 
-    plant4.parent = group
-
-    plant5.position.set(11, -DEPTH, 9)
-    plant5.scaling.set(1, 1, 1)
-    plant5.rotate(Axis.Y, getRandomRotation()) 
-    plant5.parent = group
-
-    island1.position.set(.5, -height + 1, 5) 
-    island2.position.set(-2, -height + .5, 8) 
-    island3.position.set(1, -height, 12) 
-
-    island2.rotate(Axis.X, .1)
-    island2.rotate(Axis.Z, .1)
-
-    island1.parent = group
-    island2.parent = group
-    island3.parent = group
-
-    rocks.parent = group
-    
-    group.position.z = getZPosition(depth) 
-    
-    blocks.push({
-        width: WIDTH,
-        height: HEIGHT,
-        depth, 
-        type: PathType.GAP,
-        get position() {
-            return group.position
-        },
-        dispose() {
-            group.dispose()
-        }
-    })
+    return group
 }
+ 
+export function makeFog(){
+    const max = 10
+    const fogMaterial = new StandardMaterial()
+    const wrap = MeshBuilder.CreateBox("", { size: 200, sideOrientation: Mesh.BACKSIDE }, scene)
+  
+    wrap.material = fogMaterial 
+    wrap.position.set(0,0,0)
+    wrap.parent = ground
+
+    fogMaterial.diffuseColor = Color3.White() 
+    fogMaterial.roughness = 0
+    fogMaterial.emissiveColor = Color3.White()
+    fogMaterial.specularPower = 0
+    fogMaterial.fogEnabled = true
+
+    for (let i = 0; i < max; i++) { 
+        const layer = MeshBuilder.CreateGround(1, { width: 30, height: 50, subdivisions: 1 }, scene)
+
+        layer.material = fogMaterial
+        layer.position.x = 0
+        layer.position.z = 0
+        layer.position.y =  -i * .15
+        layer.visibility = .25
+
+        layer.parent = ground
+    }
+
+    ground.position.y = -DEPTH  
+}
+
+export function getZPosition(currentDepth = 0, type) {
+    const previousBlock = blocks[blocks.length - 1]
+
+    if (previousBlock) {
+        if (previousBlock.type === type && type === PathType.ISLAND) {
+            return previousBlock.position.z + previousBlock.islandSize/2
+        }
+
+        return previousBlock.position.z + previousBlock.depth / 2 + currentDepth / 2  
+    }
+
+    return 0
+}
+ 
+export function makeGroup(visible = false){
+    const mesh = MeshBuilder.CreateGround("", { width: 1, height: 1, subdivisions: 1 }, scene)
+
+    if (visible) { 
+        mesh.visibility = .0001
+    } else {
+        mesh.isVisible = false 
+    }
+            
+    return mesh
+}
+ 
+export function getRandomBlock(){
+    let types = Object.values(PathType) 
+  
+    return types[Math.floor(Math.random() * types.length)]
+}
+
+export function makeBlock(forceType, ...params) { 
+    let type = forceType || getRandomBlock()
+    let previousBlock = blocks[blocks.length - 1]
+
+    if (previousBlock && !forceType) {  
+        while (!PathSettings[type].isLegal(type) || (PathSettings[previousBlock.type].illegalNext.length && PathSettings[previousBlock.type].illegalNext.includes(type))) {
+            //console.log("cant use", type, PathSettings[type].isLegal(type))
+            type = getRandomBlock()
+        }
+    } 
+
+    switch (type) {
+        case PathType.FULL:
+            return makeFull(...params)
+        case PathType.GAP:
+            return makeGap(...params)
+        case PathType.BRIDGE:
+            return makeBridge(...params)
+        case PathType.ISLAND:
+            return makeIsland(...params) 
+        case PathType.RUINS:
+            return makeRuins(...params)   
+        case PathType.HIGH_ISLAND:
+            return makeHighIsland(...params)  
+    }
+} 
+
+load().then(() => {
+    loading = false
+    init()
+})
+      
+const SPEHER_SIZE = .35 
+
+let startAlpha = Math.PI / 2 // LEFT RIGHT
+let startBeta =  1.55 /// UP DOWN
+let startRadius = 0
+
+let targetSpeed = 60
+let logoOpacity = 1
+ 
+
+let targetAlpha = .75 // Math.PI / 2 + Math.PI / 4  left/right => left === closer to zero
+let targetBeta = 0 //Math.PI /2 - .25  // up down,,, up === closer to zero
+let targetRadius = 22 
+let targetY = 0
+let targetX = 0
+let targetZ = 8 
+
+ 
+
+let score = 0 
+let speed = 4
+let rotation = 0
+let loading = true
+let started = false  
+let gameOver = false
+ 
+const player = MeshBuilder.CreateSphere("player", { segments: 16, diameter: SPEHER_SIZE }, scene)
+const cameraTarget = MeshBuilder.CreateBox("cameraTarget", { size: .1 }, scene)
+const camera =  new ArcRotateCamera("camera", startAlpha, startBeta, startRadius, cameraTarget, scene) 
+  
+ 
+cameraTarget.isVisible = false 
+cameraTarget.position.z = -18
+cameraTarget.position.y = 30
+ 
+  
+player.position.y = 50
+player.position.x = 0
+player.position.z = 0 
+player.material = blackMaterial
+player.physicsImpostor = new PhysicsImpostor(player, PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
+player.registerBeforeRender(() => { 
+    if (loading || gameOver || !started) {
+        return
+    }
+
+    let velocity = player.physicsImpostor.getLinearVelocity().clone() 
+ 
+    velocity.z = player.position. y < -1 ? 0 : speed
+    velocity.x = rotation / 90 * 4
+    rotation *= .95
+    player.physicsImpostor.setLinearVelocity(velocity)
+
+    ground.position.z = player.position.z
+})
+
+
+
+
 
 function start() { 
     targetAlpha = -Math.PI / 2 
@@ -1055,17 +921,14 @@ function start() {
     targetRadius = 12
     targetSpeed = 30  
     targetY = 0
-    fogEnd = 30
-    fogStart = 14
+
+    setSceneRunning() 
 
     player.position.y = 4
     player.position.z = 16
     player.physicsImpostor.setMass(1)
 
-    logoOpacity = 0
-
-    //logo.billboardMode = Mesh.BILLBOARDMODE_NONE
-    //logoDistance = -2
+    logoOpacity = 0 
 }
 
 canvas.addEventListener("keydown", e => {
@@ -1128,14 +991,7 @@ scene.afterRender = () => {
             block.dispose() 
             makeBlock() 
         } 
-    }
-
-    /*
-    let target = camera.getFrontPosition(logoDistance)
-    
-    logo.position.x += (target.x - logo.position.x) / 7
-    logo.position.y += (target.y - logo.position.y) / 7
-    logo.position.z += (target.z - logo.position.z) / 7*/
+    } 
 
     logo.visibility += (logoOpacity - logo.visibility) / 16
     logo.position.z += ((logoOpacity === 1 ? 8 : 32) - logo.position.z) / 16
@@ -1151,11 +1007,6 @@ scene.afterRender = () => {
     camera.radius += (targetRadius - camera.radius ) / targetSpeed / 2
     camera.alpha += (targetAlpha - camera.alpha) / targetSpeed  
     camera.beta += (targetBeta - camera.beta) / targetSpeed  
-
-    scene.fogEnd += (fogEnd - scene.fogEnd) / 30 
-    scene.fogStart += (fogStart - scene.fogStart) / 30 
+ 
 }
 
-engine.runRenderLoop(() => {   
-    scene.render()  
-})
