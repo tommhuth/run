@@ -24,21 +24,18 @@ export default class PathwayBlock {
     get position() {
         return this.group.position
     }
-    makeFloor(width, depth, position, box = true){
+    makeFloor(width, depth, position){
         let floor 
-
-        if (box) {
-            floor = MeshBuilder.CreateBox(1, { width, depth, height: .25 }, this.scene)
-        } else {
-            floor = MeshBuilder.CreateCylinder(1, { diameter: width, height: .25, tessellation: 10 }, this.scene)
-        }
+ 
+        floor = MeshBuilder.CreateBox(1, { width, depth, height: .25 }, this.scene)
+       
          
-        let mat = new StandardMaterial(1, this.scene )
+        /*let mat = new StandardMaterial(1, this.scene )
         
         mat.diffuseColor = Color3.Red()
-        floor.material = mat
+        floor.material = mat*/
 
-        floor.visibility = .25
+        floor.isVisible = false
 
         floor.position = position
         floor.position.y -= .125

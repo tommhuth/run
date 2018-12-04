@@ -53,8 +53,7 @@ export default class Island extends PathwayBlock {
         this.makeFloor(
             islandSize - .25, 
             islandSize - .5, 
-            new Vector3(island.position.x, type === "island3" ? -.3 : 0, gap1 + islandSize / 2),
-            true
+            new Vector3(island.position.x, type === "island3" ? -.3 : 0, gap1 + islandSize / 2)
         )
 
         if (leftPlant) {

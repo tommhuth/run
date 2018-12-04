@@ -5,8 +5,8 @@ import uuid from "uuid"
 export default class Player {
     score = 0  
     rotation = 0
-    speed = 4
-    previousY = 0
+    targetRotation = 0
+    speed = 4 
     jumping = true
     allowsJumping = true
 
@@ -19,37 +19,36 @@ export default class Player {
         this.mesh = mesh
         this.scene = scene 
 
-        window.addEventListener("deviceorientation", (e) => {
-            this.rotation = e.gamma
-        }, false)
-
-        document.addEventListener("click", (e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            
-            if (!this.jumping && this.allowsJumping) {
-                this.jumping = true
-                this.allowsJumping = false 
-                setTimeout(() => {
-                    this.allowsJumping = true
-                    console.log("allows is true")
-                }, 500) 
-                //console.log("jumping", this.jumping)
-                this.mesh.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), this.mesh.position)  
-            }
-        })
-        document.addEventListener("keydown", e => {
-            if(e.keyCode === 68){
-                this.speed = 4
-            }
-            if(e.keyCode === 65){
-                this.speed = -4
-            }
-        })
+        window.addEventListener("deviceorientation", (e) => this.handleDeviceRotation(e), false)
+        window.addEventListener("mousemove", (e) => this.handleMouseMove(e), false)
+        window.addEventListener("click", (e) => this.handleClick(e))
     }
 
     get position() {
         return this.mesh.position
+    }
+
+    handleMouseMove(e) { 
+        // normalize to 90 deg!
+        this.targetRotation = (e.pageX - window.innerWidth / 2) / 2
+    }
+    handleDeviceRotation(e) {
+        this.targetRotation = e.gamma
+    }
+
+    handleClick(e){
+        e.preventDefault()
+        e.stopPropagation()
+        
+        if (!this.jumping && this.allowsJumping) {
+            this.jumping = true
+            this.allowsJumping = false 
+            this.mesh.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), this.mesh.position)  
+
+            setTimeout(() => {
+                this.allowsJumping = true
+            }, 400)  
+        }
     }
 
     getAbsolutePosition() {
@@ -59,12 +58,12 @@ export default class Player {
     beforeRender(pathway) {   
         const velocity = this.mesh.physicsImpostor.getLinearVelocity().clone() 
     
-        velocity.z = this.speed //this.position.y < -1 ? 0 : this.speed
+        velocity.z = this.position.y < -1 ? 0 : this.speed
         velocity.x = this.rotation / 90 * 4
 
         this.mesh.physicsImpostor.setLinearVelocity(velocity)
 
-        this.rotation *= .95  
+        this.rotation += (this.targetRotation - this.rotation) / 4
  
         for (let block of pathway.path) { 
             let isWithin = this.mesh.position.z >= block.group.position.z && this.mesh.position.z <= block.group.position.z + block.depth
@@ -74,7 +73,6 @@ export default class Player {
                     if (child.intersectsMesh(this.mesh, true)) {
                         this.jumping = false
                         break
-                        //console.log("jumping", this.jumping)
                     }
                 }
             }

@@ -17,8 +17,6 @@ async function start() {
         const camera = new Camera(scene, player)
         const pathway = new Pathway(scene, player) 
         const world = new World(scene)
-
-        window.path = pathway
             
         engine.runRenderLoop(() => {
             player.beforeRender(pathway)

@@ -55,8 +55,7 @@ export default class HighIsland extends PathwayBlock {
             this.makeFloor(
                 diameter - .25, 
                 diameter - .5, 
-                new Vector3(island.position.x, island.position.y + height/2, island.position.z), 
-                true
+                new Vector3(island.position.x, island.position.y + height/2, island.position.z)
             )
             
             if (plant) { 
