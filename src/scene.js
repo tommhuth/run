@@ -8,7 +8,7 @@ const state = {
 }
 
 export default function() {
-    const physicsPlugin = new CannonJSPlugin(false, 8) 
+    const physicsPlugin = new CannonJSPlugin(false, 10) 
     const canvas = document.getElementById("app")
     const engine = new Engine(canvas, true, undefined, true)
     const scene = new Scene(engine)
