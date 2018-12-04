@@ -16,6 +16,8 @@ export default class Camera extends ArcRotateCamera {
         this.player = player
         this.scene = scene 
         this.target2 = target
+        this.maxZ = 75
+        this.minZ = -15
     }
     beforeRender() { 
         this.target2.position.z = this.player.position.z
