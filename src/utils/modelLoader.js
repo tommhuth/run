@@ -1,6 +1,4 @@
-
-import { SceneLoader } from "babylonjs"  
-import { blackMaterial, plantMaterial, baseMaterial } from "../materials"
+import { SceneLoader } from "babylonjs"   
 
 const models = {}
 
@@ -23,9 +21,10 @@ function load() {
                 mesh.width = extendSize.x  * 2
                 mesh.height = extendSize.y * 2
                 mesh.depth = extendSize.z * 2
-                mesh.material = baseMaterial
+                //mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
 
+                /*
                 switch (mesh.id) {
                     case "plant":
                     case "leaf":
@@ -40,7 +39,7 @@ function load() {
                     default:
                         mesh.material = baseMaterial
                 }
-
+                */
                 models[mesh.id] = mesh
             }  
         })

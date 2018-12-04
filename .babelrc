@@ -1,23 +1,15 @@
 {
-    "presets": [
-        "stage-2",
+    "presets": [ 
         [
-            "env",
+            "@babel/preset-env",
             {
-                "targets": {
-                    "browsers": [
-                        "last 1 versions",
-                        "not ie 5-11",
-                        "not android <= 5"
-                    ]
-                },
+                "targets": "last 1 version, not ie > 0, not android > 0", 
                 "debug": true,
-                "useBuiltIns": true,
-                "modules": false
+                "useBuiltIns": "entry"
             }
         ]
     ],
     "plugins": [
-        "transform-es2015-modules-commonjs" 
+        "@babel/plugin-proposal-class-properties"
     ]
 }

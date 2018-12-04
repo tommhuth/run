@@ -5,12 +5,10 @@
         "node": true,
         "mocha": true
     },
+    "parser": "babel-eslint",
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 8,
-        "ecmaFeatures": {
-            "experimentalObjectRestSpread": true
-        },
+        "ecmaVersion": 9,
         "sourceType": "module"
     },
     "rules": {
@@ -29,5 +27,8 @@
             "error",
             "never"
         ]
-    }
+    },
+    "plugins": [
+        "babel"
+    ]
 }
