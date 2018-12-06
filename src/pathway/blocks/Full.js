@@ -25,7 +25,6 @@ export default class Full extends PathwayBlock {
         rocks.position.y = -height
         rocks.parent = this.group
 
-    
         resize(path, width, height, depth + bufferDepth)  
         path.position.set(0, -height/2, depth/2) 
         path.rotate(Axis.Y, Math.random() < .5 ? -Math.PI : 0) 
@@ -34,7 +33,5 @@ export default class Full extends PathwayBlock {
         path.parent = this.group
 
         this.makeFloor(width, depth, new Vector3(0, 0, depth/2))
-        
-        //this.ground.push(path)
     } 
 }

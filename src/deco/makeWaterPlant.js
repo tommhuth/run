@@ -2,7 +2,7 @@ import { Axis } from "babylonjs"
 import { clone } from "../utils/modelLoader"
 import { getRandomRotation, makeGroup } from "../utils/utils"
 
-export default function (amount) {
+export default function (amount = 2) {
     const group = makeGroup()
     const basePlant = clone("plant")
     const baseScale = Math.random() + .25

@@ -28,14 +28,14 @@ export default class Ruins extends PathwayBlock {
         const path = clone(randomList("path"))
         const path2 = clone("path2")
         const path3 = clone("path2") 
+        const gravel = clone("gravel") 
         const rocks = makeRocks(scene, {
             centerOffset: width,
-            xOffset: 4,
+            xOffset: 6,
             scale: 2,
             count: Math.random() * 4,
             depth
         }) 
-        const gravel = clone("gravel") 
         
         this.group.position.set(0,0, zPosition)
  

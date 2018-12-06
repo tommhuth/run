@@ -11,7 +11,7 @@ export default class Bridge extends PathwayBlock {
     requiredNext = [Full, Bridge] 
     bridgeX
     hasTriggeredCollapse 
-    collapseTriggerDistanceRandomizer =Math.random() * 5 + 5
+    collapseTriggerDistanceRandomizer = Math.random() * 5 + 10
     bridgeParts = []
 
     static isAcceptableNext(type, path){
@@ -31,7 +31,7 @@ export default class Bridge extends PathwayBlock {
         depth = Math.ceil(Math.random() * (Config.DEPTH + 2)) + 4, 
     } = {}) {
         super(scene, width, height, depth) 
-        let bridgeX = 0 //lastWasSame ? previousBridgeX : (Math.random() * width / 2 - 1) * flip() 
+        let bridgeX = lastWasSame ? previousBridgeX : (Math.random() * width / 2 - 1) * flip() 
         let pillarStart = clone("bridgeEnd")
         let pillarEnd = clone("bridgeEnd")  
         let plant = makePlant(scene)
