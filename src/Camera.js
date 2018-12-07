@@ -21,5 +21,6 @@ export default class Camera extends ArcRotateCamera {
     }
     beforeRender() { 
         this.target2.position.z = this.player.position.z + 3
+        this.target2.position.x += (this.player.rotation / 100 - this.target2.position.x ) / 70
     }
 }
