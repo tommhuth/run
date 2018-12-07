@@ -6,6 +6,7 @@ import Gap from "./Gap"
 import { Config } from "../Pathway"
 import Island from "./Island"
 import makePlant from "../../deco/makePlant"
+import makeWaterPlant from "../../deco/makeWaterPlant"
 import Bridge from "./Bridge"
 
 export default class HighIsland extends PathwayBlock {
@@ -19,9 +20,8 @@ export default class HighIsland extends PathwayBlock {
         lastWasSame = false, 
         islandsCount = 3, 
         baseDiamter = 2,
-        plant = Math.random() > .5,
-        plantOffset = 4,
-        forceSecondPlant = false,
+        doPlant = true,
+        plantOffset = 6,
         doCoins = Math.random() > .5
     } = {}) {
         super(scene)
@@ -69,23 +69,23 @@ export default class HighIsland extends PathwayBlock {
                 )
             }
             
-            if (plant) { 
-                const plant = makePlant(scene, { animated: false })
-                const scale = Math.random() * .4 + .4
+            if (doPlant && Math.random() > .5) { 
+                const plant = makeWaterPlant(Math.random() * 2 + 1) 
                 
                 plant.rotate(Axis.Y, getRandomRotation()) 
                 plant.position.z = island.position.z - height/2
                 plant.position.y = island.position.y - height/2
-                plant.position.x = island.position.x + (plantOffset * flip())
-                plant.parent = this.group 
-                plant.scaling.set(scale, scale, scale)
+                plant.position.x = island.position.x + ((Math.random() * plantOffset + 1.5) * flip())
+                plant.parent = this.group   
 
-                if (forceSecondPlant || Math.random() < .5) {
-                    const plant2 = makePlant(scene, { leafCount: 3 })
-
-                    plant2.rotate(Axis.Y, getRandomRotation()) 
-                    plant2.position = plant.position.clone()
-                    plant2.position.x *= -1.25
+                if (Math.random() < .65) {
+                    const plant2 = makePlant(scene)
+                    const dir = flip()
+ 
+                    plant2.rotate(Axis.Z, dir * (Math.random() * .25 + .25)) 
+                    plant2.position = island.position.clone()
+                    plant2.position.y = Math.random() * -1 - 3
+                    plant2.position.x -= (diameter/2 - .5) * dir
                     plant2.parent = this.group
                 }
             }

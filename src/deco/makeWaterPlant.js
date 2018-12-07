@@ -5,7 +5,7 @@ import { getRandomRotation, makeGroup } from "../utils/utils"
 export default function (amount = 2) {
     const group = makeGroup()
     const basePlant = clone("plant")
-    const baseScale = Math.random() + .25
+    const baseScale = Math.random() + .5
     const baseR = basePlant.depth * baseScale / 2
     const rotations = []
 
