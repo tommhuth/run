@@ -3,8 +3,8 @@ import { getRandomRotation } from "../utils/utils"
 import { Axis } from "babylonjs"
 
 export default function({ scale = 1 } = {}) {
-    const tree = clone("tree")
-    const leaf = clone("leaves")
+    const tree = clone("tree2")
+    const leaf = clone("leaves2")
 
     leaf.parent = tree  
 

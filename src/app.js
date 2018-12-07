@@ -27,7 +27,10 @@ async function start() {
             scene.render()  
         })
         
-        window.addEventListener("resize", () => engine.resize())
+        window.addEventListener("resize", () => {
+            engine.resize()
+            scene.render()  
+        })
     } catch (e) {
         console.error(e)
     }
