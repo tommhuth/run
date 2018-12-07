@@ -32,9 +32,16 @@ export default class Pathway {
         this.scene = scene
         this.player = player   
 
-        this.renderStart()
+        this.init()
     } 
-    renderStart(){
+    clear() {
+        for (let block of this.path) {
+            block.remove()
+        }
+
+        this.path.length = 0
+    }
+    init(){
         let scene = this.scene
         let maxJumpDistance = this.maxJumpDistance
 

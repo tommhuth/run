@@ -1,6 +1,6 @@
  
 import { MeshBuilder, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"  
-import uuid from "uuid"
+import uuid from "uuid" 
 
 export default class Player {
     score = 0  
@@ -13,33 +13,22 @@ export default class Player {
     constructor(scene) {
         const mesh = MeshBuilder.CreateSphere(uuid.v4(), { segments: 16, diameter: .35 }, scene)
         
-        mesh.position.set(0, 1, 0) 
-        mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
-
+        mesh.position.set(0, 10, 0)  
+        mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
+        
         this.mesh = mesh
         this.scene = scene 
-
-        window.addEventListener("deviceorientation", (e) => this.handleDeviceRotation(e), false)
-        window.addEventListener("mousemove", (e) => this.handleMouseMove(e), false)
-        window.addEventListener("click", (e) => this.handleClick(e))
     }
 
     get position() {
         return this.mesh.position
     }
-
-    handleMouseMove(e) { 
-        // normalize to 90 deg!
-        this.targetRotation = (e.pageX - window.innerWidth / 2) / 2
+    init(){ 
+        this.rotation = 0
+        this.mesh.position.set(0, 4, 0) 
+        this.mesh.physicsImpostor.setMass(1)
     }
-    handleDeviceRotation(e) {
-        this.targetRotation = e.gamma
-    }
-
-    handleClick(e){
-        e.preventDefault()
-        e.stopPropagation()
-        
+    jump() { 
         if (!this.jumping && this.allowsJumping) {
             this.jumping = true
             this.allowsJumping = false 
@@ -49,6 +38,9 @@ export default class Player {
                 this.allowsJumping = true
             }, 400)  
         }
+    }
+    move(rotation) { 
+        this.targetRotation = rotation //e.gamma
     }
 
     getAbsolutePosition() {
@@ -64,6 +56,10 @@ export default class Player {
         this.mesh.physicsImpostor.setLinearVelocity(velocity)
 
         this.rotation += (this.targetRotation - this.rotation) / 4
+
+        if (this.mesh.position.y < -3) {
+            this.gameOver()
+        }
  
         for (let block of pathway.path) { 
             let isWithin = this.mesh.position.z >= block.group.position.z && this.mesh.position.z <= block.group.position.z + block.depth
