@@ -5,6 +5,7 @@ import Full from "./Full"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
 import makeRocks from "../../deco/makeRocks"
+import makeTree from "../../deco/makeTree"
 
 export default class Ruins extends PathwayBlock {
     requiredNext = [Full] 
@@ -20,7 +21,8 @@ export default class Ruins extends PathwayBlock {
         collapsable = Math.random() > .5,
         columns = 2,
         columnFragments = 3,
-        outerGap = 2.5
+        outerGap = 2.5,
+        doTree = Math.random() > .5
     } = {}) {
         super(scene, width, height, depth)
 
@@ -28,7 +30,7 @@ export default class Ruins extends PathwayBlock {
         const path = clone(randomList("path"))
         const path2 = clone("path2")
         const path3 = clone("path2") 
-        const gravel = clone("gravel") 
+        const gravel = clone("gravel")  
         const rocks = makeRocks(scene, {
             centerOffset: width,
             xOffset: 6,
@@ -97,6 +99,7 @@ export default class Ruins extends PathwayBlock {
         path3.position.y = -height / 2 + (Math.random() * flip())
         path3.position.z = depth/2  
         path3.parent = this.group
+
         
         resize(path, width, height, depth) 
         path.rotate(Axis.Y, Math.random() * .15 * flip())
@@ -104,6 +107,15 @@ export default class Ruins extends PathwayBlock {
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent = this.group  
 
+        if (doTree) {
+            const tree = makeTree(Math.random() * .5 + 5)
+            
+            tree.position = path2.position.clone()
+            tree.position.y += height/2
+            tree.position.x += 1
+            tree.parent = this.group
+        }
+        
         this.makeFloor(width, depth, new Vector3(0, 0, depth / 2))
     }
     beforeRender(player) {

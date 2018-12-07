@@ -17,12 +17,12 @@ export default class HighIsland extends PathwayBlock {
     constructor(scene, zPosition, { 
         maxJumpDistance, 
         lastWasSame = false, 
-        islandsCount = 3,
-        coinCount = 5,
+        islandsCount = 3, 
         baseDiamter = 2,
-        plant = true,
+        plant = Math.random() > .5,
         plantOffset = 4,
-        forceSecondPlant = false
+        forceSecondPlant = false,
+        doCoins = Math.random() > .5
     } = {}) {
         super(scene)
 
@@ -57,6 +57,17 @@ export default class HighIsland extends PathwayBlock {
                 diameter - .5, 
                 new Vector3(island.position.x, island.position.y + height/2, island.position.z)
             )
+
+            if (i === 1 && doCoins) { 
+                let previous = islands[i-1].island.position.clone()
+                
+                this.addCoinLine(
+                    3,
+                    new Vector3(previous.x, previous.y, previous.z + 1 ),
+                    new Vector3(island.position.x, island.position.y, island.position.z - 1 ), 
+                    new Vector3(previous.x, previous.y + height/2 + .5, previous.z), 
+                )
+            }
             
             if (plant) { 
                 const plant = makePlant(scene, { animated: false })
@@ -84,14 +95,6 @@ export default class HighIsland extends PathwayBlock {
         }
 
         this.position.set(0, 0, zPosition) 
-        this.depth = totalDepth + maxJumpDistance - 1  
-/*
-        this.addCoins(coinCount, (i) => {
-            let { diameter, island, height } = islands[islands.length - 1]
-            let y = Math.cos(Math.PI / coinCount * i) + (height- Config.HEIGHT) /2
-            let z = island.position.z + diameter / 2 + i + .5
-
-            return new Vector3(island.position.x, y, z)
-        }) */
+        this.depth = totalDepth + maxJumpDistance - 1 
     } 
 }

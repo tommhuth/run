@@ -1,4 +1,4 @@
-import { Axis, PhysicsImpostor as Impostor, Vector2, Vector3 } from "babylonjs"
+import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
 import { clone } from "../../utils/modelLoader"
 import { resize, randomList, flip } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock" 
@@ -13,7 +13,8 @@ export default class Full extends PathwayBlock {
         width = Config.WIDTH + Math.random() * 1.5,
         height = Config.HEIGHT,
         depth = Config.DEPTH,
-        bufferDepth = 1
+        bufferDepth = 1,
+        doCoins = Math.random() > .5
     } = {}) {
         super(scene, width, height, depth) 
 
@@ -31,6 +32,15 @@ export default class Full extends PathwayBlock {
         path.rotate(Axis.Y, Math.random() * .2 * flip())
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent = this.group
+
+        if (doCoins) { 
+            this.addCoinLine(
+                3, 
+                new Vector3(0, 0, 0), 
+                new Vector3(0, 0, depth - 2), 
+                new Vector3(0, .25, 1)
+            )
+        }
 
         this.makeFloor(width, depth, new Vector3(0, 0, depth/2))
     } 

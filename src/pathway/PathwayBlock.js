@@ -49,26 +49,33 @@ export default class PathwayBlock {
     remove() {
         this.group.dispose()
     }
-    addCoins(count, positionCallback){
+    addCoin(position, time){ 
+        let coin = clone("coin") 
+        
+        resize(coin, .3, .6, .3)
+        
+        coin.time = time
+        coin.position = position
+        coin.parent = this.group
+
+        this.coins.push(coin)
+    }
+    addCoinLine(count, start, end, origin = new Vector3(0, .25, 0)) { 
+        let gapX = (end.x - start.x) / (count - 1)
+        let gapY = (end.y - start.y) / (count - 1)
+        let gapZ = (end.z - start.z) / (count - 1) 
+
         for (let i = 0; i < count; i++) {
-            let coin = clone("coin") 
-            
-            resize(coin, .3, .6, .3)
-    
-            coin.time = i * .01
-            coin.position = positionCallback(i, count) 
-            coin.parent = this.group
+            let position = new Vector3(gapX * i + origin.x, gapY * i + origin.y, gapZ * i + origin.z)
 
-            this.coins.push(coin)
-
-            this.group.intersectsMesh()
+            this.addCoin(position, i * .1)
         }
     }
     beforeRender(player) {  
         for (let coin of this.coins) {
             let distance = Vector3.DistanceSquared(coin.getAbsolutePosition(), player.getAbsolutePosition())
 
-            coin.rotate(Axis.Y, coin.rotation.y + .075)
+            coin.rotate(Axis.Y, coin.rotation.y + .025)
 
             if (distance < .5) {
                 player.score++ 
