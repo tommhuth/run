@@ -11,7 +11,7 @@ export default class Bridge extends PathwayBlock {
     requiredNext = [Full, Bridge] 
     bridgeX
     hasTriggeredCollapse 
-    collapseTriggerDistanceRandomizer = Math.random() * 5 + 10
+    collapseTriggerDistanceRandomizer = Math.random() * 5 + 12
     bridgeParts = []
 
     static isAcceptableNext(type, path){
@@ -25,7 +25,7 @@ export default class Bridge extends PathwayBlock {
     constructor(scene, zPosition, {
         lastWasSame,
         previousBridgeX,
-        collapsable = Math.random(),
+        collapsable = Math.random() > .5,
         width = 1,
         height = .65,
         depth = Math.ceil(Math.random() * (Config.DEPTH + 2)) + 4, 
