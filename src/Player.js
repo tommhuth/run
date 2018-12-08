@@ -40,7 +40,7 @@ export default class Player {
         }
     }
     move(rotation) { 
-        this.targetRotation = rotation //e.gamma
+        this.targetRotation = rotation
     }
 
     getAbsolutePosition() {
@@ -66,7 +66,7 @@ export default class Player {
             
             if (isWithin) { 
                 for (let child of block.floor){
-                    if (child.intersectsMesh(this.mesh, true)) {
+                    if (child.intersectsMesh(this.mesh, false)) {
                         this.jumping = false
                         break
                     }
