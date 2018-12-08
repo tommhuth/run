@@ -77,7 +77,7 @@ export default class PathwayBlock {
 
             coin.rotate(Axis.Y, coin.rotation.y + .025)
 
-            if (distance < .5) {
+            if (distance < .25) {
                 player.score++ 
                 coin.dispose() 
                 this.coins = this.coins.filter(i => i !== coin)
