@@ -45,7 +45,18 @@ export default class Island extends PathwayBlock {
         )  
         island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
         island.parent = this.group
-         
+        
+        if (Math.random() > .4 || islandSize > 3.5) {
+            const gravel = clone("gravel2")
+            let scale = islandSize / Config.WIDTH * 2.75
+            
+            gravel.rotate(Axis.Y, getRandomRotation())
+            gravel.scaling.set(scale, 1, scale)
+            gravel.position = island.position.clone()
+            gravel.position.y = 0
+            gravel.parent = this.group
+        }
+        
         this.gap1 = gap1
         this.gap2 = gap2  
         this.position.set(0, 0, zPosition) 
