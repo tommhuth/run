@@ -16,7 +16,7 @@ export default class PathwayBlock {
     }
     constructor(scene, width = 0, height = 0, depth = 0) { 
         this.scene = scene
-        this.group = makeGroup(scene, true) 
+        this.group = makeGroup(scene, false) 
         this.width = width
         this.height = height 
         this.depth = depth        
@@ -28,15 +28,8 @@ export default class PathwayBlock {
         let floor 
  
         floor = MeshBuilder.CreateBox(1, { width, depth, height: .25 }, this.scene)
-       
-         
-        /*let mat = new StandardMaterial(1, this.scene )
-        
-        mat.diffuseColor = Color3.Red()
-        floor.material = mat*/
 
         floor.isVisible = false
-
         floor.position = position
         floor.position.y -= .125
         floor.parent = this.group
@@ -75,7 +68,7 @@ export default class PathwayBlock {
         for (let coin of this.coins) {
             let distance = Vector3.DistanceSquared(coin.getAbsolutePosition(), player.getAbsolutePosition())
 
-            coin.rotate(Axis.Y, coin.rotation.y + .025)
+            coin.rotate(Axis.Y, coin.rotation.y + .035)
 
             if (distance < .25) {
                 player.score++ 
