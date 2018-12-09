@@ -27,6 +27,8 @@ export default class Island extends PathwayBlock {
         leftPlant = Math.random() > .5,
         rightPlant = Math.random() > .5,
         plantX = flip(),
+        doGravel = Math.random() > .4 || islandSize > 3.5,
+        doBush = Math.random() > .5
     } = {}) {  
         const gap1 = lastWasSame ? 0 : gapSize
         const gap2 = gapSize  
@@ -48,27 +50,6 @@ export default class Island extends PathwayBlock {
         island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
         island.parent = this.group
         
-        if (Math.random() > .4 || islandSize > 3.5) {
-            const gravel = clone("gravel2")
-            let scale = islandSize / Config.WIDTH * 2.75
-            
-            gravel.rotate(Axis.Y, getRandomRotation())
-            gravel.scaling.set(scale, 1, scale)
-            gravel.position = island.position.clone()
-            gravel.position.y = deltaHeight/2
-            gravel.parent = this.group
-        }
-
-        if (Math.random() < .5) {
-            const plant2 = makePlant(scene)
-            const dir = flip()
-
-            plant2.rotate(Axis.Z, dir * (Math.random() * .25 + .25)) 
-            plant2.position = island.position.clone()
-            plant2.position.y = Math.random() * -1 - 3
-            plant2.position.x -= (islandSize/2 - 1) * dir
-            plant2.parent = this.group
-        }
         
         this.gap1 = gap1
         this.gap2 = gap2  
@@ -81,26 +62,50 @@ export default class Island extends PathwayBlock {
             new Vector3(island.position.x, type === "island3" ? -.3 : deltaHeight/2, gap1 + islandSize / 2)
         )
 
+        // deco
+
+        if (doGravel) {
+            let gravel = clone("gravel2")
+            let scale = islandSize / Config.WIDTH * 2.75
+            
+            gravel.rotate(Axis.Y, getRandomRotation())
+            gravel.scaling.set(scale, 1, scale)
+            gravel.position = island.position.clone()
+            gravel.position.y = deltaHeight/2
+            gravel.parent = this.group
+        }
+
+        if (doBush) {
+            let bush = makePlant(scene)
+            let direction = flip()
+
+            bush.rotate(Axis.Z, direction * (Math.random() * .25 + .25)) 
+            bush.position = island.position.clone()
+            bush.position.y = Math.random() * -1 - 3
+            bush.position.x -= (islandSize/2 - 1) * direction
+            bush.parent = this.group
+        }
+
         if (leftPlant) {
-            const plants = makeWaterPlant(Math.floor(Math.random() * 3) + 1) 
+            let plants = makeWaterPlant(Math.floor(Math.random() * 3) + 1) 
 
             plants.parent = this.group
             plants.rotate(Axis.Y, getRandomRotation())
             plants.position.set(
                 island.position.x + (islandSize + Math.random() * 1.5 + .5) * plantX, 
-                -height, 
+                -Config.FLOOR_DEPTH, 
                 0
             )    
         }
          
         if (rightPlant) { 
-            const plants = makeWaterPlant(Math.floor(Math.random() * 3) + 1)
+            let plants = makeWaterPlant(Math.floor(Math.random() * 3) + 1)
     
             plants.parent = this.group
             plants.rotate(Axis.Y, getRandomRotation())
             plants.position.set(
                 island.position.x + (islandSize + Math.random() * 1.5 + .5) * -plantX, 
-                -height, 
+                -Config.FLOOR_DEPTH,
                 0
             )
         }

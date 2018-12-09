@@ -2,6 +2,7 @@
 import { MeshBuilder, StandardMaterial, Color3, Mesh } from "babylonjs"  
 import uuid from "uuid"
 import { makeGroup } from "./utils/utils"
+import { Config } from "./pathway/Pathway"
 
 export default class World {
     width = 45
@@ -13,7 +14,7 @@ export default class World {
     constructor(scene) { 
         this.scene = scene
         this.group = makeGroup(scene)
-        this.group.position.set(0, -4.75, 0) 
+        this.group.position.set(0, -Config.FLOOR_DEPTH, 0) 
         this.makeFog()
     }
     makeFog(){

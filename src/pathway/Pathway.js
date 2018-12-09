@@ -7,7 +7,8 @@ import Bridge from "./blocks/Bridge"
 export const Config = {
     WIDTH: 4.5,
     HEIGHT: 6,
-    DEPTH: 4
+    DEPTH: 4,
+    FLOOR_DEPTH: 4.5
 }
 
 export default class Pathway {
