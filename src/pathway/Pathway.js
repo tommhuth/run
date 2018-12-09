@@ -1,6 +1,5 @@
 import Full from "./blocks/Full"
 import Gap from "./blocks/Gap"
-import HighIsland from "./blocks/HighIsland"
 import Island from "./blocks/Island"
 import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
@@ -127,7 +126,7 @@ export default class Pathway {
     }
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
-        let types = [Gap, Full, HighIsland, Island, Ruins, Bridge]
+        let types = [Gap, Full, Island, Ruins, Bridge]
         let zPosition = this.zPosition
         let maxJumpDistance =  this.maxJumpDistance
         let scene = this.scene
@@ -148,8 +147,6 @@ export default class Pathway {
                 return new Gap(scene, zPosition, { maxJumpDistance }) 
             case Full:
                 return new Full(scene, zPosition)
-            case HighIsland:
-                return new HighIsland(scene, zPosition, { maxJumpDistance, lastWasSame: previous instanceof HighIsland })
             case Island:
                 return new Island(scene, zPosition, { maxJumpDistance, lastWasSame: previous instanceof Island })
             case Ruins:

@@ -4,14 +4,15 @@ import { resize, randomList, flip, getRandomRotation } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock"  
 import { Config } from "../Pathway"
 import Gap from "./Gap"
-import HighIsland from "./HighIsland"
 import makeWaterPlant from "../../deco/makeWaterPlant"
+import makePlant from "../../deco/makePlant"
 import Bridge from "./Bridge"
 
 export default class Island extends PathwayBlock {
-    illegalNext = [Gap, HighIsland, Bridge]  
+    illegalNext = [Gap, Bridge]  
     gap1
     gap2 
+    deltaHeight
     
     static isAcceptableNext(type, path){
         return super.isAcceptableNext(type, path)
@@ -32,15 +33,16 @@ export default class Island extends PathwayBlock {
         const depth = islandSize + gap1 + gap2   
         const type = randomList("island", "island2", "island3")
         const island = clone(type) 
+        const deltaHeight = Math.random() * flip()
  
         super(scene, islandSize, height, depth)
         
-        resize(island, islandSize, height, islandSize)
+        resize(island, islandSize, height + deltaHeight, islandSize)
 
         island.rotate(Axis.Y, Math.random() * Math.PI * flip())
         island.position.set(
             Math.random() * 1.5 * flip(),
-            -height / 2, 
+            -(height ) / 2, 
             gap1 + islandSize / 2
         )  
         island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
@@ -53,18 +55,30 @@ export default class Island extends PathwayBlock {
             gravel.rotate(Axis.Y, getRandomRotation())
             gravel.scaling.set(scale, 1, scale)
             gravel.position = island.position.clone()
-            gravel.position.y = 0
+            gravel.position.y = deltaHeight/2
             gravel.parent = this.group
+        }
+
+        if (Math.random() < .5) {
+            const plant2 = makePlant(scene)
+            const dir = flip()
+
+            plant2.rotate(Axis.Z, dir * (Math.random() * .25 + .25)) 
+            plant2.position = island.position.clone()
+            plant2.position.y = Math.random() * -1 - 3
+            plant2.position.x -= (islandSize/2 - 1) * dir
+            plant2.parent = this.group
         }
         
         this.gap1 = gap1
         this.gap2 = gap2  
+        this.deltaHeight = deltaHeight
         this.position.set(0, 0, zPosition) 
 
         this.makeFloor(
             islandSize - .25, 
             islandSize - .5, 
-            new Vector3(island.position.x, type === "island3" ? -.3 : 0, gap1 + islandSize / 2)
+            new Vector3(island.position.x, type === "island3" ? -.3 : deltaHeight/2, gap1 + islandSize / 2)
         )
 
         if (leftPlant) {
