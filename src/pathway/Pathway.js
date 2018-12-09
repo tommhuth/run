@@ -52,7 +52,6 @@ export default class Pathway {
         this.add(new Full(scene, this.zPosition))      
         this.add(new Bridge(scene, this.zPosition, { lastWasSame: false  }))  
         this.add(new Bridge(scene, this.zPosition, { lastWasSame: true, previousBridgeX: this.path[6].bridgeX  })) 
-        this.add(new Full(scene, this.zPosition))       
      /*   this.add(new Full(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition))    
