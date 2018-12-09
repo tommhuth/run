@@ -20,7 +20,11 @@ export default class World {
     makeFog(){
         let fogMaterial = new StandardMaterial(this.scene)  
         let wrap = MeshBuilder.CreateBox("", { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
+        let fogLayer = MeshBuilder.CreateGround(uuid.v4(), { width: this.width, height: this.height }, this.scene)
   
+        fogLayer.material = fogMaterial
+        fogLayer.position.y = -20
+
         fogMaterial.emissiveColor = Color3.White()
         fogMaterial.disableLighting = true
 
@@ -29,11 +33,10 @@ export default class World {
         wrap.parent = this.group
         
         for (let i = 0; i < this.fogLayers; i++) {
-            const mesh = MeshBuilder.CreateGround(uuid.v4(), { width: this.width, height: this.height }, this.scene)
+            const mesh = fogLayer.clone()
         
             mesh.visibility = .35 * i / this.fogLayers + .2
             mesh.position.y = -i * .2
-            mesh.material = fogMaterial
             mesh.parent = this.group
         }
     }
