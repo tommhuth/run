@@ -59,7 +59,7 @@ export default class Island extends PathwayBlock {
         this.makeFloor(
             islandSize - .25, 
             islandSize - .5, 
-            new Vector3(island.position.x, type === "island3" ? -.3 : deltaHeight/2, gap1 + islandSize / 2)
+            new Vector3(island.position.x, deltaHeight/2, gap1 + islandSize / 2)
         )
 
         // deco
