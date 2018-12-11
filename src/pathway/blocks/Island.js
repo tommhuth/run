@@ -1,6 +1,6 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
 import { clone } from "../../utils/modelLoader"
-import { resize, randomList, flip, getRandomRotation } from "../../utils/utils"
+import { resize, flip, getRandomRotation, random } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock"  
 import { Config } from "../Pathway"
 import Gap from "./Gap"
@@ -21,30 +21,29 @@ export default class Island extends PathwayBlock {
     constructor(scene, zPosition, { 
         maxJumpDistance, 
         lastWasSame = false,
-        islandSize = Math.max(Config.WIDTH * Math.random(), 2.25),
+        islandSize = random.real(2.25, Config.WIDTH),
         height = Config.HEIGHT, 
-        gapSize = Math.max(maxJumpDistance * Math.random() - 1, 2.5),
-        leftPlant = Math.random() > .5,
-        rightPlant = Math.random() > .5,
+        gapSize = random.real(2.5, maxJumpDistance - 1),
+        leftPlant = random.bool(),
+        rightPlant = random.bool(),
         plantX = flip(),
-        doGravel = Math.random() > .4 || islandSize > 3.5,
-        doBush = Math.random() > .5
+        doGravel = random.bool(60) || islandSize > 3.5,
+        doBush = random.bool()
     } = {}) {  
         const gap1 = lastWasSame ? 0 : gapSize
         const gap2 = gapSize  
         const depth = islandSize + gap1 + gap2   
-        const type = randomList("island", "island2", "island3")
-        const island = clone(type) 
-        const deltaHeight = Math.random() * flip()
+        const island = clone(random.pick(["island", "island2", "island3"])) 
+        const deltaHeight = random.real(-1, 1, true)
  
         super(scene, islandSize, height, depth)
         
         resize(island, islandSize, height + deltaHeight, islandSize)
 
-        island.rotate(Axis.Y, Math.random() * Math.PI * flip())
+        island.rotate(Axis.Y, random.real(-Math.PI * 2, Math.PI * 2))
         island.position.set(
-            Math.random() * 1.5 * flip(),
-            -(height ) / 2, 
+            random.real(-1.5, 1.5),
+            -height / 2, 
             gap1 + islandSize / 2
         )  
         island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
@@ -79,32 +78,32 @@ export default class Island extends PathwayBlock {
             let bush = makePlant(scene)
             let direction = flip()
 
-            bush.rotate(Axis.Z, direction * (Math.random() * .25 + .25)) 
+            bush.rotate(Axis.Z, direction * random.real(.25, .5))
             bush.position = island.position.clone()
-            bush.position.y = Math.random() * -1 - 3
+            bush.position.y = random.real(-4, -3)
             bush.position.x -= (islandSize/2 - 1) * direction
             bush.parent = this.group
         }
 
         if (leftPlant) {
-            let plants = makeWaterPlant(Math.floor(Math.random() * 3) + 1) 
+            let plants = makeWaterPlant(random.integer(1, 3)) 
 
             plants.parent = this.group
             plants.rotate(Axis.Y, getRandomRotation())
             plants.position.set(
-                island.position.x + (islandSize + Math.random() * 1.5 + .5) * plantX, 
+                island.position.x + (islandSize + random.real(.5, 2)) * plantX, 
                 -Config.FLOOR_DEPTH, 
                 0
             )    
         }
          
         if (rightPlant) { 
-            let plants = makeWaterPlant(Math.floor(Math.random() * 3) + 1)
+            let plants = makeWaterPlant(random.integer(1, 3))
     
             plants.parent = this.group
             plants.rotate(Axis.Y, getRandomRotation())
             plants.position.set(
-                island.position.x + (islandSize + Math.random() * 1.5 + .5) * -plantX, 
+                island.position.x + (islandSize + random.real(.5, 2)) * -plantX, 
                 -Config.FLOOR_DEPTH,
                 0
             )

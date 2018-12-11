@@ -1,6 +1,6 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
 import { clone } from "../../utils/modelLoader"
-import { resize, randomList, flip, getRandomRotation } from "../../utils/utils"
+import { resize, getRandomRotation, random } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
 import makeRocks from "../../deco/makeRocks"
@@ -10,17 +10,17 @@ export default class Full extends PathwayBlock {
         return super.isAcceptableNext(type, path)
     }
     constructor(scene, zPosition, {
-        width = Config.WIDTH + Math.random() * 1.5,
+        width = random.real(Config.WIDTH, Config.WIDTH + 1.5),
         height = Config.HEIGHT,
         depth = Config.DEPTH,
         bufferDepth = 1,
-        doCoins = Math.random() > .5,
+        doCoins = random.bool(),
         doObstacle = true,
     } = {}) {
         super(scene, width, height, depth) 
 
-        let path = clone(randomList("path", "path2")) 
-        let rocks = makeRocks(scene, { count: Math.random() * 3 + 1, centerOffset: width - 1, depth })
+        let path = clone(random.pick(["path", "path2"])) 
+        let rocks = makeRocks(scene, { count: random.integer(1, 5), centerOffset: width - 1, depth })
         let obsticalPosition 
      
         this.position.set(0, 0, zPosition) 
@@ -30,21 +30,21 @@ export default class Full extends PathwayBlock {
 
         resize(path, width, height, depth + bufferDepth)  
         path.position.set(0, -height/2, depth/2) 
-        path.rotate(Axis.Y, Math.random() < .5 ? -Math.PI : 0) 
-        path.rotate(Axis.Y, Math.random() * .2 * flip())
+        path.rotate(Axis.Y, random.pick([0, -Math.PI])) 
+        path.rotate(Axis.Y, random.real(-.2, .2))
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent = this.group
 
         if (doObstacle) {
             const rock = clone("rock")
-            const size = Math.random() * 1 + .5
+            const size = random.real(.5, 1.5)
             const gravel = clone("gravel")
              
             resize(rock, size, size, size)
             rock.position.set(
-                ((width/2 - 3) * Math.random() + 1) * flip(), 
+                random.real(-1, 1),
                 0, 
-                (depth - 2) * Math.random() + 1 
+                random.real(1, depth - 2)
             )
             rock.rotation.set(getRandomRotation(), getRandomRotation(), getRandomRotation())
             rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0 }, scene)
@@ -52,7 +52,7 @@ export default class Full extends PathwayBlock {
             
             gravel.rotate(Axis.Y, getRandomRotation())
             gravel.scaling.set(2, 2, 2)
-            gravel.position.set(0, Math.random() * -.1, depth/2)
+            gravel.position.set(0, random.real(-.1, 0), depth / 2)
             gravel.parent = this.group
 
             obsticalPosition = rock.position.clone()

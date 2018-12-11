@@ -1,6 +1,6 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
 import { clone } from "../../utils/modelLoader"
-import { resize, randomList, flip, getRandomRotation, explode } from "../../utils/utils"
+import { resize, flip, getRandomRotation, explode, random } from "../../utils/utils"
 import Full from "./Full" 
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
@@ -18,16 +18,16 @@ export default class Ruins extends PathwayBlock {
         width = Config.WIDTH * 2 + 2,
         height = Config.HEIGHT,
         depth = Config.DEPTH * 2, 
-        collapsable = Math.random() > .5,
+        collapsable = random.bool(),
         columns = 2,
         columnFragments = 3,
         outerGap = 2.5,
-        doTree = Math.random() > .5
+        doTree = random.bool()
     } = {}) {
         super(scene, width, height, depth)
 
         const pillarGap = (depth - outerGap * 2) / (columns-1)
-        const path = clone(randomList("path"))
+        const path = clone(random.pick(["path", "path2"]))
         const path2 = clone("path2")
         const path3 = clone("path2") 
         const gravel = clone("gravel")  
@@ -35,7 +35,7 @@ export default class Ruins extends PathwayBlock {
             centerOffset: width,
             xOffset: 6,
             scale: 2,
-            count: Math.random() * 4,
+            count: random.integer(0, 4),
             depth
         }) 
         
@@ -44,8 +44,8 @@ export default class Ruins extends PathwayBlock {
         for (let i = 0; i < 2; i++) {
             for (let j = 0; j < columns; j++) {
                 let foot = clone("pillarFoot") 
-                let is = Math.random() > .4 
-                let isSecond = is && Math.random() > .2
+                let isFirstCollapsable = random.bool(60)
+                let isSecondCollapsable = isFirstCollapsable && random.bool(80)
         
                 foot.position.set(
                     (width/2 - 2.25) * (i === 0 ? -1 : 1), 
@@ -53,16 +53,16 @@ export default class Ruins extends PathwayBlock {
                     outerGap + pillarGap * j 
                 )
                 foot.rotate(Axis.Y, getRandomRotation())
-                foot.physicsImpostor = new Impostor(foot, Impostor.CylinderImpostor, { mass: is || !collapsable ? 0 : 200 }, scene) 
+                foot.physicsImpostor = new Impostor(foot, Impostor.CylinderImpostor, { mass: isFirstCollapsable || !collapsable ? 0 : 200 }, scene) 
                 foot.parent = this.group
         
                 let totalHeight = foot.height
         
                 for (let j = 0; j < columnFragments; j++) { 
                     let pillar = clone("pillar")
-                    let scaleY = Math.random() * 1 + .45
+                    let scaleY = random.real(.45, 1.45) 
                     let height = pillar.height * scaleY
-                    let mass = (is && j === 0) || (isSecond && j === 1) || !collapsable ? 0 : 200 
+                    let mass = (isFirstCollapsable && j === 0) || (isSecondCollapsable && j === 1) || !collapsable ? 0 : 200 
         
                     pillar.scaling.y = scaleY
                     pillar.position.set(foot.position.x, totalHeight + height/2, foot.position.z)
@@ -86,29 +86,29 @@ export default class Ruins extends PathwayBlock {
 
         // right 
         resize(path2, 4, height, 6)
-        path2.rotate(Axis.Y, Math.random() * .15 * flip())
-        path2.position.x = 4.5 + Math.random() * 1.5
-        path2.position.y = -height/2 - Math.random() * 2
-        path2.position.z = depth/2 + Math.random() * 1.5 * flip()
+        path2.rotate(Axis.Y, random.real(-.15, .15))
+        path2.position.x = random.real(4.5, 6)
+        path2.position.y = -height/2 - random.real(0, 2)
+        path2.position.z = depth/2 + random.real(-1.5, 1.5)
         path2.parent = this.group
         
         // left
         resize(path3, 4, height + 1, 4)
-        path3.rotate(Axis.Y, Math.random() * .15 * flip())
+        path3.rotate(Axis.Y, random.real(-.15, .15))
         path3.position.x = -6
-        path3.position.y = -height / 2 + (Math.random() * flip())
+        path3.position.y = -height / 2 + random.real(-1, 1)
         path3.position.z = depth/2  
         path3.parent = this.group
 
         
         resize(path, width, height, depth) 
-        path.rotate(Axis.Y, Math.random() * .15 * flip())
+        path.rotate(Axis.Y, random.real(-.15, .15))
         path.position.set(0, -height/2, depth/2)  
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent = this.group  
 
         if (doTree) {
-            const tree = makeTree(Math.random() * .5 + 5)
+            const tree = makeTree()
             
             tree.position = path2.position.clone()
             tree.position.y += height/2
@@ -122,8 +122,11 @@ export default class Ruins extends PathwayBlock {
         super.beforeRender(player)
 
         if (player.position.z > this.position.z - 10 && !this.hasTriggeredCollapse) {
-            explode(this.scene, new Vector3(-7 - Math.random() * .5, 2 + Math.random() * .25, this.position.z), 7, 15000)
-            explode(this.scene, new Vector3(7.5 + Math.random() * .5, 2 + Math.random() * .25, this.position.z), 7, 15000, 500)
+            let explosionY = random.real(2, 2.25)
+            let explosionX = random.real(7.5, 8)
+
+            explode(this.scene, new Vector3(explosionX * -1, explosionY, this.position.z), 7, 15000)
+            explode(this.scene, new Vector3(explosionX, explosionY, this.position.z), 7, 15000, 500)
 
             this.hasTriggeredCollapse = true 
         } 

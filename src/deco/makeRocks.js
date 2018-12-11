@@ -1,28 +1,28 @@
 import { Axis } from "babylonjs"
 import { clone } from "../utils/modelLoader"
-import { getRandomRotation, makeGroup, flip, randomList } from "../utils/utils"
+import { getRandomRotation, makeGroup, flip, random } from "../utils/utils"
 
 export default function makeRocks(scene, {
     centerOffset, 
     depth,
-    count = Math.ceil(Math.random() * 3), 
+    count = random.integer(1, 3), 
     xOffset = 8,
     scale = 1,
 } = {}){
     let group = makeGroup(scene)
 
     for (let i = 0; i < count; i++) {
-        let rock = clone(randomList("rock", "rock2"))
-        let scaling = Math.random() * 1.5 + .5
-        let scalingY = Math.max(Math.random() * 1.5 + .5, .85)
+        let rock = clone(random.pick(["rock", "rock2"]))
+        let scaling = random.real(.5, 2)
+        let scalingY = random.real(.85, 2)
 
         rock.scaling.set(scaling * scale, scalingY * scale, scaling * scale)
         rock.rotate(Axis.Y, getRandomRotation())
-        rock.rotate(Axis.X, Math.random() * .25 * flip())
-        rock.rotate(Axis.Z, Math.random() * .25 * flip())
-        rock.position.x = (centerOffset/2 + Math.random() * xOffset) * flip()
+        rock.rotate(Axis.X, random.real(-.25, .25))
+        rock.rotate(Axis.Z,random.real(-.25, .25))
+        rock.position.x = (centerOffset/2 + random.real(0, xOffset)) * flip()
         rock.position.y = 0
-        rock.position.z = depth * Math.random() / 2 * flip()
+        rock.position.z = random.real(-depth/2, depth/2)
         rock.parent = group
     } 
 

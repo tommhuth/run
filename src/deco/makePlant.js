@@ -1,7 +1,8 @@
 import { clone } from "../utils/modelLoader" 
+import { random } from "../utils/utils"
 
 export default function makePlant(scene, { 
-    scale = 1 + Math.random() * .25,
+    scale = random.real(1, 1.25)
 } = {}){
     let trunk = clone("tree")
     let leaves = clone("leaves")

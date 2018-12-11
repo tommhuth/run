@@ -1,6 +1,6 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
 import { clone } from "../../utils/modelLoader"
-import { resize, randomList, flip, getFlipRotation } from "../../utils/utils"
+import { resize, flip, getFlipRotation, random } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
 import makeRocks from "../../deco/makeRocks" 
@@ -11,7 +11,7 @@ export default class Bridge extends PathwayBlock {
     requiredNext = [Full, Bridge] 
     bridgeX
     hasTriggeredCollapse 
-    collapseTriggerDistanceRandomizer = Math.random() * 5 + 12
+    collapseTriggerDistanceRandomizer = random.real(5, 17)
     bridgeParts = []
 
     static isAcceptableNext(type, path){
@@ -25,25 +25,25 @@ export default class Bridge extends PathwayBlock {
     constructor(scene, zPosition, {
         lastWasSame,
         previousBridgeX,
-        collapsable = Math.random() > .5,
+        collapsable = random.bool(),
         width = 1,
         height = .65,
-        depth = Math.ceil(Math.random() * (Config.DEPTH + 2)) + 4, 
+        depth = random.integer(4, Config.DEPTH + 2), 
     } = {}) {
         super(scene, width, height, depth) 
-        let bridgeX = lastWasSame ? previousBridgeX : (Math.random() * width / 2 - 1) * flip() 
+        let bridgeX = lastWasSame ? previousBridgeX : random.real(-width / 2 + 1, width / 2 - 1)
         let pillarStart = clone("bridgeEnd")
         let pillarEnd = clone("bridgeEnd")  
         let plant = makePlant(scene)
         let rocks = makeRocks(scene, { centerOffset: 1, count: 10, depth })
-        let plantScale = Math.random() * .35 + .4
+        let plantScale = random.real(.4, .75)  
         
         rocks.position.y = -Config.HEIGHT
         rocks.parent = this.group
 
         plant.position.y = -Config.HEIGHT
-        plant.position.x = bridgeX + flip() * (Math.random() * 3 + 2)
-        plant.position.z = (Math.random() * (depth/2 - 2)) * flip()
+        plant.position.x = bridgeX + random.real(2, 5) * flip()
+        plant.position.z = random.real(1, depth - 2)
         plant.scaling.set(plantScale, plantScale, plantScale)
         plant.parent = this.group
         
@@ -62,7 +62,7 @@ export default class Bridge extends PathwayBlock {
         this.hasTriggeredCollapse = !collapsable
     
         for (let i = 0; i < depth + 1; i++) {
-            const block = clone(randomList("bridgeMid", "bridgeMid2", "bridgeMid3"))
+            const block = clone(random.pick(["bridgeMid", "bridgeMid2", "bridgeMid3"]))
     
             resize(block, width, height, width)
     

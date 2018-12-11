@@ -1,25 +1,24 @@
 import { MeshBuilder, PhysicsHelper, PhysicsRadialImpulseFalloff } from "babylonjs"
+import Random from "random-js"
+
+export const random = new Random(Random.engines.mt19937().autoSeed())
 
 export function flip() {
-    return Math.random() > .5 ? 1 : -1
+    return random.bool() ? -1 : 1
 }
 
 export function getFlipRotation() {
     const rotations = [0, Math.PI, -Math.PI, Math.PI * 2, Math.PI * -2]
     
-    return rotations[Math.floor(Math.random() * rotations.length) ]
+    return random.pick(rotations)
 }
 
 export function resize(mesh, width, height, depth) {
     mesh.scaling.set(1/mesh.width * width, 1/mesh.height * height, 1/mesh.depth * depth)
 }
-  
-export function randomList(...args) {
-    return args[Math.floor(Math.random() * args.length)]
-}
 
 export function getRandomRotation(){
-    return Math.PI * 2 * Math.random() * flip()
+    return random.real(-Math.PI * 2, Math.PI * 2)
 }
 
 export function makeGroup(scene, visible = false){
@@ -41,7 +40,7 @@ export function explode(scene, position, radius, strength, delay = 0, debug = fa
           
         if (debug) { 
             explosion.getData().sphere.isVisible = true
-            explosion.getData().sphere.visibility = .3   
+            explosion.getData().sphere.visibility = .5  
         }
     }, delay)
 }

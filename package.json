@@ -48,6 +48,7 @@
         "json-loader": "^0.5.4",
         "oimo": "^1.0.9",
         "pug": "^2.0.3",
+        "random-js": "^1.0.8",
         "sass-loader": "^7.1.0",
         "serve-static": "^1.12.3",
         "uuid": "^3.3.2",

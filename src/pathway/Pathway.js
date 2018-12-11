@@ -3,6 +3,7 @@ import Gap from "./blocks/Gap"
 import Island from "./blocks/Island"
 import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
+import { random } from "../utils/utils";
 
 export const Config = {
     WIDTH: 4.5,
@@ -47,12 +48,21 @@ export default class Pathway {
 
         this.add(new Full(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition))       
-        this.add(new Full(scene, this.zPosition))   
-        this.add(new Ruins(scene, this.zPosition, { lastWasSame: false  })) 
-        this.add(new Full(scene, this.zPosition))      
-        this.add(new Bridge(scene, this.zPosition, { lastWasSame: false  }))  
-        this.add(new Bridge(scene, this.zPosition, { lastWasSame: true, previousBridgeX: this.path[6].bridgeX  })) 
+        this.add(new Full(scene, this.zPosition))        
+        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: true  }))  
+        this.add(new Full(scene, this.zPosition))        
+        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: true  }))  
+        this.add(new Full(scene, this.zPosition))        
+        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: true  }))  
+        this.add(new Full(scene, this.zPosition))        
+        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: true  }))  
+        this.add(new Full(scene, this.zPosition))           
      /*   this.add(new Full(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition))    
@@ -133,12 +143,12 @@ export default class Pathway {
         let type 
 
         if (previous.requiredNext.length) {
-            type = previous.requiredNext[Math.floor(Math.random() * previous.requiredNext.length)] 
+            type = random.pick(previous.requiredNext)
         } else {
-            type = types[Math.floor(Math.random() * types.length)] 
+            type = random.pick(types)
  
             while (!previous.canAcceptNext(type, this.path) || !type.isAcceptableNext(type, this.path)) { 
-                type = types[Math.floor(Math.random() * types.length)]
+                type = random.pick(types)
             }
         } 
 
