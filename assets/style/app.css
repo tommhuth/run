@@ -20,6 +20,16 @@ body {
     white-space: pre;
 }
 
+#debug {
+    position: fixed;
+    bottom: 2em;
+    left: 0;
+    right: 0;
+    font-size: 2em;
+    text-align: center;
+    z-index: 100;
+}
+
 #intro {
     position: absolute;
     pointer-events: none;

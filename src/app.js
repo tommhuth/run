@@ -28,6 +28,10 @@ async function start() {
         player.on("gameover", ({ reason }) => {
             console.log("game over, you:", reason)
             state = GAME_OVER
+            document.getElementById("debug").innerText = "Game over, you " + reason
+        })
+        player.on("reset", () => { 
+            document.getElementById("debug").innerText = ""
         })
             
         engine.runRenderLoop(() => {
