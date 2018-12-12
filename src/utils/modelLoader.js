@@ -24,7 +24,7 @@ function load() {
                 //mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
                 mesh.receiveShadows = true 
-                mesh.position = new Vector3(0, -100, 0)
+                mesh.position = new Vector3(0, 0, 0)
                 mesh.isVisible = false
 
                 /*

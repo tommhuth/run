@@ -17,6 +17,7 @@ export default class Player extends EventLite {
         super()
         const mesh = MeshBuilder.CreateSphere(uuid.v4(), { segments: 16, diameter: .35 }, scene)
         
+        mesh.receiveShadows = true
         mesh.position.set(0, 10, 0)  
         mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
         
