@@ -44,7 +44,7 @@ export default function() {
 
     shadowGenerator.usePoissonSampling = true
     shadowGenerator.useExponentialShadowMap = false
-    //shadowGenerator.bias = 0.01
+    shadowGenerator.bias = 0.00051
     shadowGenerator.setDarkness(.7)
 
     return { 
