@@ -38,6 +38,7 @@ export default class Player extends EventLite {
         this.mesh.position.set(0, 4, 0) 
         this.mesh.physicsImpostor.setMass(1) 
         this.running = true
+        this.emit("reset" )
     }
     jump() { 
         if (!this.jumping && this.allowsJumping) {
@@ -60,9 +61,7 @@ export default class Player extends EventLite {
         if (this.running) {
             const velocity = this.mesh.physicsImpostor.getLinearVelocity().clone() 
             const fallen = this.mesh.position.y < -3
-            const stopped = velocity.z < 1
-
-            console.log(velocity.z)
+            const stopped = velocity.z < 1 
         
             if ((fallen || stopped) && this.ticks > 5) {
                 this.reason = fallen ? "fell" : "fell behind"
@@ -74,6 +73,8 @@ export default class Player extends EventLite {
     
             this.mesh.physicsImpostor.setLinearVelocity(velocity) 
             this.rotation += (this.targetRotation - this.rotation) / 4
+
+            this.ticks++
      
             for (let block of pathway.path) { 
                 let isWithin = this.mesh.position.z >= block.group.position.z && this.mesh.position.z <= block.group.position.z + block.depth
@@ -87,12 +88,11 @@ export default class Player extends EventLite {
                     }
                 }
             }  
-
-            this.ticks++
         } else { 
             const velocity = this.mesh.physicsImpostor.getLinearVelocity().clone() 
             
             velocity.z = 0
+            velocity.y = velocity.y < -10 ? 0 : velocity.y
 
             this.mesh.physicsImpostor.setLinearVelocity(velocity) 
         }

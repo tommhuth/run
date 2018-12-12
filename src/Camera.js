@@ -26,6 +26,9 @@ export default class Camera extends ArcRotateCamera {
             this.gameOver = true
             this.lastZ = this.player.position.z + 8
         })
+        this.player.on("reset", () => {
+            this.gameOver = false
+        })
     }
     beforeRender() { 
         if (this.gameOver) {
