@@ -2,6 +2,9 @@ import { MeshBuilder, ArcRotateCamera } from "babylonjs"
 import uuid from "uuid" 
 
 export default class Camera extends ArcRotateCamera {
+    gameOver = false 
+    lastZ = 0
+
     constructor(scene, player) {  
         const startAlpha = -Math.PI / 2 //Math.PI / 2 // LEFT RIGHT
         const startBeta =  Math.PI / 3.5 //1.55 /// UP DOWN
@@ -18,9 +21,19 @@ export default class Camera extends ArcRotateCamera {
         this.target2 = target
         this.maxZ = 75
         this.minZ = -15
+
+        this.player.on("gameover", () => {
+            this.gameOver = true
+            this.lastZ = this.player.position.z + 8
+        })
     }
     beforeRender() { 
-        this.target2.position.z = this.player.position.z + 3
-        this.target2.position.x += (this.player.rotation / 100 - this.target2.position.x ) / 60
+        if (this.gameOver) {
+            this.target2.position.z += (this.lastZ - this.target2.position.z) / 90
+            this.target2.position.x += (0 - this.target2.position.x ) / 60
+        } else {
+            this.target2.position.z = this.player.position.z + 3
+            this.target2.position.x += (this.player.rotation / 100 - this.target2.position.x ) / 60
+        }
     }
 }

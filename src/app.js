@@ -12,7 +12,6 @@ const GAME_OVER = "game-over"
 const READY = "ready"
 const LOADING = "loading"
 
-
 async function start() {
     try { 
         let { scene, engine } = makeScene()
@@ -25,10 +24,11 @@ async function start() {
         let pathway = new Pathway(scene, player) 
         let world = new World(scene)
 
-
-        player.gameOver = () => {
+ 
+        player.on("gameover", ({ reason }) => {
+            console.log("game over, you:", reason)
             state = GAME_OVER
-        }
+        })
             
         engine.runRenderLoop(() => {
             player.beforeRender(pathway)
@@ -54,18 +54,18 @@ async function start() {
             e.preventDefault()
 
             switch (state) {
-                case READY:
+                case READY: 
                     state = RUNNING
-                    player.init()
+                    player.start()
                     break
-                case RUNNING:
+                case RUNNING: 
                     player.jump()
                     break
-                case GAME_OVER:
+                case GAME_OVER: 
                     state = RUNNING
                     pathway.clear()
                     pathway.init()
-                    player.init()
+                    player.start()
             }
         })
 
