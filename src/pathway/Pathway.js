@@ -16,6 +16,7 @@ export default class Pathway {
     path = [] 
     player 
     scene 
+    shadowGenerator
 
     get zPosition() {
         let previousBlock = this.path[this.path.length - 1]
@@ -29,9 +30,10 @@ export default class Pathway {
     get maxJumpDistance() { 
         return this.player.speed * .875
     }
-    constructor(scene, player) {
+    constructor(scene, player, shadowGenerator) {
         this.scene = scene
-        this.player = player   
+        this.player = player 
+        this.shadowGenerator = shadowGenerator  
 
         this.init()
     } 
@@ -112,10 +114,12 @@ export default class Pathway {
     } 
     remove(block) { 
         block.remove()
+        this.shadowGenerator.removeShadowCaster(block.group, true)
  
         this.path = this.path.filter(i => i !== block)
     } 
     add(block) {
+        this.shadowGenerator.addShadowCaster(block.group)
         this.path.push(block)
     }
     addRandom() {

@@ -14,16 +14,17 @@ const LOADING = "loading"
 
 async function start() {
     try { 
-        let { scene, engine } = makeScene()
+        let { scene, engine, shadowGenerator, beforeRender } = makeScene()
 
         await load()
 
         let state = READY
         let player = new Player(scene)
         let camera = new Camera(scene, player)
-        let pathway = new Pathway(scene, player) 
+        let pathway = new Pathway(scene, player, shadowGenerator) 
         let world = new World(scene)
 
+        shadowGenerator.addShadowCaster(player.mesh)
  
         player.on("gameover", ({ reason }) => {
             console.log("game over, you:", reason)
@@ -39,6 +40,7 @@ async function start() {
             camera.beforeRender()
             pathway.beforeRender()
             world.beforeRender(pathway, player)
+            beforeRender(player)
 
             scene.render()
         })

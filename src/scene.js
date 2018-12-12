@@ -1,6 +1,6 @@
 import { Scene, Engine, CannonJSPlugin } from "babylonjs"
 import { Vector3, Color3 } from "babylonjs"
-import { DirectionalLight, HemisphericLight } from "babylonjs"
+import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
 
 const state = {
     fogEnd: 30,
@@ -14,11 +14,12 @@ export default function() {
     const scene = new Scene(engine)
     const light = new DirectionalLight("directionalLight", new Vector3(-2, -2, 2), scene)  
     const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
+    const shadowGenerator = new ShadowGenerator(1024, light, true)
     
     engine.renderEvenInBackground = false
     engine.setHardwareScalingLevel(.75)
     
-    scene.autoClear = false
+    scene.autoClear = false 
     scene.autoClearDepthAndStencil = false
     scene.blockMaterialDirtyMechanism = true
     scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
@@ -33,11 +34,26 @@ export default function() {
     
     light.diffuse = Color3.White()
     light.intensity = .5
+    light.autoUpdateExtends = false
+    light.shadowMaxZ = 20
+    light.shadowMinZ = -10
     
     hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
     hemisphere.groundColor =  new Color3(209/255, 242/255, 1) 
     hemisphere.intensity = .5 
 
-    return { scene, engine, light, hemisphere }
+    shadowGenerator.usePoissonSampling = true
+    shadowGenerator.setDarkness(.75)
+
+    return { 
+        scene, 
+        engine, 
+        light, 
+        hemisphere, 
+        shadowGenerator,
+        beforeRender(player){
+            light.position.z = player.position.z
+        } 
+    }
 }
  

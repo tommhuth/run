@@ -23,6 +23,7 @@ function load() {
                 mesh.depth = extendSize.z * 2
                 //mesh.material = baseMaterial
                 mesh.convertToFlatShadedMesh() 
+                mesh.receiveShadows = true 
 
                 /*
                 switch (mesh.id) {
