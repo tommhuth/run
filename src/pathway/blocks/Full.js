@@ -52,7 +52,7 @@ export default class Full extends PathwayBlock {
             
             gravel.rotate(Axis.Y, getRandomRotation())
             gravel.scaling.set(2, 2, 2)
-            gravel.position.set(0, random.real(-.05, 0), depth / 2)
+            gravel.position.set(0, -random.real(.05, 0), depth / 2)
             gravel.parent = this.group
 
             obsticalPosition = rock.position.clone()
