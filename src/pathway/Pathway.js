@@ -49,12 +49,15 @@ export default class Pathway {
         let maxJumpDistance = this.maxJumpDistance
 
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
+        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Full(scene, this.zPosition))     
+        this.add(new Gap(scene, this.zPosition, { maxJumpDistance }))     
         this.add(new Full(scene, this.zPosition))                     
         this.add(new Ruins(scene, this.zPosition, { collapsable: false, doTree: true }))  
         this.add(new Full(scene, this.zPosition))       
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
         this.add(new Full(scene, this.zPosition))
+        console.log("POS", this.zPosition)
     } 
     remove(block) { 
         block.remove()
@@ -63,7 +66,6 @@ export default class Pathway {
         this.path = this.path.filter(i => i !== block)
     } 
     add(block) {
-        this.shadowGenerator.addShadowCaster(block.group)
         this.path.push(block)
     }
     addRandom() {
@@ -108,7 +110,12 @@ export default class Pathway {
         let removed = []
 
         for (let block of this.path) {
-            if (this.player.position.z >= block.position.z + block.depth + 12 ) {
+            if (block.position.z + block.depth < this.player.position.z + 22 && !block.hasShadows) {
+                this.shadowGenerator.addShadowCaster(block.group)
+                block.hasShadows = true
+            }
+
+            if (this.player.position.z > block.position.z + block.depth + 10 ) {
                 removed.push(block)
             } else {
                 block.beforeRender(this.player)

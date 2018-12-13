@@ -42,10 +42,10 @@ export default function() {
     hemisphere.groundColor =  new Color3(209/255, 242/255, 1) 
     hemisphere.intensity = .5 
 
-    shadowGenerator.usePoissonSampling = true
-    shadowGenerator.useExponentialShadowMap = false
+    shadowGenerator.usePoissonSampling = true 
     shadowGenerator.bias = 0.00051
     shadowGenerator.setDarkness(.7)
+    shadowGenerator.frustumEdgeFalloff = 1
 
     return { 
         scene, 

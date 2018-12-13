@@ -10,6 +10,7 @@ export default class PathwayBlock {
     height = 0
     depth = 0
     floor = []
+    hasShadows = false
 
     static isAcceptableNext(_previous, _path) { 
         return true
