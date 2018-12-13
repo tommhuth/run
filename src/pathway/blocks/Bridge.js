@@ -34,18 +34,18 @@ export default class Bridge extends PathwayBlock {
         let bridgeX = lastWasSame ? previousBridgeX : random.real(-width / 2 + 1, width / 2 - 1)
         let pillarStart = clone("bridgeEnd")
         let pillarEnd = clone("bridgeEnd")  
-        let plant = makePlant(scene)
+        //let plant = makePlant(scene)
         let rocks = makeRocks(scene, { centerOffset: 1, count: 10, depth })
-        let plantScale = random.real(.4, .75)  
+       // let plantScale = random.real(.4, .75)  
         
         rocks.position.y = -Config.HEIGHT
         rocks.parent = this.group
-
+/*
         plant.position.y = -Config.HEIGHT
         plant.position.x = bridgeX + random.real(2, 5) * flip()
         plant.position.z = random.real(1, depth - 2)
         plant.scaling.set(plantScale, plantScale, plantScale)
-        plant.parent = this.group
+        plant.parent = this.group*/
         
         pillarStart.scaling.z = .5
         pillarStart.position.set(bridgeX, -.75, -.5)
