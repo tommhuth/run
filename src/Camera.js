@@ -8,7 +8,7 @@ export default class Camera extends ArcRotateCamera {
     constructor(scene, player) {  
         const startAlpha = -Math.PI / 2 //Math.PI / 2 // LEFT RIGHT
         const startBeta =  Math.PI / 3.5 //1.55 /// UP DOWN
-        const startRadius = 12 
+        const startRadius = 13 
         const target = MeshBuilder.CreateBox(uuid.v4(), { size: .1 }, scene)
 
         target.isVisible = false 

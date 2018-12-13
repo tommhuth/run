@@ -3,7 +3,7 @@ import { Vector3, Color3 } from "babylonjs"
 import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
 
 const state = {
-    fogEnd: 30,
+    fogEnd: 26,
     fogStart: 12
 }
 
