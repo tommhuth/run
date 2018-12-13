@@ -69,7 +69,7 @@ export default class Bridge extends PathwayBlock {
             block.rotate(Axis.Y, getFlipRotation())
             block.rotate(Axis.Z, getFlipRotation())
             block.rotate(Axis.X, getFlipRotation())
-            block.position.set(bridgeX, -height/2 - .05, i * (width + 0)) 
+            block.position.set(bridgeX, -height/2 - .005, i * (width + 0)) 
             block.physicsImpostor = new Impostor(block, Impostor.BoxImpostor, { mass: 0 }, scene)
             block.parent = this.group
     

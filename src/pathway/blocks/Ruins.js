@@ -22,14 +22,14 @@ export default class Ruins extends PathwayBlock {
         columns = 2,
         columnFragments = 3,
         outerGap = 2.5,
-        doTree = random.bool()
+        doTree = random.bool(65)
     } = {}) {
         super(scene, width, height, depth)
 
         const pillarGap = (depth - outerGap * 2) / (columns-1)
-        const path = clone(random.pick(["path", "path2"]))
+        const path = clone("path4")
         const path2 = clone("path2")
-        const path3 = clone("path2") 
+        const path3 = clone("path3") 
         const gravel = clone("gravel")  
         const rocks = makeRocks(scene, {
             centerOffset: width,
@@ -99,9 +99,8 @@ export default class Ruins extends PathwayBlock {
         path3.position.y = -height / 2 + random.real(-1, 1)
         path3.position.z = depth/2  
         path3.parent = this.group
-
         
-        resize(path, width, height, depth) 
+        resize(path, width, height, depth + 1) 
         path.rotate(Axis.Y, random.real(-.15, .15))
         path.position.set(0, -height/2, depth/2)  
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)

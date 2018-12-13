@@ -19,7 +19,7 @@ export default class Full extends PathwayBlock {
     } = {}) {
         super(scene, width, height, depth) 
 
-        let path = clone(random.pick(["path", "path2"])) 
+        let path = clone(random.pick(["path", "path2", "path3"])) 
         let rocks = makeRocks(scene, { count: random.integer(1, 5), centerOffset: width - 1, depth })
         let obsticalPosition 
      
@@ -52,7 +52,7 @@ export default class Full extends PathwayBlock {
             
             gravel.rotate(Axis.Y, getRandomRotation())
             gravel.scaling.set(2, 2, 2)
-            gravel.position.set(0, random.real(-.1, 0), depth / 2)
+            gravel.position.set(0, random.real(-.05, 0), depth / 2)
             gravel.parent = this.group
 
             obsticalPosition = rock.position.clone()
