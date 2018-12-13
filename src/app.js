@@ -6,6 +6,7 @@ import Pathway from "./pathway/Pathway"
 import Player from "./Player"
 import Camera from "./Camera"
 import World from "./World"
+import materials from "./materials"
 
 const RUNNING = "running"
 const GAME_OVER = "game-over"
@@ -15,6 +16,8 @@ const LOADING = "loading"
 async function start() {
     try { 
         let { scene, engine, shadowGenerator, beforeRender } = makeScene()
+        
+        materials.init(scene)
 
         await load()
 
@@ -36,11 +39,11 @@ async function start() {
         })
             
         engine.runRenderLoop(() => {
+            beforeRender(player)
             player.beforeRender(pathway)
             camera.beforeRender()
             pathway.beforeRender()
             world.beforeRender(pathway, player)
-            beforeRender(player)
 
             scene.render()
         })
@@ -87,6 +90,7 @@ async function start() {
 document.body.addEventListener("touchmove", (e) => { 
     e.preventDefault()
     e.stopPropagation()
+    e.stopImmediatePropagation()
 })
 
 start()

@@ -24,9 +24,10 @@ export default class World {
   
         fogLayer.material = fogMaterial
         fogLayer.position.y = -20
+        fogLayer.receiveShadows = true
 
-        fogMaterial.emissiveColor = Color3.White()
-        fogMaterial.disableLighting = true
+        ///fogMaterial.emissiveColor = Color3.White()
+        // fogMaterial.disableLighting = true
 
         wrap.material = fogMaterial 
         wrap.position.set(0,0,0)
@@ -38,6 +39,7 @@ export default class World {
             mesh.visibility = .35 * i / this.fogLayers + .2
             mesh.position.y = -i * .2
             mesh.parent = this.group
+            mesh.receiveShadows = i < 6 ? true : false 
         }
     }
  
