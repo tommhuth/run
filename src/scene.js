@@ -13,13 +13,14 @@ export default function() {
     const engine = new Engine(canvas, true, undefined, true)
     const scene = new Scene(engine)
     const light = new DirectionalLight("directionalLight", new Vector3(-2, -2, 2), scene)  
-    const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
+   // const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
     const shadowGenerator = new ShadowGenerator(1800, light, true)
     
     engine.renderEvenInBackground = false
     engine.setHardwareScalingLevel(.75)
     
     scene.autoClear = false 
+    scene.ambientColor = new Color3(.93,.93,.93)
     scene.autoClearDepthAndStencil = false
     scene.blockMaterialDirtyMechanism = true
     scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
@@ -33,15 +34,15 @@ export default function() {
     scene.clearColor = Color3.White()
     
     light.diffuse = Color3.White()
-    light.intensity = .5
+    light.intensity = .6
     light.autoUpdateExtends = false
     light.shadowMaxZ = 10
     light.shadowMinZ = -15
-    
+    /*
     hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
     hemisphere.groundColor =  new Color3(209/255, 242/255, 1) 
     hemisphere.intensity = .5 
-
+*/
     shadowGenerator.usePoissonSampling = true 
     shadowGenerator.bias = 0.00051
     shadowGenerator.setDarkness(.7)
@@ -51,7 +52,7 @@ export default function() {
         scene, 
         engine, 
         light, 
-        hemisphere, 
+       // hemisphere, 
         shadowGenerator,
         beforeRender(player){
             light.position.z = player.position.z + 5

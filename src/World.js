@@ -26,7 +26,7 @@ export default class World {
         fogLayer.position.y = -20
         fogLayer.receiveShadows = true
 
-        ///fogMaterial.emissiveColor = Color3.White()
+        fogMaterial.diffuseColor = new Color3(.71,.71,.81)
         // fogMaterial.disableLighting = true
 
         wrap.material = fogMaterial 

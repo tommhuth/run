@@ -1,4 +1,4 @@
-import { StandardMaterial, Color3 } from "babylonjs"
+import { StandardMaterial, Color3, CubeTexture, Texture } from "babylonjs"
 
 export default {
     init(scene) {
@@ -7,6 +7,14 @@ export default {
         let greenery = new StandardMaterial(null, scene) 
     
         rock.diffuseColor = Color3.White()
+        
+        //rock.ambientColor = new Color3(.1,.1,.1)
+        rock.reflectionTexture = new CubeTexture("https://www.babylonjs-playground.com/textures/skybox", scene)
+        rock.bumpTexture = new Texture("https://www.babylonjs-playground.com/textures/rockn.png", scene);
+       // rock.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
+        rock.roughness = 7
+        rock.diffuseColor = new Color3(1, 1, 1);  
+
         powerup.diffuseColor = Color3.Yellow()
         greenery.diffuseColor = Color3.Green()
     
