@@ -1,72 +1,75 @@
-import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
-import { clone } from "../../utils/modelLoader"
-import { resize, getRandomRotation, random } from "../../utils/utils"
+import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs" 
+import { box, clone, boxed } from "../../utils/modelLoader"
+import { random } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
-import makeRocks from "../../deco/makeRocks"
+
+/*
+WIDTH: 8, 
+    BASE_HEIGHT: 20,
+    DEPTH: 8,
+    FLOOR_DEPTH: 4.5
+
+    */
+export const Pattern = {
+    PLAIN:[ ], 
+    ISLAND:[ 
+    ], 
+}
+
 
 export default class Full extends PathwayBlock { 
+    width = Config.WIDTH 
+    depth = Config.DEPTH 
+    patterns = [ 
+        [
+            {
+                width: 1, depth: 10, height: 1, x: 0, z: 0, y: 0
+            }
+        ]
+    ]
+    
     static isAcceptableNext(type, path){
         return super.isAcceptableNext(type, path)
     }
-    constructor(scene, zPosition, {
-        width = random.real(Config.WIDTH, Config.WIDTH + 1.5),
-        height = Config.HEIGHT,
-        depth = Config.DEPTH,
-        bufferDepth = 1,
-        doCoins = random.bool(),
-        doObstacle = true,
-    } = {}) {
-        super(scene, width, height, depth) 
+    constructor(scene, zPosition) { 
+        super(scene)
+ /*
+        const base = box(scene, { height: Config.BASE_HEIGHT, width: this.width, depth: this.depth }) 
+  
+        base.position.z = this.depth / 2 
+        base.position.y = -Config.BASE_HEIGHT / 2 
+        base.position.x = 0
+        base.physicsImpostor = new Impostor(base, Impostor.BoxImpostor, { mass: 0 }, scene) 
+        base.parent = this.group
+*/
+        let boxd = boxed(scene, this.width, 1, this.depth)
 
-        let path = clone(random.pick(["path", "path2", "path3"])) 
-        let rocks = makeRocks(scene, { count: random.integer(1, 5), centerOffset: width - 1, depth })
-        let obsticalPosition 
-     
-        this.position.set(0, 0, zPosition) 
+        boxd.position.x = -this.width / 2 + .5
+        boxd.position.y = -.5
+        boxd.position.z = .5
+        boxd.parent = this.group
 
-        rocks.position.y = -height
-        rocks.parent = this.group
+        this.position.z = zPosition  
 
-        resize(path, width, height, depth + bufferDepth)  
-        path.position.set(0, -height/2, depth/2) 
-        path.rotate(Axis.Y, random.pick([0, -Math.PI])) 
-        path.rotate(Axis.Y, random.real(-.2, .2))
-        path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
-        path.parent = this.group
-
-        if (doObstacle) {
-            const rock = clone("rock")
-            const size = random.real(.5, 1.5)
-            const gravel = clone("gravel")
-             
-            resize(rock, size, size, size)
-            rock.position.set(
-                random.real(-1, 1),
-                0, 
-                random.real(1, depth - 2)
-            )
-            rock.rotation.set(getRandomRotation(), getRandomRotation(), getRandomRotation())
-            rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0 }, scene)
-            rock.parent = this.group  
-            
-            gravel.rotate(Axis.Y, getRandomRotation())
-            gravel.scaling.set(2, 2, 2)
-            gravel.position.set(0, -random.real(.05, 0), depth / 2)
-            gravel.parent = this.group
-
-            obsticalPosition = rock.position.clone()
-        }
-
-        if (doCoins) { 
-            this.addCoinLine(
-                3, 
-                new Vector3(0, 0, 0), 
-                new Vector3(0, 0, depth - 2), 
-                new Vector3(obsticalPosition ? obsticalPosition.x * -1.5 : 0, .25, 1)
-            )
-        }
-
-        this.makeFloor(width, depth, new Vector3(0, 0, depth/2))
+        this.floor.push(boxd.tmp)
+        this.buildLayers(random.pick(this.patterns)) 
     } 
+    buildLayers(type) {
+        this.type = type 
+
+        for (let { x = 0, y = 0, z = 0, width = 1, height = 1, depth = 1 } of type) {
+            const block = boxed(this.scene, height, width, depth ) 
+
+            block.position.set(
+                x - this.width/2 + .5,
+                y +.5,
+                z + .5 
+            )
+            //block.physicsImpostor = new Impostor(block, Impostor.BoxImpostor, { mass: 0 }, this.scene) 
+            block.parent = this.group
+
+            this.floor.push(block.tmp)
+        }
+    }
 }

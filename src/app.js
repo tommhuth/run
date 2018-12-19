@@ -11,7 +11,6 @@ import materials from "./materials"
 const RUNNING = "running"
 const GAME_OVER = "game-over"
 const READY = "ready"
-const LOADING = "loading"
 
 async function start() {
     try { 
@@ -29,14 +28,15 @@ async function start() {
 
         shadowGenerator.addShadowCaster(player.mesh)
  
-        player.on("gameover", ({ reason }) => {
-            console.log("game over, you:", reason)
-            state = GAME_OVER
-            document.getElementById("ui").innerText = "Game over, you " + reason
-        })
-        player.on("reset", () => { 
-            document.getElementById("ui").innerText = ""
-        })
+        player
+            .on("gameover", ({ reason }) => {
+                console.log("game over: you " + reason)
+                state = GAME_OVER
+                document.getElementById("ui").innerText = "Game over, you " + reason
+            })
+            .on("reset", () => { 
+                document.getElementById("ui").innerText = ""
+            })
             
         engine.runRenderLoop(() => {
             beforeRender(player)

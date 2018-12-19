@@ -13,9 +13,9 @@ export default class World {
 
     constructor(scene) { 
         this.scene = scene
-        this.group = makeGroup(scene)
-        this.group.position.set(0, -Config.FLOOR_DEPTH, 0) 
-        this.makeFog()
+        //this.group = makeGroup(scene)
+        //this.group.position.set(0, -Config.FLOOR_DEPTH, 0) 
+        //this.makeFog()
     }
     makeFog(){
         let fogMaterial = new StandardMaterial(this.scene)  
@@ -44,6 +44,6 @@ export default class World {
     }
  
     beforeRender(pathway, player) {   
-        this.group.position.z = player.position.z 
+        //this.group.position.z = player.position.z 
     }
 }  

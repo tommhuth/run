@@ -15,25 +15,13 @@ export default class PathwayBlock {
     static isAcceptableNext(_previous, _path) { 
         return true
     }
-    constructor(scene, width = 0, height = 0, depth = 0) { 
+    constructor(scene) { 
         this.scene = scene
-        this.group = makeGroup(scene, false) 
-        this.width = width
-        this.height = height 
-        this.depth = depth        
+        this.group = makeGroup(scene, false)
     }
     get position() {
         return this.group.position
-    }
-    makeFloor(width, depth, position){
-        let floor = MeshBuilder.CreateBox(1, { width, depth, height: .25 }, this.scene)
-        
-        floor.isVisible = false
-        floor.position = position 
-        floor.parent = this.group
-
-        this.floor.push(floor)
-    }
+    } 
     canAcceptNext(nextType, _path){
         return this.illegalNext.length ? !this.illegalNext.includes(nextType) : true
     } 

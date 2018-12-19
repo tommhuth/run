@@ -7,9 +7,8 @@ export default class Player extends EventLite {
     score = 0  
     rotation = 0
     targetRotation = 0
-    speed = 4 
-    jumping = true
-    allowsJumping = true 
+    speed = 4  
+    canJump = false 
     running = false
     ticks = 0
 
@@ -36,20 +35,15 @@ export default class Player extends EventLite {
     start() { 
         this.rotation = 0
         this.ticks = 0
-        this.mesh.position.set(0, 4, 0) 
+        this.position.set(0, 4, 0) 
         this.mesh.physicsImpostor.setMass(1) 
         this.running = true
         this.emit("reset" )
     }
     jump() { 
-        if (!this.jumping && this.allowsJumping) {
-            this.jumping = true
-            this.allowsJumping = false 
-            this.mesh.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), this.mesh.position)  
-
-            setTimeout(() => {
-                this.allowsJumping = true
-            }, 400)  
+        if (this.canJump) { 
+            this.canJump = false 
+            this.mesh.physicsImpostor.applyImpulse(new Vector3(0, 5, 0), this.position)   
         }
     }
     move(rotation) { 
@@ -59,10 +53,31 @@ export default class Player extends EventLite {
         return this.mesh.getAbsolutePosition()
     }
     beforeRender(pathway) {   
+        for (let block of pathway.path) { 
+            let isWithin = this.position.z >= block.group.position.z && this.position.z <= block.group.position.z + block.depth
+            let isAbove = this.position.y > block.position.y
+
+            if (isWithin && isAbove) { 
+                let result = false 
+
+                for (let child of block.floor){
+                    if (child.intersectsMesh(this.mesh, false)) {
+                        this.canJump = result = true
+
+                        break
+                    }
+                }
+
+                if (!result) {
+                    this.canJump = false
+                }
+            }
+        }
+
         if (this.running) {
             const velocity = this.mesh.physicsImpostor.getLinearVelocity().clone() 
-            const fallen = this.mesh.position.y < -3
-            const stopped = velocity.z < 1 
+            const fallen = this.position.y < -6
+            const stopped = velocity.z < 1 && this.position.y > 0
         
             if ((fallen || stopped) && this.ticks > 5) {
                 this.reason = fallen ? "fell" : "fell behind"
@@ -76,19 +91,6 @@ export default class Player extends EventLite {
             this.rotation += (this.targetRotation - this.rotation) / 4
 
             this.ticks++
-     
-            for (let block of pathway.path) { 
-                let isWithin = this.mesh.position.z >= block.group.position.z && this.mesh.position.z <= block.group.position.z + block.depth
-                
-                if (isWithin) { 
-                    for (let child of block.floor){
-                        if (child.intersectsMesh(this.mesh, false)) {
-                            this.jumping = false
-                            break
-                        }
-                    }
-                }
-            }  
         } else { 
             const velocity = this.mesh.physicsImpostor.getLinearVelocity().clone() 
             

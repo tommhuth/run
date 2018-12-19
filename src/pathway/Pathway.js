@@ -3,12 +3,12 @@ import Gap from "./blocks/Gap"
 import Island from "./blocks/Island"
 import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
-import { random } from "../utils/utils";
+import { random } from "../utils/utils"
 
 export const Config = {
-    WIDTH: 4.5,
-    HEIGHT: 6,
-    DEPTH: 4,
+    WIDTH: 6, 
+    BASE_HEIGHT: 20,
+    DEPTH: 10,
     FLOOR_DEPTH: 4.5
 }
 
@@ -48,16 +48,12 @@ export default class Pathway {
         let scene = this.scene
         let maxJumpDistance = this.maxJumpDistance
 
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
-        this.add(new Full(scene, this.zPosition))     
-        this.add(new Gap(scene, this.zPosition, { maxJumpDistance }))     
-        this.add(new Full(scene, this.zPosition))                     
-        this.add(new Ruins(scene, this.zPosition, { collapsable: false, doTree: true }))  
-        this.add(new Full(scene, this.zPosition))       
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
-        this.add(new Full(scene, this.zPosition))
-        console.log("POS", this.zPosition)
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Gap(scene, this.zPosition, { maxJumpDistance }))  
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Gap(scene, this.zPosition, { maxJumpDistance }))    
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
     } 
     remove(block) { 
         block.remove()
@@ -75,7 +71,7 @@ export default class Pathway {
     }
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
-        let types = [Gap, Full, Island, Ruins, Bridge]
+        let types = [ Full, Gap ]
         let zPosition = this.zPosition
         let maxJumpDistance =  this.maxJumpDistance
         let scene = this.scene

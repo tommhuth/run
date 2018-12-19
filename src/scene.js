@@ -12,7 +12,7 @@ export default function() {
     const canvas = document.getElementById("app")
     const engine = new Engine(canvas, true, undefined, true)
     const scene = new Scene(engine)
-    const light = new DirectionalLight("directionalLight", new Vector3(-2, -2, 2), scene)  
+    const light = new DirectionalLight("directionalLight", new Vector3(-3, -6, 5), scene)  
     const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
     const shadowGenerator = new ShadowGenerator(1800, light, true)
     
@@ -25,17 +25,17 @@ export default function() {
     scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
     
     scene.getPhysicsEngine().setTimeStep(1 / 45)
-    scene.fogMode = Scene.FOGMODE_LINEAR
+    scene.fogMode = Scene.FOGMODE_NONE
     scene.fogColor = Color3.White()
     scene.fogStart = 6
     scene.fogEnd = state.fogEnd
     scene.fogStart = state.fogStart
     scene.clearColor = Color3.White()
     
-    light.diffuse = Color3.White()
-    light.intensity = .5
+    light.diffuse = new Color3(.5, .5, .5)
+    light.intensity = .65
     light.autoUpdateExtends = false
-    light.shadowMaxZ = 10
+    light.shadowMaxZ = 15
     light.shadowMinZ = -15
     
     hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
