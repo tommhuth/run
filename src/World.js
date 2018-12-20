@@ -21,8 +21,10 @@ export default class World {
         let fogMaterial = new StandardMaterial(this.scene)  
         let wrap = MeshBuilder.CreateBox("", { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
         let fogLayer = MeshBuilder.CreateGround(uuid.v4(), { width: this.width, height: this.height }, this.scene)
-        let isSmallScreen = matchMedia("(max-width: 800px)").matches
+        let isSmallScreen = matchMedia("(max-width: 900px)").matches
   
+        fogMaterial.diffuseColor = new Color3(.2,.2,.2)
+
         fogLayer.material = fogMaterial
         fogLayer.position.y = -20
         fogLayer.receiveShadows = true 

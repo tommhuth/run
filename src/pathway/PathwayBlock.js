@@ -1,4 +1,4 @@
-import { Vector3, Axis, MeshBuilder, StandardMaterial, Color3 } from "babylonjs"
+import { Vector3, Axis, MeshBuilder } from "babylonjs"
 import { makeGroup, resize } from "../utils/utils"
 import { clone } from "../utils/modelLoader"
 

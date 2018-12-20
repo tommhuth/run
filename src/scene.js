@@ -1,5 +1,5 @@
 import { Scene, Engine, CannonJSPlugin } from "babylonjs"
-import { Vector3, Color3 } from "babylonjs"
+import { Vector3, Color3, Color4 } from "babylonjs"
 import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
 
 const state = {
@@ -26,11 +26,11 @@ export default function() {
     
     scene.getPhysicsEngine().setTimeStep(1 / 45)
     scene.fogMode = Scene.FOGMODE_LINEAR
-    scene.fogColor = Color3.White()
+    scene.fogColor = Color3.Black()
     scene.fogStart = 6
     scene.fogEnd = state.fogEnd
     scene.fogStart = state.fogStart
-    scene.clearColor = Color3.White()
+    scene.clearColor = Color3.Black()
     
     light.diffuse = Color3.White()
     light.intensity = .5
@@ -38,13 +38,13 @@ export default function() {
     light.shadowMaxZ = 10
     light.shadowMinZ = -15
     
-    hemisphere.diffuse = new Color3(209/255, 242/255, 1) 
-    hemisphere.groundColor =  new Color3(209/255, 242/255, 1) 
+    hemisphere.diffuse = new Color3(66/255, 134/255, 255/255) 
+    hemisphere.groundColor =  new Color3(2/255, 255/255, 154/255) 
     hemisphere.intensity = .5 
 
     shadowGenerator.usePoissonSampling = true 
-    shadowGenerator.bias = 0.00051
-    shadowGenerator.setDarkness(.7)
+    shadowGenerator.bias = 0.006 
+    shadowGenerator.setDarkness(.25)
     shadowGenerator.frustumEdgeFalloff = 1
 
     return { 

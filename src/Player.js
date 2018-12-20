@@ -1,5 +1,5 @@
  
-import { MeshBuilder, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"  
+import { MeshBuilder, PhysicsImpostor as Impostor, Vector3, StandardMaterial, Color3, PointLight } from "babylonjs"  
 import uuid from "uuid" 
 import EventLite from "event-lite"
 
@@ -15,13 +15,16 @@ export default class Player extends EventLite {
     constructor(scene) {
         super()
         const mesh = MeshBuilder.CreateSphere(uuid.v4(), { segments: 16, diameter: .35 }, scene)
-        
+        const mat = new StandardMaterial(null, scene) 
+
+        mat.emissiveColor = Color3.White()
+        mesh.material = mat
         mesh.receiveShadows = true
         mesh.position.set(0, 3, 0)  
         mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
         
         this.mesh = mesh
-        this.scene = scene 
+        this.scene = scene  
 
         this.on("gameover", () => {
             this.running = false
@@ -54,7 +57,7 @@ export default class Player extends EventLite {
     getAbsolutePosition() {
         return this.mesh.getAbsolutePosition()
     }
-    beforeRender(pathway) {    
+    beforeRender(pathway) {     
         for (let block of pathway.path) { 
             let isWithin = this.position.z >= block.group.position.z  && this.position.z  <= block.group.position.z + block.depth 
             let isAbove = this.position.y > block.position.y
@@ -65,7 +68,6 @@ export default class Player extends EventLite {
                 for (let child of block.floor) {
                     if (child.intersectsMesh(this.mesh, false)) {
                         result = true
-                        console.log("this.canJump")
                         break
                     }
                 }

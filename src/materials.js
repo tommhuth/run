@@ -6,9 +6,15 @@ export default {
         let powerup = new StandardMaterial(null, scene) 
         let greenery = new StandardMaterial(null, scene) 
     
-        rock.diffuseColor = Color3.White()
+        rock.diffuseColor = new Color3(.2, .2, .2)
+        rock.specularColor = Color3.White() 
+        rock.specularPower = 10
+
         powerup.diffuseColor = Color3.Yellow()
+
         greenery.diffuseColor = Color3.Green()
+        greenery.specularColor = Color3.Yellow() 
+        greenery.specularPower = 10
     
         this.rock = rock 
         this.powerup = powerup
