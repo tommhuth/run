@@ -35,7 +35,7 @@ export default class Bridge extends PathwayBlock {
         let pillarStart = clone("bridgeEnd")
         let pillarEnd = clone("bridgeEnd")  
         //let plant = makePlant(scene)
-        let rocks = makeRocks(scene, { centerOffset: 1, count: 10, depth })
+        let rocks = makeRocks(scene, { centerOffset: 1, count: 7, depth })
        // let plantScale = random.real(.4, .75)  
         
         rocks.position.y = -Config.HEIGHT
