@@ -12,7 +12,7 @@ export default {
 
         powerup.diffuseColor = Color3.Yellow()
 
-        greenery.diffuseColor = Color3.Green()
+        greenery.diffuseColor = new Color3(0/255, 255/255, 153/255)
         greenery.specularColor = Color3.Yellow() 
         greenery.specularPower = 10
     
