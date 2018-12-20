@@ -10,7 +10,8 @@ export default {
         rock.specularColor = Color3.White() 
         rock.specularPower = 10
 
-        powerup.diffuseColor = Color3.Yellow()
+        powerup.diffuseColor = new Color3(255/255, 0/255, 191/255)
+        powerup.specularColor = Color3.Yellow() // new Color3(255/255, 0/255, 191/255)
 
         greenery.diffuseColor = new Color3(0/255, 255/255, 153/255)
         greenery.specularColor = Color3.Yellow() 
