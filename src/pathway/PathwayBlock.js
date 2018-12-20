@@ -26,7 +26,7 @@ export default class PathwayBlock {
         return this.group.position
     }
     makeFloor(width, depth, position){
-        let floor = MeshBuilder.CreateBox(1, { width, depth, height: .25 }, this.scene)
+        let floor = MeshBuilder.CreateBox(1, { width, depth, height: .35 }, this.scene)
         
         floor.isVisible = false
         floor.position = position 

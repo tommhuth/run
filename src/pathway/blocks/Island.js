@@ -34,7 +34,7 @@ export default class Island extends PathwayBlock {
         const gap2 = gapSize  
         const depth = islandSize + gap1 + gap2   
         const island = clone(random.pick(["island", "island2", "island3"])) 
-        const deltaHeight = random.real(-1, 1, true)
+        const deltaHeight = random.real(-.5, .5, true)
  
         super(scene, islandSize, height, depth)
         
