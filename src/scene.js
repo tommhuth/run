@@ -3,8 +3,8 @@ import { Vector3, Color3, Color4 } from "babylonjs"
 import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
 
 const state = {
-    fogEnd: 26,
-    fogStart: 12
+    fogEnd: 25,
+    fogStart: 6
 }
 
 export default function() {
@@ -26,7 +26,7 @@ export default function() {
     
     scene.getPhysicsEngine().setTimeStep(1 / 45)
     scene.fogMode = Scene.FOGMODE_LINEAR
-    scene.fogColor = new Color3(.05, .05, .05)
+    scene.fogColor = new Color3(21/255, 21/255, 40/255)
     scene.fogEnd = state.fogEnd
     scene.fogStart = state.fogStart
     scene.clearColor = Color3.Black()
