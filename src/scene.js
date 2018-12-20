@@ -43,9 +43,10 @@ export default function() {
     hemisphere.intensity = .5 
 
     shadowGenerator.usePoissonSampling = true 
-    shadowGenerator.bias = 0.006 
+    //shadowGenerator.bias = 0.006 
     shadowGenerator.setDarkness(.25)
     shadowGenerator.frustumEdgeFalloff = 1
+    shadowGenerator.forceBackFacesOnly = true
 
     return { 
         scene, 
