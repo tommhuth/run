@@ -50,13 +50,20 @@ export default class Pathway {
 
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
-        this.add(new Full(scene, this.zPosition))     
-        this.add(new Gap(scene, this.zPosition, { maxJumpDistance }))     
-        this.add(new Full(scene, this.zPosition))                     
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        /*this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))   
         this.add(new Ruins(scene, this.zPosition, { collapsable: false, doTree: true }))  
         this.add(new Full(scene, this.zPosition))       
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
-        this.add(new Full(scene, this.zPosition))
+        this.add(new Full(scene, this.zPosition)) 
+        */
     } 
     remove(block) { 
         block.remove()
