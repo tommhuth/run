@@ -6,12 +6,13 @@ export default {
         let powerup = new StandardMaterial(null, scene) 
         let greenery = new StandardMaterial(null, scene) 
     
-        rock.diffuseColor = new Color3(.2, .2, .2)
-        rock.specularColor = Color3.White() 
+        rock.diffuseColor = new Color3(.4, .4, .4)
+        rock.specularColor = new Color3(.3, .3, .3)
         rock.specularPower = 10
 
-        powerup.diffuseColor = new Color3(255/255, 0/255, 191/255)
-        powerup.specularColor = Color3.Yellow() // new Color3(255/255, 0/255, 191/255)
+        powerup.diffuseColor = Color3.White()
+        powerup.emissiveColor = Color3.White() //new Color3(255/255, 0/255, 191/255)
+        //powerup.specularColor = Color3.Yellow() // new Color3(255/255, 0/255, 191/255)
 
         greenery.diffuseColor = new Color3(0/255, 255/255, 153/255)
         greenery.specularColor = Color3.Yellow() 

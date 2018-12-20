@@ -26,8 +26,7 @@ export default function() {
     
     scene.getPhysicsEngine().setTimeStep(1 / 45)
     scene.fogMode = Scene.FOGMODE_LINEAR
-    scene.fogColor = Color3.Black()
-    scene.fogStart = 6
+    scene.fogColor = new Color3(.05, .05, .05)
     scene.fogEnd = state.fogEnd
     scene.fogStart = state.fogStart
     scene.clearColor = Color3.Black()
@@ -35,7 +34,7 @@ export default function() {
     light.diffuse = Color3.White()
     light.intensity = .5
     light.autoUpdateExtends = false
-    light.shadowMaxZ = 10
+    light.shadowMaxZ = 15
     light.shadowMinZ = -15
     
     hemisphere.diffuse = new Color3(66/255, 134/255, 255/255) 

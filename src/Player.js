@@ -14,7 +14,7 @@ export default class Player extends EventLite {
 
     constructor(scene) {
         super()
-        const mesh = MeshBuilder.CreateSphere(uuid.v4(), { segments: 16, diameter: .35 }, scene)
+        const mesh = MeshBuilder.CreateSphere(null, { segments: 16, diameter: .35 }, scene)
         const mat = new StandardMaterial(null, scene) 
 
         mat.emissiveColor = Color3.White()
