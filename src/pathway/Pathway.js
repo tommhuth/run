@@ -57,7 +57,6 @@ export default class Pathway {
         this.add(new Full(scene, this.zPosition))       
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
         this.add(new Full(scene, this.zPosition))
-        console.log("POS", this.zPosition)
     } 
     remove(block) { 
         block.remove()

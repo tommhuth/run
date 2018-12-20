@@ -21,25 +21,23 @@ export default class World {
         let fogMaterial = new StandardMaterial(this.scene)  
         let wrap = MeshBuilder.CreateBox("", { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
         let fogLayer = MeshBuilder.CreateGround(uuid.v4(), { width: this.width, height: this.height }, this.scene)
+        let isSmallScreen = matchMedia("(max-width: 800px)").matches
   
         fogLayer.material = fogMaterial
         fogLayer.position.y = -20
-        fogLayer.receiveShadows = true
-
-        ///fogMaterial.emissiveColor = Color3.White()
-        // fogMaterial.disableLighting = true
+        fogLayer.receiveShadows = true 
 
         wrap.material = fogMaterial 
         wrap.position.set(0,0,0)
         wrap.parent = this.group
-        
-        for (let i = 0; i < this.fogLayers; i++) {
+         
+        for (let i = 0; i <  (isSmallScreen ? this.fogLayers : 1) ; i++) {
             const mesh = fogLayer.clone()
         
-            mesh.visibility = .35 * i / this.fogLayers + .2
+            mesh.visibility = isSmallScreen ?  .9735 * i / this.fogLayers + .2 : 1
             mesh.position.y = -i * .2
             mesh.parent = this.group
-            mesh.receiveShadows = i < 6 ? true : false 
+            mesh.receiveShadows = i < 6   ? true : false 
         }
     }
  

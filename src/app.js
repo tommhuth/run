@@ -30,9 +30,9 @@ async function start() {
         shadowGenerator.addShadowCaster(player.mesh)
  
         player.on("gameover", ({ reason }) => {
-            console.log("game over, you:", reason)
+            console.log("game over: you ", reason)
             state = GAME_OVER
-            document.getElementById("ui").innerText = "Game over, you " + reason
+            document.getElementById("ui").innerText = "Game over: you " + reason
         })
         player.on("reset", () => { 
             document.getElementById("ui").innerText = ""
