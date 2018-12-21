@@ -23,7 +23,7 @@ export default class World {
         let fogLayer = MeshBuilder.CreateGround(uuid.v4(), { width: this.width, height: this.height }, this.scene)
         let isSmallScreen = matchMedia("(max-width: 900px)").matches
   
-        fogMaterial.diffuseColor = new Color3(97/255, 135/255, 155/255)
+        fogMaterial.diffuseColor = new Color3(35/255, 152/255, 178/255)
 
         fogLayer.material = fogMaterial
         fogLayer.position.y = -20
