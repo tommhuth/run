@@ -1,6 +1,5 @@
  
-import { MeshBuilder, StandardMaterial, Color3, Mesh } from "babylonjs"  
-import uuid from "uuid"
+import { MeshBuilder, StandardMaterial, Color3, Mesh } from "babylonjs" 
 import { makeGroup } from "./utils/utils"
 import { Config } from "./pathway/Pathway"
 
@@ -19,8 +18,8 @@ export default class World {
     }
     makeFog(){
         let fogMaterial = new StandardMaterial(this.scene)  
-        let wrap = MeshBuilder.CreateBox("", { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
-        let fogLayer = MeshBuilder.CreateGround(uuid.v4(), { width: this.width, height: this.height }, this.scene)
+        let wrap = MeshBuilder.CreateBox(null, { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
+        let fogLayer = MeshBuilder.CreateGround(null, { width: this.width, height: this.height }, this.scene)
         let isSmallScreen = matchMedia("(max-width: 900px)").matches
   
         fogMaterial.diffuseColor = new Color3(35/255, 152/255, 178/255)

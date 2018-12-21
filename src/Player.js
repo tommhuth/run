@@ -1,6 +1,5 @@
  
-import { MeshBuilder, PhysicsImpostor as Impostor, Vector3, StandardMaterial, Color3, PointLight } from "babylonjs"  
-import uuid from "uuid" 
+import { MeshBuilder, PhysicsImpostor as Impostor, Vector3, StandardMaterial, Color3 } from "babylonjs"  
 import EventLite from "event-lite"
 
 export default class Player extends EventLite {
