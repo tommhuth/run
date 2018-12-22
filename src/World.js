@@ -8,14 +8,18 @@ export default class World {
     height = 60 
     fogLayers = 8
     scene
-    group
-
+    group 
+    
+    get position() {
+        return this.group.position
+    }
     constructor(scene) { 
         this.scene = scene
         this.group = makeGroup(scene)
         this.group.position.set(0, -Config.FLOOR_DEPTH, 0) 
-        this.makeFog()
-    }
+
+        this.makeFog()  
+    }  
     makeFog(){
         let fogMaterial = new StandardMaterial(this.scene)  
         let wrap = MeshBuilder.CreateBox(null, { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
@@ -32,7 +36,7 @@ export default class World {
         wrap.position.set(0,0,0)
         wrap.parent = this.group
          
-        for (let i = 0; i <  (isSmallScreen ? this.fogLayers : 1) ; i++) {
+        for (let i = 0; i <  (isSmallScreen ? this.fogLayers : 1);  i++) {
             const mesh = fogLayer.clone()
         
             mesh.visibility = isSmallScreen ?  .9735 * i / this.fogLayers + .2 : 1
@@ -43,6 +47,6 @@ export default class World {
     }
  
     beforeRender(pathway, player) {   
-        this.group.position.z = player.position.z 
+        this.position.z = player.position.z 
     }
 }  

@@ -4,6 +4,7 @@ import Island from "./blocks/Island"
 import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
 import { random } from "../utils/utils";
+import Intro from "./blocks/Intro";
 
 export const Config = {
     WIDTH: 4.5,
@@ -48,14 +49,15 @@ export default class Pathway {
         let scene = this.scene
         let maxJumpDistance = this.maxJumpDistance
 
+        this.add(new Intro(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
+        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
+        this.add(new Full(scene, this.zPosition, { doObstacle: true }))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))   
         /*this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
         
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))   

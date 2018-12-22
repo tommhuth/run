@@ -19,7 +19,7 @@ export default class Player extends EventLite {
         mat.emissiveColor = Color3.White()
         mesh.material = mat
         mesh.receiveShadows = true
-        mesh.position.set(0, 3, 0)  
+        mesh.position.set(0, 13, 0)  
         mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
         
         this.mesh = mesh
@@ -39,7 +39,7 @@ export default class Player extends EventLite {
     start() { 
         this.rotation = 0
         this.ticks = 0
-        this.position.set(0, 4, 0) 
+        this.position.set(0, .35/2, 10) 
         this.impostor.setMass(1) 
         this.running = true
         this.emit("reset" )

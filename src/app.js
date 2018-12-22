@@ -66,6 +66,7 @@ async function start() {
                 case READY: 
                     state = RUNNING
                     player.start()
+                    camera.running()
                     break
                 case RUNNING: 
                     player.jump()
