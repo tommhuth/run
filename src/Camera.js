@@ -18,7 +18,7 @@ export default class Camera {
     alpha = START_ALPHA
     beta = START_BETA
     radius = START_RADIUS
-    mode = "init" // running, game over, 
+    mode = "init"  
 
     constructor(scene, player) {
         const target = MeshBuilder.CreateBox(null, { size: .1 }, scene)
@@ -38,10 +38,11 @@ export default class Camera {
 
         this.player.on("gameover", () => {
             this.mode = "gameover"
-            this.lastZ = this.player.position.z
+            this.lastZ = this.player.position.z + 6
         })
         this.player.on("reset", () => {
             this.mode = "running"
+            this.target.position.set(0, 0, 6)
         })
     }
     running(){
@@ -58,7 +59,7 @@ export default class Camera {
                 this.target.position.y += (this.player.position.y - this.target.position.y) / 120
                 break
             case "gameover": 
-                //this.target.position.x += (0 - this.target.position.x ) / 60
+                this.target.position.z += (this.lastZ - this.target.position.z) / 32 
                 break
             case "init": 
                 this.target.position.z += (2 - this.target.position.z) / 120
