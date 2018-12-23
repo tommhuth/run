@@ -21,6 +21,8 @@ async function start() {
 
         await load()
 
+        document.getElementById("app").style.opacity = 1
+
         let state = READY
         let player = new Player(scene)
         let camera = new Camera(scene, player)

@@ -1,6 +1,7 @@
  
 import { MeshBuilder, PhysicsImpostor as Impostor, Vector3, StandardMaterial, Color3 } from "babylonjs"  
 import EventLite from "event-lite"
+import { Config } from "./pathway/Pathway";
 
 export default class Player extends EventLite {
     score = 0  
@@ -77,7 +78,7 @@ export default class Player extends EventLite {
 
         if (this.running) {
             const velocity = this.impostor.getLinearVelocity().clone() 
-            const fallen = this.position.y < -3
+            const fallen = this.position.y < -Config.HEIGHT
             const stopped = velocity.z < 1 && this.position.y > 0
         
             if ((fallen || stopped) && this.ticks > 5) {

@@ -53,7 +53,7 @@ export default class Camera {
     beforeRender() { 
         switch(this.mode) {
             case "running":
-                this.target.position.z += (this.player.position.z + 4.5 - this.target.position.z) / 8
+                this.target.position.z += (this.player.position.z + 6 - this.target.position.z) / 32
                 this.target.position.x += (this.player.rotation / 15 - this.target.position.x ) / 60
                 break
             case "gameover": 
