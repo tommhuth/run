@@ -1,7 +1,7 @@
  
 import { MeshBuilder, PhysicsImpostor as Impostor, Vector3, StandardMaterial, Color3 } from "babylonjs"  
 import EventLite from "event-lite"
-import { Config } from "./pathway/Pathway";
+import { Config } from "./pathway/Pathway"
 
 export default class Player extends EventLite {
     score = 0  
@@ -11,6 +11,7 @@ export default class Player extends EventLite {
     canJump = false 
     running = false
     ticks = 0
+    hasRestart = false 
 
     constructor(scene) {
         super()
@@ -43,7 +44,12 @@ export default class Player extends EventLite {
         this.position.set(0, .35/2, 10) 
         this.impostor.setMass(1) 
         this.running = true
-        this.emit("reset" )
+
+        if (this.hasRestart) {
+            this.emit("reset" ) 
+        } else {
+            this.hasRestart = true 
+        } 
     }
     jump() { 
         if (this.canJump) { 
