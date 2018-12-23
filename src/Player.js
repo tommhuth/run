@@ -79,7 +79,7 @@ export default class Player extends EventLite {
         if (this.running) {
             const velocity = this.impostor.getLinearVelocity().clone() 
             const fallen = this.position.y < -Config.HEIGHT
-            const stopped = velocity.z < 1 && this.position.y > 0
+            const stopped = velocity.z < 1 && this.position.y >= -Config.HEIGHT
         
             if ((fallen || stopped) && this.ticks > 5) {
                 let reason = fallen ? "fell off" : "crashed"
