@@ -63,12 +63,11 @@ export default class Player extends EventLite {
     getAbsolutePosition() {
         return this.mesh.getAbsolutePosition()
     }
-    beforeRender(pathway) {     
+    beforeRender(pathway) {   
         for (let block of pathway.path) { 
-            let isWithin = this.position.z >= block.group.position.z  && this.position.z  <= block.group.position.z + block.depth 
-            let isAbove = this.position.y > block.position.y
- 
-            if (isWithin && isAbove) { 
+            let isWithin = this.position.z >= block.position.z  && this.position.z  <= block.position.z + block.depth 
+            
+            if (isWithin) { 
                 let result = false 
 
                 for (let child of block.floor) {
