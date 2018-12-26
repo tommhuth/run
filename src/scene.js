@@ -3,7 +3,7 @@ import { Vector3, Color3, Color4 } from "babylonjs"
 import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
  
 export default function() {
-    const physicsPlugin = new CannonJSPlugin(false, 10) 
+    const physicsPlugin = new CannonJSPlugin(false, 16) 
     const canvas = document.getElementById("app")
     const engine = new Engine(canvas, true, undefined, true)
     const scene = new Scene(engine)
@@ -31,7 +31,8 @@ export default function() {
     light.intensity = .5
     light.autoUpdateExtends = false
     light.shadowMaxZ = 15
-    light.shadowMinZ = -15
+    light.shadowMinZ = -20
+    light.shadowFrustumSize = 30
     /*
     hemisphere.diffuse = new Color3(66/255, 134/255, 255/255) 
     hemisphere.groundColor =  new Color3(2/255, 255/255, 154/255) 
