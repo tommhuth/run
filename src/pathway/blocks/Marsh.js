@@ -4,11 +4,13 @@ import { resize, getRandomRotation, random } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
 import makeRocks from "../../deco/makeRocks"
+import Full from "./Full"
 
 export default class Marsh extends PathwayBlock { 
     static isAcceptableNext(type, path){
         return super.isAcceptableNext(type, path)
     } 
+    requiredNext = [Full, Marsh]
     constructor(scene, zPosition, {
         width = Config.WIDTH,
         height = Config.HEIGHT,
@@ -52,7 +54,7 @@ export default class Marsh extends PathwayBlock {
 
             island.position.set(
                 i === 0 ? 0 : random.real(-.5, .5),
-                i * 1 - height/2, //- Config.FLOOR_DEPTH,
+                i * 1 - height/2,
                 i === 0 ? marshDepth + 2 : marshDepth + islandSize / 2 + staircaseDepth  
             )
             island.rotate(Axis.Y, getRandomRotation())
