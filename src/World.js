@@ -36,7 +36,7 @@ export default class World {
         wrap.position.set(0,0,0)
         wrap.parent = this.group
          
-        for (let i = 0; i <  (isSmallScreen ? this.fogLayers : 1);  i++) {
+        for (let i = 0; i < (isSmallScreen ? this.fogLayers : 1);  i++) {
             const mesh = fogLayer.clone()
         
             mesh.visibility = isSmallScreen ?  .9735 * i / this.fogLayers + .2 : 1
