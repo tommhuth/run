@@ -22,7 +22,7 @@ export default function makeRocks(scene, {
         rock.rotate(Axis.Z,random.real(-.25, .25))
         rock.position.x = (centerOffset/2 + random.real(0, xOffset)) * flip()
         rock.position.y = 0
-        rock.position.z = random.real(-depth/2, depth/2)
+        rock.position.z = random.real(0, depth)
         rock.parent = group
     } 
 
