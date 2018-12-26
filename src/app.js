@@ -11,7 +11,6 @@ import materials from "./materials"
 const RUNNING = "running"
 const GAME_OVER = "game-over"
 const READY = "ready"
-const LOADING = "loading"
 
 async function start() {
     try { 
@@ -78,6 +77,7 @@ async function start() {
                     pathway.clear()
                     pathway.init()
                     player.start()
+                    break
             }
         })
 
