@@ -3,8 +3,9 @@ import Gap from "./blocks/Gap"
 import Island from "./blocks/Island"
 import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
-import { random } from "../utils/utils";
-import Intro from "./blocks/Intro";
+import { random } from "../utils/utils"
+import Intro from "./blocks/Intro"
+import Marsh from "./blocks/Marsh" 
 
 export const Config = {
     WIDTH: 4.5,
@@ -51,8 +52,8 @@ export default class Pathway {
 
         this.add(new Intro(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: true }))    
+        this.add(new Full(scene, this.zPosition, { doObstacle: false }))       
+        this.add(new Marsh(scene, this.zPosition, { doObstacle: true }))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
@@ -83,7 +84,7 @@ export default class Pathway {
     }
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
-        let types = [Gap, Full, Island, Ruins, Bridge]
+        let types = [Gap, Full, Island, Ruins, Bridge, Marsh]
         let zPosition = this.zPosition
         let maxJumpDistance =  this.maxJumpDistance
         let scene = this.scene
@@ -102,6 +103,8 @@ export default class Pathway {
         switch (type) {
             case Gap:
                 return new Gap(scene, zPosition, { maxJumpDistance }) 
+            case Marsh:
+                return new Marsh(scene, zPosition, { maxJumpDistance }) 
             case Full:
                 return new Full(scene, zPosition)
             case Island:
@@ -118,9 +121,9 @@ export default class Pathway {
         let removed = []
 
         for (let block of this.path) {
-            if (block.position.z + block.depth < this.player.position.z + 22 && !block.hasShadows) {
+            if (block.position.z < this.player.position.z + 22 && !block.hasShadows) {
                 this.shadowGenerator.addShadowCaster(block.group)
-                block.hasShadows = true
+                block.hasShadows = true 
             }
 
             if (this.player.position.z > block.position.z + block.depth + 10 ) {
