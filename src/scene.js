@@ -32,17 +32,13 @@ export default function() {
     light.autoUpdateExtends = false
     light.shadowMaxZ = 15
     light.shadowMinZ = -20
-    light.shadowFrustumSize = 30
-    /*
-    hemisphere.diffuse = new Color3(66/255, 134/255, 255/255) 
-    hemisphere.groundColor =  new Color3(2/255, 255/255, 154/255) 
-*/
+    light.shadowFrustumSize = 30 
     hemisphere.intensity = 0
     shadowGenerator.usePoissonSampling = true 
     //shadowGenerator.bias = 0.006 
     shadowGenerator.setDarkness(.5)
     shadowGenerator.frustumEdgeFalloff = 1
-    shadowGenerator.forceBackFacesOnly = true
+    shadowGenerator.forceBackFacesOnly = true 
 
     return { 
         scene, 
