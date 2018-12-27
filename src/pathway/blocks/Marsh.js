@@ -25,7 +25,7 @@ export default class Marsh extends PathwayBlock {
         this.position.set(0, -Config.FLOOR_DEPTH, zPosition)
 
         path.position.set(0, -4.45, marshDepth / 2)
-        path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
+        path.physicsImpostor = new Impostor(path, Impostor.CylinderImpostor, { mass: 0 }, scene)
         path.rotate(Axis.Z, -Math.PI / 2) 
         path.rotate(Axis.X, Math.PI / 2)
         path.parent = this.group
