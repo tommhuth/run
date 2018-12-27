@@ -11,9 +11,10 @@ const START_RADIUS = 15
 const RUNNING_ALPHA =  -Math.PI / 2 
 const RUNNING_BETA = Math.PI / 3.5
 const RUNNING_RADIUS = 12
+ 
+const GAME_OVER_RADIUS = 18
 
 export default class Camera {
-    gameOver = false 
     lastZ = 0
     alpha = START_ALPHA
     beta = START_BETA
@@ -38,11 +39,12 @@ export default class Camera {
 
         this.player.on("gameover", () => {
             this.mode = "gameover"
-            this.lastZ = this.player.position.z + 6
+            this.lastZ = this.player.position.z + 7
+            this.gameOver()
         })
         this.player.on("reset", () => {
-            this.mode = "running"
             this.target.position.set(0, 0, 6)
+            this.running()
         })
     }
     running(){
@@ -50,6 +52,9 @@ export default class Camera {
         this.alpha = RUNNING_ALPHA
         this.beta = RUNNING_BETA
         this.radius = RUNNING_RADIUS
+    }
+    gameOver() {  
+        this.radius = GAME_OVER_RADIUS
     }
     beforeRender() { 
         switch(this.mode) {
@@ -68,7 +73,7 @@ export default class Camera {
         } 
 
         this.camera.radius += (this.radius - this.camera.radius) / 90
-        this.camera.alpha += (this.alpha - this.camera.alpha) / 30
-        this.camera.beta += (this.beta - this.camera.beta) / 30
+        this.camera.alpha += (this.alpha - this.camera.alpha) / 60
+        this.camera.beta += (this.beta - this.camera.beta) / 60
     }
 }
