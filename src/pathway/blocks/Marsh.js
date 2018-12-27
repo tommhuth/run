@@ -8,9 +8,9 @@ import Full from "./Full"
 
 export default class Marsh extends PathwayBlock { 
     static isAcceptableNext(type, path){
-        return super.isAcceptableNext(type, path)
+        return super.isAcceptableNext(type, path) && path.filter(i => i instanceof Marsh).length === 0
     } 
-    requiredNext = [Full, Marsh]
+    requiredNext = [Full]
     constructor(scene, zPosition, {
         width = Config.WIDTH,
         height = Config.HEIGHT,
