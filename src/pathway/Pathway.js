@@ -57,8 +57,7 @@ export default class Pathway {
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))   
+        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))    
         /*this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
         
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))   
