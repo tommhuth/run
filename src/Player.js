@@ -1,7 +1,8 @@
  
-import { MeshBuilder, PhysicsImpostor as Impostor, Vector3, StandardMaterial, Color3 } from "babylonjs"  
+import { MeshBuilder, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"  
 import EventLite from "event-lite"
 import { Config } from "./pathway/Pathway"
+import materials from "./materials"
 
 export default class Player extends EventLite {
     score = 0  
@@ -15,11 +16,9 @@ export default class Player extends EventLite {
 
     constructor(scene) {
         super()
-        const mesh = MeshBuilder.CreateSphere(null, { segments: 16, diameter: .35 }, scene)
-        const mat = new StandardMaterial(null, scene) 
+        const mesh = MeshBuilder.CreateSphere(null, { segments: 16, diameter: .35 }, scene) 
 
-        mat.emissiveColor = Color3.White()
-        mesh.material = mat
+        mesh.material = materials.player
         mesh.receiveShadows = true
         mesh.position.set(0, 13, 0)  
         mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)

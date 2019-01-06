@@ -3,12 +3,11 @@ import { clone } from "../../utils/modelLoader"
 import { resize, getRandomRotation, random } from "../../utils/utils"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
-import makeRocks from "../../deco/makeRocks"
 import Full from "./Full"
 
 export default class Marsh extends PathwayBlock { 
     static isAcceptableNext(type, path){
-        return super.isAcceptableNext(type, path) && path.filter(i => i instanceof Marsh).length === 0
+        return false //super.isAcceptableNext(type, path) && path.filter(i => i instanceof Marsh).length === 0
     } 
     requiredNext = [Full]
     constructor(scene, zPosition, {

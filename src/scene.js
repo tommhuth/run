@@ -7,7 +7,7 @@ export default function() {
     const canvas = document.getElementById("app")
     const engine = new Engine(canvas, true, undefined, true)
     const scene = new Scene(engine)
-    const light = new DirectionalLight("directionalLight", new Vector3(-2, -2, 2), scene)  
+    const light = new DirectionalLight("directionalLight", new Vector3(-2, -3, 2), scene)  
     const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
     const shadowGenerator = new ShadowGenerator(1800, light, true)
     
@@ -20,11 +20,11 @@ export default function() {
     scene.enablePhysics(new Vector3(0, -9.8, 0), physicsPlugin)
     
     scene.getPhysicsEngine().setTimeStep(1 / 45)
-    scene.fogMode = Scene.FOGMODE_EXP2
-    scene.fogDensity = .05100
+    scene.ambientColor = new Color3(.5, .5, .5)
+    scene.fogMode = Scene.FOGMODE_LINEAR 
     scene.fogColor = new Color3(12/255, 17/255, 17/255)
     scene.fogEnd = 30
-    scene.fogStart = 16
+    scene.fogStart = 12    
     scene.clearColor = Color3.Black()
     
     light.diffuse = Color3.White()
@@ -33,9 +33,12 @@ export default function() {
     light.shadowMaxZ = 15
     light.shadowMinZ = -20
     light.shadowFrustumSize = 30 
+    
     hemisphere.intensity = 0
-    shadowGenerator.usePoissonSampling = true 
-    //shadowGenerator.bias = 0.006 
+    //hemisphere.diffuse = Color3.White()
+    //hemisphere.groundColor = Color3.Blue()
+
+    shadowGenerator.usePoissonSampling = true
     shadowGenerator.setDarkness(.5)
     shadowGenerator.frustumEdgeFalloff = 1
     shadowGenerator.forceBackFacesOnly = true 

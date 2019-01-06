@@ -1,7 +1,8 @@
  
-import { MeshBuilder, StandardMaterial, Color3, Mesh } from "babylonjs" 
+import { MeshBuilder, Mesh } from "babylonjs" 
 import { makeGroup } from "./utils/utils"
 import { Config } from "./pathway/Pathway"
+import materials from "./materials"
 
 export default class World {
     width = 45
@@ -20,19 +21,16 @@ export default class World {
 
         this.makeFog()  
     }  
-    makeFog(){
-        let fogMaterial = new StandardMaterial(this.scene)  
+    makeFog(){ 
         let wrap = MeshBuilder.CreateBox(null, { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
         let fogLayer = MeshBuilder.CreateGround(null, { width: this.width, height: this.height }, this.scene)
         let isSmallScreen = matchMedia("(max-width: 900px)").matches
-  
-        fogMaterial.diffuseColor = new Color3(35/255, 152/255, 178/255)
-
-        fogLayer.material = fogMaterial
+   
+        fogLayer.material = materials.water
         fogLayer.position.y = -20
         fogLayer.receiveShadows = true 
 
-        wrap.material = fogMaterial 
+        wrap.material = materials.water 
         wrap.position.set(0,0,0)
         wrap.parent = this.group
          

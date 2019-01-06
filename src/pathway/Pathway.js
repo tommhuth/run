@@ -53,8 +53,9 @@ export default class Pathway {
         this.add(new Intro(scene, this.zPosition))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))       
-        this.add(new Marsh(scene, this.zPosition, { doObstacle: true }))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
+        //this.add(new Marsh(scene, this.zPosition, { doObstacle: true }))    
+        this.add(new Full(scene, this.zPosition))    
+        this.add(new Full(scene, this.zPosition))    
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
         this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))    
@@ -78,6 +79,8 @@ export default class Pathway {
     }
     addRandom() {
         let block = this.getRandomBlock()
+
+        console.log("Added: " + block.constructor.name)
 
         this.add(block)
     }

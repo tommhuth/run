@@ -15,7 +15,7 @@ export default class Full extends PathwayBlock {
         depth = Config.DEPTH,
         bufferDepth = 1,
         doCoins = random.bool(),
-        doObstacle = true,
+        doObstacle = !doCoins,
     } = {}) {
         super(scene, width, height, depth) 
 
@@ -35,7 +35,7 @@ export default class Full extends PathwayBlock {
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent = this.group
 
-        if (doObstacle) {
+        if (doObstacle && !doCoins) {
             const rock = clone("rock")
             const size = random.real(.5, 1.5)
             const gravel = clone("gravel")
@@ -58,7 +58,7 @@ export default class Full extends PathwayBlock {
             obsticalPosition = rock.position.clone()
         }
 
-        if (doCoins) { 
+        if (doCoins && !doObstacle) { 
             this.addCoinLine(
                 3, 
                 new Vector3(0, 0, 0), 
