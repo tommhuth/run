@@ -38,17 +38,15 @@ export default class Island extends PathwayBlock {
  
         super(scene, islandSize, height, depth)
         
-        resize(island, islandSize, height + deltaHeight, islandSize)
-
+        resize(island, islandSize, height + deltaHeight, islandSize) 
+        island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
+        island.parent = this.group
         island.rotate(Axis.Y, random.real(-Math.PI * 2, Math.PI * 2))
         island.position.set(
             random.real(-1.5, 1.5),
             -height / 2, 
             gap1 + islandSize / 2
         )  
-        island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
-        island.parent = this.group
-        
         
         this.gap1 = gap1
         this.gap2 = gap2  

@@ -7,7 +7,7 @@ import Full from "./Full"
 
 export default class Marsh extends PathwayBlock { 
     static isAcceptableNext(type, path){
-        return false //super.isAcceptableNext(type, path) && path.filter(i => i instanceof Marsh).length === 0
+        return true || super.isAcceptableNext(type, path) && path.filter(i => i instanceof Marsh).length === 0
     } 
     requiredNext = [Full]
     constructor(scene, zPosition, {
@@ -23,11 +23,11 @@ export default class Marsh extends PathwayBlock {
   
         this.position.set(0, -Config.FLOOR_DEPTH, zPosition)
 
-        path.position.set(0, -4.45, marshDepth / 2)
-        path.physicsImpostor = new Impostor(path, Impostor.CylinderImpostor, { mass: 0 }, scene)
         path.rotate(Axis.Z, -Math.PI / 2) 
         path.rotate(Axis.X, Math.PI / 2)
+        path.physicsImpostor = new Impostor(path, Impostor.CylinderImpostor, { mass: 0 }, scene)
         path.parent = this.group
+        path.position.set(0, -4.45, marshDepth / 2)
         path.visibility = 1
 
         for (let i = 0; i < obstacleCount; i++) {
@@ -35,13 +35,13 @@ export default class Marsh extends PathwayBlock {
             let scale = random.real(.85, 1.5)
 
             rock.scaling.set(scale, random.real(.75, 1.75), scale)
+            rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0 }, scene)
+            rock.parent = this.group
             rock.position.set(
                 random.real(-2.5, 2.5),
                 random.real(-.25, -1.5),
                 i / obstacleCount * (marshDepth - 8) + 6
             )
-            rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0 }, scene)
-            rock.parent = this.group
         }
 
         for (let i = 0; i < 6; i++) { 
@@ -51,14 +51,14 @@ export default class Marsh extends PathwayBlock {
 
             resize(island, islandSize, height, islandSize)
 
+            island.rotate(Axis.Y, getRandomRotation())
+            island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
+            island.parent = this.group
             island.position.set(
                 i === 0 ? 0 : random.real(-.5, .5),
                 i * 1 - height/2,
                 i === 0 ? marshDepth + 2 : marshDepth + islandSize / 2 + staircaseDepth  
             )
-            island.rotate(Axis.Y, getRandomRotation())
-            island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
-            island.parent = this.group
             
             staircaseDepth += islandSize + gap
 

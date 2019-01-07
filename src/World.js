@@ -24,7 +24,6 @@ export default class World {
     makeFog(){ 
         let wrap = MeshBuilder.CreateBox(null, { size: 70, sideOrientation: Mesh.BACKSIDE }, this.scene)
         let fogLayer = MeshBuilder.CreateGround(null, { width: this.width, height: this.height }, this.scene)
-        let isSmallScreen = matchMedia("(max-width: 900px)").matches
    
         fogLayer.material = materials.water
         fogLayer.position.y = -20
@@ -34,10 +33,10 @@ export default class World {
         wrap.position.set(0,0,0)
         wrap.parent = this.group
          
-        for (let i = 0; i < (isSmallScreen ? this.fogLayers : 1);  i++) {
+        for (let i = 0; i <  this.fogLayers;  i++) {
             const mesh = fogLayer.clone()
         
-            mesh.visibility = isSmallScreen ?  .9735 * i / this.fogLayers + .2 : 1
+            mesh.visibility =   .9735 * i / this.fogLayers + .2
             mesh.position.y = -i * .2
             mesh.parent = this.group
             mesh.receiveShadows = i < 6   ? true : false 

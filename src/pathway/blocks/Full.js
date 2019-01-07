@@ -29,26 +29,26 @@ export default class Full extends PathwayBlock {
         rocks.parent = this.group
 
         resize(path, width, height, depth + bufferDepth)  
-        path.position.set(0, -height/2, depth/2) 
         path.rotate(Axis.Y, random.pick([0, -Math.PI])) 
         path.rotate(Axis.Y, random.real(-.2, .2))
-        path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
+        path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0, ignoreParent: true }, scene)
         path.parent = this.group
+        path.position.set(0, -height/2, depth/2) 
 
-        if (doObstacle && !doCoins) {
+        if (doObstacle) {
             const rock = clone("rock")
             const size = random.real(.5, 1.5)
             const gravel = clone("gravel")
              
             resize(rock, size, size, size)
+            rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0, ignoreParent: true }, scene)
+            rock.parent = this.group  
             rock.position.set(
                 random.real(-1, 1),
                 0, 
                 random.real(1, depth - 2)
             )
             rock.rotation.set(getRandomRotation(), getRandomRotation(), getRandomRotation())
-            rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0 }, scene)
-            rock.parent = this.group  
             
             gravel.rotate(Axis.Y, getRandomRotation())
             gravel.scaling.set(2, 2, 2)
@@ -56,9 +56,7 @@ export default class Full extends PathwayBlock {
             gravel.parent = this.group
 
             obsticalPosition = rock.position.clone()
-        }
-
-        if (doCoins && !doObstacle) { 
+        } else { 
             this.addCoinLine(
                 3, 
                 new Vector3(0, 0, 0), 
