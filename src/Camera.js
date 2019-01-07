@@ -9,7 +9,7 @@ const START_BETA = .9 //Math.PI / 3.5
 const START_RADIUS = 15
 
 const RUNNING_ALPHA =  -Math.PI / 2 
-const RUNNING_BETA = Math.PI / 3.5
+const RUNNING_BETA = Math.PI / 3.5 //-- UP/DOWN
 const RUNNING_RADIUS = 12
  
 const GAME_OVER_RADIUS = 18
