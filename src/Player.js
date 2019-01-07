@@ -4,6 +4,8 @@ import EventLite from "event-lite"
 import { Config } from "./pathway/Pathway"
 import materials from "./materials"
 
+const PLAYER_DIAMETER = .5
+
 export default class Player extends EventLite {
     score = 0  
     rotation = 0
@@ -16,11 +18,11 @@ export default class Player extends EventLite {
 
     constructor(scene) {
         super()
-        const mesh = MeshBuilder.CreateSphere(null, { segments: 16, diameter: .45 }, scene) 
+        const mesh = MeshBuilder.CreateSphere(null, { segments: 10, diameter: PLAYER_DIAMETER }, scene) 
 
         mesh.material = materials.player
         mesh.receiveShadows = true
-        mesh.position.set(0, 13, 0)  
+        mesh.position.set(0, 20, 0)  
         mesh.physicsImpostor = new Impostor(mesh, Impostor.SphereImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
         
         this.mesh = mesh
@@ -40,7 +42,7 @@ export default class Player extends EventLite {
     start() { 
         this.rotation = 0
         this.ticks = 0
-        this.position.set(0, .35/2, 10) 
+        this.position.set(0, PLAYER_DIAMETER/2, 10) 
         this.impostor.setMass(1) 
         this.running = true
 
@@ -81,9 +83,10 @@ export default class Player extends EventLite {
         }   
 
         if (this.running) {
+            const floorDelimiter = -(Config.HEIGHT + 5)
             const velocity = this.impostor.getLinearVelocity().clone() 
-            const fallen = this.position.y < -(Config.HEIGHT + 5)
-            const stopped = velocity.z < 1 && this.position.y >= -(Config.HEIGHT + 5)
+            const fallen = this.position.y < floorDelimiter
+            const stopped = velocity.z < 1 && this.position.y >= floorDelimiter
         
             if ((fallen || stopped) && this.ticks > 5) {
                 let reason = fallen ? "fell off" : "crashed"
