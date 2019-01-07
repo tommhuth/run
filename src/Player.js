@@ -16,7 +16,7 @@ export default class Player extends EventLite {
 
     constructor(scene) {
         super()
-        const mesh = MeshBuilder.CreateSphere(null, { segments: 16, diameter: .35 }, scene) 
+        const mesh = MeshBuilder.CreateSphere(null, { segments: 16, diameter: .45 }, scene) 
 
         mesh.material = materials.player
         mesh.receiveShadows = true
