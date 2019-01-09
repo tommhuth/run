@@ -92,15 +92,15 @@ export default class Player extends EventLite {
                 let reason = fallen ? "fell off" : "crashed"
                 
                 this.emit("gameover", { reason })
-            } 
-
-            velocity.z = this.speed
-            velocity.x = this.rotation / 90 * 4
+            } else { 
+                velocity.z = this.speed
+                velocity.x = this.rotation / 90 * 4
+        
+                this.impostor.setLinearVelocity(velocity) 
+                this.rotation += (this.targetRotation - this.rotation) / 4
     
-            this.impostor.setLinearVelocity(velocity) 
-            this.rotation += (this.targetRotation - this.rotation) / 4
-
-            this.ticks++ 
+                this.ticks++ 
+            }
         } else { 
             const velocity = this.impostor.getLinearVelocity().clone() 
             
