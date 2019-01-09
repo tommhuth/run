@@ -12,7 +12,7 @@ export default class Intro extends PathwayBlock {
     }
     
     constructor(scene, zPosition) {  
-        super(scene, 0, 0, 10) 
+        super(scene, 0, 0, 8) 
 
         let logo = clone("logo")  
         let plants = [

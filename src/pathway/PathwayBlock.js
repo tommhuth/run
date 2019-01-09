@@ -1,4 +1,4 @@
-import { Vector3, Axis, MeshBuilder } from "babylonjs"
+import { Vector3, Axis, MeshBuilder, StandardMaterial, Color3 } from "babylonjs"
 import { makeGroup, resize } from "../utils/utils"
 import { clone } from "../utils/modelLoader"
 
@@ -25,12 +25,18 @@ export default class PathwayBlock {
     get position() {
         return this.group.position
     }
-    makeFloor(width, depth, position){
+    makeFloor(width, depth, position, debug = false){
         let floor = MeshBuilder.CreateBox(1, { width, depth, height: .35 }, this.scene)
         
-        floor.isVisible = false
         floor.position = position 
         floor.parent = this.group
+
+        if (debug) {  
+            floor.material = new StandardMaterial(null, this.scene)
+            floor.material.diffuseColor = Color3.Red()
+        } else { 
+            floor.isVisible = false
+        }
 
         this.floor.push(floor)
     }

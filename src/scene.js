@@ -21,9 +21,9 @@ export default function() {
     
     scene.getPhysicsEngine().setTimeStep(1 / 45)
     scene.ambientColor = new Color3(.5, .5, .5)
-    //scene.fogMode = Scene.FOGMODE_LINEAR 
-    //scene.fogColor = new Color3(12/255, 17/255, 17/255)
-    scene.fogEnd = 30
+    scene.fogMode = Scene.FOGMODE_LINEAR 
+    scene.fogColor = new Color3(12/255, 17/255, 17/255)
+    scene.fogEnd = 38
     scene.fogStart = 12    
     scene.clearColor = Color3.Black()
     

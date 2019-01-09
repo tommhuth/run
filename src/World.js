@@ -36,8 +36,8 @@ export default class World {
         for (let i = 0; i <  this.fogLayers;  i++) {
             const mesh = fogLayer.clone()
         
-            mesh.visibility =   .9735 * i / this.fogLayers + .2
-            mesh.position.y = -i * .2
+            mesh.visibility = .9735 * i / this.fogLayers + .2
+            mesh.position.y = -i * .25
             mesh.parent = this.group
             mesh.receiveShadows = i < 6   ? true : false 
         }

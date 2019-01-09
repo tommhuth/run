@@ -18,28 +18,32 @@ export default class Marsh extends PathwayBlock {
     } = {}) {
         super(scene, width, height, marshDepth) 
 
-        let path = MeshBuilder.CreateCylinder(null, { diameter: 8, height: marshDepth + 4 }, scene) 
-        let staircaseDepth = 0
+        let path2 = clone("seafloor")   
+        let diameter = 9
+        let staircaseDepth = 0 
+ 
+        resize(path2, diameter, marshDepth + 4, diameter) 
   
         this.position.set(0, -Config.FLOOR_DEPTH, zPosition)
 
-        path.rotate(Axis.Z, -Math.PI / 2) 
-        path.rotate(Axis.X, Math.PI / 2)
-        path.physicsImpostor = new Impostor(path, Impostor.CylinderImpostor, { mass: 0 }, scene)
-        path.parent = this.group
-        path.position.set(0, -4.45, marshDepth / 2)
-        path.visibility = 1
+        path2.rotate(Axis.Z, -Math.PI / 2) 
+        path2.rotate(Axis.X, Math.PI / 2)
+        path2.rotate(Axis.Y, getRandomRotation()) 
+        path2.physicsImpostor = new Impostor(path2, Impostor.CylinderImpostor, { mass: 0 }, scene)
+        path2.parent = this.group
+        path2.position.set(0,  -diameter/2 -.1, marshDepth / 2) 
 
         for (let i = 0; i < obstacleCount; i++) {
             let rock = clone("rock")
             let scale = random.real(.85, 1.5)
+            let xPosition = random.real(-2.5, 2.5)
 
             rock.scaling.set(scale, random.real(.75, 1.75), scale)
             rock.physicsImpostor = new Impostor(rock, Impostor.SphereImpostor, { mass: 0 }, scene)
             rock.parent = this.group
             rock.position.set(
-                random.real(-2.5, 2.5),
-                random.real(-.25, -1.5),
+                xPosition,
+                -Math.abs(xPosition) / 2,
                 i / obstacleCount * (marshDepth - 8) + 6
             )
         }
@@ -69,6 +73,6 @@ export default class Marsh extends PathwayBlock {
         } 
         
         this.depth += staircaseDepth
-        this.makeFloor(width - 1.5, marshDepth, new Vector3(0, path.position.y + 4.1, marshDepth/2))
+        this.makeFloor(width - 1.5, marshDepth, new Vector3(0, path2.position.y + diameter/2, marshDepth/2))
     } 
 }
