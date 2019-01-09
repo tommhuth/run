@@ -83,7 +83,7 @@ export default class Player extends EventLite {
         }   
 
         if (this.running) {
-            const floorDelimiter = -(Config.HEIGHT + 5)
+            const floorDelimiter = -(Config.HEIGHT + 1)
             const velocity = this.impostor.getLinearVelocity().clone() 
             const fallen = this.position.y < floorDelimiter
             const stopped = velocity.z < 1 && this.position.y >= floorDelimiter
