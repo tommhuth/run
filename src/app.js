@@ -33,7 +33,7 @@ async function start() {
         player.on("gameover", ({ reason }) => {
             console.log("game over: you ", reason)
             state = GAME_OVER
-            document.getElementById("ui").innerText = "Game over: you " + reason
+            document.getElementById("ui").innerHTML = `Game over <span>You ${reason}</span>`
         })
         player.on("reset", () => { 
             document.getElementById("ui").innerText = ""
