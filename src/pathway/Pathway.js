@@ -40,13 +40,6 @@ export default class Pathway {
 
         this.init()
     } 
-    clear() {
-        for (let block of this.path) {
-            block.remove()
-        }
-
-        this.path.length = 0
-    }
     init(){
         let scene = this.scene
         let maxJumpDistance = this.maxJumpDistance
@@ -70,16 +63,23 @@ export default class Pathway {
         this.add(new Full(scene, this.zPosition)) 
         */
     } 
+    add(block = this.getRandomBlock()) {
+        console.log("Added: " + block.constructor.name)
+        this.path.push(block)
+    } 
     remove(block) { 
         block.remove()
         this.shadowGenerator.removeShadowCaster(block.group, true)
  
         this.path = this.path.filter(i => i !== block)
     } 
-    add(block = this.getRandomBlock()) {
-        console.log("Added: " + block.constructor.name)
-        this.path.push(block)
-    } 
+    clear() {
+        for (let block of this.path) {
+            block.remove()
+        }
+
+        this.path.length = 0
+    }
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
         let types = [Gap, Full, Island, Ruins, Bridge, Marsh]
