@@ -21,7 +21,6 @@ export default class Full extends PathwayBlock {
 
         let path = clone(random.pick(["path", "path2", "path3"])) 
         let rocks = makeRocks(scene, { count: random.integer(1, 5), centerOffset: width - 1, depth })
-        let obsticalPosition 
      
         this.position.set(0, 0, zPosition) 
 
@@ -54,14 +53,12 @@ export default class Full extends PathwayBlock {
             gravel.scaling.set(2, 2, 2)
             gravel.position.set(0, -random.real(.05, 0), depth / 2)
             gravel.parent = this.group
-
-            obsticalPosition = rock.position.clone()
         } else { 
             this.addCoinLine(
                 3, 
                 new Vector3(0, 0, 0), 
                 new Vector3(0, 0, depth - 2), 
-                new Vector3(obsticalPosition ? obsticalPosition.x * -1.5 : 0, .25, 1)
+                new Vector3(0, .25, 1)
             )
         }
 
