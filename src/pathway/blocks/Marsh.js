@@ -110,7 +110,5 @@ export default class Marsh extends PathwayBlock {
                 lastWasCoins = false 
             }
         }
-
-        console.log("segments", segments, segmentSize)
     }
 }
