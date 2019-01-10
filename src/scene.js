@@ -23,8 +23,8 @@ export default function() {
     scene.ambientColor = new Color3(.5, .5, .5)
     scene.fogMode = Scene.FOGMODE_LINEAR 
     scene.fogColor = new Color3(12/255, 17/255, 17/255)
-    scene.fogEnd = 38
-    scene.fogStart = 12    
+    scene.fogEnd = 40
+    scene.fogStart = 10    
     scene.clearColor = Color3.Black()
     
     light.diffuse = Color3.White()
