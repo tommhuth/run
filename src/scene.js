@@ -1,9 +1,10 @@
 import { Scene, Engine, CannonJSPlugin } from "babylonjs"
-import { Vector3, Color3, Color4 } from "babylonjs"
+import { Vector3, Color3 } from "babylonjs"
 import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
+import materials from "./materials"
  
 export default function() {
-    const physicsPlugin = new CannonJSPlugin(false, 16) 
+    const physicsPlugin = new CannonJSPlugin(false, 10) 
     const canvas = document.getElementById("app")
     const engine = new Engine(canvas, true, undefined, true)
     const scene = new Scene(engine)
@@ -35,13 +36,20 @@ export default function() {
     light.shadowFrustumSize = 30 
     
     hemisphere.intensity = 0
-    //hemisphere.diffuse = Color3.White()
-    //hemisphere.groundColor = Color3.Blue()
 
     shadowGenerator.usePoissonSampling = true
     shadowGenerator.setDarkness(.5)
     shadowGenerator.frustumEdgeFalloff = 1
     shadowGenerator.forceBackFacesOnly = true 
+
+    // scene is ready so init materials
+    materials.init(scene)
+
+    // make sure the scene gets recalced for resizes    
+    window.addEventListener("resize", () => {
+        engine.resize()
+        scene.render()  
+    })
 
     return { 
         scene, 

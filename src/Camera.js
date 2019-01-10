@@ -35,45 +35,23 @@ export default class Camera {
         this.player = player
         this.scene = scene 
         this.target = target
-        this.camera = camera
-
-        this.player.on("gameover", () => {
-            this.mode = "gameover"
-            this.lastZ = this.player.position.z + 7
-            this.gameOver()
-        })
-        this.player.on("reset", () => {
-            this.target.position.set(0, 0, 6)
-            this.running()
-        })
+        this.camera = camera 
     }
-    running(){
+    running() {
         this.mode = "running" 
         this.alpha = RUNNING_ALPHA
         this.beta = RUNNING_BETA
         this.radius = RUNNING_RADIUS
     }
     gameOver() {  
+        this.lastZ = this.player.position.z + 7
         this.radius = GAME_OVER_RADIUS
     }
-    beforeRender() { 
-        switch(this.mode) {
-            case "running":
-                this.target.position.z += (this.player.position.z + 6 - this.target.position.z) / 32
-                this.target.position.x += (this.player.rotation / 15 - this.target.position.x ) / 60
-                this.target.position.y += (this.player.position.y - this.target.position.y) / 60
-                break
-            case "gameover": 
-                this.target.position.z += (this.lastZ - this.target.position.z) / 32 
-                break
-            case "init": 
-                this.target.position.z += (2 - this.target.position.z) / 120
-                this.target.position.y += (-2 - this.target.position.y) / 120
-                break
-        } 
-
-        this.camera.radius += (this.radius - this.camera.radius) / 90
-        this.camera.alpha += (this.alpha - this.camera.alpha) / 60
-        this.camera.beta += (this.beta - this.camera.beta) / 60
+    reset() { 
+        this.target.position.set(0, 0, 6)
+        this.running()
+    }
+    beforeRender(player, pathway) { 
+        // empty
     }
 }

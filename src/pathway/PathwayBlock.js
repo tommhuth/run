@@ -68,17 +68,9 @@ export default class PathwayBlock {
             this.addCoin(position, i * .1)
         }
     }
-    beforeRender(player) {  
-        for (let coin of this.coins) {
-            let distance = Vector3.DistanceSquared(coin.getAbsolutePosition(), player.getAbsolutePosition())
-
-            coin.rotate(Axis.Y, coin.rotation.y + .035)
-
-            if (distance < .25) {
-                player.score++ 
-                coin.dispose() 
-                this.coins = this.coins.filter(i => i !== coin)
-            }
+    beforeRender() {  
+        for (let coin of this.coins) { 
+            coin.rotate(Axis.Y, coin.rotation.y + .035) 
         }
     }
 }

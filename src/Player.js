@@ -1,23 +1,17 @@
  
-import { MeshBuilder, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"  
-import EventLite from "event-lite"
-import { Config } from "./pathway/Pathway"
+import { MeshBuilder, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
 import materials from "./materials"
 
 const PLAYER_DIAMETER = .5
 
-export default class Player extends EventLite {
+export default class Player {
     score = 0  
     rotation = 0
     targetRotation = 0
     speed = 4  
-    canJump = false 
-    running = false
-    ticks = 0
-    hasRestart = false 
+    canJump = false  
 
-    constructor(scene) {
-        super()
+    constructor(scene, shadowGenerator) {
         const mesh = MeshBuilder.CreateSphere(null, { segments: 10, diameter: PLAYER_DIAMETER }, scene) 
 
         mesh.material = materials.player
@@ -27,11 +21,8 @@ export default class Player extends EventLite {
         
         this.mesh = mesh
         this.scene = scene  
-
-        this.on("gameover", () => {
-            this.running = false
-            this.impostor.setLinearVelocity(Vector3.Zero())
-        })
+ 
+        shadowGenerator.addShadowCaster(mesh)
     }
     get impostor() {
         return this.mesh.physicsImpostor
@@ -40,17 +31,9 @@ export default class Player extends EventLite {
         return this.mesh.position
     } 
     start() { 
-        this.rotation = 0
-        this.ticks = 0
-        this.position.set(0, PLAYER_DIAMETER/2, 10) 
-        this.impostor.setMass(1) 
-        this.running = true
-
-        if (this.hasRestart) {
-            this.emit("reset" ) 
-        } else {
-            this.hasRestart = true 
-        } 
+        this.rotation = 0 
+        this.position.set(0, PLAYER_DIAMETER / 2 + .25, 10) 
+        this.impostor.setMass(1)  
     }
     jump() { 
         if (this.canJump) { 
@@ -81,33 +64,5 @@ export default class Player extends EventLite {
                 this.canJump = result
             }
         }   
-
-        if (this.running) {
-            const floorDelimiter = -(Config.HEIGHT + 1)
-            const velocity = this.impostor.getLinearVelocity().clone() 
-            const fallen = this.position.y < floorDelimiter
-            const stopped = velocity.z < 1 && this.position.y >= floorDelimiter
-        
-            if ((fallen || stopped) && this.ticks > 5) {
-                let reason = fallen ? "fell off" : "crashed"
-                
-                this.emit("gameover", { reason })
-            } else { 
-                velocity.z = this.speed
-                velocity.x = this.rotation / 90 * 4
-        
-                this.impostor.setLinearVelocity(velocity) 
-                this.rotation += (this.targetRotation - this.rotation) / 4
-    
-                this.ticks++ 
-            }
-        } else { 
-            const velocity = this.impostor.getLinearVelocity().clone() 
-            
-            velocity.z = 0
-            velocity.y = velocity.y < -10 ? 0 : velocity.y
-
-            this.impostor.setLinearVelocity(velocity) 
-        }
     }
 }  

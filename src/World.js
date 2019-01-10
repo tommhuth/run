@@ -44,6 +44,6 @@ export default class World {
     }
  
     beforeRender(pathway, player) {   
-        this.position.z = player.position.z 
+        // empty for now
     }
 }  

@@ -40,6 +40,10 @@ export default class Pathway {
 
         this.init()
     } 
+    restart() { 
+        this.clear()
+        this.init()
+    }
     init(){
         let scene = this.scene
         let maxJumpDistance = this.maxJumpDistance
@@ -48,20 +52,7 @@ export default class Pathway {
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
         this.add(new Full(scene, this.zPosition, { doObstacle: false }))     
         this.add(new Marsh(scene, this.zPosition, { maxJumpDistance, lastWasSame: false })) 
-        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))   
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))       
-        //this.add(new Marsh(scene, this.zPosition, { doObstacle: true }))    
-        this.add(new Full(scene, this.zPosition))    
-        this.add(new Full(scene, this.zPosition))    
-        this.add(new Marsh(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))    
-        /*this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))  
-        
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: true }))   
-        this.add(new Ruins(scene, this.zPosition, { collapsable: false, doTree: true }))  
-        this.add(new Full(scene, this.zPosition))       
-        this.add(new Island(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))  
-        this.add(new Full(scene, this.zPosition)) 
-        */
+        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))    
     } 
     add(block = this.getRandomBlock()) {
         console.log("Added: " + block.constructor.name)
@@ -122,7 +113,7 @@ export default class Pathway {
                 block.hasShadows = true 
             }
 
-            if (this.player.position.z > block.position.z + block.depth + 10 ) {
+            if (this.player.position.z > block.position.z + block.depth + 10) {
                 this.remove(block)
             } else {
                 block.beforeRender(this.player)
