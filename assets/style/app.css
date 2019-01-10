@@ -1,18 +1,27 @@
 #ui {
     position: fixed;
     bottom: 2em;
-    left: 0;
-    right: 0;
+    left: .5em;
+    right: .5em;
     text-align: center;
     z-index: 100; 
     text-transform: uppercase;
     font-size: 4.5em;
+    line-height: 1;
+}
+
+@media (max-width: 400px) {
+    #ui {
+        font-size: 2.75em;
+        bottom: 4em;
+
+    }
 }
 
 #ui span { 
     display: block;
     font-size: .45em;
-    margin-top: .25em;
+    margin-top: .5em;
     opacity: .5;
 }
 
@@ -22,7 +31,7 @@
     right: 2em;
     font-size: 2em;
     z-index: 100; 
-}
+} 
 
 #distance {
     position: absolute;
@@ -30,6 +39,20 @@
     left: 2em;
     font-size: 2em;
     z-index: 100; 
+}
+
+@media (max-width: 400px) {
+    #score, #distance {
+        font-size: 1.5em;
+    }
+
+    #score {
+        right: 1em;
+    }
+
+    #distance {
+        left: 1em;
+    }
 }
 
 body { 
