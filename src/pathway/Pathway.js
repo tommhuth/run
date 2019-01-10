@@ -11,7 +11,8 @@ export const Config = {
     WIDTH: 4.5,
     HEIGHT: 6,
     DEPTH: 4,
-    FLOOR_DEPTH: 4.5
+    FLOOR_DEPTH: 4.5,
+    FORWARD_BUFFER: 40
 }
 
 export default class Pathway {
@@ -75,16 +76,10 @@ export default class Pathway {
  
         this.path = this.path.filter(i => i !== block)
     } 
-    add(block) {
-        this.path.push(block)
-    }
-    addRandom() {
-        let block = this.getRandomBlock()
-
+    add(block = this.getRandomBlock()) {
         console.log("Added: " + block.constructor.name)
-
-        this.add(block)
-    }
+        this.path.push(block)
+    } 
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
         let types = [Gap, Full, Island, Ruins, Bridge, Marsh]
@@ -121,8 +116,6 @@ export default class Pathway {
         }
     }
     beforeRender() {
-        let removed = []
-
         for (let block of this.path) {
             if (block.position.z < this.player.position.z + 22 && !block.hasShadows) {
                 this.shadowGenerator.addShadowCaster(block.group)
@@ -130,15 +123,14 @@ export default class Pathway {
             }
 
             if (this.player.position.z > block.position.z + block.depth + 10 ) {
-                removed.push(block)
+                this.remove(block)
             } else {
                 block.beforeRender(this.player)
             }
         }
-
-        for (let block of removed) {
-            this.remove(block)
-            this.addRandom()
+ 
+        if (this.zPosition - this.player.position.z < Config.FORWARD_BUFFER) {
+            this.add()
         }
     }
 }
