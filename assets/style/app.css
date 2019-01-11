@@ -49,6 +49,10 @@
     z-index: 100; 
 }
 
+div {
+    pointer-events: none;
+}
+
 @media (max-width: 400px) {
     #score, #distance {
         font-size: 1.5em;
