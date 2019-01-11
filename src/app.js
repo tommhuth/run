@@ -6,7 +6,7 @@ import Pathway from "./stage/pathway/Pathway"
 import Player from "./stage/Player"
 import Camera from "./stage/Camera"
 import World from "./stage/World"
-import RunnerEngine from "./RunnerEngine" 
+import { RunnerEngine, RunnerEvent } from "./RunnerEngine" 
 
 async function start() {
     try { 
@@ -38,16 +38,16 @@ async function start() {
         document.getElementById("app").style.opacity = 1
  
         runnerEngine
-            .on("gameover", ({ reason }) => {
+            .on(RunnerEvent.GAME_OVER, ({ reason }) => {
                 document.getElementById("ui").innerHTML = `Game over <span>You ${reason}</span>`
             })
-            .on("reset", () => { 
+            .on(RunnerEvent.RESET, () => { 
                 document.getElementById("ui").innerText = ""
             })
-            .on("score-change", (score) => {  
+            .on(RunnerEvent.SCORE_CHANGE, (score) => {  
                 document.getElementById("score").innerText = score
             })
-            .on("distance-change", (distance) => {  
+            .on(RunnerEvent.DISTANCE_CHANGE, (distance) => {  
                 document.getElementById("distance").innerText = distance +  "m"
             })     
     } catch (e) {

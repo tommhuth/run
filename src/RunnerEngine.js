@@ -2,19 +2,26 @@ import EventLite from "event-lite"
 import { Vector3 } from "babylonjs"
 import { Config } from "./stage/pathway/Pathway"
 
-const State = {
+export const State = {
     READY: "ready",
     RUNNING: "running",
     GAME_OVER: "game-over"
 }
 
-export default class RunnerEngine extends EventLite {
+export const RunnerEvent = {
+    SCORE_CHANGE: "runner:score-change",
+    DISTANCE_CHANGE: "runner:distance-change",
+    GAME_OVER: "runner:game-over",
+    RESET: "runner:reset"
+}
+
+export class RunnerEngine extends EventLite {
     scene
-    state = State.READY
-    ticks = 0
-    score = 0
-    lives = 1
+    state = State.READY 
+    score = 0 
     distance = 0
+    playerVelocities = []
+    velocityFramesCount = 3
 
     constructor(scene, player, pathway, camera, world) {
         super()
@@ -24,53 +31,75 @@ export default class RunnerEngine extends EventLite {
         this.camera = camera
         this.world = world
 
-        window.addEventListener("deviceorientation", (e) => {
-            if (this.state === State.RUNNING) {
-                let rotation = e.gamma
-
-                if (e.beta >= 90) {
-                    // if tilted towards user, gamma is flipped - flip back
-                    rotation *= -1
-                }
-
-                this.player.move(rotation)
-            }
-        }, false)
-
-        window.addEventListener("mousemove", (e) => {
-            if (this.state === State.RUNNING) {
-                this.player.move((e.pageX - window.innerWidth / 2) / 2)
-            }
-        }, false)
-
-        window.addEventListener("click", (e) => {
-            e.stopPropagation()
-            e.preventDefault()
-
-            switch (this.state) {
-                case State.READY: 
-                    this.state = State.RUNNING
-                    this.player.start()
-                    this.camera.running()
-                    break
-                case State.RUNNING: 
-                    this.player.jump()
-                    break
-                case State.GAME_OVER: 
-                    this.state = State.RUNNING
-                    this.ticks = 0
-                    this.score = 0
-                    this.distance = 0
-                    this.pathway.restart()
-                    this.camera.reset()
-                    this.player.start()
-                    this.emit("reset")
-                    this.emit("score-change", this.score)
-                    this.emit("distance-change", this.distance)
-                    break
-            }
-        })
+        window.addEventListener("deviceorientation", (e) => this.onDeviceOrientation(e), false)
+        window.addEventListener("mousemove", (e) => this.onMouseMove(e), false)
+        window.addEventListener("click", (e) => this.onClick(e))
     }
+
+    // handlers
+    onDeviceOrientation(e) {
+        if (this.state === State.RUNNING) {
+            let rotation = e.gamma
+
+            if (e.beta >= 90) {
+                // if tilted towards user, gamma is flipped - flip back
+                rotation *= -1
+            }
+
+            this.player.move(rotation)
+        }
+    }
+    onMouseMove(e) {
+        if (this.state === State.RUNNING) {
+            this.player.move((e.pageX - window.innerWidth / 2) / 2)
+        }
+    }
+    onClick(e){ 
+        e.stopPropagation()
+        e.preventDefault()
+
+        switch (this.state) {
+            case State.READY: 
+                return this.doRunning() 
+            case State.RUNNING:  
+                return this.doJump()
+            case State.GAME_OVER: 
+                return this.doReset()
+        }   
+    }
+
+    // actions
+    doJump() { 
+        this.player.jump()
+    }
+    doRunning() { 
+        this.state = State.RUNNING
+        this.player.start()
+        this.camera.running()
+    }
+    doReset() { 
+        this.playerVelocities.length = 0
+        this.score = 0
+        this.distance = 0
+        this.pathway.restart()
+        this.camera.reset()
+        this.player.start()
+
+        this.emit(RunnerEvent.RESET)
+        this.emit(RunnerEvent.SCORE_CHANGE, this.score)
+        this.emit(RunnerEvent.DISTANCE_CHANGE, this.distance)
+
+        this.state = State.RUNNING
+    }
+    doGameOver(reason) {
+        this.state = State.GAME_OVER
+        this.camera.gameOver()
+        this.player.impostor.setLinearVelocity(Vector3.Zero())
+        
+        this.emit(RunnerEvent.GAME_OVER, { reason })
+    }
+
+    // loops
     cameraLoop() {
         let cw = this.camera
         let camera = cw.camera
@@ -100,29 +129,31 @@ export default class RunnerEngine extends EventLite {
         // player movement/game over
         if (this.state === State.RUNNING) {
             let player = this.player    
-            let floorDelimiter = -(Config.HEIGHT + 1)
+            let floorDelimiter = -(Config.FLOOR_DEPTH + 1)
             let velocity = player.impostor.getLinearVelocity().clone() 
-            let fallen = player.position.y < floorDelimiter
-            let stopped = velocity.z < 1 && player.position.y >= floorDelimiter
-        
-            if ((fallen || stopped) && this.ticks > 5) {
-                let reason = fallen ? "fell off" : "crashed"
-                
-                this.emit("gameover", { reason })
-                this.state = State.GAME_OVER
-                this.camera.gameOver()
-                player.impostor.setLinearVelocity(Vector3.Zero())
-            } else { 
-                velocity.z = player.speed
-                velocity.x = player.rotation / 22
-        
-                player.impostor.setLinearVelocity(velocity) 
-                player.rotation += (player.targetRotation - player.rotation) / 4
-    
-                this.ticks++ 
-            }
 
-            this.emit("distance-change", Math.round((player.position.z - 10) / 2))
+            this.playerVelocities.push(velocity.z)
+            this.playerVelocities = this.playerVelocities.slice(-this.velocityFramesCount)
+
+            if (this.playerVelocities.length === this.velocityFramesCount) {
+                let fallen = player.position.y < floorDelimiter
+                let avarageVelocity = this.playerVelocities.map(i => i < 0 ? 0 : i).reduce((total, current) => total + current, 0) / this.velocityFramesCount
+                let stopped = avarageVelocity < 2 && player.position.y >= floorDelimiter
+             
+                if (fallen || stopped) {
+                    let reason = fallen ? "fell off" : "crashed"
+                    
+                    this.doGameOver(reason)
+                } 
+            }   
+
+            velocity.z = player.speed
+            velocity.x = player.rotation
+    
+            player.impostor.setLinearVelocity(velocity) 
+            player.rotation += (player.targetRotation - player.rotation) / 4
+            
+            this.emit(RunnerEvent.DISTANCE_CHANGE, Math.round((player.position.z - 10) / 2))
         } 
 
         // scoring
@@ -132,7 +163,7 @@ export default class RunnerEngine extends EventLite {
 
                 if (distance < .25) {
                     this.score++ 
-                    this.emit("score-change", this.score)
+                    this.emit(RunnerEvent.SCORE_CHANGE, this.score)
                     coin.dispose() 
                     block.coins = block.coins.filter(i => i !== coin)
                 } 

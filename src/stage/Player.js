@@ -41,7 +41,7 @@ export default class Player {
         }
     }
     move(rotation) { 
-        this.targetRotation = rotation
+        this.targetRotation = rotation / 40
     }
     getAbsolutePosition() {
         return this.mesh.getAbsolutePosition()
