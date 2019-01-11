@@ -1,8 +1,8 @@
  
 import { MeshBuilder, Mesh } from "babylonjs" 
-import { makeGroup } from "./utils/utils"
-import { Config } from "./pathway/Pathway"
-import materials from "./materials"
+import { makeGroup } from "../utils/helpers"
+import { Config } from "../stage/pathway/Pathway"
+import materials from "../materials/materials"
 
 export default class World {
     width = 45

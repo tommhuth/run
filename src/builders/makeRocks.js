@@ -1,6 +1,6 @@
 import { Axis } from "babylonjs"
-import { clone } from "../utils/modelLoader"
-import { getRandomRotation, makeGroup, flip, random } from "../utils/utils"
+import { clone } from "./models"
+import { getRandomRotation, makeGroup, flip, random } from "../utils/helpers"
 
 export default function makeRocks(scene, {
     centerOffset, 

@@ -1,11 +1,11 @@
 import "@babel/polyfill"
  
-import makeScene from "./scene"
-import { load } from "./utils/modelLoader"  
-import Pathway from "./pathway/Pathway"
-import Player from "./Player"
-import Camera from "./Camera"
-import World from "./World"
+import makeScene from "./stage/scene"
+import { load } from "./builders/models"  
+import Pathway from "./stage/pathway/Pathway"
+import Player from "./stage/Player"
+import Camera from "./stage/Camera"
+import World from "./stage/World"
 import RunnerEngine from "./RunnerEngine" 
 
 async function start() {

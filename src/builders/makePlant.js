@@ -1,5 +1,5 @@
-import { clone } from "../utils/modelLoader" 
-import { random } from "../utils/utils"
+import { clone } from "./models" 
+import { random } from "../utils/helpers"
 import { Vector3 } from "babylonjs"
  
 export default function makePlant(scene, { 

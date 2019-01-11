@@ -1,5 +1,5 @@
 import { SceneLoader, Vector3 } from "babylonjs"   
-import materials from "../materials"
+import materials from "../materials/materials"
 
 const models = {}
 

@@ -1,11 +1,11 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
-import { clone } from "../../utils/modelLoader"
-import { resize, flip, getRandomRotation, explode, random } from "../../utils/utils"
+import { clone } from "../../../builders/models"
+import { resize, flip, getRandomRotation, explode, random } from "../../../utils/helpers"
 import Full from "./Full" 
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
-import makeRocks from "../../deco/makeRocks"
-import makeTree from "../../deco/makeTree"
+import makeRocks from "../../../builders/makeRocks"
+import makeTree from "../../../builders/makeTree"
 
 export default class Ruins extends PathwayBlock {
     requiredNext = [Full] 

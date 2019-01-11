@@ -1,5 +1,5 @@
-import { clone } from "../utils/modelLoader"
-import { getRandomRotation } from "../utils/utils"
+import { clone } from "./models"
+import { getRandomRotation } from "../utils/helpers"
 import { Axis, Vector3 } from "babylonjs"
 
 export default function({ scale = 1 } = {}) {

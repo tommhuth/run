@@ -1,7 +1,7 @@
 import { Scene, Engine, CannonJSPlugin } from "babylonjs"
 import { Vector3, Color3 } from "babylonjs"
 import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
-import materials from "./materials"
+import materials from "../materials/materials"
  
 export default function() {
     let physicsPlugin = new CannonJSPlugin(false, 10) 

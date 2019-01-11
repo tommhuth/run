@@ -1,6 +1,6 @@
 import EventLite from "event-lite"
 import { Vector3 } from "babylonjs"
-import { Config } from "./pathway/Pathway"
+import { Config } from "./stage/pathway/Pathway"
 
 const State = {
     READY: "ready",
@@ -26,10 +26,15 @@ export default class RunnerEngine extends EventLite {
 
         window.addEventListener("deviceorientation", (e) => {
             if (this.state === State.RUNNING) {
-                this.player.move(e.gamma * (e.beta >= 90 ? -1 : 1))
-            }
+                let rotation = e.gamma
 
-            //document.getElementById("debug").innerText = JSON.stringify({ alpha: e.alpha, gamma: e.gamma, beta: e.beta }, null, 4)
+                if (e.beta >= 90) {
+                    // if tilted towards user, gamma is flipped - flip back
+                    rotation *= -1
+                }
+
+                this.player.move(rotation)
+            }
         }, false)
 
         window.addEventListener("mousemove", (e) => {
@@ -55,11 +60,13 @@ export default class RunnerEngine extends EventLite {
                     this.state = State.RUNNING
                     this.ticks = 0
                     this.score = 0
+                    this.distance = 0
                     this.pathway.restart()
                     this.camera.reset()
                     this.player.start()
                     this.emit("reset")
                     this.emit("score-change", this.score)
+                    this.emit("distance-change", this.distance)
                     break
             }
         })

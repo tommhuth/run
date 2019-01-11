@@ -1,9 +1,9 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
-import { clone } from "../../utils/modelLoader"
-import { resize, getFlipRotation, random } from "../../utils/utils"
+import { clone } from "../../../builders/models"
+import { resize, getFlipRotation, random } from "../../../utils/helpers"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
-import makeRocks from "../../deco/makeRocks"  
+import makeRocks from "../../../builders/makeRocks"  
 import Full from "./Full"
 
 export default class Bridge extends PathwayBlock {

@@ -1,6 +1,6 @@
 import { Vector3, Axis, MeshBuilder, StandardMaterial, Color3 } from "babylonjs"
-import { makeGroup, resize } from "../utils/utils"
-import { clone } from "../utils/modelLoader"
+import { makeGroup, resize } from "../../utils/helpers"
+import { clone } from "../../builders/models"
 
 export default class PathwayBlock {
     illegalNext = []

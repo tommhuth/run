@@ -1,11 +1,11 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
-import { clone } from "../../utils/modelLoader"
-import { resize, flip, getRandomRotation, random } from "../../utils/utils"
+import { clone } from "../../../builders/models"
+import { resize, flip, getRandomRotation, random } from "../../../utils/helpers"
 import PathwayBlock from "../PathwayBlock"  
 import { Config } from "../Pathway"
 import Gap from "./Gap"
-import makeWaterPlant from "../../deco/makeWaterPlant"
-import makePlant from "../../deco/makePlant"
+import makeWaterPlant from "../../../builders/makeWaterPlant"
+import makePlant from "../../../builders/makePlant"
 import Bridge from "./Bridge"
 
 export default class Island extends PathwayBlock {

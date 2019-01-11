@@ -1,6 +1,6 @@
 import { Axis, PhysicsImpostor as Impostor, Vector3 } from "babylonjs"
-import { clone } from "../../utils/modelLoader"
-import { resize, getRandomRotation, random } from "../../utils/utils"
+import { clone } from "../../../builders/models"
+import { resize, getRandomRotation, random } from "../../../utils/helpers"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
 import Full from "./Full"

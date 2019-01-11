@@ -3,7 +3,7 @@ import Gap from "./blocks/Gap"
 import Island from "./blocks/Island"
 import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
-import { random } from "../utils/utils"
+import { random } from "../../utils/helpers"
 import Intro from "./blocks/Intro"
 import Marsh from "./blocks/Marsh" 
 

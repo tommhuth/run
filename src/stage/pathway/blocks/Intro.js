@@ -1,10 +1,10 @@
 import PathwayBlock from "../PathwayBlock" 
-import { clone } from "../../utils/modelLoader" 
-import makeWaterPlant from "../../deco/makeWaterPlant"
-import makePlant from "../../deco/makePlant"
+import { clone } from "../../../builders/models" 
+import makeWaterPlant from "../../../builders/makeWaterPlant"
+import makePlant from "../../../builders/makePlant"
 import { Axis, Vector3 } from "babylonjs"
 import { Config } from "../Pathway"
-import { random, getRandomRotation } from "../../utils/utils"
+import { random, getRandomRotation } from "../../../utils/helpers"
 
 export default class Intro extends PathwayBlock {   
     static isAcceptableNext(type, path){
