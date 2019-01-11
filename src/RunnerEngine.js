@@ -1,14 +1,14 @@
 import EventLite from "event-lite"
+import { Vector3 } from "babylonjs"
 import { Config } from "./pathway/Pathway"
-import {Vector3} from "babylonjs"
 
 const State = {
     READY: "ready",
     RUNNING: "running",
-    GAME_OVER: "game over"
+    GAME_OVER: "game-over"
 }
 
-export default class Runner extends EventLite {
+export default class RunnerEngine extends EventLite {
     scene
     state = State.READY
     ticks = 0
@@ -26,8 +26,10 @@ export default class Runner extends EventLite {
 
         window.addEventListener("deviceorientation", (e) => {
             if (this.state === State.RUNNING) {
-                this.player.move(e.gamma) 
+                this.player.move(e.gamma * (e.beta >= 90 ? -1 : 1))
             }
+
+            //document.getElementById("debug").innerText = JSON.stringify({ alpha: e.alpha, gamma: e.gamma, beta: e.beta }, null, 4)
         }, false)
 
         window.addEventListener("mousemove", (e) => {
@@ -62,7 +64,6 @@ export default class Runner extends EventLite {
             }
         })
     }
-
     cameraLoop() {
         let cw = this.camera
         let camera = cw.camera
@@ -89,7 +90,7 @@ export default class Runner extends EventLite {
         camera.beta += (cw.beta - camera.beta) / 60
     } 
     playerLoop() {
-        // player movement
+        // player movement/game over
         if (this.state === State.RUNNING) {
             let player = this.player    
             let floorDelimiter = -(Config.HEIGHT + 1)
@@ -114,12 +115,11 @@ export default class Runner extends EventLite {
                 this.ticks++ 
             }
 
-            this.emit("distance-change", Math.round((player.position.z - 10) * 1.5))
+            this.emit("distance-change", Math.round((player.position.z - 10) / 2))
         } 
 
         // scoring
-        for (let block of this.pathway.path) {
-                
+        for (let block of this.pathway.path) { 
             for (let coin of block.coins) {
                 let distance = Vector3.DistanceSquared(coin.getAbsolutePosition(), this.player.getAbsolutePosition())
 

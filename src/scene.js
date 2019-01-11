@@ -4,13 +4,14 @@ import { DirectionalLight, HemisphericLight, ShadowGenerator } from "babylonjs"
 import materials from "./materials"
  
 export default function() {
-    const physicsPlugin = new CannonJSPlugin(false, 10) 
-    const canvas = document.getElementById("app")
-    const engine = new Engine(canvas, true, undefined, true)
-    const scene = new Scene(engine)
-    const light = new DirectionalLight("directionalLight", new Vector3(-2, -3, 2), scene)  
-    const hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
-    const shadowGenerator = new ShadowGenerator(1800, light, true)
+    let physicsPlugin = new CannonJSPlugin(false, 10) 
+    let canvas = document.getElementById("app")
+    let engine = new Engine(canvas, true, undefined, true)
+    let scene = new Scene(engine)
+    let light = new DirectionalLight("directionalLight", new Vector3(-2, -3, 2), scene)  
+    let hemisphere = new HemisphericLight("hemisphereLight", new Vector3(0, 0, 0), scene) 
+    let shadowGenerator = new ShadowGenerator(1800, light, true)
+    let resizeTimeout = null
     
     engine.renderEvenInBackground = false
     engine.setHardwareScalingLevel(.75)
@@ -45,10 +46,13 @@ export default function() {
     // scene is ready so init materials
     materials.init(scene)
 
-    // make sure the scene gets recalced for resizes    
+    // make sure the scene gets recalced for resizes, with delay    
     window.addEventListener("resize", () => {
-        engine.resize()
-        scene.render()  
+        clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(() => { 
+            engine.resize()
+            scene.render()  
+        }, 250)
     })
 
     return { 
@@ -57,9 +61,12 @@ export default function() {
         light, 
         hemisphere, 
         shadowGenerator,
-        beforeRender(player){
-            light.position.z = player.position.z + 5
-        } 
+        runRenderLoop(callback) {
+            engine.runRenderLoop(() => {
+                callback(light, hemisphere)
+                scene.render()
+            })
+        }
     }
 }
  

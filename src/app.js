@@ -6,11 +6,11 @@ import Pathway from "./pathway/Pathway"
 import Player from "./Player"
 import Camera from "./Camera"
 import World from "./World"
-import Runner from "./Runner" 
+import RunnerEngine from "./RunnerEngine" 
 
 async function start() {
     try { 
-        let { scene, engine, shadowGenerator, beforeRender } = makeScene()
+        let { scene, shadowGenerator, runRenderLoop } = makeScene()
 
         await load()
  
@@ -18,44 +18,38 @@ async function start() {
         let camera = new Camera(scene, player)
         let pathway = new Pathway(scene, player, shadowGenerator) 
         let world = new World(scene)
-        let runner = new Runner(scene, player, pathway, camera, world)
+        let runnerEngine = new RunnerEngine(scene, player, pathway, camera, world)
 
-        engine.runRenderLoop(() => {
-            // scene before render loop
-            beforeRender(player)
-
+        runRenderLoop((light) => {  
             // objects
             player.beforeRender(pathway)
             camera.beforeRender(pathway, player)
             pathway.beforeRender(player)
             world.beforeRender(pathway, player)
             
+            // recalc light for shadows
+            light.position.z = player.position.z + 5
+            
             // gameplay loop
-            runner.gameLoop()
-
-            //render out
-            scene.render()
+            runnerEngine.gameLoop() 
         })
 
         // ui stuff here
         document.getElementById("app").style.opacity = 1
  
-        runner.on("gameover", ({ reason }) => {
-            console.log("game over: you ", reason) 
-            document.getElementById("ui").innerHTML = `Game over <span>You ${reason}</span>`
-        })
-        runner.on("reset", () => { 
-            document.getElementById("ui").innerText = ""
-        })
-        runner.on("score-change", (score) => { 
-            console.log("score", score)
-            document.getElementById("score").innerText = score
-        })
-        runner.on("distance-change", (distance) => { 
-            console.log("distance", distance)
-            document.getElementById("distance").innerText = distance +  "m"
-        })
-            
+        runnerEngine
+            .on("gameover", ({ reason }) => {
+                document.getElementById("ui").innerHTML = `Game over <span>You ${reason}</span>`
+            })
+            .on("reset", () => { 
+                document.getElementById("ui").innerText = ""
+            })
+            .on("score-change", (score) => {  
+                document.getElementById("score").innerText = score
+            })
+            .on("distance-change", (distance) => {  
+                document.getElementById("distance").innerText = distance +  "m"
+            })     
     } catch (e) {
         console.error(e)
     }
