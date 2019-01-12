@@ -19,7 +19,8 @@ export class RunnerEngine extends EventLite {
     scene
     state = State.READY 
     score = 0 
-    distance = 0
+    distanceIncrement = 250
+    distance = this.distanceIncrement 
     playerVelocities = []
     velocityFramesCount = 3
 
@@ -81,18 +82,18 @@ export class RunnerEngine extends EventLite {
         this.state = State.RUNNING
         this.player.start()
         this.camera.running()
+        this.emit(RunnerEvent.SCORE_CHANGE, this.score) 
     }
     doReset() { 
         this.playerVelocities.length = 0
         this.score = 0
-        this.distance = 0
+        this.distance = this.distanceIncrement
         this.pathway.restart()
         this.camera.reset()
         this.player.start()
 
         this.emit(RunnerEvent.RESET)
-        this.emit(RunnerEvent.SCORE_CHANGE, this.score)
-        this.emit(RunnerEvent.DISTANCE_CHANGE, this.distance)
+        this.emit(RunnerEvent.SCORE_CHANGE, this.score) 
 
         this.state = State.RUNNING
     }
@@ -158,7 +159,11 @@ export class RunnerEngine extends EventLite {
             player.impostor.setLinearVelocity(velocity) 
             player.rotation += (player.targetRotation - player.rotation) / 4
             
-            this.emit(RunnerEvent.DISTANCE_CHANGE, Math.round((player.position.z - 10) / 2))
+            if (player.position.z - 10 >= this.distance) {
+                this.emit(RunnerEvent.DISTANCE_CHANGE, this.distance)
+
+                this.distance += this.distanceIncrement
+            }
         } 
 
         // scoring

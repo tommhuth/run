@@ -7,15 +7,15 @@
     z-index: 100; 
     text-transform: uppercase;
     font-size: 4.5em;
-    line-height: 1;
+    line-height: .85;
 }
 
-#debug {
-    position: fixed;
-    top: 0;
-    left:0;
-    z-index: 111;
-    white-space: pre;
+#ui span { 
+    display: block;
+    font-size: .35em;
+    margin-top: .65em;
+    opacity: .5;
+    font-weight: 100; 
 }
 
 @media (max-width: 400px) {
@@ -26,11 +26,12 @@
     }
 }
 
-#ui span { 
-    display: block;
-    font-size: .45em;
-    margin-top: .5em;
-    opacity: .5;
+#debug {
+    position: fixed;
+    top: 0;
+    left:0;
+    z-index: 111;
+    white-space: pre;
 }
 
 #score {
@@ -39,14 +40,40 @@
     right: 2em;
     font-size: 2em;
     z-index: 100; 
+    font-weight: 300; 
+    font-family: Roboto;
 } 
+
+@media (max-width: 400px) {
+    #score {
+        font-size: 2em;
+        bottom: 4em;
+
+    }
+}
 
 #distance {
     position: absolute;
-    bottom: 1em;
-    left: 2em;
+    top: 0;
+    left: .5em;
+    right: .5em;
     font-size: 2em;
-    z-index: 100; 
+    font-weight: 300; 
+    z-index: 100;
+    text-align: center; 
+    transition: all .5s;
+    opacity: 0;
+    font-family: Roboto;
+}
+
+#distance span {
+    font-size: .6em;
+    text-transform: uppercase;
+}
+
+#distance.on {
+    top: 2em;
+    opacity: 1;
 }
 
 div {
@@ -70,8 +97,8 @@ div {
 body { 
     font-size: 1.5em;
     touch-action: none; 
-    font-family: "Open Sans"; 
-    font-weight: 300; 
+    font-family: "Raleway"; 
+    font-weight: 900; 
     color: #FFF;
     background-color: rgba(12,40,47);
 } 

@@ -7,6 +7,7 @@ import Player from "./stage/Player"
 import Camera from "./stage/Camera"
 import World from "./stage/World"
 import { RunnerEngine, RunnerEvent } from "./RunnerEngine" 
+import * as ui from "./ui"
 
 async function start() {
     try { 
@@ -38,8 +39,8 @@ async function start() {
             .on(RunnerEvent.SCORE_CHANGE, (score) => {  
                 document.getElementById("score").innerText = score
             })
-            .on(RunnerEvent.DISTANCE_CHANGE, (distance) => {  
-                document.getElementById("distance").innerText = distance +  "m"
+            .on(RunnerEvent.DISTANCE_CHANGE, (distance) => {   
+                ui.distanceAlert(distance)
             })     
     } catch (e) {
         console.error(e)

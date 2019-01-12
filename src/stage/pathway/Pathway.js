@@ -48,9 +48,9 @@ export default class Pathway {
         let maxJumpDistance = this.maxJumpDistance
 
         this.add(new Intro(scene, this.zPosition))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false }))     
-        this.add(new Marsh(scene, this.zPosition, { maxJumpDistance, lastWasSame: false })) 
+        this.add(new Full(scene, this.zPosition, { doObstacle: false, doCoins: false }))    
+        this.add(new Full(scene, this.zPosition, { doObstacle: false, doCoins: false }))     
+        //this.add(new Marsh(scene, this.zPosition, { maxJumpDistance, lastWasSame: false })) 
         this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))    
     } 
     add(block = this.getRandomBlock()) {
