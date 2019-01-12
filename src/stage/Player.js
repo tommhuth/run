@@ -49,6 +49,11 @@ export default class Player {
         return this.mesh.getAbsolutePosition()
     }
     beforeRender(pathway) {   
+        if (this.position.y < -15) {
+            this.position.x = 0
+            this.position.y = -15
+        }
+
         for (let block of pathway.path) { 
             let isWithin = this.position.z >= block.position.z  && this.position.z  <= block.position.z + block.depth 
             
