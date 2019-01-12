@@ -31,6 +31,7 @@ export default class Player {
     } 
     start() { 
         this.rotation = 0 
+        this.targetRotation = 0
         this.position.set(0, PLAYER_DIAMETER / 2 + .25, 10) 
         this.impostor.setMass(1)  
         this.impostor.setLinearVelocity(Vector3.Zero())  
