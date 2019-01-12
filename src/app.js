@@ -16,22 +16,13 @@ async function start() {
  
         let player = new Player(scene, shadowGenerator)
         let camera = new Camera(scene, player)
-        let pathway = new Pathway(scene, player, shadowGenerator) 
+        let pathway = new Pathway(scene, player) 
         let world = new World(scene)
-        let runnerEngine = new RunnerEngine(scene, player, pathway, camera, world)
+        let runnerEngine = new RunnerEngine(scene, player, pathway, camera, world, shadowGenerator)
 
         runRenderLoop((light) => {  
-            // objects
-            player.beforeRender(pathway)
-            camera.beforeRender(pathway, player)
-            pathway.beforeRender(player)
-            world.beforeRender(pathway, player)
-            
-            // recalc light for shadows
-            light.position.z = player.position.z + 5
-            
             // gameplay loop
-            runnerEngine.gameLoop() 
+            runnerEngine.loop(light) 
         })
 
         // ui stuff here

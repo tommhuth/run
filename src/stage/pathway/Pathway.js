@@ -6,6 +6,7 @@ import Bridge from "./blocks/Bridge"
 import { random } from "../../utils/helpers"
 import Intro from "./blocks/Intro"
 import Marsh from "./blocks/Marsh" 
+import { State } from "../../RunnerEngine"
 
 export const Config = {
     WIDTH: 4.5,
@@ -18,8 +19,7 @@ export const Config = {
 export default class Pathway {
     path = [] 
     player 
-    scene 
-    shadowGenerator
+    scene  
 
     get zPosition() {
         let previousBlock = this.path[this.path.length - 1]
@@ -33,10 +33,9 @@ export default class Pathway {
     get maxJumpDistance() { 
         return this.player.speed * .875
     }
-    constructor(scene, player, shadowGenerator) {
+    constructor(scene, player) {
         this.scene = scene
-        this.player = player 
-        this.shadowGenerator = shadowGenerator  
+        this.player = player  
 
         this.init()
     } 
@@ -60,7 +59,6 @@ export default class Pathway {
     } 
     remove(block) { 
         block.remove()
-        this.shadowGenerator.removeShadowCaster(block.group, true)
  
         this.path = this.path.filter(i => i !== block)
     } 
@@ -105,23 +103,5 @@ export default class Pathway {
             default: 
                 throw new Error("Unknown path type " + type.name)
         }
-    }
-    beforeRender() {
-        for (let block of this.path) {
-            if (block.position.z < this.player.position.z + 22 && !block.hasShadows) {
-                this.shadowGenerator.addShadowCaster(block.group)
-                block.hasShadows = true 
-            }
-
-            if (this.player.position.z > block.position.z + block.depth + 10) {
-                this.remove(block)
-            } else {
-                block.beforeRender(this.player)
-            }
-        }
- 
-        if (this.zPosition - this.player.position.z < Config.FORWARD_BUFFER) {
-            this.add()
-        }
-    }
+    }   
 }

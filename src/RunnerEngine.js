@@ -23,13 +23,14 @@ export class RunnerEngine extends EventLite {
     playerVelocities = []
     velocityFramesCount = 3
 
-    constructor(scene, player, pathway, camera, world) {
+    constructor(scene, player, pathway, camera, world, shadowGenerator) {
         super()
         this.scene = scene
         this.player = player
         this.pathway = pathway
         this.camera = camera
         this.world = world
+        this.shadowGenerator = shadowGenerator
 
         window.addEventListener("deviceorientation", (e) => this.onDeviceOrientation(e), false)
         window.addEventListener("mousemove", (e) => this.onMouseMove(e), false)
@@ -47,11 +48,15 @@ export class RunnerEngine extends EventLite {
             }
 
             this.player.move(rotation)
+        } else {
+            this.player.move(0)
         }
     }
     onMouseMove(e) {
         if (this.state === State.RUNNING) {
             this.player.move((e.pageX - window.innerWidth / 2) / 2)
+        } else {
+            this.player.move(0)
         }
     }
     onClick(e){ 
@@ -175,9 +180,36 @@ export class RunnerEngine extends EventLite {
             this.world.position.z = this.player.position.z 
         }
     }
-    gameLoop() {
+    pathwayLoop() {
+        for (let block of this.pathway.path) {
+            if (block.position.z < this.player.position.z + 22 && !block.hasShadows) {
+                block.hasShadows = true 
+                this.shadowGenerator.addShadowCaster(block.group)
+            }
+
+            if (this.player.position.z > block.position.z + block.depth + 10 && this.state === State.RUNNING) {
+                this.pathway.remove(block) 
+                this.shadowGenerator.removeShadowCaster(block.group, true)
+            } else {
+                block.beforeRender(this.player)
+            }
+        }
+    
+        if (this.pathway.zPosition - this.player.position.z < Config.FORWARD_BUFFER && this.state === State.RUNNING) {
+            this.pathway.add()
+        }
+    }
+    loop(light) {
         this.cameraLoop()
         this.playerLoop()
         this.worldLoop()
+        this.pathwayLoop()
+
+        this.player.beforeRender(this.pathway)
+        this.camera.beforeRender(this.pathway, this.player) 
+        this.world.beforeRender(this.pathway, this.player)
+
+        // recalc light for shadows
+        light.position.z = this.player.position.z + 5
     }
 }
