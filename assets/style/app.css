@@ -42,13 +42,12 @@
     z-index: 100; 
     font-weight: 300; 
     font-family: Roboto;
+    opacity: .5;
 } 
 
 @media (max-width: 400px) {
     #score {
-        font-size: 2em;
-        bottom: 4em;
-
+        font-size: 1.5em;  
     }
 }
 
