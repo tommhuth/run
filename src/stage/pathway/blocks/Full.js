@@ -53,7 +53,7 @@ export default class Full extends PathwayBlock {
             gravel.scaling.set(2, 2, 2)
             gravel.position.set(0, -random.real(.05, 0), depth / 2)
             gravel.parent = this.group
-        } else { 
+        } else if (doCoins) { 
             this.addCoinLine(
                 3, 
                 new Vector3(0, 0, 0), 
