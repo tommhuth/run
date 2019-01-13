@@ -11,7 +11,7 @@ const USE_CACHE_BUST = process.env.USE_CACHE_BUST === "true"
 const app = express()
 
 app.use(compression())
-app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 })) 
+app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "10 years" : 0 })) 
 app.set("views", path.join(__dirname, "assets/views"))
 app.set("view engine", "pug")
 
