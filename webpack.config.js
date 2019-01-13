@@ -20,7 +20,6 @@ let plugins = [
         swDest: "./sw.js", 
         templatedUrls: {
             "/": uuid.v4(),
-            "https://fonts.googleapis.com/css?family=Raleway:100,900|Roboto:100": 1,
         }
     })
 ] 
