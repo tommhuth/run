@@ -14,7 +14,7 @@ workbox.routing.registerRoute(
     workbox.strategies.staleWhileRevalidate({
         cacheName: "google-fonts-stylesheets",
     })
-);
+)
 
 // Cache the underlying font files with a cache-first strategy for 1 year.
 workbox.routing.registerRoute(
@@ -31,4 +31,4 @@ workbox.routing.registerRoute(
             }),
         ],
     })
-);
+)

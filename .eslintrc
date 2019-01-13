@@ -3,7 +3,11 @@
         "browser": true,
         "es6": true,
         "node": true,
-        "mocha": true
+        "mocha": true,
+        "serviceworker": true
+    },
+    "globals": { 
+        "workbox": true
     },
     "parser": "babel-eslint",
     "extends": "eslint:recommended",
