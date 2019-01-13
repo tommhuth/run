@@ -1,9 +1,7 @@
 const webpack = require("webpack") 
 const { version } = require("./package.json")
-const path = require("path") 
-const WorkboxPlugin = require("workbox-webpack-plugin")
+const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
-const uuid = require("uuid")
 
 
 let plugins = [ 
@@ -15,21 +13,17 @@ let plugins = [
         { from: "./assets/models/world.babylon.manifest", to: "./models/world." + version + ".babylon.manifest" },
         { from: "./assets/models/world.babylon", to: "./models/world." + version + ".babylon" },
         { from: "./assets/style/app.css", to: "./css/app." + version + ".css" },        
-    ]),
-    new WorkboxPlugin.InjectManifest({
-        swSrc: "./src/sw.js",
-        swDest: "./sw.js", 
-        templatedUrls: {
-            "/": uuid.v4(),
-        }
-    })
+    ])
 ] 
 
 module.exports = {
-    entry: "./src/app.js",
+    entry: {
+        "js/client": "./src/app.js",
+        "sw": "./src/sw.js"
+    },
     output: {
         path: path.resolve(__dirname, "public"),
-        filename: `js/client.bundle.${version}.js`
+        filename: `[name].bundle.${version}.js`
     },
 
     stats: { 
