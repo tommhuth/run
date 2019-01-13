@@ -11,18 +11,14 @@ const USE_CACHE_BUST = process.env.USE_CACHE_BUST === "true"
 const app = express()
 
 app.use(compression())
-app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
-app.use(serveStatic(path.join(__dirname, "assets/style"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
-app.use(serveStatic(path.join(__dirname, "assets/models"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
+app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 })) 
 app.set("views", path.join(__dirname, "assets/views"))
 app.set("view engine", "pug")
 
-app.locals.autoVersion = function (path) {
-    if (NODE_ENV !== "production") {
-        return path
-    }
+app.locals.autoVersion = function (filename) {
+    const type = filename.lastIndexOf(".")
 
-    return `${path}?=v${version}`
+    return filename.substring(0, type) + "." + version + filename.substring(type)
 }
 
 app.get("/", (req, res) => {

@@ -15,7 +15,7 @@ function clone(model) {
 
 async function load() {  
     try {
-        let { meshes } = await SceneLoader.LoadAssetContainerAsync("world.babylon")  
+        let { meshes } = await SceneLoader.LoadAssetContainerAsync("models/world." + process.env.APP_VERSION + ".babylon")  
          
         for (let mesh of meshes) { 
             let { extendSize } = mesh.getBoundingInfo().boundingBox

@@ -20,7 +20,7 @@ async function start() {
         let pathway = new Pathway(scene, player) 
         let world = new World(scene)
         let runnerEngine = new RunnerEngine(scene, player, pathway, camera, world, shadowGenerator)
-
+ 
         runRenderLoop((light) => {  
             // gameplay loop
             runnerEngine.loop(light) 
@@ -52,5 +52,13 @@ document.body.addEventListener("touchmove", (e) => {
     e.stopPropagation()
     e.stopImmediatePropagation()
 })
+
+
+if ("serviceWorker" in navigator) {
+    // Use the window load event to keep the page load performant
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js")
+    })
+}
 
 start()
