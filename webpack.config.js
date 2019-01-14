@@ -2,8 +2,8 @@ const webpack = require("webpack")
 const { version } = require("./package.json")
 const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
-
-
+ 
+let alias
 let plugins = [ 
     new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
@@ -15,6 +15,12 @@ let plugins = [
         { from: "./assets/style/app.css", to: "./css/app." + version + ".css" },        
     ])
 ] 
+
+if (process.env.NODE_ENV === "production") { 
+    alias = {
+        babylonjs: path.resolve(__dirname, "assets/babylonjs/es6.js")
+    }
+}
 
 module.exports = {
     entry: {
@@ -43,7 +49,8 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [ ".js"]
+        extensions: [ ".js"],
+        alias
     },
     plugins
 }

@@ -1,11 +1,14 @@
 {
     "name": "react-boilerplate",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "description": "",
     "main": "server.js",
     "engines": {
         "node": "10.13.0"
     },
+    "sideEffects": [
+        "@babel/polyfill"
+    ],
     "scripts": {
         "ngrok": "ngrok http 3000",
         "postinstall": "yarn run build-client:prod && yarn run wb",
