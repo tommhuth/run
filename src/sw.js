@@ -2,7 +2,7 @@ importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox
 
 workbox.precaching.precacheAndRoute([])
 
-///workbox.skipWaiting()
+workbox.skipWaiting()
 workbox.clientsClaim()
 
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
