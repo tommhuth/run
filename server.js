@@ -10,6 +10,10 @@ const USE_CACHE_BUST = process.env.USE_CACHE_BUST === "true"
 
 const app = express()
 
+app.get("/sw.js", (req, res) => {
+    res.sendFile(path.join(__dirname, "public/sw.js"), { maxAge: 0 })
+})
+
 app.use(compression())
 app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "10 years" : 0 })) 
 app.set("views", path.join(__dirname, "assets/views"))
