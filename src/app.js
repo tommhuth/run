@@ -8,6 +8,7 @@ import Camera from "./stage/Camera"
 import World from "./stage/World"
 import { RunnerEngine, RunnerEvent } from "./RunnerEngine" 
 import * as ui from "./ui"
+import fontLoader from "./font-loader"
 
 async function start() {
     try { 
@@ -52,13 +53,19 @@ document.body.addEventListener("touchmove", (e) => {
     e.stopPropagation()
     e.stopImmediatePropagation()
 })
+ 
+window.addEventListener("load", async () => {
+    console.log("load")
+    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+        console.log("regg")
+        // Use the window load event to keep the page load performant
+        await navigator.serviceWorker.register("/sw.js")
+        console.log("regged")
+    }
+    console.log("loaidng fonts")
+    await fontLoader()
+    console.log("fonts loaded")
+})
 
-
-if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
-    // Use the window load event to keep the page load performant
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js")
-    })
-}
 
 start()
