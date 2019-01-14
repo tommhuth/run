@@ -1,5 +1,4 @@
 const uuid = require("uuid")
-const { version } = require("./package.json")
 
 module.exports = { 
     swSrc: "./src/sw.js", 
