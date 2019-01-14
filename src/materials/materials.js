@@ -14,7 +14,7 @@ export default {
         let water = new StandardMaterial(this.scene)  
         let player =  new StandardMaterial(this.scene)  
     
-        rock.diffuseColor = Color3.Purple() //new Color3(42/255, 45/255, 52/255 )
+        rock.diffuseColor = Color3.Yellow() //new Color3(42/255, 45/255, 52/255 )
         rock.specularColor = new Color3(0, 0, 0)
         rock.specularPower = 0
         rock.ambientColor = new Color3(42/255, 45/255, 52/255 )
