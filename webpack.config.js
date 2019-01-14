@@ -18,7 +18,7 @@ let plugins = [
 
 module.exports = {
     entry: {
-        "js/client": "./src/app.js"
+        "/js/client": "./src/app.js"
     },
     output: {
         path: path.resolve(__dirname, "public"),
