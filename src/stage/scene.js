@@ -15,7 +15,8 @@ export default function() {
     
     engine.renderEvenInBackground = false
     engine.setHardwareScalingLevel(.75)
-    
+    engine.enableOfflineSupport = false
+
     scene.autoClear = false 
     scene.autoClearDepthAndStencil = false
     scene.blockMaterialDirtyMechanism = true
