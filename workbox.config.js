@@ -8,6 +8,6 @@ module.exports = {
         "/": uuid.v4(),
     }, 
     maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-    globDirectory: "./",
-    globPatterns:  ["./public/**/*.{js,css,babylon,manifest}"] 
+    globDirectory: "./public",
+    globPatterns:  ["**/*.{js,css,babylon,manifest}"] 
 }
