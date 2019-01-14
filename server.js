@@ -25,7 +25,10 @@ app.locals.autoVersion = function (filename) {
     return filename.substring(0, type) + "." + version + filename.substring(type)
 }
 
-app.get("/", (req, res) => {
+app.get("/", (req, res) => { 
+    res.header("Cache-Control", "private, no-cache, no-store, must-revalidate")
+    res.header("Expires", "-1")
+    res.header("Pragma", "no-cache")
     res.render("app")
 })
 
