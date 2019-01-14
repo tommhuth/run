@@ -2,7 +2,7 @@ const uuid = require("uuid")
 const { version } = require("./package.json")
 
 module.exports = { 
-    swSrc: "./public/sw.bundle." + version + ".js", 
+    swSrc: "./src/sw.js", 
     swDest: "./public/sw.js", 
     templatedUrls: {
         "/": uuid.v4(),
