@@ -12,6 +12,7 @@ export const RunnerEvent = {
     SCORE_CHANGE: "runner:score-change",
     DISTANCE_CHANGE: "runner:distance-change",
     GAME_OVER: "runner:game-over",
+    RUNNING: "runner:running",
     RESET: "runner:reset"
 }
 
@@ -83,6 +84,7 @@ export class RunnerEngine extends EventLite {
         this.player.start()
         this.camera.running()
         this.emit(RunnerEvent.SCORE_CHANGE, this.score) 
+        this.emit(RunnerEvent.RUNNING) 
     }
     doReset() { 
         this.playerVelocities.length = 0

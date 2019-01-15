@@ -30,7 +30,10 @@ async function start() {
         // ui stuff here
         document.getElementById("app").style.opacity = 1
  
-        runnerEngine
+        runnerEngine 
+            .on(RunnerEvent.RUNNING, () => {
+                document.getElementById("intro").classList.add("hidden")
+            })   
             .on(RunnerEvent.GAME_OVER, ({ reason }) => {
                 document.getElementById("ui").innerHTML = `Game over <span>You ${reason}</span>`
             })
@@ -55,17 +58,11 @@ document.body.addEventListener("touchmove", (e) => {
 })
  
 window.addEventListener("load", async () => {
-    console.log("load")
-    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
-        console.log("regg")
+    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") { 
         // Use the window load event to keep the page load performant
-        await navigator.serviceWorker.register("/sw.js")
-        console.log("regged")
-    }
-    console.log("loaidng fonts")
-    await fontLoader()
-    console.log("fonts loaded")
+        await navigator.serviceWorker.register("/sw.js") 
+    } 
+    await fontLoader() 
 })
-
 
 start()
