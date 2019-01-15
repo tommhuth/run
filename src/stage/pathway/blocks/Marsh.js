@@ -4,6 +4,7 @@ import { resize, getRandomRotation, random } from "../../../utils/helpers"
 import PathwayBlock from "../PathwayBlock" 
 import { Config } from "../Pathway"
 import Full from "./Full"
+import makeIsland from "../../../builders/makeIsland"
 
 export default class Marsh extends PathwayBlock { 
     static isAcceptableNext(type, path){
@@ -13,7 +14,7 @@ export default class Marsh extends PathwayBlock {
     constructor(scene, zPosition, {
         width = Config.WIDTH,
         height = Config.HEIGHT,
-        marshDepth = 30,
+        marshDepth = 28,
     } = {}) {
         super(scene, width, height, marshDepth) 
 
@@ -42,40 +43,24 @@ export default class Marsh extends PathwayBlock {
         let staircaseDepth = 0 
 
         for (let i = 0; i < 6; i++) { 
-            let island = clone(random.pick(["island", "island2", "island3"])) 
-            let islandSize = i === 0 ? 4 : random.real(2, 4)
-            let gap = 2
-            let doGravel = random.bool(.8)
-
-            resize(island, islandSize, height, islandSize)
-
-            island.rotate(Axis.Y, getRandomRotation())
-            island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, this.scene)
-            island.parent = this.group
-            island.position.set(
+            let radius = i === 0 ? 4 : random.real(2, 4)
+            let { islandGroup } = makeIsland({ height: height + 1, scene: this.scene, radius })
+            let gap = 2 
+ 
+            islandGroup.parent = this.group
+            islandGroup.position.set(
                 i === 0 ? 0 : random.real(-1, 1),
                 i * 1 - height/2 + .5,
-                i === 0 ? marshDepth + 2 : marshDepth + islandSize / 2 + staircaseDepth  
+                i === 0 ? marshDepth + 2 : marshDepth + radius / 2 + staircaseDepth  
             )
-
-            if (doGravel) {
-                let gravel = clone("gravel2")
-                let scale = islandSize / Config.WIDTH * 2.75
-                
-                gravel.rotate(Axis.Y, getRandomRotation())
-                gravel.scaling.set(scale, 1, scale)
-                gravel.position = island.position.clone() 
-                gravel.position.y += height/2 
-                gravel.parent = this.group
-            }
-  
+ 
             this.makeFloor(
-                islandSize,
-                islandSize,
-                new Vector3(island.position.x, island.position.y + height/2, island.position.z)
+                radius,
+                radius,
+                new Vector3(islandGroup.position.x, islandGroup.position.y + height / 2, islandGroup.position.z)
             )
             
-            staircaseDepth += islandSize + gap
+            staircaseDepth += radius + gap
         } 
 
         return staircaseDepth
