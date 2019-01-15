@@ -11,10 +11,11 @@ export default class Marsh extends PathwayBlock {
         return super.isAcceptableNext(type, path) && path.filter(i => i instanceof Marsh).length === 0
     } 
     requiredNext = [Full]
+    
     constructor(scene, zPosition, {
         width = Config.WIDTH,
         height = Config.HEIGHT,
-        marshDepth = 28,
+        marshDepth = 20,
     } = {}) {
         super(scene, width, height, marshDepth) 
 
@@ -44,7 +45,7 @@ export default class Marsh extends PathwayBlock {
 
         for (let i = 0; i < 6; i++) { 
             let radius = i === 0 ? 4 : random.real(2, 4)
-            let { islandGroup } = makeIsland({ height: height + 1, scene: this.scene, radius })
+            let { islandGroup } = makeIsland({ height: height, scene: this.scene, radius })
             let gap = 2 
  
             islandGroup.parent = this.group
