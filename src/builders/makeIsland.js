@@ -9,8 +9,8 @@ export default function({
     radius = 1, 
     maxRadius = 2,
     height = Config.HEIGHT,  
-    doGravel = random.bool(.65) || radius >= 3.5,
-    doBush = random.bool(.65)
+    doGravel = random.bool(65) || radius >= 3.5,
+    doBush = random.bool(65)
 } = {}) {
     const group = makeGroup(scene)
     const island = clone(random.pick(["island", "island2", "island3"]))  

@@ -70,7 +70,7 @@ export default class Marsh extends PathwayBlock {
         let lastWasCoins = false 
 
         for (let i = 0; i < segments; i++) {
-            if (random.bool(.5) && i >= 2 && i < segments - 1 && !lastWasCoins) { 
+            if (random.bool(50) && i >= 2 && i < segments - 1 && !lastWasCoins) { 
                 this.addCoinLine(
                     3, 
                     new Vector3(0, 0, i * segmentSize ),
