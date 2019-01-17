@@ -55490,8 +55490,8 @@ var BABYLON;
                     returnValue = new this.BJSCANNON.Sphere(Math.max(this._checkWithEpsilon(radiusX), this._checkWithEpsilon(radiusY), this._checkWithEpsilon(radiusZ)) / 2);
                     break;
                 //TMP also for cylinder - TODO Cannon supports cylinder natively.
-                case BABYLON.PhysicsImpostor.CylinderImpostor:
-                    returnValue = new this.BJSCANNON.Cylinder(this._checkWithEpsilon(extendSize.x) / 2, this._checkWithEpsilon(extendSize.x) / 2, this._checkWithEpsilon(extendSize.y), 16);
+                case BABYLON.PhysicsImpostor.CylinderImpostor: 
+                    returnValue = new this.BJSCANNON.Cylinder(this._checkWithEpsilon(extendSize.x) / 2, this._checkWithEpsilon(extendSize.x) / 2, this._checkWithEpsilon(extendSize.y), impostor.getParam("tessellation") || 16);
                     break;
                 case BABYLON.PhysicsImpostor.BoxImpostor:
                     var box = extendSize.scale(0.5);
