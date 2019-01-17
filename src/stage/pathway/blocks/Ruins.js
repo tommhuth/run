@@ -17,12 +17,12 @@ export default class Ruins extends PathwayBlock {
     constructor(scene, zPosition, {
         width = Config.WIDTH * 2 + 2,
         height = Config.HEIGHT,
-        depth = Config.DEPTH * 2, 
-        collapsable = random.bool(),
+        depth = Config.DEPTH * 2,  
         columns = 2,
         columnFragments = 3,
         outerGap = 2.5,
-        doTree = random.bool(65)
+        doTree = random.bool(65),
+        collapsable = true
     } = {}) {
         super(scene, width, height, depth)
 
@@ -44,30 +44,34 @@ export default class Ruins extends PathwayBlock {
         for (let i = 0; i < 2; i++) {
             for (let j = 0; j < columns; j++) {
                 let foot = clone("pillarFoot") 
-                let isFirstCollapsable = random.bool(60)
-                let isSecondCollapsable = isFirstCollapsable && random.bool(80)
-        
+                let collapseStart = random.integer(0, columnFragments, true)
+                let totalHeight = foot.height
+
                 foot.position.set(
-                    (width/2 - 2.25) * (i === 0 ? -1 : 1), 
+                    (width / 2 - 2.25) * (i === 0 ? -1 : 1), 
                     foot.height/2, 
                     outerGap + pillarGap * j 
                 )
                 foot.rotate(Axis.Y, getRandomRotation())
-                foot.physicsImpostor = new Impostor(foot, Impostor.CylinderImpostor, { mass: isFirstCollapsable || !collapsable ? 0 : 200 }, scene) 
+                foot.physicsImpostor = new Impostor(foot, Impostor.CylinderImpostor, { 
+                    mass: collapseStart === 0 ? 200 : 0, 
+                    tessellation: 10 
+                }, scene) 
                 foot.parent = this.group
-        
-                let totalHeight = foot.height
-        
+         
                 for (let j = 0; j < columnFragments; j++) { 
                     let pillar = clone("pillar")
                     let scaleY = random.real(.45, 1.45) 
                     let height = pillar.height * scaleY
-                    let mass = (isFirstCollapsable && j === 0) || (isSecondCollapsable && j === 1) || !collapsable ? 0 : 200 
-        
+                    let mass = Math.max(height * 100, 150)
+
                     pillar.scaling.y = scaleY
-                    pillar.position.set(foot.position.x, totalHeight + height/2, foot.position.z)
+                    pillar.position.set(foot.position.x, totalHeight + height / 2, foot.position.z)
                     pillar.rotate(Axis.Y, getRandomRotation())
-                    pillar.physicsImpostor = new Impostor(pillar, Impostor.CylinderImpostor, { mass }, scene) 
+                    pillar.physicsImpostor = new Impostor(pillar, Impostor.CylinderImpostor, { 
+                        mass: j >= collapseStart && collapsable ? mass : 0,
+                        tessellation: 10 
+                    }, scene) 
         
                     pillar.parent = this.group
         
@@ -90,6 +94,7 @@ export default class Ruins extends PathwayBlock {
         path2.position.x = random.real(4.5, 6)
         path2.position.y = -height/2 - random.real(0, 2)
         path2.position.z = depth/2 + random.real(-1.5, 1.5)
+        path2.physicsImpostor = new Impostor(path2, Impostor.BoxImpostor, { mass: 0 }, scene)
         path2.parent = this.group
         
         // left
@@ -98,6 +103,7 @@ export default class Ruins extends PathwayBlock {
         path3.position.x = -6
         path3.position.y = -height / 2 + random.real(-1, 1)
         path3.position.z = depth/2  
+        path3.physicsImpostor = new Impostor(path3, Impostor.BoxImpostor, { mass: 0 }, scene)
         path3.parent = this.group
         
         resize(path, width, height, depth + 1) 
@@ -124,8 +130,8 @@ export default class Ruins extends PathwayBlock {
             let explosionY = random.real(2, 2.25)
             let explosionX = random.real(7.5, 8)
 
-            explode(this.scene, new Vector3(explosionX * -1, explosionY, this.position.z), 7, 15000)
-            explode(this.scene, new Vector3(explosionX, explosionY, this.position.z), 7, 15000, 500)
+            explode(this.scene, new Vector3(explosionX * -1, explosionY, this.position.z + random.real(-2, 2)), 7, 15000)
+            explode(this.scene, new Vector3(explosionX, explosionY, this.position.z + random.real(-2, 2)), 7, 15000, 500)
 
             this.hasTriggeredCollapse = true 
         } 
