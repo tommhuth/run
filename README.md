@@ -2,6 +2,5 @@
 
 ## Todo
 
-- Figure out intro section
-- Tutroial intro?
+- Figure out intro section -- Tutroial intro?
 - Improve Bridge block and add BridgeIsland alternative + rework/fix "collapsing" bridge flow
