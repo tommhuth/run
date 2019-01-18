@@ -44,7 +44,8 @@ export default class Ruins extends PathwayBlock {
         for (let i = 0; i < 2; i++) {
             for (let j = 0; j < columns; j++) {
                 let foot = clone("pillarFoot") 
-                let collapseStart = random.integer(0, columnFragments, true)
+                let columnHeight = random.integer(1, columnFragments, true)
+                let collapseStart = random.integer(0, columnHeight, true)
                 let totalHeight = foot.height
 
                 foot.position.set(
@@ -59,7 +60,7 @@ export default class Ruins extends PathwayBlock {
                 }, scene) 
                 foot.parent = this.group
          
-                for (let j = 0; j < columnFragments; j++) { 
+                for (let j = 0; j < columnHeight; j++) { 
                     let pillar = clone("pillar")
                     let scaleY = random.real(.45, 1.45) 
                     let height = pillar.height * scaleY
