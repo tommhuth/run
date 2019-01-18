@@ -2,7 +2,6 @@
 
 ## Todo
 
-- inital startup screen as part of world (own mesh)
-- smooth camera animation from init => title screen => running
-- actual game over logic
-- reset game logic
+- Figure out intro section
+- Tutroial intro?
+- Improve Bridge block and add BridgeIsland alternative + rework/fix "collapsing" bridge flow
