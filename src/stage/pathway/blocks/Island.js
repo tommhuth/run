@@ -19,7 +19,7 @@ export default class Island extends PathwayBlock {
     constructor(scene, zPosition, { 
         maxJumpDistance, 
         lastWasSame = false,
-        radius = random.real(2.25, Config.WIDTH),
+        diameter = random.real(2.25, Config.WIDTH),
         height = Config.HEIGHT, 
         gapSize = random.real(2.5, maxJumpDistance - 1),
         leftPlant = random.bool(),
@@ -28,16 +28,16 @@ export default class Island extends PathwayBlock {
     } = {}) {  
         let gap1 = lastWasSame ? 0 : gapSize
         let gap2 = gapSize  
-        let depth = radius + gap1 + gap2   
-        let { islandGroup } = makeIsland({ scene, radius, height }) 
+        let depth = diameter + gap1 + gap2   
+        let { islandGroup } = makeIsland({ scene, diameter, height }) 
  
-        super(scene, radius, height, depth)
+        super(scene, diameter, height, depth)
          
         islandGroup.parent = this.group
         islandGroup.position.set(
             random.real(-1.5, 1.5),
             -height / 2, 
-            gap1 + radius / 2
+            gap1 + diameter / 2
         )  
         
         this.gap1 = gap1
@@ -45,9 +45,9 @@ export default class Island extends PathwayBlock {
         this.position.set(0, 0, zPosition) 
 
         this.makeFloor(
-            radius - .25, 
-            radius - .5, 
-            new Vector3(islandGroup.position.x, 0, gap1 + radius / 2)
+            diameter - .25, 
+            diameter - .5, 
+            new Vector3(islandGroup.position.x, 0, gap1 + diameter / 2)
         ) 
 
         if (leftPlant) {
@@ -56,7 +56,7 @@ export default class Island extends PathwayBlock {
             plants.parent = this.group
             plants.rotate(Axis.Y, getRandomRotation())
             plants.position.set(
-                islandGroup.position.x + (radius + random.real(.5, 2)) * plantX, 
+                islandGroup.position.x + (diameter + random.real(.5, 2)) * plantX, 
                 -Config.FLOOR_DEPTH, 
                 0
             )    
@@ -68,7 +68,7 @@ export default class Island extends PathwayBlock {
             plants.parent = this.group
             plants.rotate(Axis.Y, getRandomRotation())
             plants.position.set(
-                islandGroup.position.x + (radius + random.real(.5, 2)) * -plantX, 
+                islandGroup.position.x + (diameter + random.real(.5, 2)) * -plantX, 
                 -Config.FLOOR_DEPTH,
                 0
             )

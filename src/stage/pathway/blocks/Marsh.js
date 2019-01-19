@@ -44,24 +44,24 @@ export default class Marsh extends PathwayBlock {
         let staircaseDepth = 0 
 
         for (let i = 0; i < 6; i++) { 
-            let radius = i === 0 ? 4 : random.real(2, 4)
-            let { islandGroup } = makeIsland({ height: height, scene: this.scene, radius })
+            let diameter = i === 0 ? 4 : random.real(2, 4)
+            let { islandGroup } = makeIsland({ height: height, scene: this.scene, diameter })
             let gap = 2 
  
             islandGroup.parent = this.group
             islandGroup.position.set(
                 i === 0 ? 0 : random.real(-1, 1),
                 i * 1 - height/2 + .5,
-                i === 0 ? marshDepth + 2 : marshDepth + radius / 2 + staircaseDepth  
+                i === 0 ? marshDepth + 2 : marshDepth + diameter / 2 + staircaseDepth  
             )
  
             this.makeFloor(
-                radius,
-                radius,
+                diameter,
+                diameter,
                 new Vector3(islandGroup.position.x, islandGroup.position.y + height / 2, islandGroup.position.z)
             )
             
-            staircaseDepth += radius + gap
+            staircaseDepth += diameter + gap
         } 
 
         return staircaseDepth

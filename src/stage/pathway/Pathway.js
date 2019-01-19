@@ -6,7 +6,7 @@ import Bridge from "./blocks/Bridge"
 import { random } from "../../utils/helpers"
 import Intro from "./blocks/Intro"
 import Marsh from "./blocks/Marsh" 
-import { State } from "../../RunnerEngine"
+import WaterPlants from "./blocks/WaterPlants"  
 
 export const Config = {
     WIDTH: 4.5,
@@ -53,8 +53,7 @@ export default class Pathway {
         //this.add(new Marsh(scene, this.zPosition, { maxJumpDistance, lastWasSame: false })) 
         this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))    
     } 
-    add(block = this.getRandomBlock()) {
-        console.log("Added: " + block.constructor.name)
+    add(block = this.getRandomBlock()) { 
         this.path.push(block)
     } 
     remove(block) { 
@@ -71,7 +70,7 @@ export default class Pathway {
     }
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
-        let types = [Gap, Full, Island, Ruins, Bridge, Marsh]
+        let types = [Gap, Full, Island, Ruins, Bridge, Marsh, WaterPlants]
         let zPosition = this.zPosition
         let maxJumpDistance =  this.maxJumpDistance
         let scene = this.scene

@@ -6,16 +6,16 @@ import { Axis, PhysicsImpostor as Impostor } from "babylonjs"
 
 export default function({
     scene,
-    radius = 1, 
+    diameter = 1, 
     maxRadius = 2,
     height = Config.HEIGHT,  
-    doGravel = random.bool(65) || radius >= 3.5,
+    doGravel = random.bool(65) || diameter >= 3.5,
     doBush = random.bool(65)
 } = {}) {
     const group = makeGroup(scene)
     const island = clone(random.pick(["island", "island2", "island3"]))  
 
-    resize(island, radius, height, radius) 
+    resize(island, diameter, height, diameter) 
 
     island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
     island.parent = group
@@ -23,7 +23,7 @@ export default function({
 
     if (doGravel) {
         let gravel = clone("gravel2")
-        let scale = radius / maxRadius
+        let scale = diameter / maxRadius
         
         gravel.rotate(Axis.Y, getRandomRotation())
         gravel.scaling.set(scale, 1, scale)
@@ -39,7 +39,7 @@ export default function({
         bush.rotate(Axis.Z, direction * random.real(.25, .5))
         bush.position = island.position.clone()
         bush.position.y = random.real(0, -2)
-        bush.position.x -= (radius / 2 - 1) * direction
+        bush.position.x -= (diameter / 2 - 1) * direction
         bush.parent = group
     }
 
