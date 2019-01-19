@@ -14,13 +14,7 @@ let plugins = [
         { from: "./assets/models/world.babylon", to: "./models/world." + version + ".babylon" },
         { from: "./assets/style/app.css", to: "./css/app." + version + ".css" },        
     ])
-] 
-
-if (process.env.NODE_ENV === "production") { 
-    alias = {
-        babylonjs: path.resolve(__dirname, "assets/babylonjs/es6.js")
-    }
-}
+]
 
 module.exports = {
     entry: {
@@ -50,7 +44,10 @@ module.exports = {
     },
     resolve: {
         extensions: [ ".js"],
-        alias
+        alias: {
+            babylonjs: path.resolve(__dirname, "assets/babylonjs/es6.js")
+        }
     },
-    plugins
+    plugins,
+    
 }
