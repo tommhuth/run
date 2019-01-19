@@ -34,6 +34,7 @@ export default class PathwayBlock {
         if (debug) {  
             floor.material = new StandardMaterial(null, this.scene)
             floor.material.diffuseColor = Color3.Red()
+            floor.visibility = .4
         } else { 
             floor.isVisible = false
         }

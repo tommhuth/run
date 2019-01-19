@@ -27,10 +27,10 @@ export default class WaterPlants extends PathwayBlock {
             let diameter = i === 0 ? 4 : random.real(2.5, 3.5) 
             let gap = random.real(maxJumpDistance - 1.5, maxJumpDistance - .5)
             let height = 6 + random.real(-1, 1)  
-            let hasSibling = random.bool(80)
+            let hasSibling = random.bool(60)
 
             resize(plant, diameter, height, diameter)
-
+ 
             plant.position.x = random.real(-1.75, 1.75) 
             plant.position.z = diameter/2 + depth + gap
             plant.rotate(Axis.Y, getRandomRotation())
@@ -53,6 +53,10 @@ export default class WaterPlants extends PathwayBlock {
 
                 this.makeFloor(siblingDiameter, siblingDiameter, new Vector3(siblingPlant.position.x, .25, siblingPlant.position.z)) 
             } 
+            
+            if (random.bool()) {  
+                this.addCoin(new Vector3(plant.position.x, plant.position.y + .5, plant.position.z))
+            }
  
             this.makeFloor(diameter, diameter, new Vector3(plant.position.x, .5, plant.position.z)) 
 
