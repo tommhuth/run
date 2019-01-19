@@ -99,7 +99,7 @@ export default class Pathway {
             case Ruins:
                 return new Ruins(scene, zPosition)
             case Bridge:
-                return new Bridge(scene, zPosition, { lastWasSame: previous instanceof Bridge, previousBridgeX: previous.bridgeX })
+                return new Bridge(scene, zPosition)
             default: 
                 throw new Error("Unknown path type " + type.name)
         }

@@ -7,10 +7,8 @@ import makeRocks from "../../../builders/makeRocks"
 import Full from "./Full"
 
 export default class Bridge extends PathwayBlock {
-    requiredNext = [Full, Bridge] 
-    bridgeX
-    hasTriggeredCollapse 
-    collapseTriggerDistanceRandomizer = random.real(5, 17)
+    requiredNext = [Full] 
+    bridgeX 
     bridgeParts = []
 
     static isAcceptableNext(type, path){
@@ -21,75 +19,45 @@ export default class Bridge extends PathwayBlock {
         return this.position.z - this.collapseTriggerDistanceRandomizer
     }
 
-    constructor(scene, zPosition, {
-        lastWasSame,
-        previousBridgeX,
-        collapsable = random.bool(),
-        width = 1,
-        height = .65,
-        depth = random.integer(4, Config.DEPTH + 2), 
+    constructor(scene, zPosition, { 
+        width = 1, 
+        depth = random.integer(6, Config.DEPTH * 2), 
+        doCoins = random.bool()
     } = {}) {
-        super(scene, width, height, depth) 
-        let bridgeX = lastWasSame ? previousBridgeX : random.real(-width / 2 + 1, width / 2 - 1)
-        let pillarStart = clone("bridgeEnd")
-        let pillarEnd = clone("bridgeEnd")  
-        //let plant = makePlant(scene)
-        let rocks = makeRocks(scene, { centerOffset: 1, count: 7, depth })
-       // let plantScale = random.real(.4, .75)  
+        super(scene, width, .25, depth) 
+        let height = .25
+        let bridgeX = random.real(-.5, .5) 
+        let rocks = makeRocks(scene, { centerOffset: 1, count: 7, depth })  
         
         rocks.position.y = -Config.HEIGHT
-        rocks.parent = this.group
-/*
-        plant.position.y = -Config.HEIGHT
-        plant.position.x = bridgeX + random.real(2, 5) * flip()
-        plant.position.z = random.real(1, depth - 2)
-        plant.scaling.set(plantScale, plantScale, plantScale)
-        plant.parent = this.group*/
-        
-        pillarStart.scaling.z = .5
-        pillarStart.position.set(bridgeX, -.75, -.5)
-        pillarStart.rotate(Axis.Y, Math.PI/2)
-        pillarStart.parent = this.group
-    
-        pillarEnd.scaling.z = .5
-        pillarEnd.position.set(bridgeX, -.75, depth - .5)
-        pillarEnd.rotate(Axis.Y, -Math.PI / 2)
-        pillarEnd.parent = this.group
-     
-        this.position.set(0, 0, zPosition)
-        this.bridgeX = bridgeX
-        this.hasTriggeredCollapse = !collapsable
+        rocks.parent = this.group 
+          
+        this.position.set(0, 0, zPosition) 
     
         for (let i = 0; i < depth + 1; i++) {
             const block = clone(random.pick(["bridgeMid", "bridgeMid2", "bridgeMid3"]))
     
-            resize(block, width, height, width)
+            resize(block, width, height, width + .25)
     
             block.rotate(Axis.Y, getFlipRotation())
             block.rotate(Axis.Z, getFlipRotation())
             block.rotate(Axis.X, getFlipRotation())
-            block.position.set(bridgeX, -height / 2 - .005, i * width) 
+            block.position.set(bridgeX, height / 2 , i * width) 
             block.physicsImpostor = new Impostor(block, Impostor.BoxImpostor, { mass: 0 }, scene)
             block.parent = this.group
     
             this.bridgeParts.push(block)
         }
 
-        this.makeFloor(width, depth, new Vector3(bridgeX, 0, depth/2))
-    }
-    beforeRender(player){ 
-        super.beforeRender(player)
-        
-        if (player.position.z < this.collapseTriggerDistance || this.hasTriggeredCollapse) {
-            return 
-        }   
-
-        for (let i = 2; i < this.bridgeParts.length - 3 && i - 3 < 2; i++) {
-            let bridgeBlock = this.bridgeParts[i]  
-
-            bridgeBlock.physicsImpostor.setMass(10)  
+        if (doCoins) { 
+            this.addCoinLine(
+                3, 
+                new Vector3(bridgeX, 0, 2),
+                new Vector3(bridgeX, 0, 5),
+                new Vector3(bridgeX, .5, depth/2 - 2)
+            )
         }
- 
-        this.hasTriggeredCollapse = true
-    }
+
+        this.group.rotate(Axis.Y, random.real(-.1, .1))
+    } 
 }
