@@ -20,7 +20,7 @@ export default class Bridge extends PathwayBlock {
     }
 
     constructor(scene, zPosition, { 
-        width = 1, 
+        width = random.real(.65, .85), 
         depth = random.integer(6, Config.DEPTH * 2), 
         doCoins = random.bool()
     } = {}) {
@@ -37,12 +37,12 @@ export default class Bridge extends PathwayBlock {
         for (let i = 0; i < depth + 1; i++) {
             const block = clone(random.pick(["bridgeMid", "bridgeMid2", "bridgeMid3"]))
     
-            resize(block, width, height, width + .25)
+            resize(block, width, height, 1.15)
     
             block.rotate(Axis.Y, getFlipRotation())
             block.rotate(Axis.Z, getFlipRotation())
             block.rotate(Axis.X, getFlipRotation())
-            block.position.set(bridgeX, height / 2 , i * width) 
+            block.position.set(bridgeX, height / 2 , i * 1) 
             block.physicsImpostor = new Impostor(block, Impostor.BoxImpostor, { mass: 0 }, scene)
             block.parent = this.group
     
