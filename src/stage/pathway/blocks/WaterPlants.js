@@ -20,9 +20,15 @@ export default class WaterPlants extends PathwayBlock {
     } = {}) {
         super(scene, width, height) 
 
+        let depth = this.makePlatforms(platforms, maxJumpDistance) + maxJumpDistance
+  
+        this.depth = this.makeStaircase(depth) 
+        this.position.set(0, -Config.FLOOR_DEPTH, zPosition)
+    } 
+    makePlatforms(platformCount, maxJumpDistance) {
         let depth = 0
 
-        for (let i = 0; i < platforms; i++) {
+        for (let i = 0; i < platformCount; i++) {
             let plant = clone("plant")
             let diameter = i === 0 ? 4 : random.real(2.5, 3.5) 
             let gap = random.real(maxJumpDistance - 1.5, maxJumpDistance - .5)
@@ -34,7 +40,7 @@ export default class WaterPlants extends PathwayBlock {
             plant.position.x = random.real(-1.75, 1.75) 
             plant.position.z = diameter/2 + depth + gap
             plant.rotate(Axis.Y, getRandomRotation())
-            plant.physicsImpostor = new Impostor(plant, Impostor.CylinderImpostor, { mass: 0 }, scene)
+            plant.physicsImpostor = new Impostor(plant, Impostor.CylinderImpostor, { mass: 0 }, this.scene)
             plant.parent = this.group
 
             if (hasSibling) {
@@ -48,7 +54,7 @@ export default class WaterPlants extends PathwayBlock {
                 siblingPlant.position.x += random.real(xOffset, xOffset + 6) * flip()  
                 siblingPlant.position.z += (diameter/2 + siblingDiameter/2) 
                 siblingPlant.rotate(Axis.Y, getRandomRotation())
-                siblingPlant.physicsImpostor = new Impostor(siblingPlant, Impostor.CylinderImpostor, { mass: 0 }, scene)
+                siblingPlant.physicsImpostor = new Impostor(siblingPlant, Impostor.CylinderImpostor, { mass: 0 }, this.scene)
                 siblingPlant.parent = this.group
 
                 this.makeFloor(siblingDiameter, siblingDiameter, new Vector3(siblingPlant.position.x, .25, siblingPlant.position.z)) 
@@ -63,17 +69,18 @@ export default class WaterPlants extends PathwayBlock {
             depth += diameter + gap
         }
 
-        depth += maxJumpDistance
-
+        return depth
+    }
+    makeStaircase(depth) {
         for (let i = 0; i < 4; i++) {
-            let diameter = random.real(2.5, 3.5)  
-            let actualDiamter = diameter + 1.5
+            let diameter = random.real(3.5, 4)  
+            let actualDiamter = diameter + random.real(.75, 1.25)  
             let height = 6
             let { island, islandGroup } = makeIsland({ diameter: actualDiamter, height })
 
-            island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
+            island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, this.scene)
 
-            islandGroup.position.x = random.real(-2, 2)
+            islandGroup.position.x = random.real(-1.5, 1.5)
             islandGroup.position.z = depth + diameter / 2
             islandGroup.position.y = -height / 2 + .15 + i * 1.2
             islandGroup.parent = this.group 
@@ -86,8 +93,7 @@ export default class WaterPlants extends PathwayBlock {
 
             depth += diameter
         }
- 
-        this.depth = depth 
-        this.position.set(0, -Config.FLOOR_DEPTH, zPosition)
-    } 
+
+        return depth
+    }
 }

@@ -3,9 +3,10 @@ import Island from "./Island"
 import Ruins from "./Ruins"
 import Bridge from "./Bridge"
 import Marsh from "./Marsh"
+import WaterPlants from "./WaterPlants"
 
 export default class Gap extends PathwayBlock {  
-    illegalNext = [Gap, Island, Ruins, Bridge, Marsh]
+    illegalNext = [Gap, Island, Ruins, Bridge, Marsh, WaterPlants]
     
     static isAcceptableNext(type, path){
         return super.isAcceptableNext(type, path)
