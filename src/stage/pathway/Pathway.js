@@ -95,6 +95,8 @@ export default class Pathway {
                 return new Full(scene, zPosition)
             case Island:
                 return new Island(scene, zPosition, { maxJumpDistance, lastWasSame: previous instanceof Island })
+            case WaterPlants:
+                return new WaterPlants(scene, zPosition, { maxJumpDistance })
             case Ruins:
                 return new Ruins(scene, zPosition)
             case Bridge:
