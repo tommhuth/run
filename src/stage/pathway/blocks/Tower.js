@@ -2,22 +2,25 @@ import { Axis, PhysicsImpostor as Impostor, Vector3, MeshBuilder } from "babylon
 import { clone } from "../../../builders/models"
 import { resize, getFlipRotation, random } from "../../../utils/helpers"
 import PathwayBlock from "../PathwayBlock" 
-import { Config } from "../Pathway" 
-import Full from "./Full"
+import { Config } from "../Pathway"  
 
 export default class Tower extends PathwayBlock { 
     static isAcceptableNext(type, path){
-        return super.isAcceptableNext(type, path) && type instanceof Full
+        return super.isAcceptableNext(type, path) && path.filter(i => i instanceof Tower).length === 0
     }
     constructor(scene, zPosition, {
+        maxJumpDistance,
         width = random.real(Config.WIDTH, Config.WIDTH + 1.5),
         height = Config.HEIGHT + 1,  
-        towerCount = random.integer(2, 4, true)
+        towerCount = random.integer(2, 3, true)
     } = {}) {
         super(scene, width, height) 
-        // this needs cleaing up
+        
         let platformSize = 3 
-        let depth = 8
+        let platformGap = maxJumpDistance
+        let gap1 = maxJumpDistance * 2
+        let gap2 = maxJumpDistance * 3
+        let depth = gap1 + platformSize/2
         let path = clone("path2")
 
         for (let i = 0; i < towerCount; i++) {
@@ -25,8 +28,9 @@ export default class Tower extends PathwayBlock {
             let pillar = MeshBuilder.CreateBox(null, { width: .75, depth: .75, height: 8 }, scene) 
             let butt =  clone("box")  
             let base =  clone("box")  
-            let zPosition = depth + i * platformSize * 2
-
+            let zPosition = depth
+            let yPosition = random.real(-.5, .5)
+ 
             resize(platform, platformSize, .5, platformSize)
             resize(butt, 1, 1.5, 1)
             resize(base, 1.5, 3, 1.5) 
@@ -34,11 +38,11 @@ export default class Tower extends PathwayBlock {
             platform.rotate(Axis.X, getFlipRotation())
             platform.rotate(Axis.Y, getFlipRotation())
             platform.rotate(Axis.Z, getFlipRotation())
-            platform.position.set(random.real(-.5, .5), 2, zPosition)
+            platform.position.set(random.real(-.5, .5), 2 + yPosition, zPosition)
             platform.physicsImpostor = new Impostor(platform, Impostor.BoxImpostor, { mass: 0 }, scene)
             platform.parent = this.group
     
-            pillar.position.set(platform.position.x, -2, zPosition)
+            pillar.position.set(platform.position.x, -2 + yPosition, zPosition)
             pillar.physicsImpostor = new Impostor(pillar, Impostor.BoxImpostor, { mass: 0 }, scene)
             pillar.parent = this.group
             pillar.receiveShadows = true 
@@ -46,7 +50,7 @@ export default class Tower extends PathwayBlock {
             butt.rotate(Axis.X, getFlipRotation())
             butt.rotate(Axis.Y, getFlipRotation())
             butt.rotate(Axis.Z, getFlipRotation())
-            butt.position.set(platform.position.x, 1.25, zPosition) 
+            butt.position.set(platform.position.x, 1.25 + yPosition, zPosition) 
             butt.parent = this.group
             
             base.rotate(Axis.X, getFlipRotation())
@@ -66,32 +70,43 @@ export default class Tower extends PathwayBlock {
                 let plank = clone("plank")
 
                 if (i === 0) { 
-                    resize(plank, 7.75, .125, .75)
-                    plank.position.set(random.real(-1, 1), 3, 3)
+                    resize(plank, gap1 + 2, .125, .75)
+                    plank.position.set(
+                        platform.position.x + random.real(-1, 1),
+                        platform.position.y + 3,
+                        gap1 / 2 - .5
+                    )
                 } else if (i === towerCount - 1) {  
-                    resize(plank, 8, .125, .7)
-                    plank.position.set(random.real(-1, 1), 3, zPosition + 5)
+                    resize(plank, gap2 + 2, .125, .7)
+                    plank.position.set(
+                        platform.position.x + random.real(-1, 1),
+                        platform.position.y + 3,
+                        depth + platformSize / 2 + gap2 / 2 + .75
+                    )
                 }
 
                 plank.rotate(Axis.X, getFlipRotation())
                 plank.rotate(Axis.Y, getFlipRotation())
                 plank.rotate(Axis.Z, getFlipRotation())
-                plank.physicsImpostor = new Impostor(plank, Impostor.BoxImpostor, { mass: 1 }, scene)
+                plank.physicsImpostor = new Impostor(plank, Impostor.BoxImpostor, { mass: 2 }, scene)
                 plank.parent = this.group  
             }
 
             this.makeFloor(3, 3, new Vector3(platform.position.x, platform.position.y + .25, platform.position.z))
- 
+  
+            depth += platformSize + (i === towerCount - 1 ? 0 : platformGap) 
         } 
  
+        depth += gap2 
+
         resize(path, width - 1.5, height, Config.DEPTH -1)
 
-        path.position.set(0, -height/2 + .5,  depth + towerCount * 6 + Config.DEPTH / 2)
+        path.position.set(0, -height/2 + .5,  depth)
         path.rotate(Axis.Y, random.real(-.2, .2))
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent= this.group
 
-        this.depth = depth + towerCount * 6 + Config.DEPTH -1
+        this.depth = depth 
         this.position.z = zPosition
     } 
 }
