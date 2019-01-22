@@ -23,7 +23,7 @@ export class RunnerEngine extends EventLite {
     distanceIncrement = 250
     distance = this.distanceIncrement 
     playerVelocities = []
-    velocityFramesCount = 3
+    velocityFramesCount = 5
 
     constructor(scene, player, pathway, camera, world, shadowGenerator) {
         super()
