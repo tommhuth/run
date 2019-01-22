@@ -17,7 +17,7 @@ export default class Tower extends PathwayBlock {
         super(scene, width, height) 
         
         let platformSize = 3 
-        let platformGap = maxJumpDistance
+        let platformGap = maxJumpDistance - 1
         let gap1 = maxJumpDistance * 2
         let gap2 = maxJumpDistance * 3
         let depth = gap1 + platformSize/2
@@ -81,7 +81,7 @@ export default class Tower extends PathwayBlock {
                     plank.position.set(
                         platform.position.x + random.real(-1, 1),
                         platform.position.y + 3,
-                        depth + platformSize / 2 + gap2 / 2 + .75
+                        depth + platformSize / 2 + gap2 / 2
                     )
                 }
 
