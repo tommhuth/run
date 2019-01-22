@@ -103,7 +103,7 @@ export default class Pathway {
             case Bridge:
                 return new Bridge(scene, zPosition) 
             case Tower:
-                return new Tower(scene, zPosition)
+                return new Tower(scene, zPosition, { maxJumpDistance })
             default: 
                 throw new Error("Unknown path type " + type.name)
         }
