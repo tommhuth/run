@@ -6,9 +6,10 @@ import Gap from "./Gap"
 import makeWaterPlant from "../../../builders/makeWaterPlant"
 import makeIsland from "../../../builders/makeIsland" 
 import Bridge from "./Bridge"
+import Tower from "./Tower"
 
 export default class Island extends PathwayBlock {
-    illegalNext = [Gap, Bridge]  
+    illegalNext = [Gap, Bridge, Tower]  
     gap1
     gap2 
     

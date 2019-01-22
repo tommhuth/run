@@ -5,6 +5,7 @@ import Ruins from "./blocks/Ruins"
 import Bridge from "./blocks/Bridge"
 import { random } from "../../utils/helpers"
 import Intro from "./blocks/Intro"
+import Tower from "./blocks/Tower"
 import Marsh from "./blocks/Marsh" 
 import WaterPlants from "./blocks/WaterPlants"  
 
@@ -46,12 +47,12 @@ export default class Pathway {
     init(){
         let scene = this.scene
         let maxJumpDistance = this.maxJumpDistance
-
+    
         this.add(new Intro(scene, this.zPosition))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false, doCoins: false }))    
-        this.add(new Full(scene, this.zPosition, { doObstacle: false, doCoins: false }))     
-        //this.add(new Marsh(scene, this.zPosition, { maxJumpDistance, lastWasSame: false })) 
-        this.add(new Ruins(scene, this.zPosition, { maxJumpDistance, lastWasSame: false }))    
+        this.add(new Full(scene, this.zPosition))         
+        this.add(new Full(scene, this.zPosition))          
+        this.add(new Full(scene, this.zPosition))      
+        this.add(new Tower(scene, this.zPosition, { maxJumpDistance }))        
     } 
     add(block = this.getRandomBlock()) { 
         this.path.push(block)
@@ -70,7 +71,7 @@ export default class Pathway {
     }
     getRandomBlock(){
         let previous = this.path[this.path.length - 1]
-        let types = [Gap, Full, Island, Ruins, Bridge, Marsh, WaterPlants]
+        let types = [Gap, Full, Island, Ruins, Bridge, Marsh, WaterPlants, Tower]
         let zPosition = this.zPosition
         let maxJumpDistance =  this.maxJumpDistance
         let scene = this.scene
@@ -100,7 +101,9 @@ export default class Pathway {
             case Ruins:
                 return new Ruins(scene, zPosition)
             case Bridge:
-                return new Bridge(scene, zPosition)
+                return new Bridge(scene, zPosition) 
+            case Tower:
+                return new Tower(scene, zPosition)
             default: 
                 throw new Error("Unknown path type " + type.name)
         }
