@@ -16,7 +16,7 @@ export default class Tower extends PathwayBlock {
     } = {}) {
         super(scene, width, height) 
         
-        let platformSize = 3 
+        let platformSize = 3.5
         let platformGap = maxJumpDistance - 1
         let gap1 = maxJumpDistance * 2
         let gap2 = maxJumpDistance * 3
@@ -99,13 +99,19 @@ export default class Tower extends PathwayBlock {
  
         depth += gap2 
 
-        resize(path, width - 1.5, height, Config.DEPTH -1)
+        resize(path, width - 1.5, height, Config.DEPTH - 1)
 
         path.position.set(0, -height/2 + .5,  depth)
         path.rotate(Axis.Y, random.real(-.2, .2))
         path.physicsImpostor = new Impostor(path, Impostor.BoxImpostor, { mass: 0 }, scene)
         path.parent= this.group
-
+ 
+        this.makeFloor(
+            width - 1.5, 
+            Config.DEPTH - 1,
+            new Vector3(path.position.x, path.position.y + height/2, path.position.z), true
+        )
+  
         this.depth = depth 
         this.position.z = zPosition
     } 
