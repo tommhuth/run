@@ -109,7 +109,7 @@ export default class Tower extends PathwayBlock {
         this.makeFloor(
             width - 1.5, 
             Config.DEPTH - 1,
-            new Vector3(path.position.x, path.position.y + height/2, path.position.z), true
+            new Vector3(path.position.x, path.position.y + height/2, path.position.z)
         )
   
         this.depth = depth 
