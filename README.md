@@ -2,5 +2,6 @@
 
 ## Todo
 
-- Figure out intro section -- Tutroial intro?
-- Improve Bridge block and add BridgeIsland alternative + rework/fix "collapsing" bridge flow
+- Revamp models, less detail?
+- Add more env detail
+- Materials and lighting (less gray)
