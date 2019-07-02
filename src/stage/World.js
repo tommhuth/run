@@ -7,7 +7,7 @@ import materials from "../materials/materials"
 export default class World {
     width = 45
     height = 60 
-    fogLayers = 8
+    fogLayers = 4
     scene
     group 
     
