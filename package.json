@@ -3,9 +3,7 @@
     "version": "0.1.9",
     "description": "",
     "main": "server.js",
-    "engines": {
-        "node": "10.13.0"
-    },
+    "engines": {},
     "sideEffects": [
         "@babel/polyfill"
     ],
@@ -35,6 +33,7 @@
         "@babel/plugin-proposal-class-properties": "^7.1.0",
         "@babel/polyfill": "^7.0.0",
         "@babel/preset-env": "^7.1.6",
+        "animejs": "^3.0.1",
         "babel": "^6.23.0",
         "babel-eslint": "^10.0.1",
         "babel-loader": "^8.0.4",
