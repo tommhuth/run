@@ -58,7 +58,7 @@ export default class Marsh extends PathwayBlock {
             this.makeFloor(
                 diameter,
                 diameter,
-                new Vector3(islandGroup.position.x, islandGroup.position.y + height / 2, islandGroup.position.z)
+                new Vector3(islandGroup.position.x, islandGroup.position.y + height / 2 + (islandGroup.type === "island3" ? .5 : 0), islandGroup.position.z)
             )
             
             staircaseDepth += diameter + gap

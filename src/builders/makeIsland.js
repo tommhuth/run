@@ -13,10 +13,12 @@ export default function({
     doBush = random.bool(65)
 } = {}) {
     const group = makeGroup(scene)
-    const island = clone(random.pick(["island", "island2", "island3"]))  
+    const type = random.pick(["island", "island2", "island3"])
+    const island = clone(type) 
 
     resize(island, diameter, height, diameter) 
 
+    group.type = type
     island.physicsImpostor = new Impostor(island, Impostor.CylinderImpostor, { mass: 0 }, scene)
     island.parent = group
     island.rotate(Axis.Y, random.real(-Math.PI * 2, Math.PI * 2)) 

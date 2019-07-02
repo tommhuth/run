@@ -49,10 +49,11 @@ export default class Pathway {
         let maxJumpDistance = this.maxJumpDistance
     
         this.add(new Intro(scene, this.zPosition))    
-        this.add(new Full(scene, this.zPosition))         
-        this.add(new Full(scene, this.zPosition))          
-        this.add(new Full(scene, this.zPosition))      
-        this.add(new Tower(scene, this.zPosition, { maxJumpDistance }))        
+        this.add(new Full(scene, this.zPosition, { doCoins: false, doObstacle: false }))         
+        this.add(new Full(scene, this.zPosition, { doCoins: false, doObstacle: false }))   
+        this.add(new Full(scene, this.zPosition, { doCoins: true, doObstacle: false }))   
+        this.add(new Gap(scene, this.zPosition, { maxJumpDistance }))   
+        this.add(new Full(scene, this.zPosition, { doCoins: false, doObstacle: true }))   
     } 
     add(block = this.getRandomBlock()) { 
         this.path.push(block)
