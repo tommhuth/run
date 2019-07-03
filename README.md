@@ -1,6 +1,9 @@
 # Infinite runner clone
 
-Not optimzed for desktop, use a device that supports `orientationchange` instead. iOS has disabled `orientationchange` API acccess in PWAs, so that sucks. 
+Not optimzed for desktop, use a device that supports `orientationchange` instead. 
+
+iOS has disabled `orientationchange` by default, but it can be enabled again in settings under Safari. 
+
 ## Todo
 
 - Revamp models, less detail?
