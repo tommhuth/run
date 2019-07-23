@@ -1,68 +1,34 @@
-import "@babel/polyfill"
- 
-import makeScene from "./stage/scene"
-import { load } from "./builders/models"  
-import Pathway from "./stage/pathway/Pathway"
-import Player from "./stage/Player"
-import Camera from "./stage/Camera"
-import World from "./stage/World"
-import { RunnerEngine, RunnerEvent } from "./RunnerEngine" 
-import * as ui from "./ui"
-import fontLoader from "./font-loader"
+import "../assets/style/app.scss"
 
-async function start() {
-    try { 
-        let { scene, shadowGenerator, runRenderLoop } = makeScene()
+import React from "react"
+import { Provider } from "react-redux"
+import ReactDOM from "react-dom"
+import makeStore from "./store/make-store"
+import { Canvas } from "react-three-fiber"
+import { CannonProvider } from "./utils/cannon"
+import Config from "./Config"
+import RunnerEngine from "./components/RunnerEngine"
+import Lights from "./components/Lights"
+import Camera from "./components/Camera"
 
-        await load()
- 
-        let player = new Player(scene, shadowGenerator)
-        let camera = new Camera(scene, player)
-        let pathway = new Pathway(scene, player) 
-        let world = new World(scene)
-        let runnerEngine = new RunnerEngine(scene, player, pathway, camera, world, shadowGenerator)
- 
-        runRenderLoop((light) => {  
-            // gameplay loop
-            runnerEngine.loop(light) 
-        })
+const store = makeStore()
 
-        // ui stuff here
-        document.getElementById("app").style.opacity = 1
- 
-        runnerEngine 
-            .on(RunnerEvent.RUNNING, () => {
-                document.getElementById("intro").classList.add("hidden")
-            })   
-            .on(RunnerEvent.GAME_OVER, ({ reason }) => {
-                document.getElementById("ui").innerHTML = `Game over <span>You ${reason}</span>`
-            })
-            .on(RunnerEvent.RESET, () => { 
-                document.getElementById("ui").innerText = ""
-            })
-            .on(RunnerEvent.SCORE_CHANGE, (score) => {  
-                document.getElementById("score").innerText = score
-            })
-            .on(RunnerEvent.DISTANCE_CHANGE, (distance) => {   
-                ui.distanceAlert(distance)
-            })     
-    } catch (e) {
-        console.error(e)
-    }
-}
+ReactDOM.render(
+    <>
+        <h1 className="visually-hidden">Run</h1>
+        <p className="visually-hidden">Infinite runner game made with React + Three.</p>
 
-document.body.addEventListener("touchmove", (e) => { 
-    e.preventDefault()
-    e.stopPropagation()
-    e.stopImmediatePropagation()
-})
- 
-window.addEventListener("load", async () => {
-    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") { 
-        // Use the window load event to keep the page load performant
-        await navigator.serviceWorker.register("/sw.js") 
-    } 
-    await fontLoader() 
-})
-
-start()
+        <div style={{ height: "100vh", width: "100vw" }}>
+            <Canvas pixelRatio={Math.min(1.5, window.devicePixelRatio)}>
+                <Provider store={store}>
+                    <CannonProvider defaultRestitution={.0}>
+                        <Camera />
+                        <Lights />
+                        <RunnerEngine />
+                    </CannonProvider>
+                </Provider>
+            </Canvas>
+        </div>
+    </>,
+    document.getElementById("root")
+)
