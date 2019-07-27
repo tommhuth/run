@@ -11,12 +11,12 @@ const BlockType = {
 const BlockSettings = {
     [BlockType.GAP]: {
         requiredNext: [],
-        depth: [3,5],
+        depth: [2,5],
         illegalNext: [BlockType.GAP]
     },
     [BlockType.FLAT]: {
         requiredNext: [],
-        depth: [8,20],
+        depth: [14,30],
         illegalNext: []
     }
 }

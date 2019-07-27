@@ -23,20 +23,7 @@ export default function (state = { ...init }, { type, payload }) {
             return {
                 ...state,
                 blocks: state.blocks.filter(i => i.id !== payload)
-            }
-
-        case RunAction.SET_BLOCK_DEPTH:
-            return {
-                ...state,
-                blocks: [
-                    ...state.blocks.filter(i => i.id !== payload.id), 
-                    {
-                        ...state.blocks.find(i => i.id === payload.id),
-                        depth: payload.depth,
-                        end: state.blocks.find(i => i.id === payload.id).end + payload.depth
-                    }
-                ]
-            }
+            } 
         case RunAction.SET_PLAYER_POSITION:
             return {
                 ...state,

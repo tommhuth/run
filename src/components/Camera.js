@@ -16,16 +16,14 @@ export default function Camera() {
         setZ(prev => prev + (Config.PLAYER_SPEED / 30))
     }, false)
 
-    return (
-        <>
-            <perspectiveCamera
-                far={75}
-                position={[0, 5, -10 + z]}
-                ref={ref}
-                onUpdate={self => {
-                    setDefaultCamera(self)
-                }}
-            />
-        </>
+    return ( 
+        <perspectiveCamera
+            far={75}
+            position={[0, 5, -15 + z]}
+            ref={ref}
+            onUpdate={self => {
+                setDefaultCamera(self)
+            }}
+        /> 
     )
 }

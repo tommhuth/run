@@ -10,7 +10,7 @@
     ],
     "scripts": {
         "start": "node server.js",
-        "ngrok": "ngrok http localhost:3001",
+        "ngrok": "ngrok http -host-header=rewrite localhost:3000",
         "dev": "webpack --watch --mode development & yarn start",
         "build": "webpack --mode production",
         "run": "npm run build & npm run start"

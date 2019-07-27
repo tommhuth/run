@@ -1,16 +1,19 @@
 
 import React, { useState, useEffect } from "react"
-import { Sphere, Vec3, Ray, RaycastResult } from "cannon" 
+import { Sphere, Vec3, Ray, RaycastResult } from "cannon"
 import { useCannon } from "../utils/cannon"
 import Config from "../Config"
-import { setPlayerPosition } from "../store/actions/run" 
+import { setPlayerPosition } from "../store/actions/run"
 import { useRender } from "react-three-fiber"
 import { useThrottledRender, useActions } from "../utils/hooks"
+import { throttle } from "throttle-debounce"
 
 export default function Player({ position = [0, 4, 2] }) {
     let [body, setBody] = useState(null)
     let [world, setWorld] = useState(null)
     let [canJump, setCanJump] = useState(false)
+    let [xOffset, setXOffset] = useState(0)
+    let [xOffsetTemp, setXOffsetTemp] = useState(0)
     let actions = useActions({ setPlayerPosition })
 
     const ref = useCannon(
@@ -60,7 +63,9 @@ export default function Player({ position = [0, 4, 2] }) {
 
                 ray.intersectBody(target, new RaycastResult())
 
-                setCanJump(ray.hasHit)
+                if (ray.hasHit) {
+                    setCanJump(true)
+                }
             }
 
             body.addEventListener("collide", listener)
@@ -86,9 +91,46 @@ export default function Player({ position = [0, 4, 2] }) {
     // move player forwad
     useRender(() => {
         if (body) {
-            body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
+            body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z) 
         }
-    }, false, [body])
+    }, false, [body, xOffset])
+
+    useEffect(() => {
+        if (body) {
+            let deviceOrientation = throttle(5, false, (e) => {
+                let rotation = e.gamma / 90 * - 1
+                let limit = .25
+
+                if (e.beta >= 90) {
+                    // if tilted towards user, gamma is flipped - flip back
+                    rotation *= -1
+                }
+
+                if (rotation > 0 && rotation > limit) {
+                    rotation = limit
+                }
+
+                if (rotation < 0 && rotation < -limit) {
+                    rotation = -limit
+                }
+ 
+                body.applyForce(new Vec3(rotation* 10 , 0, 0), body.position)
+            })
+            let mouseMove = (e) => {
+                let offset = (window.innerWidth / 2 - e.pageX) / window.innerWidth / 2
+
+                setXOffset(offset)
+            }
+
+            window.addEventListener("deviceorientation", deviceOrientation)
+            window.addEventListener("mousemove", mouseMove)
+
+            return () => {
+                window.removeEventListener("deviceorientation", deviceOrientation)
+                window.removeEventListener("mousemove", mouseMove)
+            }
+        }
+    }, [body])
 
     return (
         <mesh ref={ref} key={"player"}>
