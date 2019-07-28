@@ -1,8 +1,8 @@
 import { RunAction } from "../actions/creators/run"
-import Config from "../../Config"
+import GameState from "../../const/GameState"
 
 const init = {
-    state: Config.STATE_INTRO,
+    state: GameState.READY,
     blocks: [],
     playerPosition: { x: 0, y: 0, z: 0 }
 }
@@ -14,6 +14,10 @@ export default function (state = { ...init }, { type, payload }) {
                 ...state,
                 state: payload
             }
+        case RunAction.RESET:
+            return {
+                ...init
+            }
         case RunAction.ADD_BLOCK:
             return {
                 ...state,
@@ -23,12 +27,12 @@ export default function (state = { ...init }, { type, payload }) {
             return {
                 ...state,
                 blocks: state.blocks.filter(i => i.id !== payload)
-            } 
+            }
         case RunAction.SET_PLAYER_POSITION:
             return {
                 ...state,
                 playerPosition: { ...state.playerPosition, ...payload }
-            }
+            } 
         default:
             return state
     }

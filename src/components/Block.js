@@ -15,18 +15,17 @@ export default function Block(props) {
 }
 
 function Flat({ z, depth }) {
-    let [color] = useState(random.pick([0xFF0000, 0xFFFF00, 0xFF00FF]))
+    let [color] = useState(0xDDDDDD)
     let [h] = useState(random.integer(0, 1))
     let [x] = useState(random.real(-4, 4))
-    let [rotation] = useState(random.real(-.135, .135))
-
+    let [rotation] = useState(random.real(-.2, .2)) 
 
     return (
         <>
             <Box
-                position={[0, -2.5, z + depth / 2]}
+                position={[0, -7.5, z + depth / 2]}
                 rotation={[0, 0, rotation]}
-                size={[35, 5 + h, depth]}
+                size={[55, 15 + h, depth]}
                 color={color}
             />
             <Box

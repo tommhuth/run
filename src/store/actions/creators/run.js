@@ -3,15 +3,22 @@ export const RunAction = {
     SET_BLOCK_DEPTH: "run:set-block-depth",
     ADD_BLOCK: "silent@run:add-block",
     REMOVE_BLOCK: "silent@run:remove-block",
-    SET_PLAYER_POSITION: "silent@run:set-player-position"
+    SET_PLAYER_POSITION: "silent@run:set-player-position", 
+    RESET: "run:reset",
 }
+
+export function reset() {
+    return {
+        type: RunAction.RESET
+    }
+} 
 
 export function setState(state) {
     return {
         type: RunAction.SET_STATE,
         payload: state
     }
-} 
+}
 
 export function setBlockDepth(id, depth) {
     return {

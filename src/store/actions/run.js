@@ -1,7 +1,7 @@
-import * as runActions from "./creators/run"
-import Config from "../../Config"
+import * as runActions from "./creators/run" 
 import uuid from "uuid"
 import random from "../../utils/random"
+import GameState from "../../const/GameState"
 
 const BlockType = {
     FLAT: "flat",
@@ -11,12 +11,12 @@ const BlockType = {
 const BlockSettings = {
     [BlockType.GAP]: {
         requiredNext: [],
-        depth: [2,5],
+        depth: [2, 5],
         illegalNext: [BlockType.GAP]
     },
     [BlockType.FLAT]: {
         requiredNext: [],
-        depth: [14,30],
+        depth: [14, 30],
         illegalNext: []
     }
 }
@@ -29,7 +29,7 @@ function getNext(previous) {
     let types = Object.values(BlockType)
     let next = random.pick(types)
 
-    while (!isValidNext(previous, next)) { 
+    while (!isValidNext(previous, next)) {
         next = random.pick(types)
     }
 
@@ -44,7 +44,7 @@ export function addBlock(
         let last = blocks[blocks.length - 1]
         let type = forceType || getNext(last.type)
         let z = (last && last.z) || 0
-        let lastDepth = (last && last.depth) || 0 
+        let lastDepth = (last && last.depth) || 0
         let depth = random.integer(...BlockSettings[type].depth)
 
         dispatch(runActions.addBlock({
@@ -67,6 +67,26 @@ export function init() {
         dispatch(addBlock("flat"))
         dispatch(addBlock("flat"))
         dispatch(addBlock("gap"))
+    }
+}
+
+export function start() {
+    return async function (dispatch) { 
+        dispatch(runActions.setState(GameState.ACTIVE)) 
+    }
+}
+
+export function gameOver() {
+    return async function (dispatch) { 
+        dispatch(runActions.setState(GameState.GAME_OVER)) 
+    }
+}
+
+export function reset() {
+    return async function (dispatch) {
+        dispatch(runActions.reset()) 
+        dispatch(init())  
+        dispatch(runActions.setState(GameState.ACTIVE))  
     }
 }
 
