@@ -13,6 +13,7 @@ export default function Ui() {
 
     return (
         <>
+            <button className="reload" onClick={() => location.reload(true)}>Reload</button>
             <Only if={state === GameState.READY}>
                 <div className="panel">
                     <button onClick={actions.start}>Start</button>
