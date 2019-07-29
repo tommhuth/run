@@ -1,4 +1,4 @@
-import * as runActions from "./creators/run" 
+import * as runActions from "./creators/run"
 import uuid from "uuid"
 import random from "../../utils/random"
 import GameState from "../../const/GameState"
@@ -36,10 +36,8 @@ function getNext(previous) {
     return next
 }
 
-export function addBlock(
-    forceType
-) {
-    return async function (dispatch, getState) {
+function addBlock(forceType) {
+    return function (dispatch, getState) {
         let blocks = getState().run.blocks
         let last = blocks[blocks.length - 1]
         let type = forceType || getNext(last.type)
@@ -59,50 +57,46 @@ export function addBlock(
     }
 }
 
-export function init() {
-    return async function (dispatch) {
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("gap"))
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("gap"))
-    }
-}
 
 export function start() {
-    return async function (dispatch) { 
-        dispatch(runActions.setState(GameState.ACTIVE)) 
+    return function (dispatch) {
+        dispatch(runActions.setState(GameState.ACTIVE))
     }
 }
 
 export function gameOver() {
-    return async function (dispatch) { 
-        dispatch(runActions.setState(GameState.GAME_OVER)) 
+    return function (dispatch) {
+        dispatch(runActions.setState(GameState.GAME_OVER))
     }
 }
 
 export function reset() {
-    return async function (dispatch) {
-        dispatch(runActions.reset()) 
-        dispatch(init())  
-        dispatch(runActions.setState(GameState.ACTIVE))  
+    return function (dispatch) {
+        dispatch(runActions.reset())
+        dispatch(buildInitalPath())
+        dispatch(runActions.setState(GameState.ACTIVE))
     }
 }
 
 export function setPlayerPosition(position) {
-    return async function (dispatch) {
+    return function (dispatch) {
         dispatch(runActions.setPlayerPosition(position))
     }
 }
-export function setBlockDepth(id, depth) {
-    return async function (dispatch) {
-        dispatch(runActions.setBlockDepth(id, depth))
+
+export function generateInitalPath() {
+    return function (dispatch) {
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("gap"))
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("gap"))
     }
 }
 
-export function clean() {
-    return async function (dispatch, getState) {
+export function generatePath() {
+    return function (dispatch, getState) {
         let { blocks, playerPosition } = getState().run
 
         for (let block of blocks) {

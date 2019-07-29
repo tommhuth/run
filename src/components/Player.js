@@ -13,7 +13,7 @@ import GameState from "../const/GameState"
 
 let prev = 0
 
-export default function Player({ position = [0, 5, 5] }) {
+export default function Player({ position = [0, 5, 2] }) {
     let [body, setBody] = useState(null)
     let [world, setWorld] = useState(null)
     let [canJump, setCanJump] = useState(false)
@@ -46,12 +46,14 @@ export default function Player({ position = [0, 5, 5] }) {
 
     // update redux pos every 1s
     useThrottledRender(() => {
-        actions.setPlayerPosition({
-            x: body.position.x,
-            y: body.position.y,
-            z: body.position.z
-        })
-    }, 1000, [body])
+        if (state === GameState.ACTIVE) { 
+            actions.setPlayerPosition({
+                x: body.position.x,
+                y: body.position.y,
+                z: body.position.z
+            })
+        }
+    }, 1000, [body, state])
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {
@@ -93,7 +95,7 @@ export default function Player({ position = [0, 5, 5] }) {
     useRender(() => {
         if (body) {
             if (state === GameState.ACTIVE) {
-                if (body.velocity.z < 2 && body.x) {
+                if (body.velocity.z < 2 && body.x) { 
                     actions.gameOver()
                 } else {
                     body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
@@ -148,16 +150,17 @@ export default function Player({ position = [0, 5, 5] }) {
     }, [body, state])
 
     useRender(() => {
-        if (body && state === GameState.ACTIVE) { 
-            if (body.position.y < -6 || body.position.x < -15 || body.position.x > 15) {
+        if (body && state === GameState.ACTIVE) {
+            if (body.position.y < -6 || body.position.x < -15 || body.position.x > 15) { 
                 actions.gameOver()
             }
         }
     }, false, [body, state])
-    
+
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
-            body.velocity.set(0,0,0)
+            body.velocity.set(0, 0, 0)
+            prev = 0
             body.x = false
         }
     }, [body, state])
