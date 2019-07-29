@@ -33,20 +33,22 @@ export default function Player({ position = [0, 5, 2] }) {
 
     // fallen off world = no jump
     useThrottledRender(() => {
-        let ray = new Ray(
-            body.position.clone(),
-            new Vec3(body.position.x, body.position.y - 10, body.position.z)
-        )
-        ray.intersectBodies(world.bodies.filter(i => i !== body), new RaycastResult())
+        if (state === GameState.ACTIVE) {
+            let ray = new Ray(
+                body.position.clone(),
+                new Vec3(body.position.x, body.position.y - 10, body.position.z)
+            )
+            ray.intersectBodies(world.bodies.filter(i => i !== body), new RaycastResult())
 
-        if (!ray.hasHit) {
-            setCanJump(false)
+            if (!ray.hasHit) {
+                setCanJump(false)
+            }
         }
     }, 300, [body, world, state])
 
     // update redux pos every 1s
     useThrottledRender(() => {
-        if (state === GameState.ACTIVE) { 
+        if (state === GameState.ACTIVE) {
             actions.setPlayerPosition({
                 x: body.position.x,
                 y: body.position.y,
@@ -93,14 +95,12 @@ export default function Player({ position = [0, 5, 2] }) {
 
     // move player forwad
     useRender(() => {
-        if (body) {
-            if (state === GameState.ACTIVE) {
-                if (body.velocity.z < 2 && body.x) { 
-                    actions.gameOver()
-                } else {
-                    body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
-                    body.x = true
-                }
+        if (body && state === GameState.ACTIVE) {
+            if (body.velocity.z < 2 && body.x) {
+                actions.gameOver()
+            } else {
+                body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
+                body.x = true
             }
         }
     }, false, [body, state])
@@ -151,7 +151,7 @@ export default function Player({ position = [0, 5, 2] }) {
 
     useRender(() => {
         if (body && state === GameState.ACTIVE) {
-            if (body.position.y < -6 || body.position.x < -15 || body.position.x > 15) { 
+            if (body.position.y < -6 || body.position.x < -15 || body.position.x > 15) {
                 actions.gameOver()
             }
         }
