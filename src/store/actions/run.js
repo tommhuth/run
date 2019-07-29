@@ -73,7 +73,7 @@ export function gameOver() {
 export function reset() {
     return function (dispatch) {
         dispatch(runActions.reset())
-        dispatch(buildInitalPath())
+        dispatch(generateInitalPath())
         dispatch(runActions.setState(GameState.ACTIVE))
     }
 }
