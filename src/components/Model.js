@@ -2,11 +2,22 @@
 import React, { useState, useEffect } from "react"
 import externalMeshes from "../utils/meshes"
 import { useCannon } from "../utils/cannon"
+import random from "../utils/random"
 import { meshToShape, ShapeType } from "../addons/meshToShape"
 
 
-export default function Model({ mass = 0, position = [0, 4, 2], type, scale=[1,1,1] }) {
+export default function Model({
+    mass = 0,
+    position = [0, 4, 2],
+    type,
+    scale = [1, 1, 1],
+    rotation: [rotateX, rotateY, rotateZ] = [0, 0, 0],
+    flippable = true
+}) {
     let [meshes, setMeshes] = useState(null)
+    let [flipX] = useState(random.pick([-1, 1]))
+    let [flipZ] = useState(random.pick([-1, 1]))
+    let [flipY] = useState(random.pick([-1, 1]))
 
     useEffect(() => {
         externalMeshes.then(meshes => setMeshes(meshes))
@@ -20,6 +31,7 @@ export default function Model({ mass = 0, position = [0, 4, 2], type, scale=[1,1
 
                 body.addShape(shape)
                 body.position.set(...position)
+                body.quaternion.setFromEuler(rotateX, rotateY, rotateZ)
             }
         },
         [meshes, ref]
@@ -32,7 +44,11 @@ export default function Model({ mass = 0, position = [0, 4, 2], type, scale=[1,1
     return (
         <mesh
             ref={ref}
-            scale={scale}
+            scale={[
+                scale[0] * (flippable ? flipX : 1),
+                scale[1] * (flippable ? flipY : 1),
+                scale[2] * (flippable ? flipZ : 1)
+            ]}
             geometry={meshes && meshes[type]}
             position={position}
         >

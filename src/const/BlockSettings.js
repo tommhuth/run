@@ -2,7 +2,7 @@ import BlockType from "./BlockType"
 
 export default {
     BASE_HEIGHT: 50,
-    
+
     [BlockType.GAP]: {
         requiredNext: [],
         depth: [2, 5],
@@ -10,12 +10,12 @@ export default {
     },
     [BlockType.FLAT]: {
         requiredNext: [],
-        depth: [14, 30],
+        depth: [10, 18],
         illegalNext: []
     }, 
     [BlockType.PLATFORMS]: {
         requiredNext: [],
-        depth: [45, 100],
+        depth: [20, 100],
         illegalNext: [BlockType.GAP]
     }
 }

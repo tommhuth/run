@@ -6,7 +6,7 @@ function load(url) {
     })
 }
 
-export default load("/models/test.glb")
+export default load("/models/world.glb")
     .then(res => {
         let geometries = {}
 

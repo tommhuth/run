@@ -1,39 +1,55 @@
 
 import React, { useState, useEffect } from "react"
 import Box from "../Box"
-import random from "../../utils/random" 
- 
+import random from "../../utils/random"
+import BlockSettings from "../../const/BlockSettings"
+import Model from "../Model";
+
 export default function Platforms({ z, depth }) {
-    let [platforms, setPlatforms] = useState([])
+    let [platforms, setPlatforms] = useState([]) 
 
     useEffect(() => {
         let platforms = []
-        let platformSize = 10
-        let platformGap = 5
-        let count = Math.floor(depth / (platformSize + platformGap))
+        let acc = 0
 
-        for (let i = 0; i < count; i++) {
+        while (acc <= depth - 20 || depth - acc > 3) {
+            let platformSize = random.integer(5, 8)
+            let platformGap = random.integer(0, 3)
+            
             platforms.push({
+                type: random.pick(["box", "box2"]),
                 position: [
-                    random.real(-2, 2), 
-                    -25, 
-                    z + platformSize / 2 + i * (platformSize + platformGap)
+                    random.real(-2, 2),
+                    -BlockSettings.BASE_HEIGHT / 2,
+                    z + platformSize / 2 + platformGap + acc
                 ],
-                size: [platformSize, 50, platformSize],
-                rotation: []
+                size: [
+                    platformSize,
+                    BlockSettings.BASE_HEIGHT + random.integer(-1, 1),
+                    platformSize
+                ],
+                rotation: [
+                    random.real(-.05, .05),
+                    random.real(-.25, .25),
+                    random.real(-.05, .05)
+                ],
             })
+
+            acc += platformGap + platformSize
         }
 
         setPlatforms(platforms)
-    }, []) 
+    }, [])
 
     return (
         <>
             {platforms.map((i, index) => {
                 return (
-                    <Box
+                    <Model
+                        type={i.type}
                         key={index}
-                        size={i.size}
+                        rotation={i.rotation}
+                        scale={i.size}
                         position={i.position}
                     />
                 )
