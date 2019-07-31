@@ -58,7 +58,7 @@ export default function Player({ position = [0, 4, 0] }) {
                 forwardVelocity: body.velocity.z || Config.PLAYER_SPEED
             })
         }
-    }, 1000, [body, state])
+    }, 250, [body, state])
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {

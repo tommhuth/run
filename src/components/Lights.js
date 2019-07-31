@@ -28,12 +28,12 @@ export default function Lights() {
                     self.target.updateMatrixWorld()
                     self.shadow.mapSize.width = 512 * 2
                     self.shadow.mapSize.height = 512 * 2
-                    self.shadow.camera.near = -15
-                    self.shadow.camera.far = 35
-                    self.shadow.camera.left = -10
-                    self.shadow.camera.right = 10
+                    self.shadow.camera.near = -10
+                    self.shadow.camera.far = 10
+                    self.shadow.camera.left = -30
+                    self.shadow.camera.right = 30
                     self.shadow.camera.top = 10
-                    self.shadow.camera.bottom = -10
+                    self.shadow.camera.bottom = -20
                 }}
             />
         </>

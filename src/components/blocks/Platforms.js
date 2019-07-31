@@ -1,21 +1,20 @@
 
 import React, { useState, useEffect } from "react"
-import Box from "../Box"
 import random from "../../utils/random"
 import BlockSettings from "../../const/BlockSettings"
-import Model from "../Model";
+import Model from "../Model"
 
 export default function Platforms({ z, depth }) {
-    let [platforms, setPlatforms] = useState([]) 
+    let [platforms, setPlatforms] = useState([])
 
     useEffect(() => {
         let platforms = []
         let acc = 0
 
-        while (acc <= depth - 20 || depth - acc > 3) {
+        while (depth - acc > 3) {
             let platformSize = random.integer(5, 8)
             let platformGap = random.integer(0, 3)
-            
+
             platforms.push({
                 type: random.pick(["box", "box2"]),
                 position: [
