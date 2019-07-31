@@ -17,6 +17,7 @@ export default function Player({ position = [0, 4, 0] }) {
     let [body, setBody] = useState(null)
     let [offset, setOffset] = useState(0)
     let [world, setWorld] = useState(null)
+    let [hasDeviceOrientation,setHasDeviceOrientation] = useState(true)
     let [canJump, setCanJump] = useState(false)
     let actions = useActions({ setPlayerPosition, gameOver })
     let state = useSelector(getState)
@@ -102,11 +103,14 @@ export default function Player({ position = [0, 4, 0] }) {
                 actions.gameOver()
             } else {
                 body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
-                body.velocity.x = offset
                 body.x = true
+
+                if(!hasDeviceOrientation){ 
+                    body.velocity.x = offset
+                }
             }
         }
-    }, false, [body, state, offset])
+    }, false, [body, state, offset,hasDeviceOrientation])
 
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
@@ -137,6 +141,7 @@ export default function Player({ position = [0, 4, 0] }) {
                 let offset = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2)  * 10
 
                 setOffset(offset)
+                setHasDeviceOrientation(false)
             }
 
             window.addEventListener("deviceorientation", deviceOrientation)
@@ -161,6 +166,7 @@ export default function Player({ position = [0, 4, 0] }) {
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
             body.velocity.set(0, 0, 0)
+            body.angularVelocity.set(0, 0, 0)
             prev = 0
             body.x = false
         }
