@@ -32,7 +32,7 @@ export default function Box({
     }, [body, position])
 
     return (
-        <mesh ref={ref}>
+        <mesh ref={ref} castShadow receiveShadow>
             <boxBufferGeometry attach="geometry" args={size} />
             <meshPhongMaterial dithering color={color} attach="material" />
         </mesh>

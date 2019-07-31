@@ -44,6 +44,8 @@ export default function Model({
     return (
         <mesh
             ref={ref}
+            castShadow
+            receiveShadow
             scale={[
                 scale[0] * (flippable ? flipX : 1),
                 scale[1] * (flippable ? flipY : 1),
