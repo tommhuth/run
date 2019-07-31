@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")  
 
 let plugins = [
-    new CleanWebpackPlugin(),
+    //new CleanWebpackPlugin(),
     new webpack.DefinePlugin({   }), 
     new MiniCssExtractPlugin({
         filename: "css/[name].[hash:6].css"
@@ -15,7 +15,10 @@ let plugins = [
     new HtmlWebpackPlugin({
         template: path.join(__dirname, "assets/views", "index.html"),
         filename: "index.html"
-    }),  
+    }),      
+    new CopyWebpackPlugin([ 
+        { from:  "assets/models/*", to: "models/[name].[ext]" }, 
+    ])
     //new BundleAnalyzerPlugin()
 ]
 

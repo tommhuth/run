@@ -1,7 +1,7 @@
 import { World, NaiveBroadphase, Body } from "cannon"
 import React, { useRef, useEffect, useState, useContext } from "react"
 import { useRender, useThree } from "react-three-fiber"
-import Debug from "../utils/debug"
+import CannonDebugRenderer from "../addons/CannonDebugRenderer"
 
 const context = React.createContext()
 
@@ -23,13 +23,13 @@ export function CannonProvider({
         world.defaultContactMaterial.restitution = defaultRestitution
         world.gravity.set(...gravity)
 
-        setDebug(new Debug(scene, world))
+        //setDebug(new CannonDebugRenderer(scene, world))
     }, [world])
 
     // Run world stepper every frame
     useRender(() => {
         world.step(1 / 30)
-        debug.update()
+        //debug.update()
     }, false, [world, debug])
 
     // Distribute world via context

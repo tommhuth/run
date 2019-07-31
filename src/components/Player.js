@@ -13,8 +13,9 @@ import GameState from "../const/GameState"
 
 let prev = 0
 
-export default function Player({ position = [0, 5, 2] }) {
+export default function Player({ position = [0, 4, 0] }) {
     let [body, setBody] = useState(null)
+    let [offset, setOffset] = useState(0)
     let [world, setWorld] = useState(null)
     let [canJump, setCanJump] = useState(false)
     let actions = useActions({ setPlayerPosition, gameOver })
@@ -52,7 +53,8 @@ export default function Player({ position = [0, 5, 2] }) {
             actions.setPlayerPosition({
                 x: body.position.x,
                 y: body.position.y,
-                z: body.position.z
+                z: body.position.z,
+                forwardVelocity: body.velocity.z || Config.PLAYER_SPEED
             })
         }
     }, 1000, [body, state])
@@ -100,10 +102,11 @@ export default function Player({ position = [0, 5, 2] }) {
                 actions.gameOver()
             } else {
                 body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
+                body.velocity.x = offset
                 body.x = true
             }
         }
-    }, false, [body, state])
+    }, false, [body, state, offset])
 
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
@@ -131,11 +134,9 @@ export default function Player({ position = [0, 5, 2] }) {
                 prev = rotation
             })
             let mouseMove = (e) => {
-                let offset = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2) - prev
+                let offset = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2)  * 10
 
-                body.applyForce(new Vec3(offset * 25, 0, 0), body.position)
-
-                prev = offset
+                setOffset(offset)
             }
 
             window.addEventListener("deviceorientation", deviceOrientation)
@@ -151,7 +152,7 @@ export default function Player({ position = [0, 5, 2] }) {
 
     useRender(() => {
         if (body && state === GameState.ACTIVE) {
-            if (body.position.y < -6 || body.position.x < -15 || body.position.x > 15) {
+            if (body.position.y < -12|| body.position.x < -15 || body.position.x > 15) {
                 actions.gameOver()
             }
         }

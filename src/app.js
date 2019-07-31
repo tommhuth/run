@@ -1,13 +1,14 @@
 import "../assets/style/app.scss"
 
 import React from "react"
-import { Provider, useSelector } from "react-redux"
+import { Provider } from "react-redux"
 import ReactDOM from "react-dom"
 import makeStore from "./store/make-store"
 import { Canvas } from "react-three-fiber"
 import { CannonProvider } from "./utils/cannon" 
 import RunnerEngine from "./components/RunnerEngine"
 import Lights from "./components/Lights"
+import Model from  "./components/Model"
 import Camera from "./components/Camera"
 import Ui from "./components/Ui"
 
@@ -22,9 +23,11 @@ ReactDOM.render(
         </Provider>
         <div style={{ height: "100vh", width: "100vw" }}>
             <Canvas pixelRatio={Math.min(1.5, window.devicePixelRatio)}>
+                <fog attach="fog" args={[0xFFFFFF, 50, 75]} />
+                
                 <Provider store={store}>
                     <CannonProvider defaultRestitution={.0}>
-                        <Camera />
+                        <Camera /> 
                         <Lights />
                         <RunnerEngine />
                     </CannonProvider>

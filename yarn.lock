@@ -5740,6 +5740,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
 
+three-to-cannon@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/three-to-cannon/-/three-to-cannon-2.0.0.tgz#725e640908305b69cab9a5d731f923ef3c68383a"
+  integrity sha512-vXQT8aHZwnSiJrM7Qj5hu11Cz+T04wnDq2I8RHiRogXJlu7PoJkHBSOrUaP2oZ3kxf+kkw7Bcps2REBwse30SA==
+
 three@*, three@^0.106.2:
   version "0.106.2"
   resolved "https://registry.yarnpkg.com/three/-/three-0.106.2.tgz#6752d304c470e4df230944ecd45325e7bf79e1f8"

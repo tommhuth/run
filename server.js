@@ -5,7 +5,7 @@ const compression = require("compression")
 
 const PORT = process.env.PORT || "3000"
 const NODE_ENV = process.env.NODE_ENV || "local"
-const USE_CACHE_BUST = process.env.NO_CACHE_BUST !== "true" && NODE_ENV === "production"
+const USE_CACHE_BUST = true //process.env.NO_CACHE_BUST !== "true" && NODE_ENV === "production"
 
 const app = express()
 

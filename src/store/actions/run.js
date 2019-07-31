@@ -2,24 +2,8 @@ import * as runActions from "./creators/run"
 import uuid from "uuid"
 import random from "../../utils/random"
 import GameState from "../../const/GameState"
-
-const BlockType = {
-    FLAT: "flat",
-    GAP: "gap"
-}
-
-const BlockSettings = {
-    [BlockType.GAP]: {
-        requiredNext: [],
-        depth: [2, 5],
-        illegalNext: [BlockType.GAP]
-    },
-    [BlockType.FLAT]: {
-        requiredNext: [],
-        depth: [14, 30],
-        illegalNext: []
-    }
-}
+import BlockType from "../../const/BlockType"
+import BlockSettings from "../../const/BlockSettings"
 
 function isValidNext(previous, next) {
     return !BlockSettings[previous].illegalNext.includes(next)
@@ -57,7 +41,6 @@ function addBlock(forceType) {
     }
 }
 
-
 export function start() {
     return function (dispatch) {
         dispatch(runActions.setState(GameState.ACTIVE))
@@ -86,12 +69,14 @@ export function setPlayerPosition(position) {
 
 export function generateInitalPath() {
     return function (dispatch) {
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("gap"))
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("flat"))
-        dispatch(addBlock("gap"))
+        dispatch(addBlock("flat")) 
+        dispatch(addBlock("platforms")) 
+        dispatch(addBlock("flat")) 
+        dispatch(addBlock("flat")) 
+        dispatch(addBlock("flat")) 
+        dispatch(addBlock("flat")) 
+        dispatch(addBlock("flat")) 
+        dispatch(addBlock("flat")) 
     }
 }
 

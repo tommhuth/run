@@ -2,18 +2,20 @@ import React, { useEffect, createRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { useThree, useRender } from "react-three-fiber"
 import Config from "../Config"
-import { getState } from "../store/selectors/run"
+import { getState, getPlayerPosition } from "../store/selectors/run"
 import GameState from "../const/GameState"
 
 export default function Camera() {
     let ref = createRef()
     let { setDefaultCamera } = useThree()
     let [z, setZ] = useState(0)
-    let state = useSelector(getState) 
-
+    let state = useSelector(getState)
+    let { forwardVelocity = Config.PLAYER_SPEED } = useSelector(getPlayerPosition)
+ 
     useEffect(() => {
-        ref.current.lookAt(0, 0, 0)
+        ref.current.lookAt(0, 0, 4)
     }, [])
+
     useEffect(() => {
         if (state === GameState.ACTIVE) {
             setZ(0)
@@ -22,14 +24,14 @@ export default function Camera() {
 
     useRender(() => {
         if (state === GameState.ACTIVE) {
-            setZ(prev => prev + (Config.PLAYER_SPEED / 30))
+            setZ(prev => prev + (forwardVelocity / 30))
         }
-    }, false, [state])
+    }, false, [state, forwardVelocity])
 
     return (
         <perspectiveCamera
             far={75}
-            position={[0, 5, -15 + z]}
+            position={[0, 8, -12 + z]}
             ref={ref}
             onUpdate={self => {
                 setDefaultCamera(self)
