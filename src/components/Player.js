@@ -133,7 +133,7 @@ export default function Player({ position = [0, 4, 0] }) {
                     rotation = -limit
                 }
 
-                body.applyForce(new Vec3(rotation * 10, 0, 0), body.position)
+                body.applyImpulse(new Vec3(rotation * 10, 0, 0), body.position)
 
                 prev = rotation
             })
