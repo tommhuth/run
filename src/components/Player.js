@@ -50,7 +50,7 @@ export default function Player({ position = [0, 4, 0] }) {
 
     // update redux pos every 1s
     useThrottledRender(() => {
-        if (state === GameState.ACTIVE) {
+        if (state === GameState.ACTIVE) { 
             actions.setPlayerPosition({
                 x: body.position.x,
                 y: body.position.y,
@@ -58,7 +58,7 @@ export default function Player({ position = [0, 4, 0] }) {
                 forwardVelocity: body.velocity.z || Config.PLAYER_SPEED
             })
         }
-    }, 250, [body, state])
+    }, 200, [body, state])
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {

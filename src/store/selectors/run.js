@@ -9,3 +9,7 @@ export function getBlocks(state) {
 export function getPlayerPosition(state) {
     return state.run.playerPosition
 } 
+
+export function getScore(state) {
+    return state.run.score
+} 

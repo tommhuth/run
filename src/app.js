@@ -23,7 +23,7 @@ ReactDOM.render(
         </Provider>
         <div style={{ height: "100vh", width: "100vw" }}>
             <Canvas pixelRatio={Math.min(1.5, window.devicePixelRatio)}>
-                <fog attach="fog" args={[0xFFFFFF, 50, 75]} />
+                <fog attach="fog" args={[0xffffff, 50, 75]} />
                 
                 <Provider store={store}>
                     <CannonProvider defaultRestitution={.0}>

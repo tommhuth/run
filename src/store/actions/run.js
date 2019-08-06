@@ -47,6 +47,12 @@ export function start() {
     }
 }
 
+export function increaseScore() {
+    return function (dispatch) {
+        dispatch(runActions.increaseScore())
+    }
+}
+
 export function gameOver() {
     return function (dispatch) {
         dispatch(runActions.setState(GameState.GAME_OVER))
@@ -70,10 +76,8 @@ export function setPlayerPosition(position) {
 export function generateInitalPath() {
     return function (dispatch) {
         dispatch(addBlock("flat")) 
-        dispatch(addBlock("platforms")) 
-        dispatch(addBlock("flat")) 
-        dispatch(addBlock("flat")) 
-        dispatch(addBlock("flat")) 
+        
+        dispatch(addBlock("flat"))  
         dispatch(addBlock("flat")) 
         dispatch(addBlock("flat")) 
         dispatch(addBlock("flat")) 

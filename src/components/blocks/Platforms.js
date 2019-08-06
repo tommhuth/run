@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from "react"
 import random from "../../utils/random"
-import BlockSettings from "../../const/BlockSettings"
-import Model from "../Model"
+import BlockSettings from "../../const/BlockSettings" 
+import RockPillar from "../RockPillar"
 
 export default function Platforms({ z, depth }) {
     let [platforms, setPlatforms] = useState([])
@@ -12,26 +12,17 @@ export default function Platforms({ z, depth }) {
         let acc = 0
 
         while (depth - acc > 3) {
-            let platformSize = random.integer(5, 8)
-            let platformGap = random.integer(0, 3)
+            let platformSize = random.integer(4, 8)
+            let platformGap = random.integer(1, 4)
 
-            platforms.push({
-                type: random.pick(["box", "box2"]),
+            platforms.push({ 
                 position: [
                     random.real(-2, 2),
                     -BlockSettings.BASE_HEIGHT / 2,
                     z + platformSize / 2 + platformGap + acc
                 ],
-                size: [
-                    platformSize,
-                    BlockSettings.BASE_HEIGHT + random.integer(-1, 1),
-                    platformSize
-                ],
-                rotation: [
-                    random.real(-.05, .05),
-                    random.real(-.25, .25),
-                    random.real(-.05, .05)
-                ],
+                height: BlockSettings.BASE_HEIGHT + random.integer(-1, 1),
+                size: platformSize
             })
 
             acc += platformGap + platformSize
@@ -44,11 +35,10 @@ export default function Platforms({ z, depth }) {
         <>
             {platforms.map((i, index) => {
                 return (
-                    <Model
-                        type={i.type}
-                        key={index}
-                        rotation={i.rotation}
-                        scale={i.size}
+                    <RockPillar 
+                        key={index} 
+                        size={i.size}
+                        height={i.height}
                         position={i.position}
                     />
                 )

@@ -5,7 +5,6 @@ import { useCannon } from "../utils/cannon"
 import random from "../utils/random"
 import { meshToShape, ShapeType } from "../addons/meshToShape"
 
-
 export default function Model({
     mass = 0,
     position = [0, 4, 2],
@@ -46,15 +45,20 @@ export default function Model({
             ref={ref}
             castShadow
             receiveShadow
+            geometry={meshes[type]}
+            position={position}
             scale={[
                 scale[0] * (flippable ? flipX : 1),
                 scale[1] * (flippable ? flipY : 1),
                 scale[2] * (flippable ? flipZ : 1)
             ]}
-            geometry={meshes && meshes[type]}
-            position={position}
         >
-            <meshPhongMaterial dithering color={0xcccccc} attach="material" />
+            <meshPhongMaterial
+                dithering
+                color={0x666666}
+                emissive={0xcccccc}
+                attach="material"
+            />
         </mesh>
     )
 }

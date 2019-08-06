@@ -35,6 +35,10 @@ export function CannonProvider({
     // Distribute world via context
     return <context.Provider value={world} children={children} />
 }
+ 
+export function useWorld() {
+    return useContext(context)
+}
 
 // Custom hook to maintain a world physics body
 export function useCannon({ ...props }, fn, deps = []) {

@@ -1,7 +1,7 @@
 
 import React from "react"
 import { useSelector } from "react-redux"
-import { getState } from "../store/selectors/run"
+import { getState, getScore } from "../store/selectors/run"
 import { start, reset } from "../store/actions/run"
 import GameState from "../const/GameState"
 import Only from "./Only"
@@ -9,11 +9,13 @@ import { useActions } from "../utils/hooks"
 
 export default function Ui() {
     let state = useSelector(getState)
+    let score = useSelector(getScore)
     let actions = useActions({ start, reset })
 
     return (
         <>
             <button className="reload" onClick={() => location.reload(true)}>Reload</button>
+            <div className="score">{score}</div>
             <Only if={state === GameState.READY}>
                 <div className="panel">
                     <button onClick={actions.start}>Start</button>

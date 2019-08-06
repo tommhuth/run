@@ -4,11 +4,18 @@ export const RunAction = {
     REMOVE_BLOCK: "run:remove-block",
     SET_PLAYER_POSITION: "silent@run:set-player-position", 
     RESET: "run:reset",
+    INCREASE_SCORE: "run:increase-score"
 }
 
 export function reset() {
     return {
         type: RunAction.RESET
+    }
+} 
+
+export function increaseScore() {
+    return {
+        type: RunAction.INCREASE_SCORE
     }
 } 
 
