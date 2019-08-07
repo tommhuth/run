@@ -4,8 +4,7 @@ import GameState from "../../const/GameState"
 const init = {
     state: GameState.READY,
     score: 0,
-    blocks: [],
-    playerPosition: { x: 0, y: 0, z: 0 }
+    blocks: []
 }
 
 export default function (state = { ...init }, { type, payload }) {
@@ -33,12 +32,7 @@ export default function (state = { ...init }, { type, payload }) {
             return {
                 ...state,
                 blocks: state.blocks.filter(i => i.id !== payload)
-            }
-        case RunAction.SET_PLAYER_POSITION:
-            return {
-                ...state,
-                playerPosition: { ...state.playerPosition, ...payload }
-            }
+            } 
         default:
             return state
     }

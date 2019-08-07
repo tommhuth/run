@@ -1,8 +1,7 @@
 export const RunAction = {
     SET_STATE: "run:set-state", 
     ADD_BLOCK: "run:add-block",
-    REMOVE_BLOCK: "run:remove-block",
-    SET_PLAYER_POSITION: "silent@run:set-player-position", 
+    REMOVE_BLOCK: "run:remove-block", 
     RESET: "run:reset",
     INCREASE_SCORE: "run:increase-score"
 }
@@ -23,13 +22,6 @@ export function setState(state) {
     return {
         type: RunAction.SET_STATE,
         payload: state
-    }
-} 
-
-export function setPlayerPosition(position) {
-    return {
-        type: RunAction.SET_PLAYER_POSITION,
-        payload: position
     }
 } 
 

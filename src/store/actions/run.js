@@ -67,12 +67,6 @@ export function reset() {
     }
 }
 
-export function setPlayerPosition(position) {
-    return function (dispatch) {
-        dispatch(runActions.setPlayerPosition(position))
-    }
-}
-
 export function generateInitalPath() {
     return function (dispatch) {
         dispatch(addBlock("flat")) 
