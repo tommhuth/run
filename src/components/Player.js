@@ -5,18 +5,17 @@ import { useSelector } from "react-redux"
 import { useCannon, useWorld } from "../utils/cannon"
 import { getState } from "../store/selectors/run"
 import Config from "../Config"
-import { setPlayerPosition, gameOver } from "../store/actions/run"
+import { gameOver } from "../store/actions/run"
 import { useRender } from "react-three-fiber"
 import { useThrottledRender, useActions } from "../utils/hooks"
-import { throttle } from "throttle-debounce"
 import GameState from "../const/GameState"
- 
+
 export default function Player({ position = [0, 4, 0] }) {
     let [body, setBody] = useState(null)
     let [hasInitialVelocity, setHasInitialVelocity] = useState(false)
-    let world = useWorld() 
+    let world = useWorld()
     let [canJump, setCanJump] = useState(false)
-    let actions = useActions({ setPlayerPosition, gameOver })
+    let actions = useActions({ gameOver })
     let state = useSelector(getState)
 
     const ref = useCannon(
@@ -26,7 +25,7 @@ export default function Player({ position = [0, 4, 0] }) {
             body.position.set(...position)
             body.xname = "player"
 
-            setBody(body) 
+            setBody(body)
         }
     )
 
@@ -44,7 +43,7 @@ export default function Player({ position = [0, 4, 0] }) {
             }
         }
     }, 300, [body, world, state])
- 
+
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {
@@ -97,7 +96,7 @@ export default function Player({ position = [0, 4, 0] }) {
                 body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
 
                 if (!hasInitialVelocity) {
-                    setHasInitialVelocity(true) 
+                    setHasInitialVelocity(true)
                 }
             }
         }
@@ -114,14 +113,14 @@ export default function Player({ position = [0, 4, 0] }) {
                 if (e.beta >= 90) {
                     // if tilted towards user, gamma is flipped - flip back
                     rotation *= -1
-                } 
+                }
 
-                body.velocity.x = rotation 
+                body.velocity.x = rotation
             }
             let mouseMove = (e) => {
                 let rotation = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2) * 10
 
-                body.velocity.x = rotation  
+                body.velocity.x = rotation
             }
 
             window.addEventListener("deviceorientation", deviceOrientation)
@@ -148,7 +147,7 @@ export default function Player({ position = [0, 4, 0] }) {
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
             body.velocity.set(0, 0, 0)
-            body.angularVelocity.set(0, 0, 0) 
+            body.angularVelocity.set(0, 0, 0)
             setHasInitialVelocity(false)
         }
     }, [body, state])
