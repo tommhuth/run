@@ -6,7 +6,7 @@ export default {
     [BlockType.GAP]: {
         requiredNext: [],
         depth: [2, 5],
-        illegalNext: [BlockType.GAP]
+        illegalNext: [BlockType.GAP, BlockType.PLATFORMS]
     },
     [BlockType.FLAT]: {
         requiredNext: [],
