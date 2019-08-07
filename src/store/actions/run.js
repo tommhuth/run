@@ -84,9 +84,10 @@ export function generateInitalPath() {
     }
 }
 
-export function generatePath() {
+export function generatePath(playerPosition) {
     return function (dispatch, getState) {
-        let { blocks, playerPosition } = getState().run
+        let { blocks } = getState().run
+ 
 
         for (let block of blocks) {
             if (block.end + 5 < playerPosition.z) {

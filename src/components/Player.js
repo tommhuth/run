@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { Sphere, Vec3, Ray, RaycastResult } from "cannon"
 import { useSelector } from "react-redux"
-import { useCannon } from "../utils/cannon"
+import { useCannon, useWorld } from "../utils/cannon"
 import { getState } from "../store/selectors/run"
 import Config from "../Config"
 import { setPlayerPosition, gameOver } from "../store/actions/run"
@@ -10,26 +10,23 @@ import { useRender } from "react-three-fiber"
 import { useThrottledRender, useActions } from "../utils/hooks"
 import { throttle } from "throttle-debounce"
 import GameState from "../const/GameState"
-
-let prev = 0
-
+ 
 export default function Player({ position = [0, 4, 0] }) {
     let [body, setBody] = useState(null)
-    let [offset, setOffset] = useState(0)
-    let [world, setWorld] = useState(null)
-    let [hasDeviceOrientation,setHasDeviceOrientation] = useState(true)
+    let [hasInitialVelocity, setHasInitialVelocity] = useState(false)
+    let world = useWorld() 
     let [canJump, setCanJump] = useState(false)
     let actions = useActions({ setPlayerPosition, gameOver })
     let state = useSelector(getState)
 
     const ref = useCannon(
-        { mass: .5 },
-        (body, world) => {
+        { mass: 2 },
+        (body) => {
             body.addShape(new Sphere(.5))
             body.position.set(...position)
+            body.xname = "player"
 
-            setBody(body)
-            setWorld(world)
+            setBody(body) 
         }
     )
 
@@ -47,18 +44,7 @@ export default function Player({ position = [0, 4, 0] }) {
             }
         }
     }, 300, [body, world, state])
-
-    // update redux pos every 1s
-    useThrottledRender(() => {
-        if (state === GameState.ACTIVE) { 
-            actions.setPlayerPosition({
-                x: body.position.x,
-                y: body.position.y,
-                z: body.position.z,
-                forwardVelocity: body.velocity.z || Config.PLAYER_SPEED
-            })
-        }
-    }, 200, [body, state])
+ 
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {
@@ -82,66 +68,60 @@ export default function Player({ position = [0, 4, 0] }) {
         }
     }, [body, state])
 
-    // do jump logic
+    // do jump  
     useEffect(() => {
-        let listener = () => {
+        let listener = (e) => {
+            e.preventDefault()
+
             if (body && canJump && state === GameState.ACTIVE) {
+                body.velocity.y = 9
                 setCanJump(false)
-                body.applyImpulse(new Vec3(0, 4, 0), body.position)
             }
         }
 
+        window.addEventListener("touchstart", listener)
         window.addEventListener("click", listener)
 
-        return () => window.removeEventListener("click", listener)
+        return () => {
+            window.removeEventListener("touchstart", listener)
+            window.removeEventListener("click", listener)
+        }
     }, [body, canJump, state])
 
     // move player forwad
     useRender(() => {
         if (body && state === GameState.ACTIVE) {
-            if (body.velocity.z < 2 && body.x) {
+            if (body.velocity.z < .1 && hasInitialVelocity) {
                 actions.gameOver()
             } else {
                 body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
-                body.x = true
 
-                if(!hasDeviceOrientation){ 
-                    body.velocity.x = offset
+                if (!hasInitialVelocity) {
+                    setHasInitialVelocity(true) 
                 }
             }
         }
-    }, false, [body, state, offset,hasDeviceOrientation])
+    }, false, [body, state, hasInitialVelocity])
 
+    // control x axis movement
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
             body.position.set(...position)
 
-            let deviceOrientation = throttle(0, false, (e) => {
-                let rotation = (e.gamma / 90 * -2) - prev
-                let limit = 100
+            let deviceOrientation = (e) => {
+                let rotation = (e.gamma / 90 * -1) * 5
 
                 if (e.beta >= 90) {
                     // if tilted towards user, gamma is flipped - flip back
                     rotation *= -1
-                }
+                } 
 
-                if (rotation > 0 && rotation > limit) {
-                    rotation = limit
-                }
-
-                if (rotation < 0 && rotation < -limit) {
-                    rotation = -limit
-                }
-
-                body.applyImpulse(new Vec3(rotation * 10, 0, 0), body.position)
-
-                prev = rotation
-            })
+                body.velocity.x = rotation 
+            }
             let mouseMove = (e) => {
-                let offset = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2)  * 10
+                let rotation = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2) * 10
 
-                setOffset(offset)
-                setHasDeviceOrientation(false)
+                body.velocity.x = rotation  
             }
 
             window.addEventListener("deviceorientation", deviceOrientation)
@@ -155,25 +135,26 @@ export default function Player({ position = [0, 4, 0] }) {
 
     }, [body, state])
 
+    // out of bounds check
     useRender(() => {
         if (body && state === GameState.ACTIVE) {
-            if (body.position.y < -12|| body.position.x < -15 || body.position.x > 15) {
+            if (body.position.y < -15 || body.position.x < -10 || body.position.x > 10) {
                 actions.gameOver()
             }
         }
     }, false, [body, state])
 
+    // reset
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
             body.velocity.set(0, 0, 0)
-            body.angularVelocity.set(0, 0, 0)
-            prev = 0
-            body.x = false
+            body.angularVelocity.set(0, 0, 0) 
+            setHasInitialVelocity(false)
         }
     }, [body, state])
 
     return (
-        <mesh ref={ref} key={"player"} receiveShadow castShadow>
+        <mesh ref={ref} receiveShadow castShadow>
             <sphereBufferGeometry attach="geometry" args={[.5, 24, 24]} />
             <meshPhongMaterial dithering color={0x0000FF} attach="material" />
         </mesh>
