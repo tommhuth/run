@@ -53,7 +53,7 @@ export default function Coin({ position = [0, 0, 0] }) {
                 setPicked(true)
             }
         }
-    }, 200, [world, picked, resolvedY, state])
+    }, 100, [world, picked, resolvedY, state], true)
 
     useRender(() => {
         if (!picked && ref.current) {
