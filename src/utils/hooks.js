@@ -20,7 +20,7 @@ export function useActions(actions = {}, deps = []) {
 
 
 export function useThrottledRender(callback, delay = 100, deps = [], noTrailing = false) {
-    let throttledCallback = useMemo(() => throttle(delay, noTrailing, callback), deps)
+    let throttledCallback = useMemo(() => throttle(delay, noTrailing, callback), [delay, noTrailing, callback, ...deps])
 
     useRender(throttledCallback, false, deps)
 }

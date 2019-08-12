@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react"
-import { Sphere, Vec3, Ray, RaycastResult } from "cannon"
+import { Vec3, RaycastResult } from "cannon"
 import { useSelector } from "react-redux"
 import { getState } from "../store/selectors/run"
 import { increaseScore } from "../store/actions/run"
@@ -8,7 +8,7 @@ import { useRender } from "react-three-fiber"
 import { useThrottledRender, useActions } from "../utils/hooks"
 import { Vector3 } from "three"
 import GameState from "../const/GameState"
-import { useWorld } from "../utils/cannon"
+import { useWorld, getPlayer } from "../utils/cannon"
 
 export default function Coin({ position = [0, 0, 0] }) {
     let world = useWorld()
@@ -36,11 +36,11 @@ export default function Coin({ position = [0, 0, 0] }) {
             } else {
                 setPicked(true)
             }
-        }, 50)
+        }, 0)
     }, [])
 
     useThrottledRender(() => {
-        let player = world.bodies.find(i => i.xname === "player")
+        let player = getPlayer(world)
 
         if (player && !picked && state === GameState.ACTIVE) {
             let distance = new Vector3(position[0], resolvedY, position[2])

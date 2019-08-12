@@ -23,7 +23,7 @@ export default function Player({ position = [0, 4, 0] }) {
         (body) => {
             body.addShape(new Sphere(.5))
             body.position.set(...position)
-            body.xname = "player"
+            body.userData = { type: "player" }
 
             setBody(body)
         }

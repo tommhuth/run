@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react"
 import externalMeshes from "../utils/meshes"
 import { useCannon } from "../utils/cannon"
 import random from "../utils/random"
-import { meshToShape, ShapeType } from "../addons/meshToShape"
+import { meshToShape, ShapeType } from "../../assets/addons/meshToShape"
+import { Sphere } from "cannon"
 
 export default function Model({
     mass = 0,
@@ -11,22 +12,34 @@ export default function Model({
     type,
     scale = [1, 1, 1],
     rotation: [rotateX, rotateY, rotateZ] = [0, 0, 0],
+    shapeType = ShapeType.BOX,
     flippable = true
 }) {
     let [meshes, setMeshes] = useState(null)
     let [flipX] = useState(random.pick([-1, 1]))
     let [flipZ] = useState(random.pick([-1, 1]))
     let [flipY] = useState(random.pick([-1, 1]))
-
+    let ref
+ 
     useEffect(() => {
         externalMeshes.then(meshes => setMeshes(meshes))
     }, [meshes])
 
-    const ref = useCannon(
+    ref = useCannon(
         { mass },
         body => {
             if (meshes && ref) {
-                let shape = meshToShape(ref.current, { type: ShapeType.BOX })
+                let shape
+
+                switch (type) {
+                    case "rock1":
+                    case "rock2":
+                        shape = new Sphere(scale[0] )
+                        break
+                    default:
+                        shape = meshToShape(ref.current, { type: shapeType })
+                        break
+                }
 
                 body.addShape(shape)
                 body.position.set(...position)
@@ -56,7 +69,7 @@ export default function Model({
             <meshPhongMaterial
                 dithering
                 color={0x666666}
-                emissive={0xcccccc}
+                //emissive={0xcccccc}
                 attach="material"
             />
         </mesh>

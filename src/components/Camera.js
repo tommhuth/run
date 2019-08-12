@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { useThree, useRender } from "react-three-fiber" 
 import { getState } from "../store/selectors/run"
 import GameState from "../const/GameState"
-import { useWorld } from "../utils/cannon"
+import { useWorld, getPlayer } from "../utils/cannon"
 
 export default function Camera() {
     let ref = createRef()
@@ -24,7 +24,7 @@ export default function Camera() {
 
     useRender(() => {
         if (state === GameState.ACTIVE) {
-            let z = world.bodies.find(i => i.xname === "player").position.z
+            let z = getPlayer(world).position.z
 
             setZ(z)
         }

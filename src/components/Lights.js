@@ -1,10 +1,10 @@
 
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { useThree, useRender } from "react-three-fiber" 
+import { useThree } from "react-three-fiber" 
 import { getState } from "../store/selectors/run"
 import GameState from "../const/GameState"
-import { useWorld } from "../utils/cannon"
+import { useWorld, getPlayer } from "../utils/cannon"
 import { useThrottledRender } from "../utils/hooks"
 
 export default function Lights() {
@@ -19,7 +19,7 @@ export default function Lights() {
 
     useThrottledRender(()=> {
         if (state === GameState.ACTIVE) { 
-            let z = world.bodies.find(i => i.xname === "player").position.z
+            let z = getPlayer(world).position.z
 
             setZ(z)
         }

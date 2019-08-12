@@ -1,9 +1,6 @@
-
-import React, { useState, useEffect, useRef } from "react"
-import { Box as CannonBox, Vec3 } from "cannon"
-import { DoubleSide } from "three"
-import { useCannon } from "../utils/cannon"
-import Config from "../Config"
+import React, { useState, useEffect } from "react"
+import { Box as CannonBox, Vec3 } from "cannon" 
+import { useCannon } from "../utils/cannon" 
 
 export default function Box({
     position,
@@ -29,7 +26,7 @@ export default function Box({
         if (body && mass === 0) {
             body.position.set(...position)
         }
-    }, [body, position])
+    }, [body, position, mass])
 
     return (
         <mesh ref={ref} castShadow receiveShadow>

@@ -7,7 +7,7 @@ import { useActions, useThrottledRender } from "../utils/hooks"
 import Block from "./blocks/Block"
 import Player from "./Player"
 import GameState from "../const/GameState" 
-import { useWorld } from "../utils/cannon"
+import { useWorld, getPlayer } from "../utils/cannon"
 
 export default function RunnerEngine() {
     let blocks = useSelector(getBlocks)
@@ -15,13 +15,13 @@ export default function RunnerEngine() {
     let world = useWorld()
     let actions = useActions({ generatePath, generateInitalPath })
   
-    useEffect(() => {
+    useEffect(() => { 
         actions.generateInitalPath()
-    }, [])
+    }, [actions])
 
     useThrottledRender(() => { 
         if (state === GameState.ACTIVE && world) {
-            let player = world.bodies.find(i => i.xname === "player")
+            let player = getPlayer(world)
             
             actions.generatePath(player.position)
         }

@@ -1,7 +1,7 @@
 import { World, NaiveBroadphase, Body } from "cannon"
 import React, { useRef, useEffect, useState, useContext } from "react"
 import { useRender, useThree } from "react-three-fiber"
-import CannonDebugRenderer from "../addons/CannonDebugRenderer"
+import CannonDebugRenderer from "../../assets/addons/CannonDebugRenderer"
 
 const context = React.createContext()
 
@@ -16,6 +16,7 @@ export function CannonProvider({
     const [debug, setDebug] = useState(null)
     const { scene } = useThree()
 
+
     useEffect(() => {
         world.broadphase = new NaiveBroadphase()
         world.solver.iterations = iterations
@@ -23,21 +24,26 @@ export function CannonProvider({
         world.defaultContactMaterial.restitution = defaultRestitution
         world.gravity.set(...gravity)
 
-        //setDebug(new CannonDebugRenderer(scene, world))
-    }, [world])
+        //setDebug(new CannonDebugRenderer(scene, world)) 
+    }, [])
 
     // Run world stepper every frame
     useRender(() => {
         world.step(1 / 30)
         //debug.update()
-    }, false, [world, debug])
+
+    }, false, [debug, world])
 
     // Distribute world via context
     return <context.Provider value={world} children={children} />
 }
- 
+
 export function useWorld() {
     return useContext(context)
+}
+
+export function getPlayer(world) {
+    return world.bodies.find(i => i.userData && i.userData.type === "player")
 }
 
 // Custom hook to maintain a world physics body
@@ -50,20 +56,22 @@ export function useCannon({ ...props }, fn, deps = []) {
 
 
     useEffect(() => {
-        // Call function so the user can add shapes
-        fn(body, world) 
+        if (props.mass !== null) {
+            // Call function so the user can add shapes
+            fn(body, world)
 
-        // Add body to world on mount
-        world.addBody(body)
+            // Add body to world on mount
+            world.addBody(body)
 
-        // Remove body on unmount
-        return () => {
-            world.removeBody(body)
+            // Remove body on unmount
+            return () => {
+                world.removeBody(body)
+            }
         }
     }, deps)
 
     useRender(() => {
-        if (ref.current) {
+        if (ref.current && props.mass !== null) {
             // Transport cannon physics into the referenced threejs object
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)

@@ -10,7 +10,7 @@ export default {
     },
     [BlockType.FLAT]: {
         requiredNext: [],
-        depth: [10, 18],
+        depth: [14, 14],
         illegalNext: []
     }, 
     [BlockType.PLATFORMS]: {

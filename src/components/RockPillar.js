@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react"
 import Model from "./Model"
 import random from "../utils/random"
 
-let rotationsLarge = Array.from({ length: 10 }).map((u, i) => .1 / 10 * i - .1)
-let rotationsSmall = Array.from({ length: 5 }).map((u, i) => .05 / 5 * i - .05)
-
 export default function RockPillar({
     position,
     size,
