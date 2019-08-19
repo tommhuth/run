@@ -1,4 +1,4 @@
-export default {
-    STATE_INTRO: "state:intro",
-    PLAYER_SPEED: 4
+export default { 
+    PLAYER_SPEED: 2,
+    PLAYER_RADIUS: .25
 }

@@ -15,6 +15,7 @@ export default function Coin({ position = [0, 0, 0] }) {
     let ref = useRef()
     let [resolvedY, setResolvedY] = useState(-100)
     let [picked, setPicked] = useState(false) 
+    let [radius] = useState(.15) 
     let state = useSelector(getState)
     let actions = useActions({ increaseScore })
 
@@ -25,18 +26,18 @@ export default function Coin({ position = [0, 0, 0] }) {
             let result = new RaycastResult()
 
             world.raycastClosest(
-                new Vec3(...position),
+                new Vec3(position[0], position[1] + 10, position[2]),
                 new Vec3(position[0], position[1] - 10, position[2]),
                 {},
                 result
             )
 
-            if (result.hasHit) {
-                setResolvedY(result.hitPointWorld.y + .35 * 1.5 + .25)
+            if (result.hasHit) { 
+                setResolvedY(result.hitPointWorld.y + radius * 1.5 + .1)
             } else {
                 setPicked(true)
             }
-        }, 0)
+        }, 110)
     }, [])
 
     useThrottledRender(() => {
@@ -73,7 +74,7 @@ export default function Coin({ position = [0, 0, 0] }) {
             position={[position[0], resolvedY, position[2]]}
             scale-y={1.5}
         >
-            <octahedronBufferGeometry attach="geometry" args={[.35, 0]} />
+            <octahedronBufferGeometry attach="geometry" args={[radius, 0]} />
             <meshPhongMaterial
                 dithering
                 color={0x0055FF}

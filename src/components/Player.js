@@ -10,7 +10,7 @@ import { useRender } from "react-three-fiber"
 import { useThrottledRender, useActions } from "../utils/hooks"
 import GameState from "../const/GameState"
 
-export default function Player({ position = [0, 4, 0] }) {
+export default function Player({ position = [0, 2, 0] }) {
     let [body, setBody] = useState(null)
     let [hasInitialVelocity, setHasInitialVelocity] = useState(false)
     let world = useWorld()
@@ -21,7 +21,7 @@ export default function Player({ position = [0, 4, 0] }) {
     const ref = useCannon(
         { mass: 2 },
         (body) => {
-            body.addShape(new Sphere(.5))
+            body.addShape(new Sphere(Config.PLAYER_RADIUS))
             body.position.set(...position)
             body.userData = { type: "player" }
 
@@ -43,7 +43,6 @@ export default function Player({ position = [0, 4, 0] }) {
             }
         }
     }, 300, [body, world, state])
-
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {
@@ -73,7 +72,7 @@ export default function Player({ position = [0, 4, 0] }) {
             e.preventDefault()
 
             if (body && canJump && state === GameState.ACTIVE) {
-                body.velocity.y = 9
+                body.velocity.y = 6
                 setCanJump(false)
             }
         }
@@ -93,7 +92,7 @@ export default function Player({ position = [0, 4, 0] }) {
             if (body.velocity.z < .1 && hasInitialVelocity) {
                 actions.gameOver()
             } else {
-                body.velocity.z = Math.max(Config.PLAYER_SPEED, body.velocity.z)
+                body.velocity.z = Config.PLAYER_SPEED 
 
                 if (!hasInitialVelocity) {
                     setHasInitialVelocity(true)
@@ -137,7 +136,7 @@ export default function Player({ position = [0, 4, 0] }) {
     // out of bounds check
     useRender(() => {
         if (body && state === GameState.ACTIVE) {
-            if (body.position.y < -15 || body.position.x < -10 || body.position.x > 10) {
+            if (body.position.y < -7 || body.position.x < -5 || body.position.x > 5) {
                 actions.gameOver()
             }
         }
@@ -154,7 +153,7 @@ export default function Player({ position = [0, 4, 0] }) {
 
     return (
         <mesh ref={ref} receiveShadow castShadow>
-            <sphereBufferGeometry attach="geometry" args={[.5, 24, 24]} />
+            <sphereBufferGeometry attach="geometry" args={[Config.PLAYER_RADIUS, 16, 16]} />
             <meshPhongMaterial dithering color={0x0000FF} attach="material" />
         </mesh>
     )

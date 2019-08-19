@@ -70,24 +70,26 @@ export function reset() {
 export function generateInitalPath() {
     return function (dispatch) {
         dispatch(addBlock("flat")) 
-        
-        dispatch(addBlock("flat"))  
-        dispatch(addBlock("flat")) 
-        dispatch(addBlock("flat")) 
-        dispatch(addBlock("flat")) 
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("flat"))
+        dispatch(addBlock("flat"))
     }
 }
 
 export function generatePath(playerPosition) {
     return function (dispatch, getState) {
         let { blocks } = getState().run
- 
+        let last = blocks[blocks.length - 1] 
 
         for (let block of blocks) {
             if (block.end + 5 < playerPosition.z) {
                 dispatch(runActions.removeBlock(block.id))
-                dispatch(addBlock())
             }
+        }
+
+        if (last.end - playerPosition.z < 38) {
+            dispatch(addBlock())
         }
     }
 }

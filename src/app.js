@@ -17,15 +17,17 @@ ReactDOM.render(
     <>
         <h1 className="visually-hidden">Run</h1>
         <p className="visually-hidden">Infinite runner game made with React + Three.</p>
+        
         <Provider store={store}>
             <Ui />
         </Provider>
+
         <div style={{ height: "100vh", width: "100vw" }}>
             <Canvas pixelRatio={Math.min(1.5, window.devicePixelRatio)}>
-                <fog attach="fog" args={[0xffffff, 50, 75]} />
+                <fog attach="fog" args={[0xffffff, 25, 38]} />
                 
                 <Provider store={store}>
-                    <CannonProvider defaultRestitution={.0}>
+                    <CannonProvider defaultRestitution={0}>
                         <Camera /> 
                         <Lights />
                         <RunnerEngine />

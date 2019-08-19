@@ -12,8 +12,8 @@ export default function Platforms({ z, depth }) {
         let acc = 0
 
         while (depth - acc > 3) {
-            let platformSize = random.integer(4, 8)
-            let platformGap = random.integer(1, 4)
+            let platformSize = random.integer(2, 4)
+            let platformGap = random.integer(1, 2)
 
             platforms.push({ 
                 position: [

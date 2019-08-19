@@ -3,12 +3,13 @@ import Model from "./Model"
 import random from "../utils/random"
 import Only from "./Only"
 
-let rotationsLarge = Array.from({ length: 10 }).map((u, i) => .1 / 10 * i - .1)
+let rotationsLarge = [-.06, -.03, 0, .03, .06]
+ 
 
 export default function RockFace({
     position,
     size,
-    scaling = 4,
+    scaling = 2,
     baseCount = 3
 }) {
     let [rocks, setRocks] = useState([])
@@ -32,7 +33,7 @@ export default function RockFace({
                     size[1] + (i === 0 ? 0 : random.integer(-scaling * .3, scaling * .3)),
                     size[2] + (i === 0 ? 0 : random.integer(-scaling, scaling))
                 ],
-                rotation: [
+                rotation: [ 
                     random.pick(rotationsLarge),
                     random.pick(rotationsLarge),
                     random.pick(rotationsLarge)
@@ -50,9 +51,9 @@ export default function RockFace({
                     <Only if={index === 0 && doGravel} >
                         <Model
                             position={[
-                                position[0] - i.rotation[0] * 15,
-                                position[1] + i.size[1] / 2,  
-                                position[2],  
+                                position[0] - i.rotation[0] * 7,
+                                position[1] + i.size[1] / 2,
+                                position[2],
                             ]}
                             flippable={false}
                             scale={[

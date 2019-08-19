@@ -1,6 +1,6 @@
 import React, { useEffect, createRef, useState } from "react"
 import { useSelector } from "react-redux"
-import { useThree, useRender } from "react-three-fiber" 
+import { useThree, useRender } from "react-three-fiber"
 import { getState } from "../store/selectors/run"
 import GameState from "../const/GameState"
 import { useWorld, getPlayer } from "../utils/cannon"
@@ -8,35 +8,42 @@ import { useWorld, getPlayer } from "../utils/cannon"
 export default function Camera() {
     let ref = createRef()
     let { setDefaultCamera } = useThree()
-    let [z, setZ] = useState(0)
+    //let [z, setZ] = useState(0) 
+    let [x] = useState(0)
     let world = useWorld(0)
-    let state = useSelector(getState) 
- 
+    let state = useSelector(getState)
+
     useEffect(() => {
+        ref.current.position.set(0, 5, -6)
         ref.current.lookAt(0, 0, 4)
-    }, [])
+    }, [ref.current])
 
     useEffect(() => {
         if (state === GameState.ACTIVE) {
-            setZ(0)
+            //ref.current.position.z = 0
         }
     }, [state])
 
     useRender(() => {
         if (state === GameState.ACTIVE) {
-            let z = getPlayer(world).position.z
+            let player = getPlayer(world)
 
-            setZ(z)
+            if (player) {
+                //setZ(player.position.z)
+                ref.current.position.z = player.position.z - 6 
+                //setX(prev => prev + (( player.position.x - prev) / 35))
+            }
+
         }
     }, false, [state, world])
 
     return (
         <perspectiveCamera
             far={75}
-            position={[0, 8, -12 + z]}
+            
             ref={ref}
             onUpdate={self => {
-                setDefaultCamera(self)
+                setDefaultCamera(self) 
             }}
         />
     )
