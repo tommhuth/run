@@ -1,11 +1,12 @@
 import BlockType from "./BlockType"
+import Config from "../Config"
 
 export default {
     BASE_HEIGHT: 20,
 
     [BlockType.GAP]: {
         requiredNext: [],
-        depth: [1, 2.5],
+        depth: [.5, Config.MAX_GAP],
         illegalNext: [BlockType.GAP, BlockType.PLATFORMS]
     },
     [BlockType.FLAT]: {

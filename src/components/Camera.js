@@ -4,18 +4,29 @@ import { useThree, useRender } from "react-three-fiber"
 import { getState } from "../store/selectors/run"
 import GameState from "../const/GameState"
 import { useWorld, getPlayer } from "../utils/cannon"
+import random from "../utils/random"
 
 export default function Camera() {
     let ref = createRef()
     let { setDefaultCamera } = useThree()
-    //let [z, setZ] = useState(0) 
-    let [x] = useState(0)
+    let [trauma, setTrauma] = useState(0)
+    let [rotation, setRot] = useState({ x: 0, y: 0, z: 0 })  
     let world = useWorld(0)
     let state = useSelector(getState)
 
     useEffect(() => {
-        ref.current.position.set(0, 5, -6)
+        //window.addEventListener("click", () => setTrauma(prev => prev + .3))
+    }, [])
+
+    useEffect(() => {
+        ref.current.position.set(0, 5, -8)
         ref.current.lookAt(0, 0, 4)
+        
+        setRot({
+            x: ref.current.rotation.x,
+            y: ref.current.rotation.y,
+            z: ref.current.rotation.z
+        })
     }, [ref.current])
 
     useEffect(() => {
@@ -28,22 +39,30 @@ export default function Camera() {
         if (state === GameState.ACTIVE) {
             let player = getPlayer(world)
 
-            if (player) {
-                //setZ(player.position.z)
-                ref.current.position.z = player.position.z - 6 
-                //setX(prev => prev + (( player.position.x - prev) / 35))
+            if (player && ref.current) { 
+                ref.current.position.z = player.position.z - 8
+                ref.current.position.x += (player.position.x/2 - ref.current.position.x) * .25 
             }
-
         }
-    }, false, [state, world])
+
+        let dec = .01 
+
+        if (trauma - dec > 0) {
+            setTrauma(prev => prev - dec)
+        } else if (trauma > 0) {
+            setTrauma(0)
+        }
+    }, false, [state, world, trauma, ref]) 
 
     return (
         <perspectiveCamera
             far={75}
-            
             ref={ref}
+            rotation-x={rotation.x + (.2 * trauma * trauma*random.real(-1, 1))}
+            rotation-y={rotation.y + (.2 * trauma * trauma*random.real(-1, 1))}
+            rotation-z={rotation.z + (.2 *trauma *trauma * random.real(-1, 1))}
             onUpdate={self => {
-                setDefaultCamera(self) 
+                setDefaultCamera(self)
             }}
         />
     )

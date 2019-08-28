@@ -12,7 +12,10 @@ export default function() {
         composeEnhancers(
             applyMiddleware(
                 thunkMiddleware, 
-                createLogger({ collapsed: true, predicate: (getState, action) => !action.type.includes("silent@")  })
+                createLogger({ 
+                    collapsed: true, 
+                    predicate: (getState, action) => !action.type.includes("silent@xx")  
+                })
             )
         )
     )

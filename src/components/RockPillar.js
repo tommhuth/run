@@ -18,7 +18,7 @@ export default function RockPillar({
                 type: random.pick(["box", "box2"]),
                 position: [
                     position[0] + (i === 0 ? 0 : random.real(-.25, -.25)),
-                    position[1] + (i === 0 ? 0 : random.real(-8, -1)),
+                    position[1] + (i === 0 ? 0 : random.real(-3, -1)),
                     position[2] + (i === 0 ? 0 : random.real(-.25, -.25))
                 ],
                 size: [

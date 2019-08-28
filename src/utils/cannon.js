@@ -1,7 +1,7 @@
 import { World, NaiveBroadphase, Body } from "cannon"
 import React, { useRef, useEffect, useState, useContext } from "react"
 import { useRender, useThree } from "react-three-fiber"
-import CannonDebugRenderer from "../../assets/addons/CannonDebugRenderer"
+//import CannonDebugRenderer from "../../assets/addons/CannonDebugRenderer"
 
 const context = React.createContext()
 
@@ -9,13 +9,12 @@ export function CannonProvider({
     children,
     iterations = 8,
     defaultRestitution = 0,
-    defaultFriction = .01,
+    defaultFriction = 0,
     gravity = [0, -9.8, 0]
 }) {
     const [world] = useState(() => new World())
     const [debug, setDebug] = useState(null)
     const { scene } = useThree()
-
 
     useEffect(() => {
         world.broadphase = new NaiveBroadphase()
@@ -48,12 +47,9 @@ export function getPlayer(world) {
 
 // Custom hook to maintain a world physics body
 export function useCannon({ ...props }, fn, deps = []) {
-    const ref = useRef()
-    // Get cannon world object
-    const world = useContext(context)
-    // Instanciate a physics body
+    const ref = useRef() 
+    const world = useContext(context) 
     const [body] = useState(() => new Body(props))
-
 
     useEffect(() => {
         if (props.mass !== null) {

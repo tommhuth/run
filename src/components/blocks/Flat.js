@@ -10,13 +10,13 @@ import { ShapeType } from "../../../assets/addons/meshToShape"
 export default function Flat({ z, depth }) {
     let [extraHeight] = useState(random.integer(0, .5))
     let [obstacleX] = useState(random.real(0, 0))
-    let [mainX] = useState(random.integer(-2, 2))
+    let [mainX] = useState(random.integer(-1, 1))
     let [coinX] = useState(random.real(-2, 2))
     let [hasCoin] = useState(random.bool())
     let [hasObstacle] = useState(!hasCoin)
     let [obstacleZ] = useState(random.real(2, depth - 2))
     let [obstacleY] = useState(random.real(-.25, .25))
-    let [obstacleScale] =  useState(random.real(.5, .5)) 
+    let [obstacleScale] =  useState(random.real(.5, .85)) 
 
     return (
         <>

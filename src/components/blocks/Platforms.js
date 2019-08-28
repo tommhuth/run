@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react"
 import random from "../../utils/random"
 import BlockSettings from "../../const/BlockSettings" 
 import RockPillar from "../RockPillar"
+import Config from "../../Config"
 
 export default function Platforms({ z, depth }) {
     let [platforms, setPlatforms] = useState([])
@@ -13,11 +14,11 @@ export default function Platforms({ z, depth }) {
 
         while (depth - acc > 3) {
             let platformSize = random.integer(2, 4)
-            let platformGap = random.integer(1, 2)
+            let platformGap = random.integer(.5, Config.MAX_GAP)
 
             platforms.push({ 
                 position: [
-                    random.real(-2, 2),
+                    random.real(-1, 1),
                     -BlockSettings.BASE_HEIGHT / 2,
                     z + platformSize / 2 + platformGap + acc
                 ],

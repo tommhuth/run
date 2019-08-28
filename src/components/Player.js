@@ -26,7 +26,7 @@ export default function Player({ position = [0, 2, 0] }) {
             body.userData = { type: "player" }
 
             setBody(body)
-        }
+        }, []
     )
 
     // fallen off world = no jump
@@ -42,7 +42,7 @@ export default function Player({ position = [0, 2, 0] }) {
                 setCanJump(false)
             }
         }
-    }, 300, [body, world, state])
+    }, 100, [body, world, state])
 
     // if player collide and body is beneath = can jump again
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function Player({ position = [0, 2, 0] }) {
     // do jump  
     useEffect(() => {
         let listener = (e) => {
-            e.preventDefault()
+            //e.preventDefault()
 
             if (body && canJump && state === GameState.ACTIVE) {
                 body.velocity.y = 6
@@ -78,11 +78,11 @@ export default function Player({ position = [0, 2, 0] }) {
         }
 
         window.addEventListener("touchstart", listener)
-        window.addEventListener("click", listener)
+        //window.addEventListener("click", listener)
 
         return () => {
             window.removeEventListener("touchstart", listener)
-            window.removeEventListener("click", listener)
+            //window.removeEventListener("click", listener)
         }
     }, [body, canJump, state])
 
@@ -92,7 +92,7 @@ export default function Player({ position = [0, 2, 0] }) {
             if (body.velocity.z < .1 && hasInitialVelocity) {
                 actions.gameOver()
             } else {
-                body.velocity.z = Config.PLAYER_SPEED 
+                body.velocity.z = Config.PLAYER_SPEED
 
                 if (!hasInitialVelocity) {
                     setHasInitialVelocity(true)
@@ -101,25 +101,37 @@ export default function Player({ position = [0, 2, 0] }) {
         }
     }, false, [body, state, hasInitialVelocity])
 
-    // control x axis movement
     useEffect(() => {
         if (body && state === GameState.ACTIVE) {
             body.position.set(...position)
+        }
+    }, [state, body])
 
+    // control x axis movement
+    useEffect(() => {
+        if (body && state === GameState.ACTIVE) {
             let deviceOrientation = (e) => {
-                let rotation = (e.gamma / 90 * -1) * 5
+                let rotation = -e.gamma / 90 * 5
 
                 if (e.beta >= 90) {
-                    // if tilted towards user, gamma is flipped - flip back
+                    // if tilted towards user, gamma is flipped  
                     rotation *= -1
                 }
 
-                body.velocity.x = rotation
+                if (rotation > 0 && rotation > 1) {
+                    // rotation = 0
+                }
+
+                if (rotation < 0 && rotation < -1) {
+                    // rotation = 0
+                }
+
+                body.velocity.x = rotation 
             }
             let mouseMove = (e) => {
                 let rotation = ((window.innerWidth / 2 - e.pageX) / window.innerWidth / 2 * 2) * 10
 
-                body.velocity.x = rotation
+                //body.velocity.x = rotation
             }
 
             window.addEventListener("deviceorientation", deviceOrientation)
@@ -154,7 +166,7 @@ export default function Player({ position = [0, 2, 0] }) {
     return (
         <mesh ref={ref} receiveShadow castShadow>
             <sphereBufferGeometry attach="geometry" args={[Config.PLAYER_RADIUS, 16, 16]} />
-            <meshPhongMaterial dithering color={0x0000FF} attach="material" />
+            <meshPhongMaterial attach="material" dithering color={0x0000FF} />
         </mesh>
     )
 }

@@ -64,6 +64,7 @@ export function reset() {
         dispatch(runActions.reset())
         dispatch(generateInitalPath())
         dispatch(runActions.setState(GameState.ACTIVE))
+        console.log("sdfsdfdsf")
     }
 }
 

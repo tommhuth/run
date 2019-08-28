@@ -2,11 +2,20 @@
 @import "typography.scss"; 
 
 .panel {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
+}
+
+canvas {
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom: 0;
+    z-index: 0;
 }
 
 button {
@@ -27,7 +36,21 @@ button {
 
 .score {
     color: blue;
-    position: absolute;
+    position: fixed;
     top: 1em;
     left: 1em;
+}
+
+#debugz {
+    background-color: blue;
+    padding: .5rem;
+    color: #FFF;
+    z-index: 11;
+    font-family: monospace;
+    position: fixed;
+    top: 1em;
+    width: 8em;
+    text-align: left;
+    display: none;
+    right: 1em;
 }

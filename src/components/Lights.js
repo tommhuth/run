@@ -17,8 +17,8 @@ export default function Lights() {
     useEffect(() => {
         gl.shadowMap.enabled = true
  
-        let helper = new CameraHelper(ref.current.shadow.camera)
-        scene.add(helper)
+        //let helper = new CameraHelper(ref.current.shadow.camera)
+        //scene.add(helper)
     }, [ref.current, gl])
 
     useThrottledRender(()=> {
@@ -47,7 +47,7 @@ export default function Lights() {
                 ref={ref}
                 position={[0, 0, 0]}
                 target-position={[3, -10, 1]}
-                shadow-camera-near={-1} // y
+                shadow-camera-near={-3} // y
                 shadow-camera-far={10} //y
                 shadow-camera-left={-2} //z
                 shadow-camera-right={18} //z
