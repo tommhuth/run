@@ -4,20 +4,17 @@ const path = require("path")
 const compression = require("compression") 
 
 const PORT = process.env.PORT || "3000"
-const NODE_ENV = process.env.NODE_ENV || "local"
-const USE_CACHE_BUST = true //process.env.NO_CACHE_BUST !== "true" && NODE_ENV === "production"
+const NODE_ENV = process.env.NODE_ENV || "development" 
 
 const app = express()
 
 app.use(compression())
+app.use(serveStatic(path.join(__dirname, "public"), { maxAge: "10 years"  }))
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public/index.html"))
 })
 
-app.use(serveStatic(path.join(__dirname, "public"), { maxAge: USE_CACHE_BUST ? "1 year" : 0 }))
-
-
 app.listen(PORT, () => {
-    console.log(`[${NODE_ENV}] Server ready @ ${PORT}`)
+    console.log(`[${NODE_ENV}] Server ready @ localhost:${PORT}`)
 })

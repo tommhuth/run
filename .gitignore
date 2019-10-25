@@ -1,10 +1,2 @@
-node_modules
-.vscode
-public
-public/app.js
-public/app.js.map
-!/public/flare.png
-
-*.log
-
-dist
+node_modules/
+public/

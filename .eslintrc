@@ -6,23 +6,50 @@
         "mocha": true,
         "serviceworker": true
     },
-    "globals": { 
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+    "globals": {
         "workbox": true
     },
     "parser": "babel-eslint",
-    "extends": "eslint:recommended",
+    "extends": ["plugin:react/recommended", "eslint:recommended"],
     "parserOptions": {
         "ecmaVersion": 9,
         "sourceType": "module"
     },
     "rules": {
-        "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+        "padding-line-between-statements": [
+            "error",
+            { "blankLine": "always", "prev": "*", "next": "return" },
+            { "blankLine": "always", "prev": ["const", "let", "var", "import"], "next": "*"},
+            { "blankLine": "always", "prev": "*", "next": ["for", "switch", "if", "try"]},
+            { "blankLine": "always", "prev": "*", "next": "export"},
+            { "blankLine": "always", "prev": "*", "next": "function"},
+            { "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"]},
+            { "blankLine": "any", "prev": ["import"], "next": ["import"]},
+            { "blankLine": "any", "prev": ["export"], "next": ["export"]}
+        ],
+        "no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ],
         "indent": [
             "error",
             4,
-            {"SwitchCase": 1}
-        ], 
-        "eol-last": ["error", "always"],
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "eol-last": [
+            "error",
+            "never"
+        ],
         "quotes": [
             "error",
             "double"
@@ -30,11 +57,9 @@
         "semi": [
             "error",
             "never"
-        ],
-        "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error",
+        ], 
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "off"
+        "react/prop-types": "off"
     },
     "plugins": [
         "babel",

@@ -1,0 +1,11 @@
+@import "global.scss";
+@import "variables.scss";
+@import "typography.scss";
+
+
+#ui {
+    position: absolute;
+    top: 2em;
+    left:2em;
+    font-weight: bold;
+}

@@ -1,41 +1,50 @@
-import "../assets/style/app.scss"
+// polyfill
+import "../assets/styles/app.scss"
 
+import "core-js/stable"
+
+import { Workbox } from "workbox-window"
 import React from "react"
-import { Provider } from "react-redux"
-import ReactDOM from "react-dom"
-import makeStore from "./store/make-store"
+import { CannonProvider } from "./data/cannon"
 import { Canvas } from "react-three-fiber"
-import { CannonProvider } from "./utils/cannon" 
-import RunnerEngine from "./components/RunnerEngine"
-import Lights from "./components/Lights" 
+import ReactDOM from "react-dom"
+import Config from "./data/Config"
+import Lights from "./components/Lights"
 import Camera from "./components/Camera"
-import Ui from "./components/Ui"
+import Path from "./components/Path"
+import Player from "./components/Player"
+import Ui from "./Ui"
+import { useStore } from "./data/store"
+import GameState from "./data/const/GameState"
 
-const store = makeStore()
+function App() {
+    let state = useStore(state => state.data.state)
+
+    return (
+        <>
+            <Ui />
+            <Canvas pixelRatio={2}>
+                <CannonProvider defaultFriction={.8} defaultRestitution={.5}>
+                    <Camera />
+                    <Lights />
+                    {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ? <Player /> : null}
+                    <Path />
+                </CannonProvider>
+            </Canvas>
+        </>
+    )
+}
 
 ReactDOM.render(
-    <>
-        <h1 className="visually-hidden">Run</h1>
-        <p className="visually-hidden">Infinite runner game made with React + Three.</p>
-        <p id="debugz"></p>
-        
-        <Provider store={store}>
-            <Ui />
-        </Provider>
-
-        <div style={{ height: "100vh", width: "100vw" }}>
-            <Canvas pixelRatio={Math.min(1.5, window.devicePixelRatio)}>
-                <fog attach="fog" args={[0xffffff, 25, 38]} />
-                
-                <Provider store={store}>
-                    <CannonProvider defaultRestitution={0}>
-                        <Camera /> 
-                        <Lights />
-                        <RunnerEngine />
-                    </CannonProvider>
-                </Provider>
-            </Canvas>
-        </div>
-    </>,
+    <App />,
     document.getElementById("root")
 )
+
+if (Config.REGISTER_SERVICEWORKER) {
+    let worker = new Workbox("/serviceworker.js")
+
+    worker.addEventListener("installed", e => {
+        console.info(`Service worker ${e.isUpdate ? "updated" : "installed"}`)
+    })
+    worker.register()
+}

@@ -1,25 +1,70 @@
- 
 const webpack = require("webpack")
 const path = require("path")
+const uuid = require("uuid")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const CopyWebpackPlugin = require("copy-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const { CleanWebpackPlugin } = require("clean-webpack-plugin")  
+const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+const WebpackPwaManifest = require("webpack-pwa-manifest")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
+const { InjectManifest } = require("workbox-webpack-plugin")
 
-let plugins = [
-    //new CleanWebpackPlugin(),
-    new webpack.DefinePlugin({   }), 
+const rev = uuid.v4()
+const plugins = [
+    new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+        "process.env.REGISTER_SERVICEWORKER": JSON.stringify(process.env.REGISTER_SERVICEWORKER)
+    }),
     new MiniCssExtractPlugin({
         filename: "css/[name].[hash:6].css"
     }),
     new HtmlWebpackPlugin({
         template: path.join(__dirname, "assets/views", "index.html"),
-        filename: "index.html"
-    }),      
-    new CopyWebpackPlugin([ 
-        { from:  "assets/models/*", to: "models/[name].[ext]" }, 
-    ])
-    //new BundleAnalyzerPlugin()
+        filename: "index.html",
+        rev
+    }),
+    new CopyWebpackPlugin(
+        [
+            {
+                from: path.join(__dirname, "assets", "splashscreens"),
+                to: "splashscreens/[name]." + rev + ".[ext]"
+            }
+        ]
+    ),
+    new WebpackPwaManifest({
+        name: "React boilplate",
+        short_name: "React boilplate",
+        background_color: "#FFF",
+        theme_color: "#000",
+        orientation: "portrait",
+        start_url: "/",
+        display: "fullscreen",
+        inject: true,
+        ios: {
+            "apple-mobile-web-app-status-bar-style": "black-translucent"
+        },
+        filename: "./manifest-[hash:6].json",
+        icons: [
+            {
+                src: path.join("assets", "icons/pwa-icon.png"),
+                destination: "images",
+                sizes: [192, 512]
+            },
+            {
+                src: path.join("assets", "icons/pwa-icon.png"),
+                destination: "images",
+                ios: true,
+                sizes: [120, 180]
+            }
+        ]
+    }),
+    new InjectManifest({
+        swSrc: "./src/serviceworker.js",
+        swDest: "serviceworker.js",
+        exclude: ["serviceworker.js", "index.html"],
+        templatedURLs: {
+            "/": uuid.v4()
+        }
+    })
 ]
 
 module.exports = {
@@ -38,9 +83,10 @@ module.exports = {
     },
     module: {
         rules: [
+            { test: /\.json$/, loader: "json" },
             {
                 test: /\.js$/,
-                exclude: /(node_modules)/,
+                exclude: /node_modules\/(?!(@huth\/utils)\/).*/,
                 loader: "babel-loader"
             },
             {
@@ -50,23 +96,22 @@ module.exports = {
                         loader: MiniCssExtractPlugin.loader
                     },
                     "css-loader", // translates CSS into CommonJS
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            sourceMap: false,
+                            config: {
+                                path: "postcss.config.js"
+                            }
+                        }
+                    },
                     "sass-loader" // compiles Sass to CSS, using Node Sass by default
                 ]
-            },
-            {
-                test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-                use: [{
-                    loader: "file-loader",
-                    options: {
-                        name: "[name].[ext]",
-                        outputPath: "fonts/"
-                    }
-                }]
-            },
+            }
         ]
     },
     resolve: {
-        extensions: [".js"] 
-    }, 
+        extensions: [".js"]
+    },
     plugins,
 }
