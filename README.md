@@ -1,1 +1,1 @@
-React boilplate
+Infinite runner clone.
