@@ -1,8 +1,8 @@
 export default {
     READY: "ready",
     RUNNING: "running",
-    PRE_RUNNING: "PRE_RUNNING",
-    REQUEST_ORIENTATION_ACCESS: "request motion",
-    REQUEST_ORIENTATION_ACCESS_FAIL: "request motion fail", 
-    GAME_OVER: "gameover"
+    PRE_RUNNING: "prerunning",
+    REQUEST_ORIENTATION_ACCESS: "request-motion-access",
+    REQUEST_ORIENTATION_ACCESS_FAIL: "request-motion-access-fail", 
+    GAME_OVER: "game-over"
 }
