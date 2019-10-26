@@ -7,71 +7,45 @@ import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
 
 export default function Player({
-    position = [0, 2, 8],
+    position = [0, 2, 7],
     radius = .5
 }) {
     let world = useWorld()
     let [body, setBody] = useState()
     let state = useStore(state => state.data.state)
+    let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let [canJump, setCanJump] = useState(false)
-    let [hasDeviceOrientation, setHasDeviceOrientation] = useState(false)
     let actions = useStore(state => state.actions)
-    let config = useMemo(() => ({
+    let cannonConfig = useMemo(() => ({
         mass: 1,
         position,
         shape: new Sphere(radius),
         cb: setBody
     }), [])
-    let ref = useCannon(config)
-    let forward = useRef(0)
-    let init = useRef(false)
-
-    // request access to deviceorientation
-    useEffect(() => {
-        window.addEventListener("click", async () => {
-            try {
-                let access = await DeviceOrientationEvent.requestPermission()
-
-                setHasDeviceOrientation(access === "granted")
-            } catch (e) {
-                //nothing
-            }
-        })
-    }, [])
+    let ref = useCannon(cannonConfig)
+    let forward = useRef(0)   
 
     // move forward
     useFrame(() => {
-        if (state === GameState.RUNNING) {
-            let hasFallenOff = body.position.y < -2 && forward.current > 2
-            let hasStopped = body.velocity.z < .1 && forward.current > 2
+        if (state === GameState.RUNNING && body) {
+            let hasForwardVelocity = forward.current > 2
+            let hasFallenOff = body.position.y < -2
+            let hasStopped = body.velocity.z < 1
 
-            if (hasFallenOff || hasStopped) {
+            if ((hasFallenOff || hasStopped) && hasForwardVelocity) { 
                 forward.current = 0
                 actions.end()
-            } else {
+            } else { 
                 body.velocity.z = 2
-                forward.current += 1
+                forward.current++
                 actions.setPosition(body.position.x, body.position.y, body.position.z)
             }
         }
     })
-    useEffect(() => {
-        if (state === GameState.RUNNING && body && !init.current) {
-            body.position.set(...position)
-            body.velocity.set(0, 0, 0)
-            body.angularVelocity.set(0, 0, 0)
-            init.current = true
-        }
-
-        if (state === GameState.GAME_OVER && init.current) {
-            init.current = false
-        }
-    }, [state, body])
-
+ 
     // move left/right 
     useEffect(() => {
-        if (state === GameState.RUNNING) {
-
+        if (state === GameState.RUNNING && body) { 
             let max = 3
             let mouseMove = e => {
                 let velocity = -(e.clientX - window.innerWidth / 2) / window.innerWidth * 2 * max
@@ -83,11 +57,11 @@ export default function Player({
 
                 body.velocity.x = velocity
             }
+            
+            window.addEventListener("mousemove", mouseMove)
 
             if (hasDeviceOrientation) {
                 window.addEventListener("deviceorientation", deviceOrientation)
-            } else {
-                window.addEventListener("mousemove", mouseMove)
             }
 
             return () => {
@@ -121,12 +95,12 @@ export default function Player({
         if (state === GameState.RUNNING) {
             let root = document.getElementById("root")
             let listener = (e) => {
-                if (hasDeviceOrientation) {
-                    e.preventDefault()
-                }
-
                 if (!canJump) {
                     return
+                }
+
+                if (hasDeviceOrientation) {
+                    e.preventDefault()
                 }
 
                 // if there is nothing below the player
@@ -162,7 +136,7 @@ export default function Player({
         </mesh>
     )
 }
- 
+
 
 function intersectBodies(from, to, bodies) {
     let result = new RaycastResult()

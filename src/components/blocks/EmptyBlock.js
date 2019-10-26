@@ -8,7 +8,7 @@ export default function EmptyBlock({
     end,
     depth
 }) {
-    let [obsticlePos] = useRandomPosition([-5, 3, start], [5, 4, end])
+    let [obsticlePos] = useRandomPosition([-5, 3, end-1], [5, 4, end])
     let [height] = useState(random.integer(2, 6))
 
     return (

@@ -1,72 +1,12 @@
 import create from "zustand"
-import uuid from "uuid"
-import random from "./random"
-import BlockSettings from "./const/BlockSettings"
 import GameState from "./const/GameState"
-import BlockType from "./const/BlockType"
-
-function getBlock(previous) {
-    let blocks = Object.values(BlockType)
-    let options = {
-        type: random.pick(blocks),
-        id: uuid.v4(),
-        start: previous.end
-    }
-
-    while (previous && BlockSettings[previous.type].illegalNext.includes(options.type)) {
-        options.type = random.pick(blocks)
-    }
-
-    switch (options.type) {
-        case BlockType.EMPTY:
-            options.depth = random.integer(4, 8)
-            break
-        case BlockType.GAP:
-            options.depth = random.integer(2, 3)
-            break
-    }
-
-    options.end = options.start + options.depth
-
-    return options
-}
+import getRandomBlock from "./getRandomBlock"
+import getInitState from "./getInitState"
 
 const [useStore, api] = create((set, get) => {
-    const init = {
-        blocks: [
-            {
-                id: uuid.v4(),
-                type: BlockType.EMPTY,
-                depth: 14,
-                start: 0,
-                end: 14
-            },
-            {
-                id: uuid.v4(),
-                type: BlockType.GAP,
-                depth: 2,
-                start: 14,
-                end: 16
-            },
-            {
-                id: uuid.v4(),
-                type: BlockType.EMPTY,
-                depth: 8,
-                start: 16,
-                end: 24
-            },
-        ],
-        spheres: [],
-        state: GameState.READY,
-        lives: 3,
-        score: 0,
-        bombs: 0,
-        position: { x: 0, y: 0, z: 0 },
-    }
-
     return {
         data: {
-            ...init
+            ...getInitState()
         },
         actions: {
             start() {
@@ -78,21 +18,66 @@ const [useStore, api] = create((set, get) => {
                 })
             },
             reset() {
+                let { hasDeviceOrientation, mustRequestOrientationAccess } = get().data
+
                 set({
                     data: {
-                        ...init,
-                        state: GameState.RUNNING
+                        ...getInitState(),
+                        state: GameState.PRE_RUNNING,
+                        hasDeviceOrientation,
+                        mustRequestOrientationAccess
                     }
                 })
-            },
-            resume() {
-                set({ data: { ...get().data, state: GameState.RUNNING } })
+
+                // force player to rerender/reset
+                setTimeout(() => {
+                    set({
+                        data: {
+                            ...get().data,
+                            state: GameState.RUNNING,
+                        }
+                    })
+                }, 0)
             },
             end() {
                 set({
                     data: {
                         ...get().data,
                         state: GameState.GAME_OVER
+                    }
+                })
+            },
+            async requestDeviceOrientation() {
+                try {
+                    let access = await DeviceOrientationEvent.requestPermission()
+
+                    if (access === "granted") {
+                        set({
+                            data: {
+                                ...get().data,
+                                hasDeviceOrientation: true,
+                                mustRequestOrientationAccess: false,
+                                state: GameState.READY
+                            }
+                        })
+                    } else {
+                        set({
+                            data: {
+                                ...get().data,
+                                state: GameState.REQUEST_ORIENTATION_ACCESS_FAIL
+                            }
+                        })
+                    }
+                } catch (e) {
+                    //console.log("requestDeviceOrientation fail", e)
+                }
+            },
+            hasDeviceOrientation() {
+                set({
+                    data: {
+                        ...get().data,
+                        state: GameState.READY,
+                        hasDeviceOrientation: true
                     }
                 })
             },
@@ -109,7 +94,7 @@ const [useStore, api] = create((set, get) => {
             addBlock() {
                 let { blocks, position, ...rest } = get().data
                 let previous = blocks[blocks.length - 1]
-                let next = getBlock(previous)
+                let next = getRandomBlock(previous)
                 let buffer = 16 // backwards cutoff distance from ball
                 let futureBlocks = blocks.filter(i => i.start + i.depth > position.z - buffer)
 
@@ -125,7 +110,7 @@ const [useStore, api] = create((set, get) => {
                 set({
                     data: {
                         ...get().data,
-                        position: { x, z, y }
+                        position: { x, y, z }
                     }
                 })
             }
@@ -137,21 +122,3 @@ window.api = api
 
 export { useStore, api }
 
-
-/*
-
-
-
-                if (lives > 0) {
-                    console.log(blocks[0])
-                    set({
-                        data: {
-                            ...get().data,
-                            lives: lives - 1,
-                            state: GameState.LIFE_LOST_INTERTITLE,
-                            position: { x: 0, y: 5, z: blocks[0].start +  blocks[0].end - blocks[0].start }
-                        }
-                    })
-                } else {
-
-                    */

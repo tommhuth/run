@@ -1,28 +1,15 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { useStore } from "./data/store"
-import GameState from "./data/const/GameState"
 
 export default function Ui() {
     let state = useStore(state => state.data.state)
-    let actions = useStore(state => state.actions)
-
-    useEffect(() => {
-        let listener = () => {
-            switch (state) {
-                case GameState.READY:
-                    return actions.start() 
-                case GameState.GAME_OVER:
-                    return actions.reset()
-            }
-        }
-
-        window.addEventListener("click", listener)
-
-        return () => window.removeEventListener("click", listener)
-    }, [state])
+    let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
+    let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
 
     return (
         <div id="ui">
+            hasDeviceOrientation={JSON.stringify(hasDeviceOrientation)}<br />
+            mustRequestOrientationAccess={JSON.stringify(mustRequestOrientationAccess)}<br /><br />
             {state}
         </div>
     )

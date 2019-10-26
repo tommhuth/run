@@ -8,7 +8,7 @@ export default function Path() {
     let blocks = useStore(state => state.data.blocks)
     let state = useStore(state => state.data.state)
     let actions = useStore(state => state.actions)
-    let tid = useRef()
+    let tid = useRef() 
 
     useEffect(() => {
         if (state === GameState.RUNNING) { 

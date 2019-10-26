@@ -8,12 +8,12 @@ export default function SimulatedBox({
     size = [1, 1, 1],
     color = "#ccc"
 }) { 
-    let config = useMemo(() => ({
+    let cannonConfig = useMemo(() => ({
         mass,
         position,
         shape: new Box(new Vec3(size[0] / 2, size[1] / 2, size[2] / 2))
     }), [])
-    let ref = useCannon(config) 
+    let ref = useCannon(cannonConfig)  
 
     return (
         <mesh ref={ref} position={position}>
