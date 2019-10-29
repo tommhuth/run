@@ -3,14 +3,12 @@ import { useStore } from "./data/store"
 
 export default function Ui() {
     let state = useStore(state => state.data.state)
-    let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
-    let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
+    let { z } = useStore(state => state.data.position)
 
     return (
         <div id="ui">
-            hasDeviceOrientation={JSON.stringify(hasDeviceOrientation)}<br />
-            mustRequestOrientationAccess={JSON.stringify(mustRequestOrientationAccess)}<br /><br />
-            {state}
+            {state}<br /><br />
+            {Math.floor(z - 8 < 0 ? 0 : z - 8)}m<br />
         </div>
     )
 }

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import random from "./random"
 
-export function useRandomPosition(min, max) {
+export function useRandomVector(min, max) {
     let [position, setPosition] = useState(() => {
         return [
             random.integer(min[0], max[0]),

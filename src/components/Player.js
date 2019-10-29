@@ -5,10 +5,11 @@ import { useFrame } from "react-three-fiber"
 import { useCannon, useWorld } from "../data/cannon"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
+import materials from "../data/materials"
 
 export default function Player({
     position = [0, 2, 7],
-    radius = .5
+    radius = .35
 }) {
     let world = useWorld()
     let [body, setBody] = useState()
@@ -29,7 +30,7 @@ export default function Player({
     useFrame(() => {
         if (state === GameState.RUNNING && body) {
             let hasForwardVelocity = forward.current > 2
-            let hasFallenOff = body.position.y < -2
+            let hasFallenOff = body.position.y < -8
             let hasStopped = body.velocity.z < 1
 
             if ((hasFallenOff || hasStopped) && hasForwardVelocity) { 
@@ -130,9 +131,8 @@ export default function Player({
     }, [body, state, canJump, hasDeviceOrientation])
 
     return (
-        <mesh ref={ref}>
-            <sphereBufferGeometry attach="geometry" args={[radius, 16, 16]} />
-            <meshPhongMaterial color={"blue"} attach="material" />
+        <mesh ref={ref} material={materials.white}>
+            <sphereBufferGeometry attach="geometry" args={[radius, 16, 16]} /> 
         </mesh>
     )
 }

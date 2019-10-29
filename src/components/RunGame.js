@@ -49,7 +49,7 @@ export default function RunGame() {
         <>
             <Ui />
             <Canvas pixelRatio={window.devicePixelRatio}>
-                <fog attach="fog" args={[0xffffff, 0, 30]} />
+                <fog attach="fog" args={[0x111111, 12, 30]} />
                 <CannonProvider defaultFriction={.8} defaultRestitution={.5}>
                     <Camera />
                     <Lights />
