@@ -17,6 +17,14 @@ const [useStore, api] = create((set, get) => {
                     }
                 })
             },
+            setBaseY(y) {
+                set({
+                    data: {
+                        ...get().data,
+                        baseY: y
+                    }
+                }) 
+            },
             reset() {
                 let { hasDeviceOrientation, mustRequestOrientationAccess } = get().data
 

@@ -6,11 +6,12 @@ import GameState from "../data/const/GameState"
 export default function Camera() {
     let { camera } = useThree()
     let state = useStore(state => state.data.state)
-    let playerPosition = useRef({ x: 0, y: 0, z: 8 }) 
- 
+    let baseY = useStore(state => state.data.baseY)
+    let playerPosition = useRef({ x: 0, y: 0, z: 8 })
+
     useEffect(() => {
         camera.position.set(0, 5, 7)
-        camera.lookAt(0, 0, 15) 
+        camera.lookAt(0, 0, 15)
 
         return api.subscribe(
             position => playerPosition.current = position,
@@ -20,8 +21,8 @@ export default function Camera() {
 
     useFrame(() => {
         camera.position.z += (playerPosition.current.z - 1 - camera.position.z) * .0175
-        camera.position.x += (playerPosition.current.x - camera.position.x) * .2 
- 
+        camera.position.x += (playerPosition.current.x - camera.position.x) * .2
+        camera.position.y += (baseY + 5 - camera.position.y) * .0051
     })
 
     useEffect(() => {

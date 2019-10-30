@@ -30,5 +30,6 @@ export default function getInitState() {
         score: 0,
         bombs: 0,
         position: { x: 0, y: 0, z: 0 },
+        baseY: 0,
     }
 }

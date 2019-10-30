@@ -85,6 +85,7 @@ export default function Player({
                 )
 
                 if (intersection.hasHit) {
+                    actions.setBaseY(body.position.y)
                     setCanJump(true)
                 }
             })
