@@ -4,8 +4,7 @@ import { useThree, useFrame } from "react-three-fiber"
 import GameState from "../data/const/GameState"
 import { PCFSoftShadowMap } from "three"
 
-export default function Lights() {
-    let ref = useRef()
+export default function Lights() { 
     let ref2 = useRef()
     let ref3 = useRef()
     let { gl } = useThree()
@@ -21,9 +20,9 @@ export default function Lights() {
             state => state.data.position
         )
 
-        gl.shadowMap.enabled = false
-        gl.shadowMap.type = PCFSoftShadowMap
-        gl.physicallyCorrectLights = true   
+        //gl.shadowMap.enabled = false
+        //gl.shadowMap.type = PCFSoftShadowMap
+        //gl.physicallyCorrectLights = true   
     }, [])  
 
     return (
@@ -37,7 +36,7 @@ export default function Lights() {
             />
             <pointLight
                 ref={ref2}
-                args={[0xFFED66, 4, 15, 1]}
+                args={[0x0000ff, 4, 10, 2]}
                 intensity={state=== GameState.RUNNING ? 4 : 0}
             /> 
         </>
