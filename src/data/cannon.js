@@ -1,6 +1,7 @@
 import { World, NaiveBroadphase, Body } from "cannon"
 import React, { useRef, useEffect, useState, useContext } from "react"
-import { useFrame } from "react-three-fiber"
+import { useFrame, useThree } from "react-three-fiber"
+import Debug from "./debug"
 
 const context = React.createContext()
 
@@ -12,6 +13,8 @@ export function CannonProvider({
     gravity = [0, -9.8, 0]
 }) {
     let [world] = useState(() => new World())
+    let { scene } = useThree()
+    let [debug] = useState(() => new Debug(scene, world))
 
     useEffect(() => {
         world.broadphase = new NaiveBroadphase()
@@ -22,7 +25,10 @@ export function CannonProvider({
     }, [world])
 
     // Run world stepper every frame
-    useFrame(() => world.step(1 / 30))
+    useFrame(() => {
+        world.step(1 / 30)
+        debug.update()
+    })
 
     // Distribute world via context
     return <context.Provider value={world}>{children}</context.Provider>
