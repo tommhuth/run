@@ -70,6 +70,7 @@ CannonDebugRenderer.prototype = {
 
         for (var i = meshIndex; i < meshes.length; i++) {
             var mesh = meshes[i];
+
             if (mesh) {
                 this.scene.remove(mesh);
             }
@@ -80,6 +81,7 @@ CannonDebugRenderer.prototype = {
 
     _updateMesh: function (index, body, shape) {
         var mesh = this._meshes[index];
+
         if (!this._typeMatch(mesh, shape)) {
             if (mesh) {
                 this.scene.remove(mesh);

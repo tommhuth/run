@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import SimulatedBox from "../SimulatedBox"
+import SimulatedCylinder from "../SimulatedCylinder"
 import { useRandomVector } from "../../data/hooks"
 import random from "../../data/random"
 
@@ -8,37 +9,44 @@ export default function EmptyBlock({
     end,
     depth
 }) {
-    let [obsticlePosition] = useRandomVector([-5, 3, end - 1], [5, 4, end])
-    let [height] = useState(random.integer(2, 6))
     let [width] = useState(random.integer(5, 8))
-    let [towerSize] = useRandomVector([3, 21, 3], [5, 24, 4])
-    let [towerX] = useState(() => random.pick([width / 2, -width / 2]))
+    let [towerRadius] = useState(random.integer(2, 4))
+    let [towerHeight] = useState(random.integer(22, 25))
+    let [towerX] = useState(() => random.pick([width / 1.5, -width / 1.5]))
     let [towerPosition] = useRandomVector(
         [towerX, -8, start + 2],
         [towerX, -10, end - 2]
     )
+    let [otherTowerZ] = useState(random.integer(start, end))
+    let [otherTowerY] = useState(random.integer(-2, 2))
     let [y] = useState(random.integer(-1, 1))
     let [x] = useState(random.integer(-1, 1))
 
     return (
         <>
             {/* floor */}
-            <SimulatedBox
-                size={[width, 20, depth]}
+            <SimulatedCylinder
+                height={20}
+                segments={12}
+                radius={Math.max(width, depth) / 2}
                 position={[x, -10 + y, start + depth / 2]}
             />
+
             {/* tower */}
-            <SimulatedBox
-                size={towerSize}
+            <SimulatedCylinder
+                height={towerHeight}
+                segments={8}
+                radius={towerRadius}
                 position={towerPosition}
             />
 
-            {/* obstical 
-            <SimulatedBox
-                mass={1}
-                size={[2, height, 2]}
-                position={obsticlePosition}
-            />*/}
+            {/* tower */}
+            <SimulatedCylinder
+                height={towerHeight - 1}
+                segments={8}
+                radius={towerRadius}
+                position={[towerPosition[0] * -2, towerPosition[1] + otherTowerY, otherTowerZ]}
+            />
         </>
     )
 }

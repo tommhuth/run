@@ -27,7 +27,7 @@ export function CannonProvider({
     // Run world stepper every frame
     useFrame(() => {
         world.step(1 / 30)
-        debug.update()
+        //debug.update()
     })
 
     // Distribute world via context
@@ -49,7 +49,7 @@ export function useCannon({ mass, shape, position, cb = () => { } }, deps = []) 
     useEffect(() => {
         // Call function so the user can add shapes
         body.addShape(shape)
-        body.position.set(...position)
+        body.position.set(...position)  
 
         // callback
         cb(body)

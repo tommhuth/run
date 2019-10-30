@@ -1,4 +1,5 @@
 export default {
     GAP: "gap",
-    EMPTY: "empty"
+    EMPTY: "empty",
+    PLAIN: "plain"
 }

@@ -3,7 +3,7 @@ import random from "./random"
 import BlockSettings from "./const/BlockSettings"
 import BlockType from "./const/BlockType"
 
-export default function getBlock(previous) {
+export default function getRandomBlock(previous) {
     let blocks = Object.values(BlockType)
     let options = {
         type: random.pick(blocks),
@@ -11,13 +11,16 @@ export default function getBlock(previous) {
         start: previous.end
     }
 
-    while (previous && BlockSettings[previous.type].illegalNext.includes(options.type)) {
+    while (BlockSettings[previous.type].illegalNext.includes(options.type)) {
         options.type = random.pick(blocks)
     }
 
     switch (options.type) {
         case BlockType.EMPTY:
             options.depth = random.integer(4, 10)
+            break
+        case BlockType.PLAIN:
+            options.depth = random.integer(7, 14)
             break
         case BlockType.GAP:
             options.depth = random.real(1, 2.5)

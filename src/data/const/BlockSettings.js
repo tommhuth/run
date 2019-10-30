@@ -6,5 +6,8 @@ export default {
     },
     [BlockType.EMPTY]: {
         illegalNext: []
+    },
+    [BlockType.PLAIN]: {
+        illegalNext: []
     }
 }
