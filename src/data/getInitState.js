@@ -9,18 +9,18 @@ export default function getInitState() {
         blocks: [
             {
                 id: uuid.v4(),
-                type: BlockType.EMPTY,
+                type: BlockType.BASE_TOWER,
                 depth: 20,
                 start: 0,
                 end: 20
-            }, 
+            },  
             {
                 id: uuid.v4(),
-                type: BlockType.EMPTY,
-                depth: 16,
+                type: BlockType.STEPS,
+                depth: 20,
                 start: 20,
-                end: 36
-            },
+                end: 40
+            }, 
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,

@@ -9,19 +9,19 @@ export default function SimulatedCylinder({
     radius = 1,
     height = 1,
     segments = 8,
-    rotation=[0,0,0]
+    rotation = [0, 0, 0]
 }) {
     let cannonConfig = useMemo(() => ({
         mass,
         position,
         shape: new Cylinder(radius, radius, height, segments),
-        cb: (body) => {  
+        cb: (body) => {
             let quat = new Quaternion()
             let translation = new Vec3(0, 0, 0)
 
             quat.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2)
-            body.shapes[0].transformAllPoints(translation, quat)  
-            body.quaternion.setFromEuler(...rotation)
+            body.shapes[0].transformAllPoints(translation, quat)
+            body.quaternion.setFromEuler(0, Math.random()*4, 0)
         }
     }), [])
     let ref = useCannon(cannonConfig)

@@ -4,7 +4,7 @@ import SimulatedCylinder from "../SimulatedCylinder"
 import { useRandomVector } from "../../data/hooks"
 import random from "../../data/random"
 
-export default function EmptyBlock({
+export default function BaseTowerBlock({
     start,
     end,
     depth

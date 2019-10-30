@@ -4,10 +4,13 @@ export default {
     [BlockType.GAP]: {
         illegalNext: [BlockType.GAP]
     },
-    [BlockType.EMPTY]: {
+    [BlockType.BASE_TOWER]: {
         illegalNext: []
     },
     [BlockType.PLAIN]: {
+        illegalNext: []
+    },
+    [BlockType.STEPS]: {
         illegalNext: []
     }
 }

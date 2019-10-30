@@ -16,8 +16,11 @@ export default function getRandomBlock(previous) {
     }
 
     switch (options.type) {
-        case BlockType.EMPTY:
+        case BlockType.BASE_TOWER:
             options.depth = random.integer(4, 10)
+            break
+        case BlockType.STEPS:
+            options.depth = random.integer(8, 22)
             break
         case BlockType.PLAIN:
             options.depth = random.integer(7, 14)

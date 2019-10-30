@@ -14,6 +14,7 @@ export default function Player({
     let world = useWorld()
     let [body, setBody] = useState()
     let state = useStore(state => state.data.state)
+    let baseY = useStore(state => state.data.baseY)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let [canJump, setCanJump] = useState(false)
     let actions = useStore(state => state.actions)
@@ -30,7 +31,7 @@ export default function Player({
     useFrame(() => {
         if (state === GameState.RUNNING && body) {
             let hasForwardVelocity = forward.current > 2
-            let hasFallenOff = body.position.y < -8
+            let hasFallenOff = body.position.y < baseY - 14
             let hasStopped = body.velocity.z < 1
 
             if ((hasFallenOff || hasStopped) && hasForwardVelocity) { 

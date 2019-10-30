@@ -1,5 +1,6 @@
 export default {
     GAP: "gap",
-    EMPTY: "empty",
+    STEPS: "steps",
+    BASE_TOWER: "base-tower",
     PLAIN: "plain"
 }
