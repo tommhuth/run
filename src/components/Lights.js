@@ -20,23 +20,24 @@ export default function Lights() {
             state => state.data.position
         )
 
-        //gl.shadowMap.enabled = false
-        //gl.shadowMap.type = PCFSoftShadowMap
-        //gl.physicallyCorrectLights = true   
+        gl.shadowMap.enabled = true
+        gl.shadowMap.type = PCFSoftShadowMap 
     }, [])  
 
     return (
         <>
+            <ambientLight intensity={.5} color={0xf2faff} />
             <directionalLight
                 ref={ref3}
-                color={0xffffff}
+                color={0xf2faff}
                 position={[0, 5, 0]}
-                intensity={1}
-                target-position={[3, -5, 5]}
+                intensity={.5}
+                target-position={[3, -3, 5]}
             />
             <pointLight
                 ref={ref2}
-                args={[0x0000ff, 4, 10, 2]}
+                castShadow 
+                args={[0x00222b, .5, 10, 2]}
                 intensity={state=== GameState.RUNNING ? 4 : 0}
             /> 
         </>

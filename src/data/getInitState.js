@@ -17,9 +17,9 @@ export default function getInitState() {
             {
                 id: uuid.v4(),
                 type: BlockType.STEPS,
-                depth: 20,
+                depth: 40,
                 start: 20,
-                end: 40
+                end: 60
             }, 
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,

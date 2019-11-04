@@ -21,7 +21,7 @@ export default function SimulatedCylinder({
 
             quat.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2)
             body.shapes[0].transformAllPoints(translation, quat)
-            body.quaternion.setFromEuler(0, Math.random()*4, 0)
+            body.quaternion.setFromEuler(0, Math.random() * 4, 0)
         }
     }), [])
     let ref = useCannon(cannonConfig)
@@ -31,6 +31,7 @@ export default function SimulatedCylinder({
             ref={ref}
             position={position}
             material={materials.red}
+            receiveShadow castShadow
         >
             <cylinderBufferGeometry attach="geometry" args={[radius, radius, height, segments]} />
         </mesh>

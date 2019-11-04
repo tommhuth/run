@@ -11,6 +11,6 @@ export default {
         illegalNext: []
     },
     [BlockType.STEPS]: {
-        illegalNext: []
+        illegalNext: [BlockType.STEPS]
     }
 }

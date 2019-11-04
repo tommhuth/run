@@ -13,10 +13,10 @@ export default function PlainBlock({
         <>  
             <SimulatedCylinder
                 radius={depth/2}
-                height={20}
+                height={40}
                 mass={0}
                 segments={12}
-                position={[x, -10 + y, start + depth / 2]}
+                position={[x, -20 + y, start + depth / 2]}
             />
         </>
     )

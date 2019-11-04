@@ -7,7 +7,7 @@ export default function StepsBlock({
     depth
 }) {
     let [baseOffsetX] = useState(random.integer(-1, 1))
-    let [baseOffsetY] = useState(random.integer(0, 1))
+    let [baseOffsetY] = useState(random.integer(0, 0))
     let [flip] = useState(random.bool())
     let [steps] = useState(() => {
         let total = 0
@@ -15,35 +15,34 @@ export default function StepsBlock({
         let steps = []
 
         while (!max) {
-            let gap = random.real(-3, 2)
+            let gap = random.integer(-1, 2)
             let radius = random.real(1.5, 3.5)
 
             if (total + gap + radius * 2 > depth) {
                 max = true
             } else {
                 steps.push({
-                    z: total + gap + radius / 2,
-                    y: baseOffsetY + steps.length - 1 + random.real(-.25, .25),
+                    z: total + gap + radius,
+                    y: Math.abs(Math.cos((steps.length + 4)/2) * 2),
                     x: Math[flip ? "cos" : "sin"](steps.length - 1) * 2 + baseOffsetX,
                     radius,
                     gap,
                 })
-
-                // this is not accurate
+ 
                 total += gap + radius * 2
             }
-        }
+        } 
 
-        if (depth - total > 2) {
-            let radius = (depth - total) / 2
+        if (depth - total > 1) {
+            let radius = (depth - total) / 2 
 
             steps.push({
                 z: total + radius,
-                y: baseOffsetY + steps.length / 2,
+                y: 1, 
                 x: 0,
                 radius: (depth - total) / 2,
                 gap: 0,
-            }) 
+            })
         }
 
         return steps
@@ -51,15 +50,15 @@ export default function StepsBlock({
 
     return (
         <>
-            {steps.map((i, index) => {
+            {steps.map((i, index) => { 
                 return (
                     <SimulatedCylinder
                         key={index}
                         radius={i.radius}
-                        height={20}
+                        height={40}
                         mass={0}
                         segments={8}
-                        position={[i.x, -10 + i.y, start + i.z + i.radius / 2]}
+                        position={[i.x, -20 + i.y, start + i.z]}
                     />
                 )
             })}

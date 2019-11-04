@@ -23,8 +23,9 @@ body {
 
 body {  
     min-height: 100vh;
-    color:#fff;
-    background-color: #111; 
+    color:#111;
+    background-color: #f2faff;
+    background-image: linear-gradient(to bottom, #f2faff, #FFF); 
 } 
 
 canvas {

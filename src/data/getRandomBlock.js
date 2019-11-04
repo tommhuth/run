@@ -20,7 +20,7 @@ export default function getRandomBlock(previous) {
             options.depth = random.integer(4, 10)
             break
         case BlockType.STEPS:
-            options.depth = random.integer(8, 22)
+            options.depth = random.integer(14, 30)
             break
         case BlockType.PLAIN:
             options.depth = random.integer(7, 14)
