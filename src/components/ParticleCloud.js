@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react"  
+import React, { useState, useMemo, useRef } from "react"
 import random from "../data/random"
 import { Vector3, TextureLoader, PointsMaterial } from "three"
 import { useFrame } from "react-three-fiber"
@@ -21,7 +21,7 @@ export default function ParticleCloud({
                 new Vector3(
                     random.real(-size * 1.5, size * 1.5),
                     random.real(-1, size / 2),
-                    random.real(-size, size)
+                    random.real(-size * .65, size * .65)
                 )
             )
         }
@@ -50,7 +50,7 @@ export default function ParticleCloud({
 
         return params
     })
-    let ref = useRef() 
+    let ref = useRef()
 
     useFrame(() => {
         for (let i = 0; i < vertices.length; i++) {
@@ -71,4 +71,3 @@ export default function ParticleCloud({
         </points>
     )
 }
- 
