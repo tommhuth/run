@@ -13,6 +13,7 @@ export default function RunGame() {
     let state = useStore(state => state.data.state)
     let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
+    let attempts = useStore(state => state.data.attempts)
     let actions = useStore(state => state.actions)
 
     useEffect(() => {
@@ -53,7 +54,7 @@ export default function RunGame() {
                 <CannonProvider defaultFriction={.8} defaultRestitution={.5}>
                     <Camera />
                     <Lights />
-                    {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ? <Player /> : null}
+                    {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ? <Player key={attempts} /> : null}
                     <Path />
                 </CannonProvider>
             </Canvas>

@@ -31,21 +31,12 @@ const [useStore, api] = create((set, get) => {
                 set({
                     data: {
                         ...getInitState(),
-                        state: GameState.PRE_RUNNING,
+                        state: GameState.RUNNING,
+                        attempts: get().data.attempts + 1,
                         hasDeviceOrientation,
                         mustRequestOrientationAccess
                     }
-                })
-
-                // force player to rerender/reset
-                setTimeout(() => {
-                    set({
-                        data: {
-                            ...get().data,
-                            state: GameState.RUNNING,
-                        }
-                    })
-                }, 50)
+                }) 
             },
             end() {
                 set({

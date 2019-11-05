@@ -25,19 +25,19 @@ export default function Player({
         cb: setBody
     }), [])
     let ref = useCannon(cannonConfig)
-    let forward = useRef(0)   
+    let forward = useRef(0)    
 
     // move forward
     useFrame(() => {
-        if (state === GameState.RUNNING && body) {
+        if (state === GameState.RUNNING && body) { 
             let hasForwardVelocity = forward.current > 3
-            let hasFallenOff = body.position.y < baseY - 14
+            let hasFallenOff = body.position.y < baseY - 20
             let hasStopped = body.velocity.z < 1
 
-            if ((hasFallenOff || hasStopped) && hasForwardVelocity) { 
+            if ((hasFallenOff || hasStopped) && hasForwardVelocity) {  
                 forward.current = 0
                 actions.end()
-            } else { 
+            } else {  
                 body.velocity.z = 2
                 forward.current++
                 actions.setPosition(body.position.x, body.position.y, body.position.z)

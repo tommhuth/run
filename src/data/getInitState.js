@@ -20,6 +20,7 @@ export default function getInitState() {
         spheres: [],
         state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
         lives: 3,
+        attempts: 0,
         score: 0,
         bombs: 0,
         position: { x: 0, y: 0, z: 7 },

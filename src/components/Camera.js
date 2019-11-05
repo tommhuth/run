@@ -7,6 +7,7 @@ export default function Camera() {
     let { camera } = useThree()
     let state = useStore(state => state.data.state)
     let baseY = useStore(state => state.data.baseY)
+    let attempts = useStore(state => state.data.attempts)
     let playerPosition = useRef({ x: 0, y: 0, z: 8 })
 
     useEffect(() => {
@@ -18,6 +19,10 @@ export default function Camera() {
             state => state.data.position
         )
     }, [camera])
+
+    useEffect(()=>{ 
+        camera.position.set(0, 5, 7)
+    }, [attempts])
 
     useFrame(() => {
         camera.position.z += (playerPosition.current.z - 1 - camera.position.z) * .0175
