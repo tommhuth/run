@@ -30,7 +30,7 @@ export default function Player({
     // move forward
     useFrame(() => {
         if (state === GameState.RUNNING && body) {
-            let hasForwardVelocity = forward.current > 2
+            let hasForwardVelocity = forward.current > 3
             let hasFallenOff = body.position.y < baseY - 14
             let hasStopped = body.velocity.z < 1
 

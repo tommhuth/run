@@ -45,7 +45,7 @@ const [useStore, api] = create((set, get) => {
                             state: GameState.RUNNING,
                         }
                     })
-                }, 0)
+                }, 50)
             },
             end() {
                 set({
