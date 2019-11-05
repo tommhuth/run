@@ -30,7 +30,7 @@ export default function SimulatedCylinder({
         <mesh
             ref={ref}
             position={position}
-            material={materials.red}
+            material={materials.gray}
             receiveShadow castShadow
         >
             <cylinderBufferGeometry attach="geometry" args={[radius, radius, height, segments]} />

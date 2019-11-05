@@ -13,8 +13,10 @@ export default function Path() {
     let tid = useRef()
 
     useEffect(() => {
+        actions.generatePath()
+
         if (state === GameState.RUNNING) {
-            tid.current = setInterval(() => actions.maintainPath(), 300)
+            tid.current = setInterval(() => actions.generatePath(), 750)
         } else {
             clearInterval(tid.current)
         }

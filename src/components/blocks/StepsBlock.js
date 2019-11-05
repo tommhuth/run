@@ -1,13 +1,15 @@
 import React, { useState } from "react"
 import SimulatedCylinder from "../SimulatedCylinder"
 import random from "../../data/random"
+import ParticleCloud from "../ParticleCloud"
+import Only from "../Only"
 
 export default function StepsBlock({
     start,
     depth
 }) {
-    let [baseOffsetX] = useState(random.integer(-1, 1))
-    let [baseOffsetY] = useState(random.integer(0, 0))
+    let [baseOffsetX] = useState(random.integer(-1, 1)) 
+    let [cloud] = useState(random.bool(.5))
     let [flip] = useState(random.bool())
     let [steps] = useState(() => {
         let total = 0
@@ -50,6 +52,10 @@ export default function StepsBlock({
 
     return (
         <>
+        <Only if={cloud}>
+            <ParticleCloud position={[-2, 0, start + depth / 2]} />
+        </Only>
+
             {steps.map((i, index) => { 
                 return (
                     <SimulatedCylinder

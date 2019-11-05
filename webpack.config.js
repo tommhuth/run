@@ -10,7 +10,7 @@ const { InjectManifest } = require("workbox-webpack-plugin")
 
 const rev = uuid.v4()
 const plugins = [
-    new CleanWebpackPlugin(),
+    //new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
         "process.env.REGISTER_SERVICEWORKER": JSON.stringify(process.env.REGISTER_SERVICEWORKER)
     }),
@@ -27,6 +27,10 @@ const plugins = [
             {
                 from: path.join(__dirname, "assets", "splashscreens"),
                 to: "splashscreens/[name]." + rev + ".[ext]"
+            },
+            {
+                from: path.join(__dirname, "assets", "textures"),
+                to: "textures/[name].[ext]"
             }
         ]
     ),

@@ -13,14 +13,7 @@ export default function getInitState() {
                 depth: 20,
                 start: 0,
                 end: 20
-            },  
-            {
-                id: uuid.v4(),
-                type: BlockType.STEPS,
-                depth: 40,
-                start: 20,
-                end: 60
-            }, 
+            }
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,
@@ -29,7 +22,7 @@ export default function getInitState() {
         lives: 3,
         score: 0,
         bombs: 0,
-        position: { x: 0, y: 0, z: 0 },
+        position: { x: 0, y: 0, z: 7 },
         baseY: 0,
     }
 }

@@ -23,7 +23,7 @@ const [useStore, api] = create((set, get) => {
                         ...get().data,
                         baseY: y
                     }
-                }) 
+                })
             },
             reset() {
                 let { hasDeviceOrientation, mustRequestOrientationAccess } = get().data
@@ -89,21 +89,22 @@ const [useStore, api] = create((set, get) => {
                     }
                 })
             },
-            maintainPath() {
+            generatePath() {
                 let { blocks, position } = get().data
                 let { addBlock } = get().actions
                 let previous = blocks[blocks.length - 1]
                 let buffer = 30
 
-                if (previous.end - position.z < buffer) {
-                    addBlock()
+                while (previous.end - position.z < buffer) {
+                    previous = addBlock()
+                    position = get().data.position 
                 }
             },
             addBlock() {
                 let { blocks, position, ...rest } = get().data
                 let previous = blocks[blocks.length - 1]
                 let next = getRandomBlock(previous)
-                let buffer = 16 // backwards cutoff distance from ball
+                let buffer = 5 // backwards cutoff distance from ball
                 let futureBlocks = blocks.filter(i => i.start + i.depth > position.z - buffer)
 
                 set({
@@ -113,6 +114,8 @@ const [useStore, api] = create((set, get) => {
                         blocks: [...futureBlocks, next]
                     }
                 })
+
+                return next
             },
             setPosition(x, y, z) {
                 set({

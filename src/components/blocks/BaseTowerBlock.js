@@ -1,27 +1,31 @@
-import React, { useState } from "react"
-import SimulatedBox from "../SimulatedBox"
+import React, { useState  } from "react" 
 import SimulatedCylinder from "../SimulatedCylinder"
-import { useRandomVector } from "../../data/hooks"
-import random from "../../data/random"
-
+import ParticleCloud from "../ParticleCloud"
+import Only from "../Only" 
+import random from "../../data/random" 
+ 
 export default function BaseTowerBlock({
-    start,
-    end,
+    start, 
     depth
 }) {
-    let [width] = useState(random.integer(5, 8)) 
+    let [width] = useState(random.integer(5, 8))
     let [y] = useState(random.integer(-1, 1))
     let [x] = useState(random.integer(-1, 1))
+    let [cloud] = useState(random.bool(.5))
 
     return (
         <>
+            <Only if={cloud}>
+                <ParticleCloud position={[-3, 0, start + depth / 2]} />
+            </Only>
+
             {/* floor */}
             <SimulatedCylinder
                 height={40}
                 segments={12}
                 radius={Math.max(width, depth) / 2}
                 position={[x, -20 + y, start + depth / 2]}
-            /> 
+            />
         </>
     )
 }

@@ -19,7 +19,7 @@ export default function SimulatedBox({
         <mesh
             ref={ref}
             position={position}
-            material={materials.red}
+            material={materials.gray}
         >
             <boxBufferGeometry attach="geometry" args={size} />
         </mesh>
