@@ -13,7 +13,9 @@ export default function Path() {
     let tid = useRef()
 
     useEffect(() => {
-        actions.generatePath()
+        if ([GameState.READY, GameState.REQUEST_ORIENTATION_ACCESS ].includes(state)) {
+            actions.generatePath() 
+        }
 
         if (state === GameState.RUNNING) {
             tid.current = setInterval(() => actions.generatePath(), 750)

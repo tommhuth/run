@@ -37,6 +37,7 @@ const [useStore, api] = create((set, get) => {
                         mustRequestOrientationAccess
                     }
                 }) 
+                get().actions.generatePath()
             },
             end() {
                 set({
@@ -123,4 +124,3 @@ const [useStore, api] = create((set, get) => {
 window.api = api
 
 export { useStore, api }
-
