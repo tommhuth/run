@@ -1,16 +1,16 @@
-import React, { useState, useMemo, useRef } from "react"
+import React, { useState, useRef } from "react"
 import random from "../data/random"
-import { Vector3, TextureLoader, PointsMaterial } from "three"
+import { Vector3,  PointsMaterial } from "three"
 import { useFrame } from "react-three-fiber"
+import textures from "../data/textures"
 
 export default function ParticleCloud({
     position = [0, 0, 0],
-    maxCount = 25,
-    minCount = 5,
+    maxCount = 15,
+    minCount = 15,
     maxSize = 3,
     minSize = 6
-}) {
-    let sprite = useMemo(() => new TextureLoader().load("/textures/dot.png"))
+}) { 
     let [count] = useState(() => random.integer(minCount, maxCount))
     let [size] = useState(() => random.integer(minSize, maxSize))
     let [vertices] = useState(() => {
@@ -29,7 +29,7 @@ export default function ParticleCloud({
         return vertices
     })
     let [material] = useState(() => new PointsMaterial({
-        map: sprite,
+        map: textures.dot,
         transparent: true,
         size: .25,
         opacity: .5,
