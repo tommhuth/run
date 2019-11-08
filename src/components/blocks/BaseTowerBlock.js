@@ -11,7 +11,7 @@ export default function BaseTowerBlock({
     let [width] = useState(random.integer(5, 8))
     let [y] = useState(random.integer(-1, 1))
     let [x] = useState(random.integer(-1, 1))
-    let [cloud] = useState(random.bool(.5))
+    let [cloud] = useState(random.bool(1.5))
 
     return (
         <>
