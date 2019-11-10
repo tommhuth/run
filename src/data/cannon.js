@@ -10,7 +10,7 @@ export function CannonProvider({
     iterations = 6,
     defaultRestitution = 0,
     defaultFriction = .1,
-    gravity = [0, -9.8, 0]
+    gravity = [0, -10, 0]
 }) {
     let [world] = useState(() => new World())
     //let { scene } = useThree()

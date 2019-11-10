@@ -10,16 +10,23 @@ export default function getInitState() {
             {
                 id: uuid.v4(),
                 type: BlockType.PLAIN,
-                depth: 20,
+                depth: 8,
                 start: 0,
-                end: 20
+                end: 8
+            },
+            {
+                id: uuid.v4(),
+                type: BlockType.PLAIN,
+                depth: 11,
+                start: 8,
+                end: 19
             },
             {
                 id: uuid.v4(),
                 type: BlockType.PILLARS,
                 depth: 20,
-                start: 20,
-                end: 40
+                start: 19,
+                end: 39
             }
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react"
 import { useStore } from "../data/store"
-import BlockType from "../data/const/BlockType"
-import BaseTowerBlock from "./blocks/BaseTowerBlock"
+import BlockType from "../data/const/BlockType" 
 import StepsBlock from "./blocks/StepsBlock"
 import GameState from "../data/const/GameState"
 import PlainBlock from "./blocks/PlainBlock"
@@ -28,9 +27,7 @@ export default function Path() {
     return (
         <>
             {blocks.map(i => {
-                switch (i.type) {
-                    case BlockType.BASE_TOWER:
-                        return <BaseTowerBlock {...i} key={i.id} />
+                switch (i.type) { 
                     case BlockType.PILLARS:
                         return <PillarsBlock {...i} key={i.id} />
                     case BlockType.STEPS:

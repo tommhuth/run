@@ -8,11 +8,7 @@ export default {
             BlockType.STEPS,
             BlockType.PILLARS
         ]
-    },
-    [BlockType.BASE_TOWER]: {
-        likelihood: 1,
-        illegalNext: []
-    },
+    }, 
     [BlockType.PLAIN]: {
         likelihood: 1,
         illegalNext: []

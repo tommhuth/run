@@ -8,11 +8,11 @@ export default function Camera() {
     let state = useStore(state => state.data.state)
     let baseY = useStore(state => state.data.baseY)
     let attempts = useStore(state => state.data.attempts)
-    let playerPosition = useRef({ x: 0, y: 0, z: 8 })
+    let playerPosition = useRef({ x: 0, y: 0, z: 0 })
 
     useEffect(() => {
-        camera.position.set(0, 5, 7)
-        camera.lookAt(0, 0, 15)
+        camera.position.set(0, 5, 0)
+        camera.lookAt(0, 0, 8)
 
         return api.subscribe(
             position => playerPosition.current = position,

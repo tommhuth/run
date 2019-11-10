@@ -8,7 +8,7 @@ import GameState from "../data/const/GameState"
 import materials from "../data/materials"
 
 export default function Player({
-    position = [0, 2, 7],
+    position = [0, 2, 0],
     radius = .35
 }) {
     let world = useWorld()

@@ -18,15 +18,12 @@ export default function getRandomBlock(previous) {
     switch (options.type) {
         case BlockType.PILLARS:
             options.depth = random.integer(10, 36)
-            break
-        case BlockType.BASE_TOWER:
-            options.depth = random.integer(4, 10)
-            break
+            break 
         case BlockType.STEPS:
             options.depth = random.integer(14, 30)
             break
         case BlockType.PLAIN:
-            options.depth = random.integer(7, 14)
+            options.depth = random.integer(6, 12)
             break
         case BlockType.GAP:
             options.depth = random.real(1, 2)
