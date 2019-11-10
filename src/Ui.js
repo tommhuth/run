@@ -8,7 +8,7 @@ export default function Ui() {
     return (
         <div id="ui">
             {state}<br /><br />
-            {Math.floor(z - 8 < 0 ? 0 : (z - 8)/10)}m<br />
+            {Math.floor(z - 8 < 0 ? 0 : (z - 8)/2)}m<br />
         </div>
     )
 }

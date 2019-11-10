@@ -42,7 +42,7 @@ export default function StepsBlock({
                 z: total + radius,
                 y: 1, 
                 x: 0,
-                radius: (depth - total) / 2,
+                radius: Math.max((depth - total) / 2, 2),
                 gap: 0,
             })
         }
@@ -51,11 +51,7 @@ export default function StepsBlock({
     })
 
     return (
-        <>
-        <Only if={cloud}>
-            <ParticleCloud position={[-2, 0, start + depth / 2]} />
-        </Only>
-
+        <> 
             {steps.map((i, index) => { 
                 return (
                     <SimulatedCylinder

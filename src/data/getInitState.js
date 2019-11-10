@@ -3,16 +3,23 @@ import GameState from "./const/GameState"
 import BlockType from "./const/BlockType"
 
 export default function getInitState() {
-    let mustRequestOrientationAccess = !!window.DeviceOrientationEvent.requestPermission
+    let mustRequestOrientationAccess = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission
 
     return {
         blocks: [
             {
                 id: uuid.v4(),
-                type: BlockType.BASE_TOWER,
+                type: BlockType.PLAIN,
                 depth: 20,
                 start: 0,
                 end: 20
+            },
+            {
+                id: uuid.v4(),
+                type: BlockType.PILLARS,
+                depth: 20,
+                start: 20,
+                end: 40
             }
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,

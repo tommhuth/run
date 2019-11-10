@@ -20,8 +20,8 @@ export default function Lights() {
             state => state.data.position
         )
 
-        gl.shadowMap.enabled = true
-        gl.shadowMap.type = PCFSoftShadowMap 
+        ///gl.shadowMap.enabled = true
+        //gl.shadowMap.type = PCFSoftShadowMap 
     }, [])  
 
     return (
@@ -35,8 +35,7 @@ export default function Lights() {
                 target-position={[3, -3, 5]}
             />
             <pointLight
-                ref={ref2}
-                castShadow 
+                ref={ref2} 
                 args={[0x00222b, .5, 10, 2]}
                 intensity={state=== GameState.RUNNING ? 4 : 0}
             /> 

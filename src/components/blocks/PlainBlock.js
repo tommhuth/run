@@ -15,11 +15,7 @@ export default function PlainBlock({
     let [cloud] = useState(random.bool(.5))
 
     return (
-        <>  
-            <Only if={cloud}>
-                <ParticleCloud position={[-1, 0, start + depth / 2]} />
-            </Only>
-
+        <>   
             <SimulatedCylinder
                 radius={depth/2}
                 height={40}

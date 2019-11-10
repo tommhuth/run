@@ -14,11 +14,7 @@ export default function BaseTowerBlock({
     let [cloud] = useState(random.bool(1.5))
 
     return (
-        <>
-            <Only if={cloud}>
-                <ParticleCloud position={[-3, 0, start + depth / 2]} />
-            </Only>
-
+        <>  
             {/* floor */}
             <SimulatedCylinder
                 height={40}

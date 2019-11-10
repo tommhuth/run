@@ -11,11 +11,14 @@ export default function getRandomBlock(previous) {
         start: previous.end
     }
 
-    while (BlockSettings[previous.type].illegalNext.includes(options.type)) {
-        options.type = random.pick(blocks)
+    while (!random.bool(BlockSettings[previous.type].likelihood) || BlockSettings[previous.type].illegalNext.includes(options.type)) {
+        options.type = random.pick(blocks.filter(i => i !== options.type)) 
     }
 
     switch (options.type) {
+        case BlockType.PILLARS:
+            options.depth = random.integer(10, 36)
+            break
         case BlockType.BASE_TOWER:
             options.depth = random.integer(4, 10)
             break
@@ -26,7 +29,7 @@ export default function getRandomBlock(previous) {
             options.depth = random.integer(7, 14)
             break
         case BlockType.GAP:
-            options.depth = random.real(1, 2.5)
+            options.depth = random.real(1, 2)
             break
     }
 
