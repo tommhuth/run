@@ -10,7 +10,7 @@ export default function PlainBlock({
     start, 
     depth
 }) { 
-    let [y] = useState(random.integer(-1, 1))
+    let [y] = useState(random.pick([-.5, .5, 0]))
     let [x] = useState(random.integer(-1, 1))
     let [cloud] = useState(random.bool(.5))
 
@@ -20,7 +20,7 @@ export default function PlainBlock({
                 radius={depth/2}
                 height={40}
                 mass={0}
-                segments={12}
+                segments={8}
                 position={[x, -20 + y, start + depth / 2]}
             />
         </>

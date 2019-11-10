@@ -19,6 +19,8 @@ export default function Lights() {
             (pos) => ref2.current.position.set(pos.x, pos.y, pos.z),
             state => state.data.position
         )
+       
+        window.info = gl.info
 
         ///gl.shadowMap.enabled = true
         //gl.shadowMap.type = PCFSoftShadowMap 

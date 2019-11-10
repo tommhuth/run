@@ -85,7 +85,7 @@ const [useStore, api] = create((set, get) => {
                 let { blocks, position } = get().data
                 let { addBlock } = get().actions
                 let previous = blocks[blocks.length - 1]
-                let buffer = 30
+                let buffer = 35
 
                 while (previous.end - position.z < buffer) {
                     previous = addBlock()

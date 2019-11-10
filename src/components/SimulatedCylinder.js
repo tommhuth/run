@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useRef, useEffect } from "react"
 import { Cylinder, Quaternion, Vec3 } from "cannon"
 import { useCannon } from "../data/cannon"
 import materials from "../data/materials"
@@ -25,6 +25,11 @@ export default function SimulatedCylinder({
         }
     }), [])
     let ref = useCannon(cannonConfig)
+    let ref2 = useRef()
+
+    useEffect(()=>{
+        () => ref2.current.dispose()
+    }, [])
 
     return (
         <mesh
@@ -32,7 +37,7 @@ export default function SimulatedCylinder({
             position={position}
             material={materials.gray} 
         >
-            <cylinderBufferGeometry attach="geometry" args={[radius, radius, height, segments]} />
+            <cylinderBufferGeometry  ref={ref2} attach="geometry" args={[radius, radius, height, segments]} />
         </mesh>
     )
 }
