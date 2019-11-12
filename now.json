@@ -2,18 +2,29 @@
     "env": {
         "REGISTER_SERVICEWORKER": "@register-serviceworker"
     },
+    "build": {
+        "env": {
+            "VARIABLE_NAME": "@environment-variable-name"
+        }
+    },
     "routes": [
         {
             "src": "/app.bundle.*",
-            "headers": {"cache-control": "max-age=9000000"}
+            "headers": {
+                "cache-control": "max-age=9000000"
+            }
         },
         {
             "src": "css/*.css",
-            "headers": {"cache-control": "max-age=9000000"}
+            "headers": {
+                "cache-control": "max-age=9000000"
+            }
         },
         {
             "src": "splashscreens/*.png",
-            "headers": {"cache-control": "max-age=9000000"}
+            "headers": {
+                "cache-control": "max-age=9000000"
+            }
         }
     ]
 }
