@@ -4,7 +4,7 @@
     },
     "build": {
         "env": {
-            "VARIABLE_NAME": "@environment-variable-name"
+            "REGISTER_SERVICEWORKER": "@register-serviceworker"
         }
     },
     "routes": [
