@@ -1,4 +1,7 @@
 {
+    "env": {
+        "REGISTER_SERVICEWORKER": "@register-serviceworker"
+    },
     "routes": [
         {
             "src": "/app.bundle.*",
