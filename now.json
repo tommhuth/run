@@ -3,6 +3,14 @@
         {
             "src": "/app.bundle.*",
             "headers": {"cache-control": "max-age=9000000"}
+        },
+        {
+            "src": "css/*.css",
+            "headers": {"cache-control": "max-age=9000000"}
+        },
+        {
+            "src": "splashscreens/*.png",
+            "headers": {"cache-control": "max-age=9000000"}
         }
     ]
 }
