@@ -1,12 +1,14 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import { Sphere } from "cannon"
 import { useCannon } from "../data/cannon"
-import { useFrame } from "react-three-fiber"
+import { useFrame, Dom } from "react-three-fiber"
 import { useStore } from "../data/store"
+import GameState from "../data/const/GameState"
 
 export default function Player({
     speed = 4
 }) {
+    let state = useStore(state => state.data.state)
     let actions = useStore(state => state.actions)
     let { ref, body } = useCannon({
         shape: new Sphere(1),
@@ -16,18 +18,33 @@ export default function Player({
         mass: 1,
         position: [0, 3, 0]
     })
+    let frames = useRef(0)
 
     useFrame(() => {
-        body.velocity.z = speed
+        if (state === GameState.RUNNING) {
+            if (body.velocity.z < .5 && frames.current > 3) {
+                actions.end()
+            }
 
-        actions.setPosition(body.position.x, body.position.y, body.position.z)
+            body.velocity.z = speed 
+            frames.current++
+            actions.setPosition(body.position.x, body.position.y, body.position.z)
+        } 
     })
 
     useEffect(() => {
         let onClick = () => {
+            if (state !== GameState.RUNNING) {
+                return
+            }
+
             body.velocity.y = speed * 2.5
         }
         let onMouseMove = (e) => {
+            if (state !== GameState.RUNNING) {
+                return
+            }
+
             let v = (e.clientX - (window.innerWidth / 2)) / (window.innerWidth / 2)
 
             body.velocity.x = v * -speed * 3
@@ -40,18 +57,20 @@ export default function Player({
             window.removeEventListener("click", onClick)
             window.removeEventListener("mousemove", onMouseMove)
         }
-    }, [body, speed])
+    }, [body, speed, state])
 
     return (
-        <mesh ref={ref}>
-            <meshPhongMaterial
-                attach={"material"}
-                args={[{ color: 0xfffb1f, transparent: true, opacity: .65, flatShading: true, emissive: 0xfffb1f, emissiveIntensity: .6 }]}
-            />
-            <sphereBufferGeometry
-                attach="geometry"
-                args={[1, 12, 6, 6]}
-            />
-        </mesh>
+        <> 
+            <mesh ref={ref}>
+                <meshPhongMaterial
+                    attach={"material"}
+                    args={[{ color: 0xfffb1f, transparent: true, opacity: .65, flatShading: true, emissive: 0xfffb1f, emissiveIntensity: .6 }]}
+                />
+                <sphereBufferGeometry
+                    attach="geometry"
+                    args={[1, 12, 6, 6]}
+                />
+            </mesh>
+        </>
     )
 }

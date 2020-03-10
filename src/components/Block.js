@@ -5,11 +5,13 @@ import { useCannon } from "../data/cannon"
 import random from "../data/random"
 import Enemy from "./Enemy"
 import Obstacle from "./Obstacle"
+import { material } from "../data/resources"
 
 export default function Block({
     depth,
     start,
     end,
+    empty = false,
     active: defaultActive = false,
     y
 }) {
@@ -22,7 +24,7 @@ export default function Block({
         position: [0, y - 2, start + depth / 2]
     })
     let [obstacles] = useState(() => {
-        let count = random.integer(0, 5)
+        let count = random.integer(0, empty ? 0 : 5)
         let result = []
 
         for (let i = 0; i < count; i++) {
@@ -40,7 +42,7 @@ export default function Block({
     })
     let [enemies] = useState(() => {
         let result = []
-        let count = obstacles.length === 0 ? random.integer(1, depth * .25) : 0
+        let count = obstacles.length === 0 && !empty ? random.integer(1, depth * .25) : 0
         let maxVelocity = 20
 
         for (let i = 0; i < count; i++) {

@@ -6,9 +6,7 @@ import uuid from "uuid"
 
 const [useStore, api] = create((set, get) => {
     return {
-        data: {
-            ...getInitState()
-        },
+        data: getInitState(),
         actions: {
             start() {
                 set({
@@ -17,28 +15,23 @@ const [useStore, api] = create((set, get) => {
                         state: GameState.RUNNING
                     }
                 })
-            },
-            setBaseY(y) {
-                set({
-                    data: {
-                        ...get().data,
-                        baseY: y
-                    }
-                })
-            },
+            }, 
             reset() {
-                let { hasDeviceOrientation, mustRequestOrientationAccess } = get().data
+                let { 
+                    hasDeviceOrientation, 
+                    mustRequestOrientationAccess, 
+                    attempts 
+                } = get().data
 
                 set({
                     data: {
                         ...getInitState(),
                         state: GameState.RUNNING,
-                        attempts: get().data.attempts + 1,
+                        attempts: attempts + 1,
                         hasDeviceOrientation,
                         mustRequestOrientationAccess
                     }
-                })
-                get().actions.generatePath()
+                }) 
             },
             end() {
                 set({
