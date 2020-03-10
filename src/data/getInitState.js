@@ -8,10 +8,26 @@ export default function getInitState() {
         blocks: [
             {
                 id: uuid.v4(),
-                depth: 60,
+                depth: 40,
                 start: -30,
                 empty: true,
                 y: 0,
+                end: 10
+            },
+            {
+                id: uuid.v4(),
+                depth: 10,
+                start: 10,
+                empty: true,
+                y: 2,
+                end: 20
+            },
+            {
+                id: uuid.v4(),
+                depth: 10,
+                start: 20,
+                empty: true,
+                y: 4,
                 end: 30
             }
         ],
