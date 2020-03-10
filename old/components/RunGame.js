@@ -54,7 +54,7 @@ export default function RunGame() {
 
                 <CannonProvider defaultFriction={.8} defaultRestitution={.5}>
                     <Camera /> 
-                       <Player key={attempts} />  
+                    <Player key={attempts} />  
                     <Path />
                 </CannonProvider>
             </Canvas>
