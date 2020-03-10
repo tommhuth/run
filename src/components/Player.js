@@ -9,6 +9,7 @@ export default function Player({
     speed = 4
 }) {
     let state = useStore(state => state.data.state)
+    let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
     let { ref, body } = useCannon({
         shape: new Sphere(1),
@@ -33,7 +34,9 @@ export default function Player({
     })
 
     useEffect(() => {
-        let onClick = () => {
+        let onClick = (e) => {
+            e.preventDefault()
+            
             if (state !== GameState.RUNNING) {
                 return
             }
@@ -49,13 +52,24 @@ export default function Player({
 
             body.velocity.x = v * -speed * 3
         }
+        let onDeviceOrientation = e => {
+            let max = speed * 3
+            let velocity = -e.gamma / 50 * max
+
+            body.velocity.x = velocity
+        }
 
         window.addEventListener("click", onClick)
         window.addEventListener("mousemove", onMouseMove)
 
+        if (hasDeviceOrientation) {
+            window.addEventListener("deviceorientation", onDeviceOrientation)
+        } 
+
         return () => {
             window.removeEventListener("click", onClick)
             window.removeEventListener("mousemove", onMouseMove)
+            window.removeEventListener("deviceorientation", onDeviceOrientation)
         }
     }, [body, speed, state])
 
