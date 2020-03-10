@@ -18,6 +18,7 @@ export default function RunGame() {
 
     useEffect(() => {
         console.log(state)
+        
         let listener = () => {
             switch (state) {
                 case GameState.REQUEST_ORIENTATION_ACCESS:

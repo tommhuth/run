@@ -27,22 +27,14 @@ export default function Player({
                 actions.end()
             }
 
-            body.velocity.z = speed 
+            body.velocity.z = speed
             frames.current++
             actions.setPosition(body.position.x, body.position.y, body.position.z)
-        } 
+        }
     })
 
-    useEffect(() => {
-        let onClick = (e) => {
-            e.preventDefault()
-
-            if (state !== GameState.RUNNING) {
-                return
-            }
-
-            body.velocity.y = speed * 2.5
-        }
+    // left/right
+    useEffect(() => { 
         let onMouseMove = (e) => {
             if (state !== GameState.RUNNING) {
                 return
@@ -56,29 +48,57 @@ export default function Player({
             if (state !== GameState.RUNNING) {
                 return
             }
-            
+
             let max = speed * 3
             let velocity = -e.gamma / 50 * max
 
             body.velocity.x = velocity
         }
-
-        window.addEventListener("click", onClick)
+ 
         window.addEventListener("mousemove", onMouseMove)
 
         if (hasDeviceOrientation) {
             window.addEventListener("deviceorientation", onDeviceOrientation)
-        } 
+        }
 
-        return () => {
-            window.removeEventListener("click", onClick)
+        return () => { 
             window.removeEventListener("mousemove", onMouseMove)
             window.removeEventListener("deviceorientation", onDeviceOrientation)
         }
+    }, [body, hasDeviceOrientation, speed, state])
+
+    // jump
+    useEffect(() => {
+        let root = document.getElementById("root")
+        let onClick = () => {
+            if (state !== GameState.RUNNING) {
+                return
+            }
+
+            body.velocity.y = speed * 2.5
+        }
+        let onTouchStart = (e) => {
+            if (state === GameState.RUNNING) {
+                e.preventDefault() 
+            }
+
+            onClick()
+        } 
+
+        root.addEventListener("click", onClick)
+        root.addEventListener("touchstart", onTouchStart) 
+
+        return () => {
+            root.removeEventListener("click", onClick)
+            root.removeEventListener("touchstart", onTouchStart) 
+        }
     }, [body, speed, state])
 
+
+
+
     return (
-        <> 
+        <>
             <mesh ref={ref}>
                 <meshPhongMaterial
                     attach={"material"}
