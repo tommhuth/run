@@ -50,7 +50,7 @@ export default function RunGame() {
         <Canvas
             orthographic
             noEvents
-            pixelRatio={1}
+            pixelRatio={window.matchMedia("(max-width: 600px)").matches ? window.devicePixelRatio : 1}
             camera={{
                 zoom: 35,
                 near: -50,

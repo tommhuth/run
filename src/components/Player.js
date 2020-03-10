@@ -36,7 +36,7 @@ export default function Player({
     useEffect(() => {
         let onClick = (e) => {
             e.preventDefault()
-            
+
             if (state !== GameState.RUNNING) {
                 return
             }
@@ -53,6 +53,10 @@ export default function Player({
             body.velocity.x = v * -speed * 3
         }
         let onDeviceOrientation = e => {
+            if (state !== GameState.RUNNING) {
+                return
+            }
+            
             let max = speed * 3
             let velocity = -e.gamma / 50 * max
 
