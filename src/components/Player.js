@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react"
 import { Sphere } from "cannon"
 import { Vec3, Ray, RaycastResult } from "cannon"
-import { useFrame } from "react-three-fiber"
+import { useFrame, useThree } from "react-three-fiber"
 import { useCannon, useWorld } from "../data/cannon"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
@@ -25,7 +25,10 @@ export default function Player({
         cb: setBody
     }), [])
     let ref = useCannon(cannonConfig)
-    let forward = useRef(0)    
+    let forward = useRef(0)   
+    let {gl} = useThree()  
+
+    useEffect(() => console.log(gl.info), [gl, state])
 
     // move forward
     useFrame(() => {

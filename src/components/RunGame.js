@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { CannonProvider } from "../data/cannon"
-import { Canvas } from "react-three-fiber"
+import { Canvas, useThree } from "react-three-fiber"
 import Lights from "./Lights"
 import Camera from "./Camera"
 import Path from "./Path"
@@ -14,7 +14,7 @@ export default function RunGame() {
     let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let attempts = useStore(state => state.data.attempts)
-    let actions = useStore(state => state.actions)
+    let actions = useStore(state => state.actions) 
 
     useEffect(() => {
         let listener = () => {
@@ -26,9 +26,9 @@ export default function RunGame() {
                 case GameState.GAME_OVER:
                     return actions.reset()
             }
-        }
+        } 
 
-        window.addEventListener("click", listener)
+        window.addEventListener("click", listener) 
 
         return () => window.removeEventListener("click", listener)
     }, [state])
@@ -44,13 +44,14 @@ export default function RunGame() {
 
             return () => window.removeEventListener("deviceorientation", listener)
         }
-    }, [state, mustRequestOrientationAccess, hasDeviceOrientation])
+    }, [state, mustRequestOrientationAccess, hasDeviceOrientation]) 
 
     return (
         <>
             <Ui />
-            <Canvas pixelRatio={window.devicePixelRatio}>
+            <Canvas pixelRatio={Math.min(1.5, window.devicePixelRatio)} noEvents>
                 <fog attach="fog" args={[0xffffff, 12, 30]} />
+
                 <CannonProvider defaultFriction={.8} defaultRestitution={.5}>
                     <Camera />
                     <Lights />

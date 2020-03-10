@@ -27,7 +27,7 @@ export default function SimulatedCylinder({
     let ref = useCannon(cannonConfig)
     let ref2 = useRef()
 
-    useEffect(()=>{
+    useEffect(() => {
         () => ref2.current.dispose()
     }, [])
 
@@ -35,9 +35,13 @@ export default function SimulatedCylinder({
         <mesh
             ref={ref}
             position={position}
-            material={materials.gray} 
+            material={materials.gray}
         >
-            <cylinderBufferGeometry  ref={ref2} attach="geometry" args={[radius, radius, height, segments]} />
+            <cylinderBufferGeometry
+                ref={ref2}
+                attach="geometry"
+                args={[radius, radius, height, segments]}
+            />
         </mesh>
     )
 }

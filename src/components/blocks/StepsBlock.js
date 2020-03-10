@@ -49,6 +49,8 @@ export default function StepsBlock({
 
         return steps
     })
+    
+    //console.log("render")
 
     return (
         <> 

@@ -16,15 +16,19 @@ export default function Lights() {
  
     useEffect(() => {
         api.subscribe(
-            (pos) => ref2.current.position.set(pos.x, pos.y, pos.z),
+            (pos) => {
+                ref2.current.position.set(pos.x, pos.y, pos.z)
+                //console.log(gl && gl.info.render)
+            },
             state => state.data.position
         )
        
-        window.info = gl.info
+        
 
         ///gl.shadowMap.enabled = true
         //gl.shadowMap.type = PCFSoftShadowMap 
-    }, [])  
+    }, [gl])  
+    //console.log("render")
 
     return (
         <>

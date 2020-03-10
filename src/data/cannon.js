@@ -7,7 +7,7 @@ const context = React.createContext()
 
 export function CannonProvider({
     children,
-    iterations = 6,
+    iterations = 3,
     defaultRestitution = 0,
     defaultFriction = .1,
     gravity = [0, -10, 0]
@@ -17,8 +17,8 @@ export function CannonProvider({
     //let [debug] = useState(() => new Debug(scene, world))
 
     useEffect(() => {
-        world.broadphase = new SAPBroadphase(world)
-        world.broadphase.axisIndex = 2
+        //world.broadphase = new SAPBroadphase(world)
+        //world.broadphase.axisIndex = 2
         world.solver.iterations = iterations
         world.defaultContactMaterial.friction = defaultFriction
         world.defaultContactMaterial.restitution = defaultRestitution
@@ -57,6 +57,8 @@ export function useCannon({ mass, shape, position, cb = () => { } }, deps = []) 
 
         // Add body to world on mount
         world.addBody(body)
+        
+        //console.log("cn")
 
         // Remove body on unmount
         return () => world.removeBody(body)

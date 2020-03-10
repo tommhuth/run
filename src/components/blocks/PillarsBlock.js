@@ -29,7 +29,7 @@ export default function PillarsBlock({
 
         for (let i = 0; i < widthCount; i++) {
             for (let j = 0; j < depthCount; j++) {
-                let height = pathEdge.includes(i) ? random.pick([58, 59, 57, 60]) : random.pick([39, 40, 41])
+                let height = pathEdge.includes(i) ? random.pick([50, 56, 52, 38, 55, 58]) : random.pick([39, 40, 41])
                 let simulated = !simulationEdge.includes(i)
 
                 pillars.push({
