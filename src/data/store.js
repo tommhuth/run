@@ -1,7 +1,8 @@
 import create from "zustand"
 import GameState from "./const/GameState"
-import getRandomBlock from "./getRandomBlock"
+import random from "./random"
 import getInitState from "./getInitState"
+import uuid from "uuid"
 
 const [useStore, api] = create((set, get) => {
     return {
@@ -36,7 +37,7 @@ const [useStore, api] = create((set, get) => {
                         hasDeviceOrientation,
                         mustRequestOrientationAccess
                     }
-                }) 
+                })
                 get().actions.generatePath()
             },
             end() {
@@ -83,27 +84,47 @@ const [useStore, api] = create((set, get) => {
             },
             generatePath() {
                 let { blocks, position } = get().data
-                let { addBlock } = get().actions
+                let { addBlock, clearBlocks } = get().actions
                 let previous = blocks[blocks.length - 1]
-                let buffer = 35
+                let forwardBuffer = 35
 
-                while (previous.end - position.z < buffer) {
+                while (previous.end - position.z < forwardBuffer) {
                     previous = addBlock()
-                    position = get().data.position 
+                    position = get().data.position
                 }
+
+                clearBlocks()
             },
-            addBlock() {
+            clearBlocks() {
                 let { blocks, position, ...rest } = get().data
-                let previous = blocks[blocks.length - 1]
-                let next = getRandomBlock(previous)
-                let buffer = 5 // backwards cutoff distance from ball
-                let futureBlocks = blocks.filter(i => i.start + i.depth > position.z - buffer)
+                let backwardBuffer = 25 // backwards cutoff distance from ball
+                let futureBlocks = blocks.filter(i => i.end > position.z - backwardBuffer)
 
                 set({
                     data: {
                         ...rest,
                         position,
-                        blocks: [...futureBlocks, next]
+                        blocks: [...futureBlocks]
+                    }
+                })
+            },
+            addBlock() {
+                let { blocks, position, ...rest } = get().data
+                let previous = blocks[blocks.length - 1]
+                let depth = random.integer(10, 25)
+                let next = {
+                    start: previous.end,
+                    end: previous.end + depth,
+                    depth: depth,
+                    id: uuid.v4(),
+                    y: random.pick([previous.y, previous.y + 2])
+                }
+
+                set({
+                    data: {
+                        ...rest,
+                        position,
+                        blocks: [...blocks, next]
                     }
                 })
 

@@ -40,7 +40,7 @@ export default function Lights() {
                 intensity={.5}
                 target-position={[3, -3, 5]}
             />
-            <pointLight
+            <ambientLight
                 ref={ref2} 
                 args={[0x00222b, .5, 10, 2]}
                 intensity={state=== GameState.RUNNING ? 4 : 0}

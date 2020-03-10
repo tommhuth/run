@@ -137,7 +137,7 @@ export default function Player({
 
     return (
         <mesh ref={ref} material={materials.white}>
-            <sphereBufferGeometry attach="geometry" args={[radius, 32, 32]} /> 
+            <sphereBufferGeometry attach="geometry" args={[radius, 16, 16]} /> 
         </mesh>
     )
 }

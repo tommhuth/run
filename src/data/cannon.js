@@ -1,7 +1,6 @@
-import { World, SAPBroadphase, Body } from "cannon"
+import { World, Body, SAPBroadphase, Vec3 } from "cannon"
 import React, { useRef, useEffect, useState, useContext } from "react"
-import { useFrame, useThree } from "react-three-fiber"
-import Debug from "./debug"
+import { useFrame } from "react-three-fiber"
 
 const context = React.createContext()
 
@@ -12,12 +11,10 @@ export function CannonProvider({
     defaultFriction = .1,
     gravity = [0, -10, 0]
 }) {
-    let [world] = useState(() => new World())
-    //let { scene } = useThree()
-    //let [debug] = useState(() => new Debug(scene, world))
+    let [world] = useState(() => new World()) 
 
     useEffect(() => {
-        //world.broadphase = new SAPBroadphase(world)
+        //world.broadphase = new SAPBroadphase(world) 
         //world.broadphase.axisIndex = 2
         world.solver.iterations = iterations
         world.defaultContactMaterial.friction = defaultFriction
@@ -26,9 +23,8 @@ export function CannonProvider({
     }, [world])
 
     // Run world stepper every frame
-    useFrame(() => {
-        world.step(1 / 30)
-        //debug.update()
+    useFrame(() => { 
+        world.step(1/30) 
     })
 
     // Distribute world via context
@@ -40,37 +36,51 @@ export function useWorld() {
 }
 
 // Custom hook to maintain a world physics body
-export function useCannon({ mass, shape, position, cb = () => { } }, deps = []) {
+export function useCannon({
+    mass = 0,
+    shape,
+    active = false,
+    position = [0,0,0],
+    update,
+    collisionFilterGroup,
+    collisionFilterMask
+}, deps = []) {
     let ref = useRef()
     // Get cannon world object
     let world = useContext(context)
     // Instantiate a physics body
-    let [body] = useState(() => new Body({ mass }))
+    let [body] = useState(() => new Body({ 
+        mass, 
+        position: new Vec3(...position),
+        collisionFilterGroup,
+        collisionFilterMask
+    }))
 
-    useEffect(() => {
-        // Call function so the user can add shapes
-        body.addShape(shape)
-        body.position.set(...position)  
-
-        // callback
-        cb(body)
-
-        // Add body to world on mount
-        world.addBody(body)
-        
-        //console.log("cn")
-
-        // Remove body on unmount
-        return () => world.removeBody(body)
+    useEffect(() => { 
+        body.addShape(shape) 
     }, deps)
 
+    useEffect(()=> {
+        if (active) { 
+            // Add body to world on mount
+            world.addBody(body)  
+
+            // Remove body on unmount
+            return () => world.removeBody(body)
+        } else {
+            world.removeBody(body) 
+        }
+    }, [active, body])
+
     useFrame(() => {
-        if (ref.current) {
+        if (!update && ref.current) {
             // Transport cannon physics into the referenced threejs object
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
+        } else if(active && update) {
+            update(body)
         }
     })
 
-    return ref
+    return { ref, body }
 }

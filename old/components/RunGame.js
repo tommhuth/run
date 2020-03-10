@@ -53,9 +53,8 @@ export default function RunGame() {
                 <fog attach="fog" args={[0xffffff, 12, 30]} />
 
                 <CannonProvider defaultFriction={.8} defaultRestitution={.5}>
-                    <Camera />
-                    <Lights />
-                    {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ? <Player key={attempts} /> : null}
+                    <Camera /> 
+                       <Player key={attempts} />  
                     <Path />
                 </CannonProvider>
             </Canvas>

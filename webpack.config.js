@@ -90,8 +90,7 @@ module.exports = {
             {
                 test: /\.glsl$/,
                 loader: "webpack-glsl-loader"
-            },
-            { test: /\.json$/, loader: "json" },
+            }, 
             {
                 test: /\.js$/,
                 exclude: /node_modules\/(?!(@huth\/utils)\/).*/,
