@@ -81,7 +81,7 @@ export default function Block({
 
     return (
         <>
-            <mesh material={material.blue} ref={ref}>
+            <mesh material={active ? material.blue : material.red} ref={ref}>
                 <boxBufferGeometry attach="geometry" args={[200, 10, depth]} />
             </mesh>
 
