@@ -17,11 +17,11 @@ export default function Block({
 }) {
     let [active, setActive] = useState(defaultActive)
     let { ref } = useCannon({
-        shape: new Box(new Vec3(50, 2, depth / 2)),
+        shape: new Box(new Vec3(100, 5, depth / 2)),
         active,
         collisionFilterGroup: 6,
         collisionFilterMask: 1 | 2 | 4,
-        position: [0, y - 2, start + depth / 2]
+        position: [0, y - 5, start + depth / 2]
     })
     let [obstacles] = useState(() => {
         let count = random.integer(0, empty ? 0 : 5)
@@ -82,7 +82,7 @@ export default function Block({
     return (
         <>
             <mesh material={material.blue} ref={ref}>
-                <boxBufferGeometry attach="geometry" args={[200, 4, depth]} />
+                <boxBufferGeometry attach="geometry" args={[200, 10, depth]} />
             </mesh>
 
             {obstacles.map((props, index) => <Obstacle active={active} key={index} {...props} />)}
