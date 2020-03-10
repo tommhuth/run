@@ -14,6 +14,7 @@ export default function RunGame() {
     let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
+    let small = window.matchMedia("(max-width: 600px)").matches
 
     useEffect(() => {
         console.log(state)
@@ -50,16 +51,15 @@ export default function RunGame() {
         <Canvas
             orthographic
             noEvents
-            pixelRatio={window.matchMedia("(max-width: 600px)").matches ? window.devicePixelRatio : 1}
+            pixelRatio={small ? window.devicePixelRatio : 1}
             camera={{
-                zoom: 35,
+                zoom: small ? 28 : 35,
                 near: -50,
                 far: 100,
                 left: -50,
                 right: 50
             }}
-        >    
-
+        >     
             <CannonProvider
                 defaultFriction={.8}
                 defaultRestitution={.5}
