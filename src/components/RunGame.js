@@ -54,7 +54,7 @@ export default function RunGame() {
             noEvents
             pixelRatio={small ? window.devicePixelRatio : 1}
             camera={{
-                zoom: small ? 28 : 35,
+                zoom: small ? 25 : 35,
                 near: -50,
                 far: 100,
                 left: -50,
