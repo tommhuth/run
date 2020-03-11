@@ -108,7 +108,7 @@ const [useStore, api] = create((set, get) => {
                 let next = {
                     start: previous.end,
                     end: previous.end + depth,
-                    depth: depth,
+                    depth,
                     id: uuid.v4(),
                     y: random.pick([previous.y, previous.y + 2])
                 }

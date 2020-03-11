@@ -34,7 +34,7 @@ export default function Player({
     })
 
     // left/right
-    useEffect(() => { 
+    useEffect(() => {
         let onMouseMove = (e) => {
             if (state !== GameState.RUNNING) {
                 return
@@ -54,14 +54,14 @@ export default function Player({
 
             body.velocity.x = velocity
         }
- 
+
         window.addEventListener("mousemove", onMouseMove)
 
         if (hasDeviceOrientation) {
             window.addEventListener("deviceorientation", onDeviceOrientation)
         }
 
-        return () => { 
+        return () => {
             window.removeEventListener("mousemove", onMouseMove)
             window.removeEventListener("deviceorientation", onDeviceOrientation)
         }
@@ -79,30 +79,34 @@ export default function Player({
         }
         let onTouchStart = (e) => {
             if (state === GameState.RUNNING) {
-                e.preventDefault() 
+                e.preventDefault()
             }
 
             onClick()
-        } 
+        }
 
         root.addEventListener("click", onClick)
-        root.addEventListener("touchstart", onTouchStart) 
+        root.addEventListener("touchstart", onTouchStart)
 
         return () => {
             root.removeEventListener("click", onClick)
-            root.removeEventListener("touchstart", onTouchStart) 
+            root.removeEventListener("touchstart", onTouchStart)
         }
     }, [body, speed, state])
-
-
-
 
     return (
         <>
             <mesh ref={ref}>
                 <meshPhongMaterial
                     attach={"material"}
-                    args={[{ color: 0xfffb1f, transparent: true, opacity: .65, flatShading: true, emissive: 0xfffb1f, emissiveIntensity: .6 }]}
+                    args={[{
+                        color: 0xfffb1f,
+                        transparent: true,
+                        opacity: .65,
+                        flatShading: true,
+                        emissive: 0xfffb1f,
+                        emissiveIntensity: 1
+                    }]}
                 />
                 <sphereBufferGeometry
                     attach="geometry"

@@ -13,7 +13,8 @@ export default function getInitState() {
                 empty: true,
                 y: 0,
                 end: 10
-            },
+            }, 
+
             {
                 id: uuid.v4(),
                 depth: 10,
@@ -25,11 +26,10 @@ export default function getInitState() {
             {
                 id: uuid.v4(),
                 depth: 10,
-                start: 20,
-                empty: true,
+                start: 20, 
                 y: 4,
                 end: 30
-            }
+            } 
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,
