@@ -1,9 +1,22 @@
-import React, { useEffect, useRef, useCallback } from "react"
-import { Sphere } from "cannon"
+import React, { useEffect, useRef, useCallback, useState } from "react"
+import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
+
+
+function intersectBody(from, to, body) {
+    let result = new RaycastResult()
+    let ray = new Ray(
+        new Vec3(...from),
+        new Vec3(...to)
+    )
+
+    ray.intersectBody(body, result)
+
+    return result
+}
 
 export default function Player({
     speed = 4
@@ -12,6 +25,7 @@ export default function Player({
     let state = useStore(state => state.data.state)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
+    let [canJump, setCanJump] = useState(true)
     let { ref, body } = useCannon({
         shape: new Sphere(1),
         collisionFilterGroup: 2,
@@ -21,12 +35,12 @@ export default function Player({
         position: [0, 3, 0]
     })
     let frames = useRef(0)
-    let boom = useCallback(()=> {
+    let boom = useCallback(() => {
         let player = body
-        let enemies = world.bodies.filter(i => i.customData?.enemy) 
+        let enemies = world.bodies.filter(i => i.customData?.enemy)
         let limit = 15
 
-        for (let enemy of enemies) { 
+        for (let enemy of enemies) {
             let distance = player.position.distanceTo(enemy.position)
 
             if (distance < limit) {
@@ -34,10 +48,10 @@ export default function Player({
                 let direction = enemy.position.clone()
                     .vsub(player.position.clone())
                     .unit()
-                    .mult(force * enemy.mass) 
+                    .mult(force * enemy.mass)
 
                 enemy.applyImpulse(direction, enemy.position)
-            } 
+            }
         }
     }, [body, world])
 
@@ -52,6 +66,27 @@ export default function Player({
             actions.setPosition(body.position.x, body.position.y, body.position.z)
         }
     })
+
+
+    // jump set on collision
+    useEffect(() => {
+        if (body && state === GameState.RUNNING) {
+            body.addEventListener("collide", ({ body: target }) => {
+                // if collieded body is below player,
+                // we hit the "top" of the other body and can jump again
+                let intersection = intersectBody(
+                    body.position.toArray(),
+                    [body.position.x, body.position.y - 50, body.position.z],
+                    target
+                )
+
+                if (intersection.hasHit) {
+                    //actions.setBaseY(body.position.y)
+                    setCanJump(true)
+                }
+            })
+        }
+    }, [body, state])
 
     // boom
     useEffect(() => {
@@ -108,7 +143,10 @@ export default function Player({
                 return
             }
 
-            body.velocity.y = speed * 2.5
+            if (canJump) {
+                body.velocity.y = speed * 2.5
+                setCanJump(false)
+            }
         }
         let onTouchStart = (e) => {
             if (state === GameState.RUNNING) {
@@ -125,10 +163,10 @@ export default function Player({
             root.removeEventListener("click", onClick)
             root.removeEventListener("touchstart", onTouchStart)
         }
-    }, [body, speed, state])
+    }, [body, speed, canJump, state])
 
     return (
-        <> 
+        <>
             <mesh ref={ref}>
                 <meshPhongMaterial
                     attach={"material"}
