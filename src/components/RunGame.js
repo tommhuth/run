@@ -7,6 +7,7 @@ import Path from "./Path"
 import Player from "./Player"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
+import Config from "../data/Config"
 
 export default function RunGame() {
     let state = useStore(state => state.data.state)
@@ -54,13 +55,13 @@ export default function RunGame() {
             noEvents
             pixelRatio={small ? window.devicePixelRatio : 1}
             camera={{
-                zoom: small ? 20 : 35,
+                zoom: Config.DEBUG_MODE ? 15 : small ? 20 : 35,
                 near: -50,
                 far: 100,
                 left: -50,
                 right: 50
             }}
-        >     
+        >      
             <CannonProvider
                 defaultFriction={.8}
                 defaultRestitution={.5}
@@ -74,3 +75,5 @@ export default function RunGame() {
         </Canvas>
     )
 }
+
+// 0x043c4b
