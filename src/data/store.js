@@ -3,6 +3,7 @@ import GameState from "./const/GameState"
 import random from "./random"
 import getInitState from "./getInitState"
 import uuid from "uuid"
+import BlockType from "./const/BlockType"
 
 const [useStore, api] = create((set, get) => {
     return {
@@ -15,12 +16,12 @@ const [useStore, api] = create((set, get) => {
                         state: GameState.RUNNING
                     }
                 })
-            }, 
+            },
             reset() {
-                let { 
-                    hasDeviceOrientation, 
-                    mustRequestOrientationAccess, 
-                    attempts 
+                let {
+                    hasDeviceOrientation,
+                    mustRequestOrientationAccess,
+                    attempts
                 } = get().data
 
                 set({
@@ -31,7 +32,7 @@ const [useStore, api] = create((set, get) => {
                         hasDeviceOrientation,
                         mustRequestOrientationAccess
                     }
-                }) 
+                })
             },
             end() {
                 set({
@@ -108,6 +109,7 @@ const [useStore, api] = create((set, get) => {
                 let next = {
                     start: previous.end,
                     end: previous.end + depth,
+                    type: BlockType.OBSTACLES,
                     depth,
                     id: uuid.v4(),
                     y: random.pick([previous.y, previous.y + 2])

@@ -1,5 +1,6 @@
 import uuid from "uuid"
 import GameState from "./const/GameState"
+import BlockType from "./const/BlockType"
 
 export default function getInitState() {
     let mustRequestOrientationAccess = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission
@@ -10,26 +11,43 @@ export default function getInitState() {
                 id: uuid.v4(),
                 depth: 40,
                 start: -30,
-                empty: true,
+                type: BlockType.PLAIN,
                 y: 0,
                 end: 10
-            }, 
+            },
 
             {
                 id: uuid.v4(),
                 depth: 10,
                 start: 10,
-                empty: true,
+                type: BlockType.PLAIN,
                 y: 2,
                 end: 20
             },
             {
                 id: uuid.v4(),
                 depth: 10,
-                start: 20, 
+                start: 20,
+                type: BlockType.ENEMIES,
                 y: 4,
                 end: 30
-            } 
+            },
+            {
+                id: uuid.v4(),
+                depth: 20,
+                start: 30,
+                type: BlockType.ENEMIES,
+                y: 4,
+                end: 50
+            },
+            {
+                id: uuid.v4(),
+                depth: 25,
+                start: 50,
+                type: BlockType.ENEMIES,
+                y: 6,
+                end: 75
+            }
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,

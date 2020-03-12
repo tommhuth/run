@@ -1,13 +1,14 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useCallback } from "react"
 import { Sphere } from "cannon"
-import { useCannon } from "../data/cannon"
-import { useFrame, Dom } from "react-three-fiber"
+import { useCannon, useWorld } from "../data/cannon"
+import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
 
 export default function Player({
     speed = 4
 }) {
+    let world = useWorld()
     let state = useStore(state => state.data.state)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
@@ -20,6 +21,25 @@ export default function Player({
         position: [0, 3, 0]
     })
     let frames = useRef(0)
+    let boom = useCallback(()=> {
+        let player = body
+        let enemies = world.bodies.filter(i => i.customData?.enemy) 
+        let limit = 15
+
+        for (let enemy of enemies) { 
+            let distance = player.position.distanceTo(enemy.position)
+
+            if (distance < limit) {
+                let force = Math.min(Math.max(0, 1 - distance / limit), 1) * 25
+                let direction = enemy.position.clone()
+                    .vsub(player.position.clone())
+                    .unit()
+                    .mult(force * enemy.mass) 
+
+                enemy.applyImpulse(direction, enemy.position)
+            } 
+        }
+    }, [body, world])
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
@@ -32,6 +52,19 @@ export default function Player({
             actions.setPosition(body.position.x, body.position.y, body.position.z)
         }
     })
+
+    // boom
+    useEffect(() => {
+        let onKeyDown = ({ which }) => {
+            if (which === 32) {
+                boom()
+            }
+        }
+
+        window.addEventListener("keydown", onKeyDown)
+
+        return () => window.removeEventListener("keydown", onKeyDown)
+    }, [boom])
 
     // left/right
     useEffect(() => {
@@ -95,7 +128,7 @@ export default function Player({
     }, [body, speed, state])
 
     return (
-        <>
+        <> 
             <mesh ref={ref}>
                 <meshPhongMaterial
                     attach={"material"}

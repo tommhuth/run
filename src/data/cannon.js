@@ -40,7 +40,9 @@ export function useCannon({
     mass = 0,
     shape,
     active = false,
+    customData = {},
     position = [0,0,0],
+    velocity = [0,0,0],
     update,
     collisionFilterGroup,
     collisionFilterMask
@@ -52,12 +54,14 @@ export function useCannon({
     let [body] = useState(() => new Body({ 
         mass, 
         position: new Vec3(...position),
+        velocity: new Vec3(...velocity),
         collisionFilterGroup,
         collisionFilterMask
     }))
 
     useEffect(() => { 
         body.addShape(shape) 
+        body.customData = customData
     }, deps)
 
     useEffect(()=> {
