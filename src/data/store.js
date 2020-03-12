@@ -94,14 +94,16 @@ const [useStore, api] = create((set, get) => {
                 let { blocks, position, ...rest } = get().data
                 let backwardBuffer = 25 // backwards cutoff distance from ball
                 let futureBlocks = blocks.filter(i => i.end > position.z - backwardBuffer)
-
-                set({
-                    data: {
-                        ...rest,
-                        position,
-                        blocks: [...futureBlocks]
-                    }
-                })
+ 
+                if (futureBlocks.length !== blocks.length) {
+                    set({
+                        data: {
+                            ...rest,
+                            position,
+                            blocks: [...futureBlocks]
+                        }
+                    })
+                }
             },
             addBlock() {
                 let { blocks, position, ...rest } = get().data
