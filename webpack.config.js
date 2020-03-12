@@ -73,6 +73,7 @@ const plugins = [
 
 module.exports = {
     entry: { app: "./src/app.js" },
+    devtool: false,
     output: {
         path: path.resolve(__dirname, "public"),
         filename: "[name].bundle.[hash:6].js",
