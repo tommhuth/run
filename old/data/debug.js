@@ -1,4 +1,5 @@
-/* global CANNON,THREE,Detector */
+/* eslint-disable */
+
 import * as CANNON from "cannon"
 import * as THREE from "three"
 
