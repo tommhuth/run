@@ -30,7 +30,8 @@ const [useStore, api] = create((set, get) => {
                         state: GameState.RUNNING,
                         attempts: attempts + 1,
                         hasDeviceOrientation,
-                        mustRequestOrientationAccess
+                        mustRequestOrientationAccess,
+                        position: { x: 0, y: 0, z: 0 }
                     }
                 })
             },
