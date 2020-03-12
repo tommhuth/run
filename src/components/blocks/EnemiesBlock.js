@@ -1,23 +1,13 @@
-import React, { useState } from "react"
-import { Box, Vec3 } from "cannon"
-import { useCannon } from "../../data/cannon"
+import React, { useState } from "react" 
 import random from "../../data/random"
-import Enemy from "../Enemy"
-import { material } from "../../data/resources"
+import Enemy from "../Enemy" 
 
 export default function EnemiesBlock({
     depth,
     start,
     active,
     y
-}) {
-    let { ref } = useCannon({
-        shape: new Box(new Vec3(100, 5, depth / 2)),
-        active,
-        collisionFilterGroup: 6,
-        collisionFilterMask: 1 | 2 | 4,
-        position: [0, y - 5, start + depth / 2]
-    })
+}) { 
     let [enemies] = useState(() => {
         let result = []
         let count = Math.min(Math.max(1, random.integer(1, depth * .15)), 4)
@@ -43,11 +33,7 @@ export default function EnemiesBlock({
     }) 
 
     return (
-        <>
-            <mesh material={active ? material.blue : material.red} ref={ref}>
-                <boxBufferGeometry attach="geometry" args={[200, 10, depth]} />
-            </mesh>
-
+        <> 
             {enemies.map((props, index) => <Enemy active={active} key={index} {...props} />)}
         </>
     )
