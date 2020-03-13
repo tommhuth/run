@@ -3,6 +3,7 @@ import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
+import Config from "../data/Config"
 import GameState from "../data/const/GameState"
 import HTML from "./HTML"
 
@@ -57,7 +58,7 @@ export default function Player({
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
-            if (body.velocity.z < .5 && frames.current > 3) {
+            if (body.velocity.z < .5 && frames.current > 3 && !Config.DEBUG_MODE) {
                 actions.end()
             }
 
@@ -66,7 +67,6 @@ export default function Player({
             actions.setPosition(body.position.x, body.position.y, body.position.z)
         }
     })
-
 
     // jump set on collision
     useEffect(() => {
