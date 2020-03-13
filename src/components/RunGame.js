@@ -73,5 +73,3 @@ export default function RunGame() {
         </Canvas>
     )
 }
-
-// 0x043c4b
