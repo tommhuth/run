@@ -14,8 +14,7 @@ export default function getInitState() {
                 type: BlockType.PLAIN,
                 y: 0,
                 end: 10
-            },
-
+            }, 
             {
                 id: uuid.v4(),
                 depth: 10,
@@ -31,23 +30,7 @@ export default function getInitState() {
                 type: BlockType.ENEMIES,
                 y: 4,
                 end: 30
-            },
-            {
-                id: uuid.v4(),
-                depth: 20,
-                start: 30,
-                type: BlockType.ENEMIES,
-                y: 4,
-                end: 50
-            },
-            {
-                id: uuid.v4(),
-                depth: 25,
-                start: 50,
-                type: BlockType.ENEMIES,
-                y: 6,
-                end: 75
-            }
+            }, 
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,
