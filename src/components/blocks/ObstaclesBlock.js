@@ -1,6 +1,6 @@
-import React, { useState } from "react" 
+import React, { useState } from "react"
 import random from "../../data/random"
-import Obstacle from "../Obstacle" 
+import Obstacle from "../Obstacle"
 import { Vector3 } from "three"
 
 export default function ObstaclesBlock({
@@ -8,13 +8,16 @@ export default function ObstaclesBlock({
     start,
     active,
     y
-}) { 
+}) {
     let [obstacles] = useState(() => {
-        let count = depth * random.pick([.1, .15, .075])
+        let count = depth * random.pick([.2, .25])
         let result = []
         let getObstacle = () => {
-            let radius = random.pick([8, 9, 6, 7, 5, 4, 3, 14])
-            let border = 30 // outer border
+            let radii = [
+                8, 9, 6, 7, 5, 4, 3, 14
+            ].filter(i => i * 1.5 < depth)  
+            let radius = random.pick(radii)
+            let border = 30 // outer border 
 
             return {
                 radius,
@@ -28,7 +31,7 @@ export default function ObstaclesBlock({
                 let distance = new Vector3(insertable.x, insertable.y, insertable.z)
                     .distanceTo(new Vector3(obstacle.x, obstacle.y, obstacle.z))
 
-                if (distance < (obstacle.radius + insertable.radius) + 2) {
+                if (distance < obstacle.radius + insertable.radius + 2) {
                     return true
                 }
             }
@@ -57,7 +60,7 @@ export default function ObstaclesBlock({
     })
 
     return (
-        <> 
+        <>
             {obstacles.map((props, index) => <Obstacle active={active} key={index} {...props} />)}
         </>
     )
