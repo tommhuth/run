@@ -32,7 +32,7 @@ export default function Player({
         collisionFilterMask: 1 | 2 | 4 | 8,
         active: true,
         mass: 1,
-        position: [0, 3, 0]
+        position: [0, 3, 30]
     })
     let frames = useRef(0)
     let boom = useCallback(() => {

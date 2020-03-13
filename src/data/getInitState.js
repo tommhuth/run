@@ -10,26 +10,26 @@ export default function getInitState() {
             {
                 id: uuid.v4(),
                 depth: 40,
-                start: -30,
+                start: 20,
                 type: BlockType.PLAIN,
                 y: 0,
-                end: 10
+                end: 60
             }, 
             {
                 id: uuid.v4(),
                 depth: 10,
-                start: 10,
+                start: 60,
                 type: BlockType.PLAIN,
                 y: 2,
-                end: 20
+                end: 70
             },
             {
                 id: uuid.v4(),
                 depth: 10,
-                start: 20,
+                start: 70,
                 type: BlockType.ENEMIES,
                 y: 4,
-                end: 30
+                end: 80
             }, 
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
@@ -37,6 +37,6 @@ export default function getInitState() {
         state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
         score: 0,
         attempts: 0,
-        position: { x: 0, y: 0, z: 7 }
+        position: { x: 0, y: 0, z: 30 }
     }
 }
