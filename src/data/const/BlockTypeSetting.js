@@ -13,7 +13,7 @@ export default {
     },
     [BlockType.ENEMIES]: {
         likelyhood: .2,
-        depth: [8, 20],
+        depth: [8, 15],
         illegalNext: [BlockType.ENEMIES]
     }
 }
