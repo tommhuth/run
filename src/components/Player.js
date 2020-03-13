@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useCallback, useState } from "react"
+import React, { useEffect, useRef, useCallback, useState } from "react" 
 import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
-
+import HTML from "./HTML"
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -167,6 +167,9 @@ export default function Player({
 
     return (
         <>
+            <HTML className="ui" top="5vh" left="5vw">
+                <h1>{state}</h1>
+            </HTML> 
             <mesh ref={ref}>
                 <meshPhongMaterial
                     attach={"material"}
@@ -187,3 +190,5 @@ export default function Player({
         </>
     )
 }
+
+ 

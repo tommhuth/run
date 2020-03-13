@@ -2,11 +2,8 @@
 @import "variables.scss";
 @import "typography.scss";
 
-
-#ui {
-    position: absolute;
-    top: 2em;
-    left:2em;
-    z-index: 1;
-    font-weight: bold;
+.ui {
+    position: fixed;
+    font-size: 2em;
+    color: #FFF;
 }

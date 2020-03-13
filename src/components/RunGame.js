@@ -17,9 +17,7 @@ export default function RunGame() {
     let actions = useStore(state => state.actions)
     let small = window.matchMedia("(max-width: 600px)").matches
 
-    useEffect(() => {
-        console.log(state)
-
+    useEffect(() => { 
         let listener = () => {
             switch (state) {
                 case GameState.REQUEST_ORIENTATION_ACCESS:
