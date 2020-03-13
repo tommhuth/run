@@ -17,6 +17,7 @@ export default function Coin({ x, y, z, remove }) {
     let [count] = useState(() => i++)
     let frame = useFrameNumber(.05, count)
     let ref = useRef()
+    let first = useRef(true)
 
     useFrame(() => {
         if (ref.current) {
@@ -25,8 +26,8 @@ export default function Coin({ x, y, z, remove }) {
         } 
     })
 
-    useEffect(() => {
-        ref.current.position.set(x, y + 1 + .5, z)
+    useEffect(() => { 
+        first.current = false 
 
         return api.subscribe((position) => {
             let threshold = 1.75
@@ -44,6 +45,7 @@ export default function Coin({ x, y, z, remove }) {
     return (
         <mesh
             ref={ref}
+            position={first.current ? [x, y + 1 + .5, z] : undefined}
             scale={[.65, 1, .65]}
             geometry={geometry.coin}
             material={material.white}

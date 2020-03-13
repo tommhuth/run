@@ -23,12 +23,13 @@ function renderBlockType(props, active) {
 
 export default function Block(props) {
     let [active, setActive] = useState(props.active)
+    let position = [0, props.y - 5, props.start + props.depth / 2]
     let { ref } = useCannon({
         shape: new Box(new Vec3(100, 5, props.depth / 2)),
         active,
         collisionFilterGroup: 6,
         collisionFilterMask: 1 | 2 | 4,
-        position: [0, props.y - 5, props.start + props.depth / 2]
+        position
     })
 
     useEffect(() => {
@@ -36,10 +37,12 @@ export default function Block(props) {
             if (z > props.start - 20 && z < props.end + 20) {
                 if (!active) {
                     setActive(true)
+                    console.log("active")
                 }
             } else {
                 if (active) {
                     setActive(false)
+                    console.log("unactive")
                 }
             }
         }, state => state.data.position)
@@ -49,7 +52,7 @@ export default function Block(props) {
         <>
             {renderBlockType(props, active)}
 
-            <mesh material={active ? material.blue : material.red} ref={ref}>
+            <mesh position={position} material={active ? material.blue : material.red} ref={ref}>
                 <boxBufferGeometry attach="geometry" args={[200, 10, props.depth]} />
             </mesh>
         </>
