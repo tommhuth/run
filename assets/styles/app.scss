@@ -6,4 +6,10 @@
     position: fixed;
     font-size: 2em;
     color: #FFF;
+    user-select: none;
+
+    &--boom {
+        transform: translateX(-50%);
+        text-transform: uppercase;
+    }
 }

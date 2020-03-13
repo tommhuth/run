@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from "react" 
+import React, { useEffect, useRef, useCallback, useState } from "react"
 import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
@@ -157,19 +157,29 @@ export default function Player({
         }
 
         root.addEventListener("click", onClick)
-        root.addEventListener("touchstart", onTouchStart)
+        root.addEventListener("touchstart", onTouchStart, { passive: !hasDeviceOrientation })
 
         return () => {
             root.removeEventListener("click", onClick)
-            root.removeEventListener("touchstart", onTouchStart)
+            root.removeEventListener("touchstart", onTouchStart, { passive: !hasDeviceOrientation })
         }
-    }, [body, speed, canJump, state])
+    }, [body, speed, canJump, state, hasDeviceOrientation])
 
     return (
         <>
             <HTML className="ui" top="5vh" left="5vw">
                 <h1>{state}</h1>
-            </HTML> 
+            </HTML>
+            <HTML className="ui ui--boom" bottom="5vh" left="50%">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        boom()
+                    }}
+                >
+                    Boom
+                </button>
+            </HTML>
             <mesh ref={ref}>
                 <meshPhongMaterial
                     attach={"material"}
@@ -191,4 +201,3 @@ export default function Player({
     )
 }
 
- 
