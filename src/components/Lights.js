@@ -4,23 +4,23 @@ import Config from "../data/Config"
 import Only from "./Only"
 
 export default function Lights() {
-    let ref = useRef()
-    let ref2 = useRef()
+    let detailLight = useRef()
+    let wideLight = useRef()
     let state = useStore(state => state.data.state)
 
     useEffect(() => {
         return api.subscribe((position) => {
-            if (!ref.current) {
+            if (!detailLight.current) {
                 return
             }
 
-            ref.current.position.z = position.z
-            ref.current.position.y = position.y + 4
-            ref.current.position.x = position.x
+            detailLight.current.position.z = position.z
+            detailLight.current.position.y = position.y + 4
+            detailLight.current.position.x = position.x
 
-            ref2.current.position.z = position.z
-            ref2.current.position.y += (position.y + 8 - ref2.current.position.y) * .1
-            ref2.current.position.x = position.x
+            wideLight.current.position.z = position.z
+            wideLight.current.position.y += (position.y + 8 - wideLight.current.position.y) * .1
+            wideLight.current.position.x = position.x
         }, state => state.data.position)
     }, [])
 
@@ -35,8 +35,8 @@ export default function Lights() {
                 />
             </Only>
             <ambientLight color={0x99eeff} intensity={.3} />
-            <pointLight ref={ref} color={0xFFFF00} decay={1} intensity={1} distance={8} />
-            <pointLight ref={ref2} color={0x00ffff} decay={1.1} intensity={1.15} distance={18} />
+            <pointLight ref={detailLight} color={0xFFFF00} decay={1} intensity={1} distance={8} />
+            <pointLight ref={wideLight} color={0x00ffff} decay={1.1} intensity={1.15} distance={18} />
         </>
     )
 }
