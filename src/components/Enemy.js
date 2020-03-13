@@ -43,7 +43,6 @@ export default function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
             ref={ref}
             material={material.blue}
             dispose={null}
-        />
-
+        /> 
     )
 }
