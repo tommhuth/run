@@ -19,12 +19,14 @@ export default function Coin({ x, y, z, remove }) {
     let ref = useRef()
 
     useFrame(() => {
-        ref.current.rotation.y += .025
-        ref.current.position.y = Math.cos(frame.current) * .5 + y + 1 + .5
+        if (ref.current) {
+            ref.current.rotation.y += .025
+            ref.current.position.y = Math.cos(frame.current) * .5 + y + 1 + .5
+        } 
     })
 
     useEffect(() => {
-        ref.current.position.set(x, y + 1, z)
+        ref.current.position.set(x, y + 1 + .5, z)
 
         return api.subscribe((position) => {
             let threshold = 1.75
