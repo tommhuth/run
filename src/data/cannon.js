@@ -11,7 +11,7 @@ export function CannonProvider({
     defaultFriction = .1,
     gravity = [0, -10, 0]
 }) {
-    let [world] = useState(() => new World()) 
+    let [world] = useState(() => new World())
 
     useEffect(() => {
         //world.broadphase = new SAPBroadphase(world) 
@@ -23,8 +23,8 @@ export function CannonProvider({
     }, [world])
 
     // Run world stepper every frame
-    useFrame(() => { 
-        world.step(1/30) 
+    useFrame(() => {
+        world.step(1 / 30)
     })
 
     // Distribute world via context
@@ -41,8 +41,8 @@ export function useCannon({
     shape,
     active = false,
     customData = {},
-    position = [0,0,0],
-    velocity = [0,0,0],
+    position = [0, 0, 0],
+    velocity = [0, 0, 0],
     update,
     collisionFilterGroup,
     collisionFilterMask
@@ -51,8 +51,9 @@ export function useCannon({
     // Get cannon world object
     let world = useContext(context)
     // Instantiate a physics body
-    let [body] = useState(() => new Body({ 
-        mass, 
+    let [body] = useState(() => new Body({
+        mass,
+        shape,
         position: new Vec3(...position),
         velocity: new Vec3(...velocity),
         collisionFilterGroup,
@@ -60,19 +61,18 @@ export function useCannon({
     }))
 
     useEffect(() => { 
-        body.addShape(shape) 
         body.customData = customData
     }, deps)
 
-    useEffect(()=> {
-        if (active) { 
+    useEffect(() => {
+        if (active) {
             // Add body to world on mount
-            world.addBody(body)  
+            world.addBody(body)
 
             // Remove body on unmount
             return () => world.removeBody(body)
         } else {
-            world.removeBody(body) 
+            world.removeBody(body)
         }
     }, [active, body])
 
@@ -81,7 +81,7 @@ export function useCannon({
             // Transport cannon physics into the referenced threejs object
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
-        } else if(active && update) {
+        } else if (active && update) {
             update(body)
         }
     })
