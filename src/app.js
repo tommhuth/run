@@ -8,7 +8,11 @@ import Config from "./data/Config"
 import RunGame from "./components/RunGame" 
 
 ReactDOM.render(
-    <RunGame />,
+    <>
+        <h1 className="visually-hidden">Run</h1>
+        <p className="visually-hidden">Infinite runner made with Threejs</p>
+        <RunGame />
+    </>,
     document.getElementById("root")
 )
 
