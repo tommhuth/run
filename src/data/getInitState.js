@@ -12,6 +12,7 @@ export default function getInitState() {
                 depth: 40,
                 start: 20,
                 type: BlockType.PLAIN,
+                active: true,
                 y: 0,
                 end: 60
             }, 
