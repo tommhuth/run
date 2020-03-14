@@ -8,8 +8,7 @@ import Block from "./Block"
 export default function Path() {
     let blocks = useStore(state => state.data.blocks)
     let actions = useStore(state => state.actions)
-    let world = useWorld()
-    let ref = useRef()
+    let world = useWorld() 
     let limit = 35
 
     useEffect(() => {
@@ -44,22 +43,25 @@ export default function Path() {
         let id = setInterval(() => actions.generatePath(), 1000)
 
         return () => clearInterval(id)
-    }, [])
-
-    useEffect(() => {
-        return api.subscribe(time => {
-            ref.current.innerText = (time / 1000).toFixed(1)
-        }, state => state.data.time)
-    }, [])
+    }, []) 
 
     return (
         <>
-            <HTML className="ui" top="5vH" right="5vw">
-                <div ref={ref}></div>
-            </HTML>
+            <Timer />
             {blocks.map(i => {
                 return <Block {...i} key={i.id} />
             })}
         </>
+    )
+}
+
+
+function Timer() {
+    let time = useStore(state => state.data.time)
+
+    return ( 
+        <HTML className="ui" top="5vH" right="5vw">
+            {(time / 1000).toFixed(1)}
+        </HTML>
     )
 }
