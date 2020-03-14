@@ -2,8 +2,10 @@ import React, { useState } from "react"
 import Coin from "./Coin"
 import uuid from "uuid"
 import random from "../data/random"
+import { useStore } from "../data/store"
 
 export default function CoinLine({ x = 0, y, z, depth, count: defaultCount }) {
+    let actions = useStore(state => state.actions)
     let [coins, setCoins] = useState(() => {
         let result = []
         let gap = Math.min(5, depth * .2)
@@ -26,7 +28,10 @@ export default function CoinLine({ x = 0, y, z, depth, count: defaultCount }) {
             {coins.map(i => {
                 return (
                     <Coin
-                        remove={() => setCoins(prev => prev.filter(j => j.id !== i.id))}
+                        remove={() => {
+                            actions.extendTime()
+                            setCoins(prev => prev.filter(j => j.id !== i.id))
+                        }}
                         key={i.id}
                         {...i}
                     />

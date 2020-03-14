@@ -1,13 +1,15 @@
-import React, { useEffect } from "react" 
-import { useStore } from "../data/store"
+import React, { useEffect, useRef } from "react"
+import { useStore, api } from "../data/store"
 import { Vec3, Body, Plane } from "cannon"
 import { useWorld } from "../data/cannon"
+import HTML from "./HTML"
 import Block from "./Block"
 
 export default function Path() {
     let blocks = useStore(state => state.data.blocks)
     let actions = useStore(state => state.actions)
     let world = useWorld()
+    let ref = useRef()
     let limit = 35
 
     useEffect(() => {
@@ -44,8 +46,17 @@ export default function Path() {
         return () => clearInterval(id)
     }, [])
 
+    useEffect(() => {
+        return api.subscribe(time => {
+            ref.current.innerText = (time / 1000).toFixed(1)
+        }, state => state.data.time)
+    }, [])
+
     return (
         <>
+            <HTML className="ui" top="5vH" right="5vw">
+                <div ref={ref}></div>
+            </HTML>
             {blocks.map(i => {
                 return <Block {...i} key={i.id} />
             })}

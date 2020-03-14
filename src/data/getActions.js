@@ -2,12 +2,36 @@ import getBlock from "./getBlock"
 import GameState from "./const/GameState"
 import getInitState from "./getInitState"
 
+let tid
+
 export default function getActions(get, set, actions) {
     return {
+        extendTime() {
+            let { time } = get()
+
+            set({ time: time + 1000 })
+        },
+        timer() {
+            let { end } = actions()
+
+            tid = setInterval(() => {
+                let { time } = get()
+
+                if (time - 100 < 0) {
+                    end("timeout")
+                } else {
+                    set({ time: time - 100 })
+                }
+            }, 100)
+        },
         start() {
+            let { timer } = actions()
+
             set({ state: GameState.RUNNING })
+            timer()
         },
         reset() {
+            let { timer } = actions()
             let {
                 hasDeviceOrientation,
                 mustRequestOrientationAccess,
@@ -21,9 +45,11 @@ export default function getActions(get, set, actions) {
                 hasDeviceOrientation,
                 mustRequestOrientationAccess
             })
+            timer()
         },
-        end() {
-            set({ state: GameState.GAME_OVER })
+        end(reason) {
+            set({ state: GameState.GAME_OVER, reason })
+            clearInterval(tid)
         },
         async requestDeviceOrientation() {
             try {
@@ -55,7 +81,7 @@ export default function getActions(get, set, actions) {
             let forwardBuffer = 35
 
             while (previous.end - position.z < forwardBuffer) {
-                previous = addBlock()  
+                previous = addBlock()
             }
 
             clearBlocks()

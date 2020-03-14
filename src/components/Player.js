@@ -24,6 +24,7 @@ export default function Player({
 }) {
     let world = useWorld()
     let state = useStore(state => state.data.state)
+    let reason = useStore(state => state.data.reason)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
     let [canJump, setCanJump] = useState(true)
@@ -59,7 +60,7 @@ export default function Player({
     useFrame(() => {
         if (state === GameState.RUNNING) {
             if (body.velocity.z < .5 && frames.current > 3 && !Config.DEBUG_MODE) {
-                actions.end()
+                actions.end("crashed")
             }
 
             body.velocity.z = speed
@@ -172,6 +173,7 @@ export default function Player({
         <>
             <HTML className="ui" top="5vh" left="5vw">
                 <h1>{state}</h1>
+                <p>{reason}</p>
             </HTML>
             <HTML className="ui ui--boom" bottom="5vh" left="50%">
                 <button
