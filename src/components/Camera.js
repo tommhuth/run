@@ -1,10 +1,12 @@
 
 import { useEffect } from "react"
 import { useThree } from "react-three-fiber"
-import { api } from "../data/store"
+import { api, useStore } from "../data/store"
+import GameState from "../data/const/GameState"
 
 export default function Camera() {
     let { camera, gl } = useThree()
+    let state = useStore(state => state.data.state)
 
     useEffect(() => {
         window.gl = gl
@@ -17,9 +19,11 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        camera.position.set(5, 6, -5)
-        camera.lookAt(0, 0, 0)
-    }, [])
+        if ([GameState.READY, GameState.RUNNING].includes(state)) {
+            camera.position.set(5, 6, -5)
+            camera.lookAt(0, 0, 0) 
+        }
+    }, [state]) 
 
     return null
 }
