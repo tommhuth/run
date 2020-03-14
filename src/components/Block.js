@@ -36,13 +36,11 @@ export default function Block(props) {
         return api.subscribe(({ z }) => {
             if (z > props.start - 20 && z < props.end + 20) {
                 if (!active) {
-                    setActive(true)
-                    console.log("active")
+                    setActive(true) 
                 }
             } else {
                 if (active) {
-                    setActive(false)
-                    console.log("unactive")
+                    setActive(false) 
                 }
             }
         }, state => state.data.position)
