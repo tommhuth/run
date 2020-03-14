@@ -35,8 +35,8 @@ const plugins = [
         ]
     ),
     new WebpackPwaManifest({
-        name: "React boilplate",
-        short_name: "React boilplate",
+        name: "Run",
+        short_name: "Run",
         background_color: "#FFF",
         theme_color: "#000",
         orientation: "portrait",
