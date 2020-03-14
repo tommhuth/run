@@ -6,10 +6,21 @@ let tid
 
 export default function getActions(get, set, actions) {
     return {
-        extendTime() {
+        extendTime(amount = 2000) {
             let { time } = get()
 
-            set({ time: time + 1000 })
+            set({ time: time + amount })
+        },
+        reduceTime(cost = 3000) {
+            let { time } = get()
+
+            if (time - cost >= 0) {
+                set({ time: time - cost })
+
+                return true
+            }
+
+            return false
         },
         timer() {
             let { end } = actions()

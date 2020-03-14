@@ -38,21 +38,23 @@ export default function Player({
     })
     let frames = useRef(0)
     let boom = useCallback(() => {
-        let player = body
-        let enemies = world.bodies.filter(i => i.customData?.enemy)
-        let limit = 15
-
-        for (let enemy of enemies) {
-            let distance = player.position.distanceTo(enemy.position)
-
-            if (distance < limit) {
-                let force = Math.min(Math.max(0, 1 - distance / limit), 1) * 25
-                let direction = enemy.position.clone()
-                    .vsub(player.position.clone())
-                    .unit()
-                    .mult(force * enemy.mass)
-
-                enemy.applyImpulse(direction, enemy.position)
+        if (actions.reduceTime()) { 
+            let player = body
+            let enemies = world.bodies.filter(i => i.customData?.enemy)
+            let limit = 15
+    
+            for (let enemy of enemies) {
+                let distance = player.position.distanceTo(enemy.position)
+    
+                if (distance < limit) {
+                    let force = Math.min(Math.max(0, 1 - distance / limit), 1) * 25
+                    let direction = enemy.position.clone()
+                        .vsub(player.position.clone())
+                        .unit()
+                        .mult(force * enemy.mass)
+    
+                    enemy.applyImpulse(direction, enemy.position)
+                }
             }
         }
     }, [body, world])
