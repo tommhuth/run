@@ -24,6 +24,18 @@ export default function Lights() {
         }, state => state.data.position)
     }, [])
 
+    useEffect(() => {
+        return api.subscribe((time) => {
+            if (!detailLight.current) {
+                return
+            }
+
+            let targetDistance = time / (20 * 1000) * 10 + 11
+
+            wideLight.current.distance += (targetDistance - wideLight.current.distance) * .1
+        }, state => state.data.time)
+    }, [])
+
     return (
         <>
             <Only if={Config.DEBUG_MODE}>
@@ -36,26 +48,7 @@ export default function Lights() {
             </Only>
             <ambientLight color={0x99eeff} intensity={.3} />
             <pointLight ref={detailLight} color={0xFFFF00} decay={1} intensity={1} distance={8} />
-            <pointLight ref={wideLight} color={0x00ffff} decay={1.1} intensity={1.15} distance={18} />
+            <pointLight ref={wideLight} color={0x00ffff} decay={1.1} intensity={1.15} distance={21} />
         </>
     )
 }
-
-/*
-
-            <directionalLight
-                color={0xffffff}
-                position={[-1, 5, -3]}
-                intensity={.5}
-                onUpdate={self => self.updateMatrixWorld()}
-            />
-
-            <ambientLight color={0x99eeff} intensity={.3} />
-            <pointLight ref={ref} color={0xFFFF00} decay={1.35} intensity={1.35} distance={8} />
-            <pointLight ref={ref2} color={0x00ffff} decay={2} intensity={1.75} distance={18} />
-
-
-            ref2.current.position.z = position.z
-            ref2.current.position.y += (position.y + 8 - ref2.current.position.y   ) * .1
-            ref2.current.position.x = position.x
-*/
