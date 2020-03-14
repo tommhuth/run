@@ -19,8 +19,7 @@ export default function getActions(get, set, actions) {
                 state: GameState.RUNNING,
                 attempts: attempts + 1,
                 hasDeviceOrientation,
-                mustRequestOrientationAccess,
-                position: { x: 0, y: 0, z: 0 }
+                mustRequestOrientationAccess
             })
         },
         end() {
