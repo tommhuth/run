@@ -22,7 +22,7 @@ export default function getActions(get, set, actions) {
 
             return false
         },
-        timer() {
+        startTimer() {
             let { end } = actions()
 
             tid = setInterval(() => {
@@ -35,14 +35,17 @@ export default function getActions(get, set, actions) {
                 }
             }, 100)
         },
+        stopTimer() { 
+            clearInterval(tid)
+        },
         start() {
-            let { timer } = actions()
+            let { startTimer } = actions()
 
             set({ state: GameState.RUNNING })
-            timer()
+            startTimer()
         },
         reset() {
-            let { timer } = actions()
+            let { startTimer } = actions()
             let {
                 hasDeviceOrientation,
                 mustRequestOrientationAccess,
@@ -56,11 +59,13 @@ export default function getActions(get, set, actions) {
                 hasDeviceOrientation,
                 mustRequestOrientationAccess
             })
-            timer()
+            startTimer()
         },
         end(reason) {
+            let { stopTimer } = actions()
+            
             set({ state: GameState.GAME_OVER, reason })
-            clearInterval(tid)
+            stopTimer()
         },
         async requestDeviceOrientation() {
             try {

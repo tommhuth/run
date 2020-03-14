@@ -17,7 +17,7 @@ export default function RunGame() {
     let actions = useStore(state => state.actions)
     let small = window.matchMedia("(max-width: 600px)").matches
 
-    useEffect(() => { 
+    useEffect(() => {
         let listener = () => {
             switch (state) {
                 case GameState.REQUEST_ORIENTATION_ACCESS:
@@ -32,6 +32,20 @@ export default function RunGame() {
         window.addEventListener("click", listener)
 
         return () => window.removeEventListener("click", listener)
+    }, [state])
+
+    useEffect(() => {
+        let listener = () => {
+            if (document.hidden && state === GameState.RUNNING) {
+                actions.stopTimer()
+            } else if (!document.hidden && state === GameState.RUNNING) {
+                actions.startTimer()
+            }
+        }
+
+        document.addEventListener("visibilitychange", listener)
+
+        return () => document.removeEventListener("visibilitychange", listener)
     }, [state])
 
     useEffect(() => {
@@ -59,7 +73,7 @@ export default function RunGame() {
                 left: -50,
                 right: 50
             }}
-        >      
+        >
             <CannonProvider
                 defaultFriction={.8}
                 defaultRestitution={.5}
@@ -67,8 +81,8 @@ export default function RunGame() {
                 <Lights />
                 <Camera />
                 <Path />
-                
-                {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ?<Player key={attempts} />:null }
+
+                {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ? <Player key={attempts} /> : null}
             </CannonProvider>
         </Canvas>
     )
