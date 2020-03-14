@@ -25,7 +25,7 @@ export default function Block(props) {
     let [active, setActive] = useState(props.active)
     let position = [0, props.y - 5, props.start + props.depth / 2]
     let { ref } = useCannon({
-        shape: new Box(new Vec3(100, 5, props.depth / 2)),
+        shape: new Box(new Vec3(125, 5, props.depth / 2)),
         active,
         collisionFilterGroup: 6,
         collisionFilterMask: 1 | 2 | 4,
@@ -51,7 +51,7 @@ export default function Block(props) {
             {renderBlockType(props, active)}
 
             <mesh position={position} material={active ? material.blue : material.red} ref={ref}>
-                <boxBufferGeometry attach="geometry" args={[200, 10, props.depth]} />
+                <boxBufferGeometry attach="geometry" args={[250, 10, props.depth]} />
             </mesh>
         </>
     )

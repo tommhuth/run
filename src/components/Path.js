@@ -9,10 +9,10 @@ export default function Path() {
     let blocks = useStore(state => state.data.blocks)
     let actions = useStore(state => state.actions)
     let world = useWorld() 
-    let limit = 35
 
     useEffect(() => {
         let edges = []
+        let limit = 85
 
         for (let direction of [1, -1]) {
             let edge = new Body({
