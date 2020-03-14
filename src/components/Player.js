@@ -71,7 +71,7 @@ export default function Player({
     // jump set on collision
     useEffect(() => {
         if (body && state === GameState.RUNNING) {
-            body.addEventListener("collide", ({ body: target }) => {
+            let listener = ({ body: target }) => {
                 // if collieded body is below player,
                 // we hit the "top" of the other body and can jump again
                 let intersection = intersectBody(
@@ -80,11 +80,14 @@ export default function Player({
                     target
                 )
 
-                if (intersection.hasHit) {
-                    //actions.setBaseY(body.position.y)
+                if (intersection.hasHit) { 
                     setCanJump(true)
                 }
-            })
+            }
+
+            body.addEventListener("collide", listener)
+
+            return () => body.removeEventListener("collide", listener)
         }
     }, [body, state])
 
