@@ -21,7 +21,7 @@ export default function EnemiesBlock({
 
             result.push({
                 x,
-                y: y + radius,
+                y: y + radius + 10,
                 radius,
                 z,
                 velocityX,
