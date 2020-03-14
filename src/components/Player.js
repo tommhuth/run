@@ -36,23 +36,23 @@ export default function Player({
         mass: 1,
         position: [0, 3, 30]
     })
-    let frames = useRef(0)
+    let frames = useRef([])
     let boom = useCallback(() => {
-        if (actions.reduceTime()) { 
+        if (actions.reduceTime()) {
             let player = body
             let enemies = world.bodies.filter(i => i.customData?.enemy)
             let limit = 15
-    
+
             for (let enemy of enemies) {
                 let distance = player.position.distanceTo(enemy.position)
-    
+
                 if (distance < limit) {
                     let force = Math.min(Math.max(0, 1 - distance / limit), 1) * 25
                     let direction = enemy.position.clone()
                         .vsub(player.position.clone())
                         .unit()
                         .mult(force * enemy.mass)
-    
+
                     enemy.applyImpulse(direction, enemy.position)
                 }
             }
@@ -61,12 +61,18 @@ export default function Player({
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
-            if (body.velocity.z < .5 && frames.current > 3 && !Config.DEBUG_MODE) {
-                actions.end("crashed")
+            let frameCount = 3
+
+            if (frames.current.length === frameCount && !Config.DEBUG_MODE) {
+                let averageVelocity = frames.current.reduce((total, current) => total + current, 0) / frameCount
+ 
+                if (averageVelocity < 2) {
+                    actions.end("crashed")
+                }
             }
 
+            frames.current = [...frames.current.slice(-(frameCount - 1)), body.velocity.z]
             body.velocity.z = speed
-            frames.current++
             actions.setPosition(body.position.x, body.position.y, body.position.z)
         }
     })
@@ -83,7 +89,7 @@ export default function Player({
                     target
                 )
 
-                if (intersection.hasHit) { 
+                if (intersection.hasHit) {
                     setCanJump(true)
                 }
             }
