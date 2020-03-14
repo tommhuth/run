@@ -38,7 +38,7 @@ export default function getInitState() {
         state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
         score: 0,
         attempts: 0,
-        time: 1000 * 30,
+        time: 1000 * 20,
         reason: null,
         position: { x: 0, y: 0, z: 30 }
     }
