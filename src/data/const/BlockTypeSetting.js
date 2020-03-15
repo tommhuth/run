@@ -8,7 +8,7 @@ export default {
     },
     [BlockType.OBSTACLES]: {
         likelyhood: 1,
-        depth: [8, 30],
+        depth: [8, 25],
         illegalNext: []
     },
     [BlockType.ENEMIES]: {
