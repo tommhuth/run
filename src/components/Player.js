@@ -5,6 +5,7 @@ import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
 import Config from "../data/Config"
 import GameState from "../data/const/GameState"
+import Only from "./Only"
 import HTML from "./HTML"
 
 function intersectBody(from, to, body) {
@@ -34,7 +35,7 @@ export default function Player({
         collisionFilterMask: 1 | 2 | 4 | 8,
         active: true,
         mass: 1,
-        position: [0, 6, 40] 
+        position: [0, 2, 40]
     })
     let frames = useRef([])
     let boom = useCallback(() => {
@@ -65,7 +66,7 @@ export default function Player({
 
             if (frames.current.length === frameCount && !Config.DEBUG_MODE) {
                 let averageVelocity = frames.current.reduce((total, current) => total + current, 0) / frameCount
- 
+
                 if (averageVelocity < 2) {
                     actions.end("crashed")
                 }

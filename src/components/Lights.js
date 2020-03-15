@@ -30,13 +30,13 @@ export default function Lights() {
 
     useEffect(() => {
         animate({
-            from: { z: -15, y: 25 },
-            to: { z: 40, y: 6 },
+            from: { z: -15, y: 25, y2: 35 },
+            to: { z: 40, y: 5, y2: 5 },
             easing: "easeInOutSine",
             duration: 4500,
-            render({ z, y }) {
+            render({ z, y, y2 }) {
                 detailLight.current.position.z = z
-                detailLight.current.position.y = y
+                detailLight.current.position.y = y2
                 wideLight.current.position.z = z
                 wideLight.current.position.y = y + 4
             }
@@ -77,7 +77,7 @@ export default function Lights() {
             />
             <pointLight
                 ref={wideLight}
-                color={0x00ffff}
+                color={0x00ffff} 
                 decay={1.1}
                 intensity={1.15}
                 distance={21}

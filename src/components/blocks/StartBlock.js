@@ -7,42 +7,46 @@ export default function StartBlock({
     y
 }) {
     return (
-        <> 
+        <>
             <mesh
-                position={[1, 0, 10]}
+                position={[25, 0, 45]}
                 material={material.blue}
                 geometry={geometry.sphere}
-                rotation-x={.7}
-                scale={[11, 11, 11]}
+                rotation-x={.2}
+                scale={[9, 9, 9]}
             />
+
+            
             <mesh
-                position={[11, 0, 26]}
-                rotation-y={.7}
+                position={[0, 0, 23]}
+                rotation-z={.47}
                 material={material.blue}
                 geometry={geometry.sphere}
                 scale={[7, 7, 7]}
-            /> 
+            />
+
 
             <mesh
-                position={[15, 0, 43]}
-                rotation-x={-.17}
-                material={material.blue}
-                geometry={geometry.sphere}
-                scale={[3, 3, 3]}
-            />
-            <mesh
-                position={[-4, 0, 26]}
-                rotation-z={.7}
+                position={[-8, 0, depth / 2]}
+                rotation-z={.25}
                 material={material.blue}
                 geometry={geometry.sphere}
                 scale={[5, 5, 5]}
             />
             <mesh
-                position={[-8, 0, depth / 2]}
+                position={[-2, 0, depth / 2]}
+                rotation-z={-.1}
+                material={material.blue}
+                geometry={geometry.sphere}
+                scale={[2, 2, 2]}
+            />
+            <mesh
+                position={[-16, 0, 31]}
+                rotation-z={-.1}
                 material={material.blue}
                 geometry={geometry.sphere}
                 scale={[3, 3, 3]}
-            />
+            /> 
         </>
     )
 }
