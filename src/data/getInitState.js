@@ -9,28 +9,21 @@ export default function getInitState() {
         blocks: [
             {
                 id: uuid.v4(),
-                depth: 40,
-                start: 20,
-                type: BlockType.PLAIN,
+                depth: 75,
+                start: -10,
+                type: BlockType.START,
                 active: true,
                 y: 0,
-                end: 60
+                end: 65
             }, 
             {
                 id: uuid.v4(),
                 depth: 10,
-                start: 60,
+                active: true,
+                start: 65,
                 type: BlockType.PLAIN,
                 y: 2,
-                end: 70
-            },
-            {
-                id: uuid.v4(),
-                depth: 10,
-                start: 70,
-                type: BlockType.ENEMIES,
-                y: 4,
-                end: 80
+                end: 75
             }, 
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
@@ -40,6 +33,6 @@ export default function getInitState() {
         attempts: 0,
         time: 1000 * 20,
         reason: null,
-        position: { x: 0, y: 0, z: 30 }
+        position: { x: 0, z: 40, y: 6 }  
     }
 }

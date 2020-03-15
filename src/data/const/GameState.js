@@ -1,4 +1,5 @@
 export default {
+    INTRO: "intro",
     READY: "ready",
     RUNNING: "running", 
     REQUEST_ORIENTATION_ACCESS: "request-motion-access",

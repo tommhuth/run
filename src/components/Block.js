@@ -4,6 +4,7 @@ import BlockType from "../data/const/BlockType"
 import ObstaclesBlock from "./blocks/ObstaclesBlock"
 import PlainBlock from "./blocks/PlainBlock"
 import EnemiesBlock from "./blocks/EnemiesBlock"
+import StartBlock from "./blocks/StartBlock"
 import { Box, Vec3 } from "cannon"
 import { useCannon } from "../data/cannon"
 import { material } from "../data/resources"
@@ -16,6 +17,8 @@ function renderBlockType(props, active) {
             return <PlainBlock {...props} active={active} />
         case BlockType.ENEMIES:
             return <EnemiesBlock {...props} active={active} />
+        case BlockType.START:
+            return <StartBlock {...props} active={active} />
         default:
             throw new Error(`Unknown Block type ${props.type}`)
     }
@@ -36,11 +39,11 @@ export default function Block(props) {
         return api.subscribe(({ z }) => {
             if (z > props.start - 20 && z < props.end + 20) {
                 if (!active) {
-                    setActive(true) 
+                    setActive(true)
                 }
             } else {
                 if (active) {
-                    setActive(false) 
+                    setActive(false)
                 }
             }
         }, state => state.data.position)

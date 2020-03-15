@@ -3,12 +3,16 @@ import { api, useStore } from "../data/store"
 import Config from "../data/Config"
 import Only from "./Only"
 
+import animate from "../data/animate"
+
 export default function Lights() {
     let detailLight = useRef()
     let wideLight = useRef()
-    let state = useStore(state => state.data.state)
+    let first = useRef(true)
 
-    useEffect(() => {
+    useEffect(() => {  
+        first.current = false 
+
         return api.subscribe((position) => {
             if (!detailLight.current) {
                 return
@@ -22,6 +26,21 @@ export default function Lights() {
             wideLight.current.position.y += (position.y + 8 - wideLight.current.position.y) * .1
             wideLight.current.position.x = position.x
         }, state => state.data.position)
+    }, []) 
+
+    useEffect(() => {
+        animate({
+            from: { z: -15, y: 25 },
+            to: { z: 40, y: 6 },
+            easing: "easeInOutSine",
+            duration: 4500,
+            render({ z, y }) {
+                detailLight.current.position.z = z
+                detailLight.current.position.y = y
+                wideLight.current.position.z = z
+                wideLight.current.position.y = y + 4
+            }
+        })
     }, [])
 
     useEffect(() => {
@@ -46,9 +65,24 @@ export default function Lights() {
                     onUpdate={self => self.updateMatrixWorld()}
                 />
             </Only>
+
             <ambientLight color={0x99eeff} intensity={.3} />
-            <pointLight ref={detailLight} color={0xFFFF00} decay={1} intensity={1} distance={8} />
-            <pointLight ref={wideLight} color={0x00ffff} decay={1.1} intensity={1.15} distance={21} />
+            <pointLight
+                ref={detailLight}
+                color={0xFFFF00}
+                decay={1}
+                intensity={1}
+                distance={8}
+                position={first.current ? [0, -116, 30] : undefined}
+            />
+            <pointLight
+                ref={wideLight}
+                color={0x00ffff}
+                decay={1.1}
+                intensity={1.15}
+                distance={21}
+                position={first.current ?  [0, -110, 30]: undefined}
+            />
         </>
     )
 }

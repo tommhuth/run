@@ -7,7 +7,7 @@ let countSinceCoins = 0
 
 export default function getBlock(previous) {
     let forceCoins = countSinceCoins > 3
-    let blocks = forceCoins ? [BlockType.PLAIN] : [...Object.values(BlockType)]
+    let blocks = forceCoins ? [BlockType.PLAIN] : [...Object.values(BlockType).filter(i => i !== BlockType.START)]
     let options = {
         type: random.pick(blocks),
         id: uuid.v4(),
