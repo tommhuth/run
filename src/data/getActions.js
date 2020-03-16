@@ -67,6 +67,9 @@ export default function getActions(get, set, actions) {
             set({ state: GameState.GAME_OVER, reason })
             stopTimer()
         },
+        ready() {  
+            set({ state: GameState.READY }) 
+        },
         async requestDeviceOrientation() {
             try {
                 let access = await DeviceOrientationEvent.requestPermission()
@@ -75,7 +78,7 @@ export default function getActions(get, set, actions) {
                     set({
                         hasDeviceOrientation: true,
                         mustRequestOrientationAccess: false,
-                        state: GameState.READY
+                        state: GameState.INTRO
                     })
                 } else {
                     set({ state: GameState.REQUEST_ORIENTATION_ACCESS_FAIL })

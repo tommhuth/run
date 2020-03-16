@@ -13,3 +13,91 @@
         text-transform: uppercase;
     }
 }
+
+body::after {
+    content: "";
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background-image: linear-gradient(45deg, rgba(#fbff00, 0), rgba(#fbff00, .1));
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.intro {
+    position: absolute;
+    display: block;
+    top: 50%;
+    z-index: 1;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85vw;
+    max-width: 50em;
+    pointer-events: none;
+    overflow: visible;
+    mix-blend-mode: lighten;
+
+    >g>g>g {
+        * {
+            animation: test .35s both ease-out;
+            opacity: 0;
+            display: block;
+            position: relative;
+            fill: #e1ff00;
+
+            @for $i from 1 through 12 {
+                &:nth-child(#{$i}) {
+                    animation-delay: ($i/12 + 1) + s;
+                }
+            }
+
+        }
+    }
+}
+
+.message {
+    position: absolute;
+    z-index: 1;
+    bottom: 8vh;
+    left:50%;
+    transform: translateX(-50%);
+    font-size: 1.5em;
+    letter-spacing: .051em;
+    color: #FFF;
+    mix-blend-mode: overlay;
+    font-weight: 200;
+    animation: message .35s both 1.5s;
+    opacity: .4;
+    text-transform: uppercase;
+}
+
+@keyframes test {
+    from {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(1em, -.5em);
+
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes message {
+    from {
+        opacity: 0; 
+        transform: translateY(1em) translateX(-50%);
+    } 
+
+    to {
+        opacity: 1; 
+        transform: translateY(0) translateX(-50%);
+    }
+}

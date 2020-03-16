@@ -28,7 +28,7 @@ export default function getInitState() {
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,
-        state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
+        state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.INTRO,
         score: 0,
         attempts: 0,
         time: 1000 * 20,

@@ -69,7 +69,7 @@ export default function Lights() {
             <ambientLight color={0x99eeff} intensity={.3} />
             <pointLight
                 ref={detailLight}
-                color={0xFFFF00}
+                color={0xfbff00}
                 decay={1}
                 intensity={1}
                 distance={8}

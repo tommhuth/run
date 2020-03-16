@@ -195,15 +195,13 @@ export default function Player({
                 </button>
             </HTML>
             <mesh ref={ref}>
-                <meshPhongMaterial
+                <meshLambertMaterial
                     attach={"material"}
                     args={[{
-                        color: 0xfffb1f,
-                        transparent: true,
-                        opacity: .65,
+                        color: 0xfffff0, 
                         flatShading: true,
-                        emissive: 0xfffb1f,
-                        emissiveIntensity: 1
+                        emissive: 0xfffff0,
+                        emissiveIntensity: 10
                     }]}
                 />
                 <sphereBufferGeometry
