@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useThree } from "react-three-fiber"
 import { api, useStore } from "../data/store"
 import GameState from "../data/const/GameState"
