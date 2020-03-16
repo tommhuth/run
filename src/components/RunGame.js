@@ -112,7 +112,7 @@ export default function RunGame() {
                     Tap to restart
                 </div>
             </Only>
-            <Only if={state === GameState.RUNNING || true}>
+            <Only if={state === GameState.RUNNING}>
                 <Timer />
             </Only>
 
