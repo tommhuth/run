@@ -1,16 +1,12 @@
 import React, { useEffect } from "react"
 import { useStore } from "../data/store"
 import { Vec3, Body, Plane } from "cannon"
-import { useWorld } from "../data/cannon"
-import HTML from "./HTML"
-import Block from "./Block"
-import Only from "./Only"
-import GameState from "../data/const/GameState"
+import { useWorld } from "../data/cannon" 
+import Block from "./Block" 
 
 export default function Path() {
     let blocks = useStore(state => state.data.blocks)
-    let actions = useStore(state => state.actions)
-    let state = useStore(state => state.data.state)
+    let actions = useStore(state => state.actions) 
     let world = useWorld() 
 
     useEffect(() => {
@@ -50,23 +46,9 @@ export default function Path() {
 
     return (
         <>
-            <Only if={state === GameState.RUNNING}>
-                <Timer /> 
-            </Only>
             {blocks.map(i => {
                 return <Block {...i} key={i.id} />
             })}
         </>
-    )
-}
-
-
-function Timer() {
-    let time = useStore(state => state.data.time)
-
-    return ( 
-        <HTML className="ui" top="5vH" right="5vw">
-            {(time / 1000).toFixed(1)}
-        </HTML>
     )
 }

@@ -24,8 +24,7 @@ export default function Player({
     speed = 4
 }) {
     let world = useWorld()
-    let state = useStore(state => state.data.state)
-    let reason = useStore(state => state.data.reason)
+    let state = useStore(state => state.data.state) 
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
     let [canJump, setCanJump] = useState(true)
@@ -68,7 +67,7 @@ export default function Player({
                 let averageVelocity = frames.current.reduce((total, current) => total + current, 0) / frameCount
 
                 if (averageVelocity < 2) {
-                    actions.end("crashed")
+                    actions.end("U crashed")
                 }
             }
 
@@ -179,21 +178,19 @@ export default function Player({
     }, [body, speed, canJump, state, hasDeviceOrientation])
 
     return (
-        <>
-            <HTML className="ui" top="5vh" left="5vw">
-                <h1>{state}</h1>
-                <p>{reason}</p>
-            </HTML>
-            <HTML className="ui ui--boom" bottom="5vh" left="50%">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        boom()
-                    }}
-                >
-                    Boom
-                </button>
-            </HTML>
+        <> 
+            <Only if={state === GameState.RUNNING}>
+                <HTML className="boom">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            boom()
+                        }}
+                    >
+                        Bitch
+                    </button>
+                </HTML> 
+            </Only>
             <mesh ref={ref}>
                 <meshLambertMaterial
                     attach={"material"}

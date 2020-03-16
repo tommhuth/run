@@ -2,15 +2,68 @@
 @import "variables.scss";
 @import "typography.scss";
 
-.ui {
+@function strip-unit($value) {
+    @return $value / ($value * 0 + 1);
+}
+
+@mixin fluid-type($min-font-size, $max-font-size) {
+    $min-vw: 320px;
+    $max-vw: 1500px;
+    $u1: unit($min-vw);
+    $u2: unit($max-vw);
+    $u3: unit($min-font-size);
+    $u4: unit($max-font-size);
+
+    @if $u1==$u2 and $u1==$u3 and $u1==$u4 {
+        & {
+            font-size: $min-font-size;
+
+            @media screen and (min-width: $min-vw) {
+                font-size: calc(#{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} * ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)}));
+            }
+
+            @media screen and (min-width: $max-vw) {
+                font-size: $max-font-size;
+            }
+        }
+    }
+}
+
+.timer {
+    position: fixed;
+    font-weight: 200;
+    color: #fff;
+    user-select: none;
+    mix-blend-mode: overlay; 
+    text-transform: lowercase;
+    font-size: 2em;
+    letter-spacing: .05em;
+    opacity: .75;
+    top: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    user-select: none;
+}
+
+.boom {
     position: fixed;
     font-size: 2em;
+    letter-spacing: .05em;
+    font-weight: 200;
     color: #FFF;
     user-select: none;
+    mix-blend-mode: overlay;
+    bottom: 5vh;
+    left: 50%;
+    z-index: 1;
+    opacity: .75;
+    transform: translateX(-50%);
+    text-transform: uppercase;
 
-    &--boom {
-        transform: translateX(-50%);
-        text-transform: uppercase;
+    button {
+        padding: 1em 2em;
+        cursor: pointer;
     }
 }
 
@@ -39,20 +92,17 @@ body::after {
     overflow: visible;
     mix-blend-mode: lighten;
 
-    >g>g>g {
-        * {
-            animation: test .35s both ease-out;
-            opacity: 0;
-            display: block;
-            position: relative;
-            fill: #e1ff00;
+    .letter {
+        animation: test .35s both ease-out;
+        opacity: 0;
+        display: block;
+        position: relative;
+        fill: #e1ff00;
 
-            @for $i from 1 through 12 {
-                &:nth-child(#{$i}) {
-                    animation-delay: ($i/12 + 1) + s;
-                }
+        @for $i from 1 through 12 {
+            &:nth-child(#{$i}) {
+                animation-delay: ($i/12 + 1) + s;
             }
-
         }
     }
 }
@@ -61,7 +111,7 @@ body::after {
     position: absolute;
     z-index: 1;
     bottom: 8vh;
-    left:50%;
+    left: 50%;
     transform: translateX(-50%);
     font-size: 1.5em;
     letter-spacing: .051em;
@@ -70,7 +120,38 @@ body::after {
     font-weight: 200;
     animation: message .35s both 1.5s;
     opacity: .4;
+    user-select: none;
     text-transform: uppercase;
+}
+
+.game-over {
+    position: absolute;
+    display: block;
+    top: 45%;
+    z-index: 1;
+    left: 50%;
+    transform: translate(-50%, -50%) skewY(-14deg);
+    @include fluid-type(60px, 200px);
+    user-select: none;
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -.01em;
+    white-space: pre;
+    color: #e1ff00;
+    mix-blend-mode: lighten;
+
+    span {
+        animation: test .35s both ease-out;
+        opacity: 0;
+        display: inline-block;
+        position: relative;
+
+        @for $i from 1 through 50 {
+            &:nth-child(#{$i}) {
+                animation-delay: ($i/12) + s;
+            }
+        }
+    }
 }
 
 @keyframes test {
@@ -80,7 +161,7 @@ body::after {
     }
 
     50% {
-        transform: translate(1em, -.5em);
+        transform: translate(1rem, -.5rem);
 
     }
 
@@ -90,14 +171,31 @@ body::after {
     }
 }
 
-@keyframes message {
+@keyframes test2 {
     from {
-        opacity: 0; 
-        transform: translateY(1em) translateX(-50%);
-    } 
+        opacity: 0;
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(1rem);
+
+    }
 
     to {
-        opacity: 1; 
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes message {
+    from {
+        opacity: 0;
+        transform: translateY(1em) translateX(-50%);
+    }
+
+    to {
+        opacity: 1;
         transform: translateY(0) translateX(-50%);
     }
 }

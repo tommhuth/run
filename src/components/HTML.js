@@ -4,19 +4,11 @@ import ReactDOM from "react-dom"
 // https://github.com/react-spring/react-three-fiber/blob/master/src/targets/shared/web/Dom.tsx
 export default function HTML({
     children,
-    className = "",
-    left,
-    top,
-    right,
-    bottom
+    className = ""
 }) {
     let [root] = useState(() => {
-        let element = document.createElement("div")
+        let element = document.createElement("div") 
 
-        element.style.top = top
-        element.style.left = left
-        element.style.right = right
-        element.style.bottom = bottom
         element.className = className
 
         return element
@@ -31,11 +23,7 @@ export default function HTML({
         }
     }, [])
 
-    useEffect(() => {
-        root.style.top = top
-        root.style.left = left
-        root.style.right = right
-        root.style.bottom = bottom
+    useEffect(() => { 
         root.className = className
         
         ReactDOM.render(<>{children}</>, root)

@@ -15,7 +15,7 @@ export default function getInitState() {
                 active: true,
                 y: 0,
                 end: 65
-            }, 
+            },
             {
                 id: uuid.v4(),
                 depth: 10,
@@ -24,7 +24,7 @@ export default function getInitState() {
                 type: BlockType.PLAIN,
                 y: 2,
                 end: 75
-            }, 
+            },
         ],
         hasDeviceOrientation: !mustRequestOrientationAccess,
         mustRequestOrientationAccess,
@@ -33,6 +33,6 @@ export default function getInitState() {
         attempts: 0,
         time: 1000 * 20,
         reason: null,
-        position: { x: 0, z: 40, y: 6 }  
+        position: { x: 0, z: 40, y: 6 }
     }
 }

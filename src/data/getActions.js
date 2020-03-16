@@ -29,7 +29,7 @@ export default function getActions(get, set, actions) {
                 let { time } = get()
 
                 if (time - 100 < 0) {
-                    end("timeout")
+                    end("U timed out")
                 } else {
                     set({ time: time - 100 })
                 }
@@ -78,7 +78,7 @@ export default function getActions(get, set, actions) {
                     set({
                         hasDeviceOrientation: true,
                         mustRequestOrientationAccess: false,
-                        state: GameState.INTRO
+                        state: GameState.RUNNING
                     })
                 } else {
                     set({ state: GameState.REQUEST_ORIENTATION_ACCESS_FAIL })
@@ -88,10 +88,7 @@ export default function getActions(get, set, actions) {
             }
         },
         hasDeviceOrientation() {
-            set({
-                state: GameState.READY,
-                hasDeviceOrientation: true
-            })
+            set({ hasDeviceOrientation: true })
         },
         generatePath() {
             let { blocks, position } = get()

@@ -6,8 +6,7 @@ import GameState from "../data/const/GameState"
 import animate from "../data/animate"
 
 export default function Camera() {
-    let { camera } = useThree()
-    let [intro, setIntro] = useState(true)
+    let { camera } = useThree() 
     let state = useStore(state => state.data.state)
 
     useEffect(() => {
@@ -16,7 +15,7 @@ export default function Camera() {
             camera.position.y += (position.y + 6 - camera.position.y) * .05
             camera.position.x += (position.x + 5 - camera.position.x) * .05
         }, state => state.data.position)
-    }, [intro])
+    }, [])
 
     useEffect(() => {
         animate({
@@ -26,17 +25,13 @@ export default function Camera() {
             duration: 4500,
             render({ z }) {
                 camera.position.z = z
-            },
-            complete() {
-                setIntro(false)
             }
         })
     }, [])
 
     useEffect(() => {
         if ([  GameState.RUNNING].includes(state)) {
-            camera.position.set(5, 6, 25)
-            //camera.lookAt(0, 0, 30) 
+            camera.position.set(5, 6, 25) 
         }
     }, [state])
 
