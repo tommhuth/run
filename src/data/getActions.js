@@ -29,7 +29,7 @@ export default function getActions(get, set, actions) {
                 let { time } = get()
 
                 if (time - 100 < 0) {
-                    end("U timed out")
+                    end("Timeout")
                 } else {
                     set({ time: time - 100 })
                 }

@@ -8,7 +8,7 @@
 
 @mixin fluid-type($min-font-size, $max-font-size) {
     $min-vw: 320px;
-    $max-vw: 1500px;
+    $max-vw: 1200px;
     $u1: unit($min-vw);
     $u2: unit($max-vw);
     $u3: unit($min-font-size);
@@ -34,7 +34,7 @@
     font-weight: 200;
     color: #fff;
     user-select: none;
-    mix-blend-mode: overlay; 
+    mix-blend-mode: overlay;
     text-transform: lowercase;
     font-size: 2em;
     letter-spacing: .05em;
@@ -60,10 +60,13 @@
     opacity: .75;
     transform: translateX(-50%);
     text-transform: uppercase;
+    padding: 1em 2em;
+    cursor: pointer;
+    transition: all .25s;
 
-    button {
-        padding: 1em 2em;
-        cursor: pointer;
+    &:hover {
+        font-weight: 300;
+        opacity: 1;
     }
 }
 
@@ -79,59 +82,31 @@ body::after {
     pointer-events: none;
 }
 
-.intro {
-    position: absolute;
-    display: block;
-    top: 50%;
-    z-index: 1;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 85vw;
-    max-width: 50em;
-    pointer-events: none;
-    overflow: visible;
-    mix-blend-mode: lighten;
-
-    .letter {
-        animation: test .35s both ease-out;
-        opacity: 0;
-        display: block;
-        position: relative;
-        fill: #e1ff00;
-
-        @for $i from 1 through 12 {
-            &:nth-child(#{$i}) {
-                animation-delay: ($i/12 + 1) + s;
-            }
-        }
-    }
-}
-
 .message {
     position: absolute;
     z-index: 1;
     bottom: 8vh;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 1.5em;
     letter-spacing: .051em;
     color: #FFF;
     mix-blend-mode: overlay;
     font-weight: 200;
-    animation: message .35s both 1.5s;
+    animation: message-in .35s both .5s;
     opacity: .4;
     user-select: none;
     text-transform: uppercase;
+    @include fluid-type(18px, 28px);
 }
 
-.game-over {
+.title {
     position: absolute;
     display: block;
     top: 45%;
     z-index: 1;
+    margin-top: -.1em;
     left: 50%;
     transform: translate(-50%, -50%) skewY(-14deg);
-    @include fluid-type(60px, 200px);
     user-select: none;
     line-height: 1.05;
     font-weight: 500;
@@ -139,9 +114,14 @@ body::after {
     white-space: pre;
     color: #e1ff00;
     mix-blend-mode: lighten;
+    @include fluid-type(60px, 200px);
 
-    span {
-        animation: test .35s both ease-out;
+    &--intro {
+        @include fluid-type(85px, 250px);
+    }
+
+    &__letter {
+        animation: title-letter-in .35s both ease-out;
         opacity: 0;
         display: inline-block;
         position: relative;
@@ -154,24 +134,7 @@ body::after {
     }
 }
 
-@keyframes test {
-    from {
-        opacity: 0;
-        transform: translate(0, 0);
-    }
-
-    50% {
-        transform: translate(1rem, -.5rem);
-
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(0, 0);
-    }
-}
-
-@keyframes test2 {
+@keyframes title-letter-in {
     from {
         opacity: 0;
         transform: translateX(0);
@@ -179,7 +142,6 @@ body::after {
 
     50% {
         transform: translateX(1rem);
-
     }
 
     to {
@@ -188,7 +150,7 @@ body::after {
     }
 }
 
-@keyframes message {
+@keyframes message-in {
     from {
         opacity: 0;
         transform: translateY(1em) translateX(-50%);

@@ -180,8 +180,9 @@ export default function Player({
     return (
         <> 
             <Only if={state === GameState.RUNNING}>
-                <HTML className="boom">
+                <HTML>
                     <button
+                        className="boom"
                         onClick={(e) => {
                             e.stopPropagation()
                             boom()
