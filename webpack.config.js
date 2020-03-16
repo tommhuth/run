@@ -27,10 +27,6 @@ const plugins = [
             {
                 from: path.join(__dirname, "assets", "splashscreens"),
                 to: "splashscreens/[name]." + rev + ".[ext]"
-            },
-            {
-                from: path.join(__dirname, "assets", "textures"),
-                to: "textures/[name].[ext]"
             }
         ]
     ),

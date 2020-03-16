@@ -1,4 +1,4 @@
-import { World, Body, SAPBroadphase, Vec3 } from "cannon"
+import { World, Body, Vec3 } from "cannon"
 import React, { useRef, useEffect, useState, useContext } from "react"
 import { useFrame } from "react-three-fiber"
 
@@ -13,9 +13,7 @@ export function CannonProvider({
 }) {
     let [world] = useState(() => new World())
 
-    useEffect(() => {
-        //world.broadphase = new SAPBroadphase(world) 
-        //world.broadphase.axisIndex = 2
+    useEffect(() => { 
         world.solver.iterations = iterations
         world.defaultContactMaterial.friction = defaultFriction
         world.defaultContactMaterial.restitution = defaultRestitution
