@@ -53,7 +53,11 @@ export default function Block(props) {
         <>
             {renderBlockType(props, active)}
 
-            <mesh position={position} material={active ? material.blue : material.red} ref={ref}>
+            <mesh
+                position={position}
+                material={active ? material.blue : material.red}
+                ref={ref}
+            >
                 <boxBufferGeometry attach="geometry" args={[250, 10, props.depth]} />
             </mesh>
         </>

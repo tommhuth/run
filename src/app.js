@@ -11,6 +11,7 @@ ReactDOM.render(
     <>
         <h1 className="visually-hidden">Run</h1>
         <p className="visually-hidden">Infinite runner made with Threejs</p>
+        
         <RunGame />
     </>,
     document.getElementById("root")
