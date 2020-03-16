@@ -43,7 +43,6 @@ export function useCannon({
     customData = {},
     position = [0, 0, 0],
     velocity = [0, 0, 0],
-    update,
     collisionFilterGroup,
     collisionFilterMask
 }, deps = []) {
@@ -60,7 +59,7 @@ export function useCannon({
         collisionFilterMask
     }))
 
-    useEffect(() => { 
+    useEffect(() => {
         body.customData = customData
     }, deps)
 
@@ -68,6 +67,13 @@ export function useCannon({
         if (active) {
             // Add body to world on mount
             world.addBody(body)
+
+            if (mass === 0) {
+                ref.current.position.copy(body.position)
+                ref.current.quaternion.copy(body.quaternion)
+                ref.current.matrixAutoUpdate = false
+                ref.current.updateMatrix()
+            }
 
             // Remove body on unmount
             return () => world.removeBody(body)
@@ -77,13 +83,11 @@ export function useCannon({
     }, [active, body])
 
     useFrame(() => {
-        if (!update && ref.current) {
+        if (ref.current && mass > 0) {
             // Transport cannon physics into the referenced threejs object
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
-        } else if (active && update) {
-            update(body)
-        }
+        } 
     })
 
     return { ref, body }
