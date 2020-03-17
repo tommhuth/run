@@ -11,8 +11,7 @@ export default function animate({
     ...rest
 }) {
     let targets = from
-    let id = setTimeout(() => {
-        console.log("anime")
+    let id = setTimeout(() => { 
         anime({
             targets,
             ...to,
