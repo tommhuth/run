@@ -49,7 +49,7 @@ export default function Path() {
     }, [state]) 
 
     useEffect(() => {
-         actions.generatePath() 
+        actions.generatePath() 
     }, []) 
 
     return (
