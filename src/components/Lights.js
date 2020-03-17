@@ -30,10 +30,10 @@ export default function Lights() {
 
     useEffect(() => {
         return animate({
-            from: { z: -15, y: 25, y2: 35 },
+            from: { z: 20, y: 25, y2: 35 },
             to: { z: 40, y: 5, y2: 5 },
             easing: "easeInOutSine",
-            duration: 4500,
+            duration: 2000,
             render({ z, y, y2 }) {
                 detailLight.current.position.z = z
                 detailLight.current.position.y = y2

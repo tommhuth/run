@@ -19,10 +19,10 @@ export default function Camera() {
 
     useEffect(() => {
         return animate({
-            from: { z: 10 },
+            from: { z: 20 },
             to: { z: 35 },
             easing: "easeInOutSine",
-            duration: 4500,
+            duration: 2000,
             render({ z }) {
                 camera.position.z = z
             }

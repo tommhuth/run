@@ -24,7 +24,7 @@ export default function RunGame() {
 
     useEffect(() => {
         if (state === GameState.INTRO) {
-            tid.current = setTimeout(() => actions.ready(), 4500)
+            tid.current = setTimeout(() => actions.ready(), 2000)
 
             return () => clearTimeout(tid.current)
         }

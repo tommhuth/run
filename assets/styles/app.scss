@@ -126,9 +126,9 @@ body::after {
         display: inline-block;
         position: relative;
 
-        @for $i from 1 through 50 {
+        @for $i from 1 through 35 {
             &:nth-child(#{$i}) {
-                animation-delay: ($i/12) + s;
+                animation-delay: ($i * .1) + s;
             }
         }
     }
