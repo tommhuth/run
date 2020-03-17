@@ -3,9 +3,11 @@ import { useStore } from "../data/store"
 import { Vec3, Body, Plane } from "cannon"
 import { useWorld } from "../data/cannon" 
 import Block from "./Block" 
+import GameState from "../data/const/GameState"
 
 export default function Path() {
     let blocks = useStore(state => state.data.blocks)
+    let state = useStore(state => state.data.state)
     let actions = useStore(state => state.actions) 
     let world = useWorld() 
 
@@ -39,9 +41,15 @@ export default function Path() {
     }, [])
 
     useEffect(() => {
-        let id = setInterval(() => actions.generatePath(), 1000)
+        if (state === GameState.RUNNING) {
+            let id = setInterval(() => actions.generatePath(), 1000)
+    
+            return () => clearInterval(id) 
+        }
+    }, [state]) 
 
-        return () => clearInterval(id)
+    useEffect(() => {
+         actions.generatePath() 
     }, []) 
 
     return (
