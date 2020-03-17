@@ -3,12 +3,13 @@ import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
-import Config from "../data/Config" 
+import Config from "../data/Config"
 import Boom from "./Boom"
 import GameState from "../data/const/GameState"
-import Only from "./Only" 
+import Only from "./Only"
 import HTML from "./HTML"
-import uuid from "uuid" 
+import uuid from "uuid"
+import animate from "../data/animate"
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -26,6 +27,7 @@ export default function Player({
     speed = 4
 }) {
     let world = useWorld()
+    let [active, setActive] = useState(true)
     let state = useStore(state => state.data.state)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
@@ -35,7 +37,7 @@ export default function Player({
         shape: new Sphere(1),
         collisionFilterGroup: 2,
         collisionFilterMask: 1 | 2 | 4 | 8,
-        active: true,
+        active,
         mass: 1,
         position: [0, 2, 40]
     })
@@ -61,20 +63,21 @@ export default function Player({
             }
 
             setBooms(prev => [
-                ...prev, 
-                { 
+                ...prev,
+                {
                     id: uuid.v4(),
-                    x: body.position.x, 
-                    y: body.position.y, 
-                    z: body.position.z 
+                    x: body.position.x,
+                    y: body.position.y,
+                    z: body.position.z
                 }
             ])
         }
     }, [body, world])
-    let removeBoom = useCallback((id)=> {
+    let removeBoom = useCallback((id) => {
         setBooms(prev => prev.filter(i => i.id !== id))
     }, [])
 
+    // player loop
     useFrame(() => {
         if (state === GameState.RUNNING) {
             let frameCount = 3
@@ -84,6 +87,7 @@ export default function Player({
 
                 if (averageVelocity < 2) {
                     actions.end("U crashed")
+                    setActive(false)
                 }
             }
 
@@ -193,6 +197,21 @@ export default function Player({
         }
     }, [body, speed, canJump, state, hasDeviceOrientation])
 
+    // die 
+    useEffect(() => {
+        if (state === GameState.GAME_OVER) {
+            return animate({
+                from: { scale: 1, opacity: 1 },
+                to: { scale: 5, opacity: 0 },
+                easing: "easeOutQuad",
+                render({ scale, opacity }) {
+                    ref.current.scale.set(scale, scale, scale)
+                    ref.current.material.opacity = opacity
+                }
+            })
+        }
+    }, [state])
+
     return (
         <>
             <Only if={state === GameState.RUNNING}>
@@ -210,13 +229,14 @@ export default function Player({
             </Only>
 
             {booms.map(i => <Boom key={i.id} remove={removeBoom} {...i} />)}
-            
+
             <mesh ref={ref}>
                 <meshLambertMaterial
                     attach={"material"}
                     args={[{
                         color: 0xfffff0,
                         flatShading: true,
+                        transparent: true,
                         emissive: 0xfffff0,
                         emissiveIntensity: 10
                     }]}
