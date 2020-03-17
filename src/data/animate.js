@@ -11,8 +11,8 @@ export default function animate({
     ...rest
 }) {
     let targets = from
-
-    setTimeout(() => {
+    let id = setTimeout(() => {
+        console.log("anime")
         anime({
             targets,
             ...to,
@@ -29,5 +29,8 @@ export default function animate({
         })
     }, timeout)
 
-    return () => anime.remove(targets)
+    return () => {
+        anime.remove(targets)
+        clearTimeout(id)
+    }
 }
