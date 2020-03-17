@@ -1,6 +1,6 @@
-import {  MeshPhongMaterial, SphereBufferGeometry } from "three"
+import {  MeshPhongMaterial, SphereBufferGeometry, DodecahedronBufferGeometry } from "three"
 
-let material = {
+const material = {
     red: new MeshPhongMaterial({ color: 0xff0000, flatShading: true }),
     blue: new MeshPhongMaterial({ color: 0x00d5ff, flatShading: true, shininess: 1 }),
     white: new MeshPhongMaterial({ 
@@ -12,9 +12,10 @@ let material = {
     }),
 }
 
-let geometry = {
+const geometry = {
     sphere: new SphereBufferGeometry(1, 8, 8),
     coin: new SphereBufferGeometry(1, 6, 2),
+    fragment: new DodecahedronBufferGeometry(1, 0)
 }
 
 export { geometry, material }
