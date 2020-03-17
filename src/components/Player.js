@@ -45,7 +45,7 @@ export default function Player({
     let boom = useCallback(() => {
         if (actions.reduceTime()) {
             let player = body
-            let enemies = world.bodies.filter(i => i.customData?.enemy)
+            let enemies = world.bodies.filter(i => i.customData ?.enemy)
             let limit = 15
 
             for (let enemy of enemies) {
@@ -62,20 +62,10 @@ export default function Player({
                 }
             }
 
-            setBooms(prev => [
-                ...prev,
-                {
-                    id: uuid.v4(),
-                    x: body.position.x,
-                    y: body.position.y,
-                    z: body.position.z
-                }
-            ])
+            setBooms(prev => [...prev, uuid.v4()])
         }
     }, [body, world])
-    let removeBoom = useCallback((id) => {
-        setBooms(prev => prev.filter(i => i.id !== id))
-    }, [])
+    let removeBoom = useCallback((id) =>  setBooms(prev => prev.filter(i => i !== id)), [])
 
     // player loop
     useFrame(() => {
@@ -228,7 +218,7 @@ export default function Player({
                 </HTML>
             </Only>
 
-            {booms.map(i => <Boom key={i.id} remove={removeBoom} {...i} />)}
+            {booms.map(i => <Boom key={i} id={i} remove={removeBoom} owner={ref.current} />)}
 
             <mesh ref={ref}>
                 <meshLambertMaterial

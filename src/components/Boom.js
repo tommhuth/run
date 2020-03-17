@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import animate from "../data/animate"
+import random from "../data/random"
 
-export default function Boom({ id, x, y, z, remove }) {
+export default function Boom({ id, remove, owner }) {
     let ref = useRef()
+    let [offsetY] = useState(() => random.real(-.1, .1))
 
     useEffect(() => {
         return animate({
@@ -12,6 +14,9 @@ export default function Boom({ id, x, y, z, remove }) {
             render({ opacity, scale }) {
                 ref.current.material.opacity = opacity
                 ref.current.scale.set(scale, scale, scale)
+                ref.current.position.x = owner.position.x
+                ref.current.position.y = owner.position.y + offsetY
+                ref.current.position.z = owner.position.z 
             },
             complete: () => {
                 remove(id)
@@ -21,8 +26,7 @@ export default function Boom({ id, x, y, z, remove }) {
 
     return (
         <mesh
-            ref={ref}
-            position={[x, y, z]}
+            ref={ref} 
             rotation-x={-Math.PI / 2}
         >
             <meshLambertMaterial
