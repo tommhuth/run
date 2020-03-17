@@ -67,55 +67,57 @@ const plugins = [
     })
 ]
 
-module.exports = {
-    entry: { app: "./src/app.js" },
-    devtool: "eval-cheap-module-source-map",
-    output: {
-        path: path.resolve(__dirname, "public"),
-        filename: "[name].bundle.[hash:6].js",
-        publicPath: "/"
-    },
-    stats: {
-        hash: false,
-        version: false,
-        timings: false,
-        children: false,
-        errors: true,
-    },
-    module: {
-        rules: [
-            {
-                test: /\.glsl$/,
-                loader: "webpack-glsl-loader"
-            }, 
-            {
-                test: /\.js$/,
-                exclude: /node_modules\/(?!(@huth\/utils)\/).*/,
-                loader: "babel-loader"
-            },
-            {
-                test: /\.scss$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader
-                    },
-                    "css-loader", // translates CSS into CommonJS
-                    {
-                        loader: "postcss-loader",
-                        options: {
-                            sourceMap: false,
-                            config: {
-                                path: "postcss.config.js"
+module.exports = (env, options) => {
+    return {
+        entry: { app: "./src/app.js" },
+        devtool: options.mode === "development" ? "eval-cheap-module-source-map" : false,
+        output: {
+            path: path.resolve(__dirname, "public"),
+            filename: "[name].bundle.[hash:6].js",
+            publicPath: "/"
+        },
+        stats: {
+            hash: false,
+            version: false,
+            timings: false,
+            children: false,
+            errors: true,
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.glsl$/,
+                    loader: "webpack-glsl-loader"
+                },
+                {
+                    test: /\.js$/,
+                    exclude: /node_modules\/(?!(@huth\/utils)\/).*/,
+                    loader: "babel-loader"
+                },
+                {
+                    test: /\.scss$/,
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader
+                        },
+                        "css-loader", // translates CSS into CommonJS
+                        {
+                            loader: "postcss-loader",
+                            options: {
+                                sourceMap: false,
+                                config: {
+                                    path: "postcss.config.js"
+                                }
                             }
-                        }
-                    },
-                    "sass-loader" // compiles Sass to CSS, using Node Sass by default
-                ]
-            }
-        ]
-    },
-    resolve: {
-        extensions: [".js"]
-    },
-    plugins,
+                        },
+                        "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                    ]
+                }
+            ]
+        },
+        resolve: {
+            extensions: [".js"]
+        },
+        plugins
+    }
 }
