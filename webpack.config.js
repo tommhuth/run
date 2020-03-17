@@ -69,7 +69,7 @@ const plugins = [
 
 module.exports = {
     entry: { app: "./src/app.js" },
-    devtool: false,
+    devtool: "eval-cheap-module-source-map",
     output: {
         path: path.resolve(__dirname, "public"),
         filename: "[name].bundle.[hash:6].js",
