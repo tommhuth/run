@@ -4,13 +4,13 @@ import { useCannon } from "../data/cannon"
 import random from "../data/random"
 import { material, geometry } from "../data/resources"
 
-export default function Obstacle({
+export default React.memo(({
     radius = 4,
     x,
     y,
     active = false,
     z
-}) {
+}) => {
     let { ref, body } = useCannon({
         shape: new Sphere(radius),
         collisionFilterGroup: 1,
@@ -39,4 +39,4 @@ export default function Obstacle({
             dispose={null}
         />
     )
-}
+})

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import Coin from "./Coin"
 import uuid from "uuid"
 import random from "../data/random"
@@ -22,16 +22,17 @@ export default function CoinLine({ x = 0, y, z, depth, count: defaultCount }) {
 
         return result
     })
+    let remove = useCallback((id)=> {
+        actions.extendTime()
+        setCoins(prev => prev.filter(j => j.id !== id)) 
+    }, [])
 
     return (
         <>
             {coins.map(i => {
                 return (
                     <Coin
-                        remove={() => {
-                            actions.extendTime()
-                            setCoins(prev => prev.filter(j => j.id !== i.id))
-                        }}
+                        remove={remove}
                         key={i.id}
                         {...i}
                     />

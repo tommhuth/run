@@ -13,7 +13,7 @@ function useFrameNumber(speed = .1, init = 0) {
 
 let i = 0
 
-export default function Coin({ x, y, z, remove }) {
+export default React.memo(({ x, y, z, id, remove }) => {
     let [count] = useState(() => i++)
     let frame = useFrameNumber(.05, count)
     let ref = useRef()
@@ -30,17 +30,17 @@ export default function Coin({ x, y, z, remove }) {
         first.current = false 
 
         return api.subscribe((position) => {
-            let threshold = 1.75
+            let threshold = 1.75 
 
             if (
                 position.y > y - threshold && position.y < y + threshold &&
                 position.z > z - threshold && position.z < z + threshold &&
                 position.x < x + threshold && position.x > x - threshold
             ) {
-                remove()
+                remove(id)
             }
         }, state => state.data.position)
-    }, [])
+    }, [id])
 
     return (
         <mesh
@@ -52,4 +52,4 @@ export default function Coin({ x, y, z, remove }) {
             dispose={null}
         />
     )
-}
+})

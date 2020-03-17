@@ -5,7 +5,7 @@ import { useCannon } from "../data/cannon"
 import random from "../data/random"
 import { material, geometry } from "../data/resources"
 
-export default function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
+export default React.memo(({ x, y, z, velocityX, triggerZ, radius }) => {
     let [active, setActive] = useState(false)
     let [velocityZ] = useState(random.real(-1, 1))
     let position = [x, y + radius, z]
@@ -52,4 +52,4 @@ export default function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
             dispose={null}
         /> 
     )
-}
+})

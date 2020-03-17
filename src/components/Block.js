@@ -24,7 +24,7 @@ function renderBlockType(props, active) {
     }
 }
 
-export default function Block(props) {
+export default React.memo((props) => {
     let [active, setActive] = useState(props.active)
     let position = [0, props.y - 5, props.start + props.depth / 2]
     let { ref } = useCannon({
@@ -62,4 +62,4 @@ export default function Block(props) {
             </mesh>
         </>
     )
-}
+})
