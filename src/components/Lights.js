@@ -29,7 +29,7 @@ export default function Lights() {
     }, []) 
 
     useEffect(() => {
-        animate({
+        return animate({
             from: { z: -15, y: 25, y2: 35 },
             to: { z: 40, y: 5, y2: 5 },
             easing: "easeInOutSine",

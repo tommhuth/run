@@ -18,7 +18,7 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        animate({
+        return animate({
             from: { z: 10 },
             to: { z: 35 },
             easing: "easeInOutSine",
