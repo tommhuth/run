@@ -3,10 +3,12 @@ import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
 import { useStore } from "../data/store"
-import Config from "../data/Config"
+import Config from "../data/Config" 
+import Boom from "./Boom"
 import GameState from "../data/const/GameState"
-import Only from "./Only"
+import Only from "./Only" 
 import HTML from "./HTML"
+import uuid from "uuid" 
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -24,10 +26,11 @@ export default function Player({
     speed = 4
 }) {
     let world = useWorld()
-    let state = useStore(state => state.data.state) 
+    let state = useStore(state => state.data.state)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
     let [canJump, setCanJump] = useState(true)
+    let [booms, setBooms] = useState([])
     let { ref, body } = useCannon({
         shape: new Sphere(1),
         collisionFilterGroup: 2,
@@ -56,8 +59,21 @@ export default function Player({
                     enemy.applyImpulse(direction, enemy.position)
                 }
             }
+
+            setBooms(prev => [
+                ...prev, 
+                { 
+                    id: uuid.v4(),
+                    x: body.position.x, 
+                    y: body.position.y, 
+                    z: body.position.z 
+                }
+            ])
         }
     }, [body, world])
+    let removeBoom = useCallback((id)=> {
+        setBooms(prev => prev.filter(i => i.id !== id))
+    }, [])
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
@@ -103,7 +119,7 @@ export default function Player({
     // boom
     useEffect(() => {
         let onKeyDown = ({ which }) => {
-            if (which === 32) {
+            if (which === 32 && state === GameState.RUNNING) {
                 boom()
             }
         }
@@ -111,7 +127,7 @@ export default function Player({
         window.addEventListener("keydown", onKeyDown)
 
         return () => window.removeEventListener("keydown", onKeyDown)
-    }, [boom])
+    }, [boom, state])
 
     // left/right
     useEffect(() => {
@@ -178,7 +194,7 @@ export default function Player({
     }, [body, speed, canJump, state, hasDeviceOrientation])
 
     return (
-        <> 
+        <>
             <Only if={state === GameState.RUNNING}>
                 <HTML>
                     <button
@@ -190,13 +206,16 @@ export default function Player({
                     >
                         Bitch
                     </button>
-                </HTML> 
+                </HTML>
             </Only>
+
+            {booms.map(i => <Boom key={i.id} remove={removeBoom} {...i} />)}
+            
             <mesh ref={ref}>
                 <meshLambertMaterial
                     attach={"material"}
                     args={[{
-                        color: 0xfffff0, 
+                        color: 0xfffff0,
                         flatShading: true,
                         emissive: 0xfffff0,
                         emissiveIntensity: 10
