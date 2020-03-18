@@ -4,6 +4,7 @@ import { Canvas } from "react-three-fiber"
 import Lights from "./Lights"
 import Camera from "./Camera"
 import Timer from "./Timer"
+import DistanceCounter from "./DistanceCounter"
 import Only from "./Only"
 import Path from "./Path"
 import Player from "./Player"
@@ -16,6 +17,8 @@ export default function RunGame() {
     let state = useStore(state => state.data.state)
     let reason = useStore(state => state.data.reason)
     let attempts = useStore(state => state.data.attempts)
+    let score = useStore(state => state.data.score)
+    let hasNewPersonalBest = useStore(state => state.data.hasNewPersonalBest) 
     let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
@@ -77,8 +80,7 @@ export default function RunGame() {
     return (
         <>
             <Only if={[GameState.REQUEST_ORIENTATION_ACCESS, GameState.READY, GameState.INTRO].includes(state)}>
-                
-                <div className="title title--intro"> 
+                <div className="title title--intro">
                     {"Roll,".split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)} <br />
                     {"britney".split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)}
                 </div>
@@ -86,19 +88,26 @@ export default function RunGame() {
                     Tap to start
                 </div>
             </Only>
-            
+
             <Only if={state === GameState.GAME_OVER}>
-                <div className="title"> 
+                <div className="title">
                     {"Gurl,".split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)} <br />
                     {(reason || "").split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)}
                 </div>
                 <div className="message">
                     Tap to restart
                 </div>
+
+                <Only if={hasNewPersonalBest}>
+                    <div className="personal-best">New personal best</div>
+                </Only>
+
+                <div className="current-score">{score} meters</div>
             </Only>
 
             <Only if={state === GameState.RUNNING}>
                 <Timer />
+                <DistanceCounter />
             </Only>
 
             <Canvas

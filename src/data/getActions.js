@@ -1,6 +1,7 @@
 import getBlock from "./getBlock"
 import GameState from "./const/GameState"
 import getInitState from "./getInitState"
+import LocalStorage from "./LocalStorage"
 
 let tid
 
@@ -24,16 +25,17 @@ export default function getActions(get, set, actions) {
         },
         startTimer() {
             let { end } = actions()
+            let decrement = 1000
 
             tid = setInterval(() => {
                 let { time } = get()
 
-                if (time - 100 < 0) {
+                if (time - decrement < 0) {
                     end("Timeout")
                 } else {
-                    set({ time: time - 100 })
+                    set({ time: time - decrement })
                 }
-            }, 100)
+            }, decrement)
         },
         stopTimer() { 
             clearInterval(tid)
@@ -63,8 +65,20 @@ export default function getActions(get, set, actions) {
         },
         end(reason) {
             let { stopTimer } = actions()
+            let { personalBest, position } = get()
+            let score =  Math.floor(position.z) - 40 
+            let hasNewPersonalBest = false
+
+            if (personalBest < score) {
+                if (personalBest > 0) {
+                    hasNewPersonalBest = true
+                }
+
+                personalBest = score
+                LocalStorage.set("run-best", score)
+            }
             
-            set({ state: GameState.GAME_OVER, reason })
+            set({ state: GameState.GAME_OVER, reason, score, personalBest, hasNewPersonalBest })
             stopTimer()
         },
         ready() {  

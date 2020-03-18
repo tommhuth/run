@@ -1,6 +1,7 @@
 import uuid from "uuid"
 import GameState from "./const/GameState"
 import BlockType from "./const/BlockType"
+import LocalStorage from "./LocalStorage"
 
 export default function getInitState() {
     let mustRequestOrientationAccess = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission
@@ -33,6 +34,8 @@ export default function getInitState() {
         attempts: 0,
         time: 1000 * 20,
         reason: null,
-        position: { x: 0, z: 40, y: 6 }
+        position: { x: 0, z: 40, y: 6 },
+        personalBest: LocalStorage.get("run-best"),
+        hasNewPersonalBest: false
     }
 }

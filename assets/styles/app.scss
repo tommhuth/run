@@ -29,21 +29,67 @@
     }
 }
 
-.timer {
+.personal-best, .current-score { 
+    @include fluid-type(16px, 20px);
     position: fixed;
     font-weight: 200;
     color: #fff;
+    white-space: nowrap;
     user-select: none;
     mix-blend-mode: overlay;
-    text-transform: lowercase;
-    font-size: 2em;
+    text-transform: uppercase; 
+    transform: translateX(-50%); 
+    z-index: 1;
+    letter-spacing: .05em;
+    opacity: .25;
+    top: 5vh;     
+    opacity: .25;
+    left: 50%;
+}
+
+.current-score { 
+    opacity: 1;
+    margin-top: 1.5rem;  
+    @include fluid-type(24px, 32px);
+}
+
+.timer, .distance-counter {
+    position: fixed;
+    font-weight: 300;
+    color: #fff;
+    user-select: none;
+    mix-blend-mode: overlay;
+    text-transform: uppercase; 
+    white-space: nowrap; 
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-name: stats-in; 
+    @include fluid-type(24px, 32px); 
     letter-spacing: .05em;
     opacity: .75;
-    top: 5vh;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 5vh; 
+    line-height: 1;
     z-index: 1;
-    user-select: none;
+    user-select: none; 
+
+    span {
+        display: block; 
+        font-size: .5em;
+        margin-top: .35em;
+        font-weight: 200;
+        opacity: .5;
+    }
+}
+
+.timer {
+    left: 50%;
+    margin-left: .35em;  
+}
+
+.distance-counter {
+    margin-right: .35em;
+    right: 50%;
+    text-align: right; 
 }
 
 .boom {
@@ -161,3 +207,14 @@ body::after {
         transform: translateY(0) translateX(-50%);
     }
 }
+
+@keyframes stats-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+ 
