@@ -11,6 +11,7 @@ import Fragment from "./Fragment"
 import HTML from "./HTML"
 import uuid from "uuid"
 import animate from "../data/animate" 
+import BoomButton from "./BoomButton"
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -208,15 +209,7 @@ export default function Player({
         <>
             <Only if={state === GameState.RUNNING}>
                 <HTML>
-                    <button
-                        className="boom"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            boom()
-                        }}
-                    >
-                        Bitch
-                    </button>
+                    <BoomButton boom={boom} />
                 </HTML>
             </Only>
 

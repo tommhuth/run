@@ -3,8 +3,6 @@ import { CannonProvider } from "../data/cannon"
 import { Canvas } from "react-three-fiber"
 import Lights from "./Lights"
 import Camera from "./Camera"
-import Timer from "./Timer"
-import DistanceCounter from "./DistanceCounter"
 import Only from "./Only"
 import Path from "./Path"
 import Player from "./Player"
@@ -12,13 +10,15 @@ import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
 import Config from "../data/Config"
 import { Vector3 } from "three"
+import TitleCard from "./TitleCard" 
+import Message from "./Message"
+import RunnerStats from "./RunnerStats"
+import GameOverStats from "./GameOverStats"
 
 export default function RunGame() {
     let state = useStore(state => state.data.state)
     let reason = useStore(state => state.data.reason)
     let attempts = useStore(state => state.data.attempts)
-    let score = useStore(state => state.data.score)
-    let hasNewPersonalBest = useStore(state => state.data.hasNewPersonalBest) 
     let mustRequestOrientationAccess = useStore(state => state.data.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
@@ -80,34 +80,19 @@ export default function RunGame() {
     return (
         <>
             <Only if={[GameState.REQUEST_ORIENTATION_ACCESS, GameState.READY, GameState.INTRO].includes(state)}>
-                <div className="title title--intro">
-                    {"Roll,".split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)} <br />
-                    {"britney".split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)}
-                </div>
-                <div className="message">
-                    Tap to start
-                </div>
+                <TitleCard lines={["Roll,", "Britney"]} big />
+                <Message text="Tap to start" /> 
             </Only>
 
             <Only if={state === GameState.GAME_OVER}>
-                <div className="title">
-                    {"Gurl,".split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)} <br />
-                    {(reason || "").split("").map((i, index) => <span className="title__letter" key={index}>{i}</span>)}
-                </div>
-                <div className="message">
-                    Tap to restart
-                </div>
+                <TitleCard lines={["Gurl,", reason]} /> 
+                <Message text="Tap to restart" /> 
 
-                <Only if={hasNewPersonalBest}>
-                    <div className="personal-best">New personal best</div>
-                </Only>
-
-                <div className="current-score">{score} meters</div>
+                <GameOverStats />
             </Only>
 
             <Only if={state === GameState.RUNNING}>
-                <Timer />
-                <DistanceCounter />
+                <RunnerStats />
             </Only>
 
             <Canvas
@@ -129,9 +114,11 @@ export default function RunGame() {
                 >
                     <Lights />
                     <Camera />
-                    <Path />
-
-                    {[GameState.RUNNING, GameState.GAME_OVER].includes(state) ? <Player key={attempts} /> : null}
+                    <Path /> 
+                    
+                    <Only if={[GameState.RUNNING, GameState.GAME_OVER].includes(state)}>
+                        <Player key={attempts} />
+                    </Only> 
                 </CannonProvider>
             </Canvas>
         </>

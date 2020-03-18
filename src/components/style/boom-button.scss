@@ -1,0 +1,25 @@
+.boom-button {
+    position: fixed;
+    font-size: 1.25em;
+    letter-spacing: .05em;
+    font-weight: 200;
+    color: rgba(#000, .25);
+    user-select: none;
+    mix-blend-mode: overlay;
+    bottom: 5vh;
+    left: 50%;
+    z-index: 1;
+    border-radius: 1px;
+    background-color: rgba(#FFF, .05); 
+    transform: translateX(-50%);
+    text-transform: uppercase;
+    padding: .5em 1.75em;
+    cursor: pointer;
+    transition: all .25s;
+
+    &:hover {
+        font-weight: 300;
+        background-color: rgba(#FFF, .4);
+        color: rgba(#000, .5);
+    }
+}

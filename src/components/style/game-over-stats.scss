@@ -1,0 +1,29 @@
+@import "../../../assets/styles/utils.scss";
+
+.game-over-stats { 
+    position: fixed;
+    font-weight: 200;
+    color: #fff;
+    white-space: nowrap;
+    line-height: 1;
+    user-select: none;
+    mix-blend-mode: overlay;
+    text-transform: uppercase; 
+    text-align: center;
+    transform: translateX(-50%); 
+    z-index: 1;
+    letter-spacing: .05em; 
+    top: 5vh;     
+    left: 50%;
+
+    &__personal-best {
+        opacity: .25;
+        @include fluid-type(16px, 20px);
+    }
+
+    &__score { 
+        opacity: 1;
+        margin-top: .35rem;  
+        @include fluid-type(24px, 32px); 
+    }
+}

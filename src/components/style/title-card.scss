@@ -1,0 +1,51 @@
+@import "../../../assets/styles/utils.scss";
+
+.title-card {
+    position: absolute;
+    display: block;
+    top: 45%;
+    z-index: 1;
+    margin-top: -.1em;
+    left: 50%;
+    transform: translate(-50%, -50%) skewY(-14deg) translateZ(1px);
+    user-select: none;
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -.01em;
+    white-space: pre;
+    color: #e1ff00;
+    mix-blend-mode: lighten; 
+    @include fluid-type(60px, 200px);
+
+    &--big {
+        @include fluid-type(85px, 250px);
+    }
+
+    &__letter {
+        animation: title-card-letter-in .35s both ease-out; 
+        display: inline-block; 
+        transform-style: preserve-3d;
+
+        @for $i from 1 through 35 {
+            &:nth-child(#{$i}) {
+                animation-delay: ($i * .1) + s;
+            }
+        }
+    }
+}
+
+@keyframes title-card-letter-in {
+    0% {
+        opacity: 0;
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
