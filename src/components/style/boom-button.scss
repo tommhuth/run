@@ -8,18 +8,17 @@
     mix-blend-mode: overlay;
     bottom: 5vh;
     left: 50%;
-    z-index: 1;
-    border-radius: 1px;
-    background-color: rgba(#FFF, .05); 
+    z-index: 1; 
+    background-color: rgba(#FFF, .1); 
     transform: translateX(-50%);
     text-transform: uppercase;
     padding: .5em 1.75em;
     cursor: pointer;
     transition: all .25s;
 
-    &:hover {
+    &--active {
         font-weight: 300;
         background-color: rgba(#FFF, .4);
-        color: rgba(#000, .5);
-    }
+        color: rgba(#000, .5); 
+    } 
 }
