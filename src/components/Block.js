@@ -55,7 +55,7 @@ function Block(props) {
 
             <mesh
                 position={position}
-                material={active ? material.blue : material.red}
+                material={material.blue}
                 ref={ref}
             >
                 <boxBufferGeometry attach="geometry" args={[250, 10, props.depth]} />
