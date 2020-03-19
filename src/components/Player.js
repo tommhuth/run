@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useCallback, useState } from "react"
 import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
 import { useFrame } from "react-three-fiber"
-import { useStore } from "../data/store" 
+import { useStore } from "../data/store"
 import Config from "../data/Config"
 import Boom from "./Boom"
 import GameState from "../data/const/GameState"
@@ -10,7 +10,7 @@ import Only from "./Only"
 import Fragment from "./Fragment"
 import HTML from "./HTML"
 import uuid from "uuid"
-import animate from "../data/animate" 
+import animate from "../data/animate"
 import BoomButton from "./BoomButton"
 
 function intersectBody(from, to, body) {
@@ -35,7 +35,7 @@ export default function Player({
     let actions = useStore(state => state.actions)
     let [canJump, setCanJump] = useState(true)
     let [booms, setBooms] = useState([])
-    let [fragments] = useState(() => new Array(10).fill())
+    let [fragments] = useState(() => new Array(8).fill())
     let { ref, body } = useCannon({
         shape: new Sphere(1),
         collisionFilterGroup: 2,
@@ -213,9 +213,11 @@ export default function Player({
                 </HTML>
             </Only>
 
-            {booms.map(i => <Boom key={i} id={i} remove={removeBoom} owner={ref.current} />)}
+            <Only if={state === GameState.GAME_OVER}>
+                {fragments.map((i, index) => <Fragment x={body.position.x} y={body.position.y} z={body.position.z} key={index} />)}
+            </Only>
 
-            {state === GameState.GAME_OVER && fragments.map((i, index) => <Fragment x={body.position.x} y={body.position.y} z={body.position.z} key={index} />)}
+            {booms.map(i => <Boom key={i} id={i} remove={removeBoom} owner={ref.current} />)}
 
             <mesh ref={ref}>
                 <meshLambertMaterial
