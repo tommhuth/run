@@ -1,17 +1,27 @@
 import React, { useEffect, useRef } from "react"
-import { api, useStore } from "../data/store"
+import { api } from "../data/store"
 import Config from "../data/Config"
 import Only from "./Only"
 
 import animate from "../data/animate"
+import { useFrame } from "react-three-fiber"
 
 export default function Lights() {
     let detailLight = useRef()
     let wideLight = useRef()
     let first = useRef(true)
+    let targetDistance = useRef(21)
 
-    useEffect(() => {  
-        first.current = false 
+    useFrame(() => {
+        if (!detailLight.current) {
+            return
+        }
+
+        wideLight.current.distance += (targetDistance.current - wideLight.current.distance) * .025
+    })
+
+    useEffect(() => {
+        first.current = false
 
         return api.subscribe((position) => {
             if (!detailLight.current) {
@@ -26,7 +36,7 @@ export default function Lights() {
             wideLight.current.position.y += (position.y + 8 - wideLight.current.position.y) * .1
             wideLight.current.position.x = position.x
         }, state => state.data.position)
-    }, []) 
+    }, [])
 
     useEffect(() => {
         return animate({
@@ -45,13 +55,7 @@ export default function Lights() {
 
     useEffect(() => {
         return api.subscribe((time) => {
-            if (!detailLight.current) {
-                return
-            }
-
-            let targetDistance = time / (20 * 1000) * 10 + 11
-
-            wideLight.current.distance += (targetDistance - wideLight.current.distance) * .1
+            targetDistance.current = Math.min(time / 1000 / 20 * 13 + 10, 24)
         }, state => state.data.time)
     }, [])
 
@@ -73,15 +77,15 @@ export default function Lights() {
                 decay={1}
                 intensity={1}
                 distance={8}
-                position={first.current ? [0, -116, 30] : undefined}
+                position={first.current ? [0, -100, 30] : undefined}
             />
             <pointLight
                 ref={wideLight}
-                color={0x00ffff} 
+                color={0x00ffff}
                 decay={1.1}
                 intensity={1.15}
                 distance={21}
-                position={first.current ?  [0, -110, 30]: undefined}
+                position={first.current ? [0, -100, 30] : undefined}
             />
         </>
     )
