@@ -3,6 +3,7 @@ import { api } from "../data/store"
 import { material, geometry } from "../data/resources"
 import animate from "../data/animate"
 import { useFrame } from "react-three-fiber"
+import { useStore } from "../data/store"
 
 function useFrameNumber(speed = .1, init = 0) {
     let frame = useRef(init)
@@ -16,6 +17,7 @@ let i = 0
 
 function Coin({ x, y, z, id, remove }) {
     let [count] = useState(() => i++)
+    let actions = useStore(state => state.actions)
     let [taken, setTaken] = useState(false)
     let frame = useFrameNumber(.05, count)
     let takenMaterial = useMemo(()=> {
@@ -60,14 +62,16 @@ function Coin({ x, y, z, id, remove }) {
             let threshold = 1.75
 
             if (
+                !taken &&
                 position.y > y - threshold && position.y < y + threshold &&
                 position.z > z - threshold && position.z < z + threshold &&
                 position.x < x + threshold && position.x > x - threshold
             ) {
                 setTaken(true)
+                actions.extendTime()
             }
         }, state => state.data.position)
-    }, [id])
+    }, [id, taken])
 
     return (
         <mesh
