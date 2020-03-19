@@ -7,6 +7,8 @@ import ReactDOM from "react-dom"
 import Config from "./data/Config" 
 import RunGame from "./components/RunGame" 
 
+document.getElementById("spinner").remove()
+
 ReactDOM.render(
     <>
         <h1 className="visually-hidden">Run</h1>
