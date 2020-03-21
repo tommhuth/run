@@ -40,7 +40,7 @@ export default function Lights() {
 
     useEffect(() => {
         return animate({
-            from: { z: 20, y: 25, y2: 35 },
+            from: { z: 20, y: 25, y2: 20 },
             to: { z: 40, y: 5, y2: 5 },
             easing: "easeInOutSine",
             duration: 2000,
