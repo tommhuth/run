@@ -22,13 +22,13 @@
     }
 
     &__letter {
-        animation: title-card-letter-in .35s both ease-out; 
+        animation: title-card-letter-in .25s both ease-out; 
         display: inline-block; 
         transform-style: preserve-3d;
 
         @for $i from 1 through 35 {
             &:nth-child(#{$i}) {
-                animation-delay: ($i * .1) + s;
+                animation-delay: (($i - 1) * .065) + s;
             }
         }
     }
