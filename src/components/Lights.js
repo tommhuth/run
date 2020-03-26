@@ -15,7 +15,7 @@ export default function Lights() {
     useFrame(() => {
         if (!detailLight.current) {
             return
-        }
+        } 
 
         wideLight.current.distance += (targetDistance.current - wideLight.current.distance) * .025
     })
@@ -55,7 +55,9 @@ export default function Lights() {
 
     useEffect(() => {
         return api.subscribe((time) => {
-            targetDistance.current = Math.min(time / 1000 / 20 * 13 + 10, 24)
+            let minDistance = 12
+
+            targetDistance.current = Math.min(time / 1000 / 20 * 13 + minDistance, 24)
         }, state => state.data.time)
     }, [])
 
