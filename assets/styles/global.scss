@@ -20,12 +20,12 @@
 html,
 body {
     overflow: hidden;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
 }
 
 body {  
-    min-height: 100vh;
+    min-height: 100%;
     color: #FFF;
     background-color: var(--teal); 
     
@@ -42,9 +42,18 @@ body {
     }
 } 
 
+#root {
+    width: 100%;
+    height: 100%;
+}
+
 canvas {
     width: 100vw !important;
     height: 100vh !important;
+    position: fixed;
+    display: block;
+    top: 0;
+    left: 0;
 }
 
 .visually-hidden {
