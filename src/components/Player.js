@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback, useState } from "react"
 import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
-import { useFrame } from "react-three-fiber"
+import { useFrame, useThree } from "react-three-fiber"
 import { useStore } from "../data/store"
 import Config from "../data/Config"
 import Boom from "./Boom"
@@ -12,6 +12,7 @@ import HTML from "./HTML"
 import uuid from "uuid"
 import animate from "../data/animate"
 import BoomButton from "./BoomButton"
+import random from "../data/random"
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -29,6 +30,7 @@ export default function Player({
     speed = 4
 }) {
     let world = useWorld()
+    let { camera } = useThree()
     let [active, setActive] = useState(true)
     let state = useStore(state => state.data.state)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
@@ -45,10 +47,15 @@ export default function Player({
         position: [0, 2, 40]
     })
     let frames = useRef([])
+    let trauma = useRef(0)
+    let shakeCamera = useCallback((amount)=> {
+        trauma.current += amount 
+        trauma.current = Math.min(trauma.current, 1)
+    })
     let boom = useCallback(() => {
         if (actions.reduceTime()) {
             let player = body
-            let enemies = world.bodies.filter(i => i.customData ?.enemy)
+            let enemies = world.bodies.filter(i => i.customData?.enemy)
             let limit = 15
 
             for (let enemy of enemies) {
@@ -66,9 +73,26 @@ export default function Player({
             }
 
             setBooms(prev => [...prev, uuid.v4()])
+            shakeCamera(.5)
         }
     }, [body, world])
     let removeBoom = useCallback((id) => setBooms(prev => prev.filter(i => i !== id)), [])
+
+    useFrame(() => {
+        let maxShake = Math.PI / 32
+        let rotationX = -2.2655
+        let rotationZ = 2.5673
+        let shake = trauma.current * trauma.current  
+
+        camera.rotation.x = rotationX + (maxShake * shake * random.real(-1, 1))
+        camera.rotation.z = rotationZ + (maxShake * shake * random.real(-1, 1))
+
+        if (trauma.current > 0) {
+            trauma.current -= .02
+        } else {
+            trauma.current = 0
+        }
+    })
 
     // player loop
     useFrame(() => {
@@ -192,7 +216,9 @@ export default function Player({
 
     // die 
     useEffect(() => {
-        if (state === GameState.GAME_OVER) {
+        if (state === GameState.GAME_OVER) { 
+            shakeCamera(.8)
+
             return animate({
                 from: { scale: 1, opacity: 1 },
                 to: { scale: 5, opacity: 0 },
@@ -202,6 +228,7 @@ export default function Player({
                     ref.current.material.opacity = opacity
                 }
             })
+
         }
     }, [state])
 
