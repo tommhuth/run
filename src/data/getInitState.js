@@ -36,6 +36,7 @@ export default function getInitState() {
         reason: null,
         position: { x: 0, z: 40, y: 6 },
         personalBest: LocalStorage.get("run-best"),
-        hasNewPersonalBest: false
+        hasNewPersonalBest: false,
+        trauma: [0]
     }
 }

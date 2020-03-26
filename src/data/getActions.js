@@ -7,6 +7,9 @@ let tid
 
 export default function getActions(get, set, actions) {
     return {
+        traumatize(amount = .2) {
+            set({ trauma: [...get().trauma, amount] })
+        },
         extendTime(amount = 2000) {
             let { time } = get()
 
@@ -37,7 +40,7 @@ export default function getActions(get, set, actions) {
                 }
             }, decrement)
         },
-        stopTimer() { 
+        stopTimer() {
             clearInterval(tid)
         },
         start() {
@@ -66,7 +69,7 @@ export default function getActions(get, set, actions) {
         end(reason) {
             let { stopTimer } = actions()
             let { personalBest, position } = get()
-            let score =  Math.floor(position.z) - 40 
+            let score = Math.floor(position.z) - 40
             let hasNewPersonalBest = false
 
             if (personalBest < score) {
@@ -77,12 +80,12 @@ export default function getActions(get, set, actions) {
                 personalBest = score
                 LocalStorage.set("run-best", score)
             }
-            
+
             set({ state: GameState.GAME_OVER, reason, score, personalBest, hasNewPersonalBest })
             stopTimer()
         },
-        ready() {  
-            set({ state: GameState.READY }) 
+        ready() {
+            set({ state: GameState.READY })
         },
         async requestDeviceOrientation() {
             try {
