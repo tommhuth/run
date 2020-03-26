@@ -24,7 +24,7 @@ const plugins = [
     new CopyWebpackPlugin(
         [
             {
-                from: path.join(__dirname, "assets", "splashscreens"),
+                from: path.join(__dirname, "assets", "splashscreens/*.png"),
                 to: "splashscreens/[name]." + rev + ".[ext]"
             }
         ]
@@ -32,8 +32,8 @@ const plugins = [
     new WebpackPwaManifest({
         name: "Run",
         short_name: "Run",
-        background_color: "#FFF",
-        theme_color: "#000",
+        background_color: "#FBFF64",
+        theme_color: "#FBFF64",
         orientation: "portrait",
         start_url: "/",
         display: "fullscreen",
