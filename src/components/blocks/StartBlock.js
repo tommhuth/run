@@ -1,10 +1,8 @@
-import React, { useState } from "react"
+import React from "react"
 import { material, geometry } from "../../data/resources"
 
 export default function StartBlock({
-    depth,
-    start,
-    y
+    depth
 }) {
     return (
         <>
