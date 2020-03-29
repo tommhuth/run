@@ -12,8 +12,15 @@ export default function BoomButton({ boom }) {
             type="button"
             onMouseOver={() => setActive(true)}
             onMouseOut={() => setActive(false)}
-            onTouchStart={() => setActive(true)}
-            onTouchEnd={() => setActive(false)}
+            onTouchStart={(e) => {
+                e.preventDefault()
+                setActive(true)
+                boom()
+            }}
+            onTouchEnd={(e) => {
+                e.preventDefault()
+                setActive(false)
+            }}
             onTouchCancel={() => setActive(false)}
             onClick={(e) => {
                 e.stopPropagation()
