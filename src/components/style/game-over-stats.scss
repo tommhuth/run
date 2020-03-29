@@ -13,17 +13,17 @@
     transform: translateX(-50%); 
     z-index: 1;
     letter-spacing: .05em; 
-    top: 5vh;     
+    top: calc(min(max(5vh, 3rem), 4rem) + env(safe-area-inset-top, 0));
     left: 50%;
 
     &__personal-best {
-        opacity: .25;
+        opacity: .5;
+        margin-bottom: .5rem;  
         @include fluid-type(16px, 20px);
     }
 
     &__score { 
         opacity: 1;
-        margin-top: .5rem;  
         @include fluid-type(24px, 32px); 
     }
 }

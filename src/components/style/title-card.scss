@@ -3,9 +3,9 @@
 .title-card {
     position: absolute;
     display: block;
-    top: 45%;
+    top: 50%;
     z-index: 1;
-    margin-top: -.1em;
+    margin-top: -.5em;
     left: 50%;
     transform: translate(-50%, -50%) skewY(-14deg) translateZ(1px);
     user-select: none;

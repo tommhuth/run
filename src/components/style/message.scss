@@ -2,8 +2,8 @@
 
 .message {
     position: absolute;
-    z-index: 1;
-    bottom: 8vh;
+    z-index: 1; 
+    bottom: calc(min(max(8vw, 3rem), 4rem) + env(safe-area-inset-bottom, 0)) ;
     left: 50%;
     transform: translateX(-50%);
     letter-spacing: .1em;
