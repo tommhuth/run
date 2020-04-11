@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react"
 import { CannonProvider } from "../data/cannon"
-import { Canvas } from "react-three-fiber"
+import { Canvas, useThree } from "react-three-fiber"
 import Lights from "./Lights"
 import Camera from "./Camera"
 import Only from "./Only"

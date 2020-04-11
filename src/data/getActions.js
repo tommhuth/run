@@ -107,8 +107,8 @@ export default function getActions(get, set, actions) {
         hasDeviceOrientation() {
             set({ hasDeviceOrientation: true })
         },
-        generatePath() {
-            let { blocks, position } = get()
+        generatePath(position) {
+            let { blocks } = get()
             let { addBlock, clearBlocks } = actions()
             let previous = blocks[blocks.length - 1]
             let forwardBuffer = 35

@@ -21,7 +21,7 @@ export function CannonProvider({
     }, [world])
 
     // Run world stepper every frame
-    useFrame(() => {
+    useFrame(() => { 
         world.step(1 / 30)
     })
 

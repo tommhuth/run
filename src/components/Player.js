@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback, useState } from "react"
 import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import { useCannon, useWorld } from "../data/cannon"
-import { useFrame } from "react-three-fiber"
+import { useFrame, useThree } from "react-three-fiber"
 import { useStore } from "../data/store"
 import Config from "../data/Config"
 import Boom from "./Boom"
@@ -11,7 +11,7 @@ import Fragment from "./Fragment"
 import HTML from "./HTML"
 import uuid from "uuid"
 import animate from "../data/animate"
-import BoomButton from "./BoomButton" 
+import BoomButton from "./BoomButton"
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -28,7 +28,8 @@ function intersectBody(from, to, body) {
 export default function Player({
     speed = 4
 }) {
-    let world = useWorld() 
+    let world = useWorld()
+    let { camera } = useThree()
     let [active, setActive] = useState(true)
     let state = useStore(state => state.data.state)
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
@@ -87,7 +88,15 @@ export default function Player({
 
             frames.current = [...frames.current.slice(-(frameCount - 1)), body.velocity.z]
             body.velocity.z = speed
-            actions.setPosition(body.position.x, body.position.y, body.position.z)
+            //actions.setPosition(body.position.x, body.position.y, body.position.z)
+        }
+    })
+
+    useFrame(() => {
+        if (state === GameState.RUNNING) {
+            camera.position.z = body.position.z - 5
+            camera.position.y = body.position.y + 6
+            camera.position.x = body.position.x + 5
         }
     })
 
@@ -193,7 +202,7 @@ export default function Player({
 
     // die 
     useEffect(() => {
-        if (state === GameState.GAME_OVER) { 
+        if (state === GameState.GAME_OVER) {
             actions.traumatize(.8)
 
             return animate({

@@ -33,11 +33,13 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
+        /*
         return api.subscribe((position) => {
             camera.position.z = position.z - 5
             camera.position.y += (position.y + 6 - camera.position.y) * .05
             camera.position.x += (position.x + 5 - camera.position.x) * .05
         }, state => state.data.position)
+        */
     }, [])
 
     useEffect(() => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react"
+import {useThree} from "react-three-fiber"
 import { api } from "../data/store"
 import { Sphere } from "cannon"
 import { useCannon } from "../data/cannon"
@@ -6,6 +7,7 @@ import random from "../data/random"
 import { material, geometry } from "../data/resources"
 
 function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
+    let {camera} = useThree()
     let [active, setActive] = useState(false)
     let [velocityZ] = useState(random.real(-1, 1))
     let position = [x, y + radius, z]
@@ -24,23 +26,28 @@ function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
     useEffect(() => {
         first.current = false
     }, [])
+    useEffect(()=> {
 
+        if (triggerZ < camera.position.z + 5) {
+            if (!active) {
+                setActive(true) 
+            }
+        } else {
+            if (active) {
+                setActive(false)
+            }
+        }
+
+    })
+
+    /*
     useEffect(() => {
         let unsubscribe = api.subscribe((position) => {
-            if (triggerZ < position.z) {
-                if (!active) {
-                    setActive(true)
-                    unsubscribe()
-                }
-            } else {
-                if (active) {
-                    setActive(false)
-                }
-            }
         }, state => state.data.position)
 
         return unsubscribe
     }, [active])
+    */
 
     return (
         <mesh

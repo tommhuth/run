@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import {useThree, useFrame} from "react-three-fiber"
 import { api } from "../data/store"
 import BlockType from "../data/const/BlockType"
 import ObstaclesBlock from "./blocks/ObstaclesBlock"
@@ -25,6 +26,7 @@ function renderBlockType(props, active) {
 }
 
 function Block(props) {
+    let {camera} = useThree()
     let [active, setActive] = useState(props.active)
     let position = [0, props.y - 5, props.start + props.depth / 2]
     let { ref } = useCannon({
@@ -35,7 +37,23 @@ function Block(props) {
         position
     })
 
+    useFrame(()=> {
+        let z = camera.position.z + 5
+
+        if (z > props.start - 20 && z < props.end + 20) {
+            if (!active) {
+                setActive(true)
+            }
+        } else {
+            if (active) {
+                setActive(false)
+            }
+        }
+
+    })
+
     useEffect(() => {
+        /*
         return api.subscribe(({ z }) => {
             if (z > props.start - 20 && z < props.end + 20) {
                 if (!active) {
@@ -47,6 +65,7 @@ function Block(props) {
                 }
             }
         }, state => state.data.position)
+        */
     }, [active])
 
     return (

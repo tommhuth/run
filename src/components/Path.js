@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import { useStore } from "../data/store"
+import {useThree} from "react-three-fiber"
 import { Vec3, Body, Plane } from "cannon"
 import { useWorld } from "../data/cannon" 
 import Block from "./Block" 
@@ -10,6 +11,7 @@ export default function Path() {
     let state = useStore(state => state.data.state)
     let actions = useStore(state => state.actions) 
     let world = useWorld() 
+    let {camera} = useThree()
 
     useEffect(() => {
         let edges = []
@@ -42,14 +44,14 @@ export default function Path() {
 
     useEffect(() => {
         if (state === GameState.RUNNING) {
-            let id = setInterval(() => actions.generatePath(), 1000)
+            let id = setInterval(() => actions.generatePath(camera.position), 1000)
     
             return () => clearInterval(id) 
         }
     }, [state]) 
 
     useEffect(() => {
-        actions.generatePath() 
+        actions.generatePath(camera.position) 
     }, []) 
 
     return (

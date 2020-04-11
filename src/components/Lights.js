@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react"
 import { api } from "../data/store"
 import Config from "../data/Config"
+import {useThree} from "react-three-fiber"
 import Only from "./Only"
 
 import animate from "../data/animate"
@@ -11,17 +12,34 @@ export default function Lights() {
     let wideLight = useRef()
     let first = useRef(true)
     let targetDistance = useRef(21)
+    let { camera } = useThree()
 
     useFrame(() => {
         if (!detailLight.current) {
             return
-        } 
+        }
 
         wideLight.current.distance += (targetDistance.current - wideLight.current.distance) * .025
+
+        /*
+                camera.position.z = body.position.z - 5
+                camera.position.y = body.position.y + 6
+                camera.position.x = body.position.x + 5
+                */
+        detailLight.current.position.z = camera.position.z +5
+        detailLight.current.position.y = camera.position.y + 4 - 6
+        detailLight.current.position.x = camera.position.x - 5
+
+        wideLight.current.position.z = camera.position.z + 5
+        wideLight.current.position.y += (camera.position.y - 6 + 8 - wideLight.current.position.y) * .1
+        wideLight.current.position.x = camera.position.x - 5
+
     })
 
     useEffect(() => {
         first.current = false
+
+        /*
 
         return api.subscribe((position) => {
             if (!detailLight.current) {
@@ -36,6 +54,7 @@ export default function Lights() {
             wideLight.current.position.y += (position.y + 8 - wideLight.current.position.y) * .1
             wideLight.current.position.x = position.x
         }, state => state.data.position)
+        */
     }, [])
 
     useEffect(() => {
