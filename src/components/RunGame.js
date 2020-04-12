@@ -98,7 +98,7 @@ export default function RunGame() {
             <Canvas
                 orthographic
                 noEvents
-                pixelRatio={1}
+                pixelRatio={small ? Math.min(window.devicePixelRatio, 2) : 1}
                 camera={{
                     position: new Vector3(5, 6, 15),
                     zoom: Config.DEBUG_MODE ? 15 : small ? 20 : 35,
