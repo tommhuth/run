@@ -61,17 +61,17 @@ export function useCannon({
         body.customData = customData
     }, deps)
 
-    useEffect(() => {
+    useEffect(()=> { 
+        ref.current.position.copy(body.position)
+        ref.current.quaternion.copy(body.quaternion)
+        ref.current.matrixAutoUpdate = mass > 0
+        ref.current.updateMatrix()
+    }, [])
+
+    useEffect(() => {  
         if (active) {
             // Add body to world on mount
-            world.addBody(body)
-
-            if (mass === 0) {
-                ref.current.position.copy(body.position)
-                ref.current.quaternion.copy(body.quaternion)
-                ref.current.matrixAutoUpdate = false
-                ref.current.updateMatrix()
-            }
+            world.addBody(body) 
 
             // Remove body on unmount
             return () => world.removeBody(body)

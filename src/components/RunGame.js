@@ -98,7 +98,7 @@ export default function RunGame() {
             <Canvas
                 orthographic
                 noEvents
-                pixelRatio={small ? Math.min(window.devicePixelRatio, 2) : 1}
+                pixelRatio={1}
                 camera={{
                     position: new Vector3(5, 6, 15),
                     zoom: Config.DEBUG_MODE ? 15 : small ? 20 : 35,
@@ -108,6 +108,8 @@ export default function RunGame() {
                     right: 50
                 }}
             >
+                <fogExp2 args={[0xc1fc1e, .0125]}   attach="fog" />
+
                 <CannonProvider
                     defaultFriction={.8}
                     defaultRestitution={.5}

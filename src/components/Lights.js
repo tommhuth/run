@@ -1,52 +1,47 @@
 import React, { useEffect, useRef } from "react"
-import { api } from "../data/store"
+import { api, useStore } from "../data/store"
 import Config from "../data/Config"
 import Only from "./Only"
 
 import animate from "../data/animate"
 import { useFrame } from "react-three-fiber"
+import GameState from "../data/const/GameState"
 
 export default function Lights() {
-    let detailLight = useRef()
     let wideLight = useRef()
     let first = useRef(true)
+    let state = useStore(store => store.data.state)
+    let position = useRef({ x: 0, y: 0, z: 0 })
     let targetDistance = useRef(21)
 
     useFrame(() => {
-        if (!detailLight.current) {
+        if (!wideLight.current || state !== GameState.RUNNING) {
             return
-        } 
+        }
 
         wideLight.current.distance += (targetDistance.current - wideLight.current.distance) * .025
+
+        wideLight.current.position.z = position.current.z
+        wideLight.current.position.y += (position.current.y + 8 - wideLight.current.position.y) * .1
+        wideLight.current.position.x = position.current.x
     })
 
     useEffect(() => {
         first.current = false
 
-        return api.subscribe((position) => {
-            if (!detailLight.current) {
-                return
-            }
+        return api.subscribe(({ x, y, z }) => {
+            position.current = { x, y, z }
 
-            detailLight.current.position.z = position.z
-            detailLight.current.position.y = position.y + 4
-            detailLight.current.position.x = position.x
-
-            wideLight.current.position.z = position.z
-            wideLight.current.position.y += (position.y + 8 - wideLight.current.position.y) * .1
-            wideLight.current.position.x = position.x
         }, state => state.data.position)
     }, [])
 
     useEffect(() => {
         return animate({
-            from: { z: 20, y: 25, y2: 20 },
-            to: { z: 40, y: 5, y2: 5 },
+            from: { z: 20, y: 25 },
+            to: { z: 40, y: 5 },
             easing: "easeInOutSine",
             duration: 2000,
-            render({ z, y, y2 }) {
-                detailLight.current.position.z = z
-                detailLight.current.position.y = y2
+            render({ z, y }) {
                 wideLight.current.position.z = z
                 wideLight.current.position.y = y + 4
             }
@@ -73,14 +68,6 @@ export default function Lights() {
             </Only>
 
             <ambientLight color={0x99eeff} intensity={.3} />
-            <pointLight
-                ref={detailLight}
-                color={0xfbff00}
-                decay={1}
-                intensity={1}
-                distance={8}
-                position={first.current ? [0, -100, 30] : undefined}
-            />
             <pointLight
                 ref={wideLight}
                 color={0x00ffff}
