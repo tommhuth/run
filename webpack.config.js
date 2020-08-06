@@ -56,6 +56,7 @@ const plugins = [
             }
         ]
     }),
+    /*
     new InjectManifest({
         swSrc: "./src/serviceworker.js",
         swDest: "serviceworker.js",
@@ -63,7 +64,7 @@ const plugins = [
         templatedURLs: {
             "/": uuid.v4()
         }
-    })
+    })*/
 ]
 
 module.exports = (env, options) => {

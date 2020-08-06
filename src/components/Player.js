@@ -1,131 +1,27 @@
-import React, { useEffect, useRef, useCallback, useState } from "react"
-import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
-import { useCannon, useWorld } from "../data/cannon"
-import { useFrame } from "react-three-fiber"
+
+import React, { useEffect, useRef, useState } from "react"
+import { useThree, useFrame } from "react-three-fiber"
+import Block from "./Block"
 import { useStore } from "../data/store"
-import Config from "../data/Config"
-import Boom from "./Boom"
+import { useCannon } from "../data/cannon"
+import Config from "../Config"
+import { Sphere } from "cannon"
 import GameState from "../data/const/GameState"
-import Only from "./Only"
-import Fragment from "./Fragment"
-import HTML from "./HTML"
-import uuid from "uuid"
-import animate from "../data/animate"
-import BoomButton from "./BoomButton" 
+import materials from "../shared/materials"
 
-function intersectBody(from, to, body) {
-    let result = new RaycastResult()
-    let ray = new Ray(
-        new Vec3(...from),
-        new Vec3(...to)
-    )
-
-    ray.intersectBody(body, result)
-
-    return result
-}
-
-export default function Player({
-    speed = 4
-}) {
-    let world = useWorld() 
-    let [active, setActive] = useState(true)
-    let state = useStore(state => state.data.state)
-    let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
-    let actions = useStore(state => state.actions)
-    let [canJump, setCanJump] = useState(true)
-    let [booms, setBooms] = useState([])
-    let [fragments] = useState(() => new Array(8).fill())
+export default function Player() {
+    let radius = 1
     let { ref, body } = useCannon({
-        shape: new Sphere(1),
-        collisionFilterGroup: 2,
-        collisionFilterMask: 1 | 2 | 4 | 8,
-        active,
-        mass: 1,
-        position: [0, 2, 40]
+        mass: 2,
+        shape: new Sphere(radius),
+        position: [0, radius * 20, Config.Z_START]
     })
-    let frames = useRef([])
-    let boom = useCallback(() => {
-        if (actions.reduceTime()) {
-            let player = body
-            let enemies = world.bodies.filter(i => i.customData?.enemy)
-            let limit = 15
-
-            for (let enemy of enemies) {
-                let distance = player.position.distanceTo(enemy.position)
-
-                if (distance < limit) {
-                    let force = Math.min(Math.max(0, 1 - distance / limit), 1) * 25
-                    let direction = enemy.position.clone()
-                        .vsub(player.position.clone())
-                        .unit()
-                        .mult(force * enemy.mass)
-
-                    enemy.applyImpulse(direction, enemy.position)
-                }
-            }
-
-            setBooms(prev => [...prev, uuid.v4()])
-            actions.traumatize(.5)
-        }
-    }, [body, world])
-    let removeBoom = useCallback((id) => setBooms(prev => prev.filter(i => i !== id)), [])
-
-    // player loop
-    useFrame(() => {
-        if (state === GameState.RUNNING) {
-            let frameCount = 3
-
-            if (frames.current.length === frameCount && !Config.DEBUG_MODE) {
-                let averageVelocity = frames.current.reduce((total, current) => total + current, 0) / frameCount
-
-                if (averageVelocity < 2) {
-                    actions.end("U crashed")
-                    setActive(false)
-                }
-            }
-
-            frames.current = [...frames.current.slice(-(frameCount - 1)), body.velocity.z]
-            body.velocity.z = speed
-            actions.setPosition(body.position.x, body.position.y, body.position.z)
-        }
-    })
-
-    // jump set on collision
-    useEffect(() => {
-        if (body && state === GameState.RUNNING) {
-            let listener = ({ body: target }) => {
-                // if collieded body is below player,
-                // we hit the "top" of the other body and can jump again
-                let intersection = intersectBody(
-                    body.position.toArray(),
-                    [body.position.x, body.position.y - 50, body.position.z],
-                    target
-                )
-
-                if (intersection.hasHit) {
-                    setCanJump(true)
-                }
-            }
-
-            body.addEventListener("collide", listener)
-
-            return () => body.removeEventListener("collide", listener)
-        }
-    }, [body, state])
-
-    // boom
-    useEffect(() => {
-        let onKeyDown = ({ which }) => {
-            if (which === 32 && state === GameState.RUNNING) {
-                boom()
-            }
-        }
-
-        window.addEventListener("keydown", onKeyDown)
-
-        return () => window.removeEventListener("keydown", onKeyDown)
-    }, [boom, state])
+    let speed = 6
+    let setPosition = useStore(i => i.setPosition)
+    let end = useStore(i => i.end)
+    let state = useStore(i => i.state)
+    let lastBlock = useStore(i => i.blocks[i.blocks.length - 1])
+    let hasDeviceOrientation = useStore(i => i.hasDeviceOrientation)
 
     // left/right
     useEffect(() => {
@@ -163,82 +59,42 @@ export default function Player({
 
     // jump
     useEffect(() => {
-        let root = document.getElementById("root")
-        let onClick = () => {
-            if (state !== GameState.RUNNING) {
-                return
+        if (state === GameState.RUNNING) {
+            let onClick = () => body.velocity.y = 8
+
+            window.addEventListener("click", onClick)
+
+            return () => {
+                window.removeEventListener("click", onClick)
             }
-
-            if (canJump) {
-                body.velocity.y = speed * 2.5
-                setCanJump(false)
-            }
-        }
-        let onTouchStart = (e) => {
-            if (state === GameState.RUNNING) {
-                e.preventDefault()
-            }
-
-            onClick()
-        }
-
-        root.addEventListener("click", onClick)
-        root.addEventListener("touchstart", onTouchStart, { passive: !hasDeviceOrientation })
-
-        return () => {
-            root.removeEventListener("click", onClick)
-            root.removeEventListener("touchstart", onTouchStart, { passive: !hasDeviceOrientation })
-        }
-    }, [body, speed, canJump, state, hasDeviceOrientation])
-
-    // die 
-    useEffect(() => {
-        if (state === GameState.GAME_OVER) { 
-            actions.traumatize(.8)
-
-            return animate({
-                from: { scale: 1, opacity: 1 },
-                to: { scale: 5, opacity: 0 },
-                easing: "easeOutQuad",
-                render({ scale, opacity }) {
-                    ref.current.scale.set(scale, scale, scale)
-                    ref.current.material.opacity = opacity
-                }
-            })
-
         }
     }, [state])
 
+    // game over
+    useFrame(() => {
+        if (state === GameState.RUNNING) {
+            let buffer = Config.BLOCK_MAX_EXTRA_WIDTH / 2
+            let x = body.position.x
+            let y = body.position.y
+            let low = y + 1 < lastBlock.y
+
+            if (low || x < -(Config.BLOCK_WIDTH / 2 + buffer) || x > Config.BLOCK_WIDTH / 2 + buffer) {
+                end()
+            }
+        }
+    })
+
+    useFrame(() => {
+        if (state === GameState.RUNNING) {
+            body.velocity.z = speed
+
+            setPosition(body.position.x, body.position.y, body.position.z)
+        }
+    })
+
     return (
-        <>
-            <Only if={state === GameState.RUNNING}>
-                <HTML>
-                    <BoomButton boom={boom} />
-                </HTML>
-            </Only>
-
-            <Only if={state === GameState.GAME_OVER}>
-                {fragments.map((i, index) => <Fragment x={body.position.x} y={body.position.y} z={body.position.z} key={index} />)}
-            </Only>
-
-            {booms.map(i => <Boom key={i} id={i} remove={removeBoom} owner={ref.current} />)}
-
-            <mesh ref={ref}>
-                <meshLambertMaterial
-                    attach={"material"}
-                    args={[{
-                        color: 0xfffff0,
-                        flatShading: true,
-                        transparent: true,
-                        emissive: 0xfffff0,
-                        emissiveIntensity: 10
-                    }]}
-                />
-                <sphereBufferGeometry
-                    attach="geometry"
-                    args={[1, 12, 6, 6]}
-                />
-            </mesh>
-        </>
+        <mesh ref={ref} material={materials.player}> 
+            <sphereBufferGeometry attach="geometry" args={[radius, 12, 6]} />
+        </mesh>
     )
 }

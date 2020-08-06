@@ -1,56 +1,36 @@
-import React, { useEffect, useState, useRef } from "react"
-import { api } from "../data/store"
-import { Sphere } from "cannon"
-import { useCannon } from "../data/cannon"
-import random from "../data/random"
-import { material, geometry } from "../data/resources"
 
-function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
-    let [active, setActive] = useState(false)
-    let [velocityZ] = useState(random.real(-1, 1))
-    let position = [x, y + radius, z]
-    let first = useRef(true)
-    let { ref } = useCannon({
+import React, { useEffect, useRef, useState } from "react"
+import { Canvas, useFrame, useThree } from "react-three-fiber"
+import { useCannon } from "../data/cannon"
+import { Sphere } from "cannon"
+import { useStore, api } from "../data/store"
+import materials from "../shared/materials"
+
+function Enemy({ position, radius, speed, id }) {
+    let removeEnemy = useStore(i => i.removeEnemy)
+    let { ref, body } = useCannon({
+        mass: radius * radius,
         shape: new Sphere(radius),
-        active,
-        collisionFilterGroup: 4,
-        customData: { enemy: true },
-        collisionFilterMask: 1 | 2 | 4,
-        mass: (4 / 3) * Math.PI * (radius * radius * radius),
-        velocity: [velocityX, 0, velocityZ],
         position
     })
+    let playerZ = useRef(0)
 
     useEffect(() => {
-        first.current = false
-    }, [])
+        return api.subscribe(z => playerZ.current = z, state => state.position.z)
+    })
 
-    useEffect(() => {
-        let unsubscribe = api.subscribe((position) => {
-            if (triggerZ < position.z) {
-                if (!active) {
-                    setActive(true)
-                    unsubscribe()
-                }
-            } else {
-                if (active) {
-                    setActive(false)
-                }
-            }
-        }, state => state.data.position)
+    useFrame(() => {
+        body.velocity.z = speed
 
-        return unsubscribe
-    }, [active])
+        if (body.position.y < -100) {
+            removeEnemy(id)
+        }
+    })
 
     return (
-        <mesh
-            scale={[radius, radius, radius]}
-            position={first.current ? position : undefined}
-            geometry={geometry.sphere}
-            ref={ref}
-            material={material.blue}
-            dispose={null}
-        />
+        <mesh ref={ref} material={materials.enemy}> 
+            <sphereBufferGeometry attach="geometry" args={[radius, 12, 6]} />
+        </mesh>
     )
 }
 

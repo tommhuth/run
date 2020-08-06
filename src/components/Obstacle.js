@@ -1,42 +1,31 @@
-import React, { useEffect } from "react"
-import { Vec3, Sphere } from "cannon"
-import { useCannon } from "../data/cannon"
-import random from "../data/random"
-import { material, geometry } from "../data/resources"
 
-export default React.memo(({
-    radius = 4,
-    x,
-    y,
-    active = false,
-    z
-}) => {
-    let { ref, body } = useCannon({
+import React, { useEffect } from "react"
+import { useCannon } from "../data/cannon"
+import { Vec3, Box, Sphere } from "cannon" 
+import { SphereGeometry } from "three"
+
+function Obstacle({ mergeGeometry, radius, position, block }) {
+    useCannon({
         shape: new Sphere(radius),
-        collisionFilterGroup: 1,
-        collisionFilterMask: 1 | 2 | 4,
-        active,
-        position: [x, y, z]
+        mass: 0,
+        position: [
+            position[0],
+            block.y,
+            position[2] + block.start + block.depth / 2
+        ]
     })
 
     useEffect(() => {
-        let axis = new Vec3(...random.pick([
-            [1, 0, 0],
-            [0, 1, 0],
-            [0, 0, 1]
-        ]))
-        let angle = random.real(0, Math.PI * 2)
+        let sphere = new SphereGeometry(radius)
 
-        body.quaternion.setFromAxisAngle(axis, angle)
-    }, [body])
+        sphere.translate(...position)
+
+        mergeGeometry(sphere) 
+    }, [])
 
     return (
-        <mesh
-            scale={[radius, radius, radius]}
-            geometry={geometry.sphere}
-            ref={ref}
-            material={material.blue}
-            dispose={null}
-        />
+        null
     )
-})
+}
+
+export default React.memo(Obstacle)

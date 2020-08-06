@@ -1,5 +1,7 @@
 import React from "react"
 
-export default function Only(props) {
+function Only(props) {
     return props.if ? <>{props.children}</> : null
 }
+
+export default React.memo(Only)

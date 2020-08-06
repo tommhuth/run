@@ -1,5 +1,5 @@
 import { World, Body, Vec3 } from "cannon"
-import React, { useRef, useEffect, useState, useContext, useLayoutEffect } from "react"
+import React, { useRef, useEffect, useState, useContext } from "react"
 import { useFrame } from "react-three-fiber"
 
 const context = React.createContext()
@@ -13,7 +13,7 @@ export function CannonProvider({
 }) {
     let [world] = useState(() => new World())
 
-    useEffect(() => {
+    useEffect(() => { 
         world.solver.iterations = iterations
         world.defaultContactMaterial.friction = defaultFriction
         world.defaultContactMaterial.restitution = defaultRestitution
@@ -37,6 +37,7 @@ export function useWorld() {
 export function useCannon({
     mass = 0,
     shape,
+    active = false,
     customData = {},
     position = [0, 0, 0],
     velocity = [0, 0, 0],
@@ -60,24 +61,31 @@ export function useCannon({
         body.customData = customData
     }, deps)
 
-    useLayoutEffect(() => {
-        if (ref.current) {
-            ref.current.position.copy(body.position)
-            ref.current.quaternion.copy(body.quaternion)
-            ref.current.updateMatrix()
+    useEffect(()=> { 
+        ref.current.position.copy(body.position)
+        ref.current.quaternion.copy(body.quaternion)
+        ref.current.matrixAutoUpdate = mass > 0
+        ref.current.updateMatrix()
+    }, [])
+
+    useEffect(() => {  
+        if (active) {
+            // Add body to world on mount
+            world.addBody(body) 
+
+            // Remove body on unmount
+            return () => world.removeBody(body)
+        } else {
+            world.removeBody(body)
         }
-
-        world.addBody(body)
-
-        return () => world.removeBody(body)
-    }, [body])
+    }, [active, body])
 
     useFrame(() => {
-        if (ref.current  ) {
+        if (ref.current && mass > 0) {
             // Transport cannon physics into the referenced threejs object
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
-        }
+        } 
     })
 
     return { ref, body }

@@ -35,6 +35,7 @@ export default function getActions(get, set, actions) {
 
                 if (time - decrement < 0) {
                     end("Timeout")
+                    console.log("sdf")
                 } else {
                     set({ time: time - decrement })
                 }
@@ -111,7 +112,7 @@ export default function getActions(get, set, actions) {
             let { blocks, position } = get()
             let { addBlock, clearBlocks } = actions()
             let previous = blocks[blocks.length - 1]
-            let forwardBuffer = 35
+            let forwardBuffer = 50 
 
             while (previous.end - position.z < forwardBuffer) {
                 previous = addBlock()
@@ -125,6 +126,7 @@ export default function getActions(get, set, actions) {
             let cleanedBlocks = blocks.filter(i => i.end > position.z - backwardBuffer)
 
             if (cleanedBlocks.length !== blocks.length) {
+                console.log("clean")
                 set({ blocks: cleanedBlocks })
             }
         },
@@ -132,7 +134,7 @@ export default function getActions(get, set, actions) {
             let { blocks } = get()
             let next = getBlock(blocks[blocks.length - 1])
 
-            set({ blocks: [...blocks, next] })
+            set({ blocks: [...blocks, next] }) 
 
             return next
         },

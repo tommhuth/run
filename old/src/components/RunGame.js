@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react"
-import { CannonProvider } from "../data/cannon"
+import { Physics } from "use-cannon"
 import { Canvas } from "react-three-fiber"
 import Lights from "./Lights"
 import Camera from "./Camera"
@@ -23,7 +23,7 @@ export default function RunGame() {
     let hasDeviceOrientation = useStore(state => state.data.hasDeviceOrientation)
     let actions = useStore(state => state.actions)
     let small = window.matchMedia("(max-width: 600px)").matches
-    let tid = useRef()
+    let tid = useRef()  
 
     useEffect(() => {
         if (state === GameState.INTRO) {
@@ -78,22 +78,7 @@ export default function RunGame() {
     }, [state, mustRequestOrientationAccess, hasDeviceOrientation])
 
     return (
-        <>
-            <Only if={[GameState.REQUEST_ORIENTATION_ACCESS, GameState.READY, GameState.INTRO].includes(state)}>
-                <TitleCard lines={["Roll,", "Britney"]} big />
-                <Message text="Tap to start" /> 
-            </Only>
-
-            <Only if={state === GameState.GAME_OVER}>
-                <TitleCard lines={["Gurl,", reason]} /> 
-                <Message text="Tap to restart" /> 
-
-                <GameOverStats />
-            </Only>
-
-            <Only if={state === GameState.RUNNING}>
-                <RunnerStats />
-            </Only>
+        <> 
 
             <Canvas
                 orthographic
@@ -108,21 +93,40 @@ export default function RunGame() {
                     right: 50
                 }}
             >
-                <fogExp2 args={[0xc1fc1e, .0125]}   attach="fog" />
+                <fogExp2 args={[0xc1fc1e, .0125]} attach="fog" />
 
-                <CannonProvider
-                    defaultFriction={.8}
-                    defaultRestitution={.5}
+                <Physics 
+                    defaultContactMaterial={{
+                        friction: 0.8,
+                        restitution: 0.2,
+                        contactEquationStiffness: 1e7,
+                        contactEquationRelaxation: 1,
+                        frictionEquationStiffness: 1e7,
+                        frictionEquationRelaxation: 2,
+                    }}
+                    step={1/30}
+                    gravity={[0,-10, 0]}
+                    iterations={5}
+                    size={5000}
                 >
-                    <Lights />
-                    <Camera />
-                    <Path /> 
-                    
                     <Only if={[GameState.RUNNING, GameState.GAME_OVER].includes(state)}>
-                        <Player key={attempts} />
-                    </Only> 
-                </CannonProvider>
+                        <Player/>
+                    </Only>
+                    <Path /> 
+                </Physics>
+                <Lights />
+                <Camera />
             </Canvas>
         </>
     )
 }
+
+
+
+/*
+
+
+
+                     
+
+                    */

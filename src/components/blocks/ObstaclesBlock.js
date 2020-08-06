@@ -1,67 +1,104 @@
-import React, { useState } from "react"
+
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
+import { useThree } from "react-three-fiber"
+import { useStore } from "../../data/store"
+import { useCannon } from "../../data/cannon"
 import random from "../../data/random"
 import Obstacle from "../Obstacle"
+import Config from "../../Config"
+import uuid from "uuid"
 import { Vector3 } from "three"
 
-export default function ObstaclesBlock({
-    depth,
-    start,
-    active,
-    y
-}) {
-    let [obstacles] = useState(() => {
-        let count = depth * random.pick([.2, .25])
-        let result = []
-        let getObstacle = () => {
-            let radii = [
-                8, 9, 6, 7, 5, 4, 3, 14
-            ].filter(i => i * 1.5 < depth)  
-            let radius = random.pick(radii)
-            let border = 30 // outer border 
 
-            return {
-                radius,
-                z: random.real(start + radius, start + depth - radius),
-                y: y,
-                x: random.integer(-border + radius, border - radius)
-            }
+let vec1 = new Vector3()
+let vec2 = new Vector3()
+
+let isTooClose = (position, radius, obstacles) => {
+    for (let obstacle of obstacles) {
+        let distance = vec1.set(...position)
+            .distanceTo(vec2.set(...obstacle.position))
+
+        if (distance < obstacle.radius + radius) {
+            return true
         }
-        let isTooClose = (insertable, obstacles) => {
-            for (let obstacle of obstacles) {
-                let distance = new Vector3(insertable.x, insertable.y, insertable.z)
-                    .distanceTo(new Vector3(obstacle.x, obstacle.y, obstacle.z))
+    }
 
-                if (distance < obstacle.radius + insertable.radius + 2) {
-                    return true
+    return false
+}
+
+function ObstaclesBlock(props) {
+    let addEnemy = useStore(i => i.addEnemy)
+    let obstacles = useMemo(() => {
+        let obstacleCount = random.integer(1, 3)
+        let result = []
+        let radii = [2.5, 2, 3, 4, 5]
+        let getPosition = (radius) => {
+            let l = random.integer(-(Config.BLOCK_WIDTH / 2) + radius, -radius)
+            let r = random.integer(radius, Config.BLOCK_WIDTH / 2 - radius)
+
+            return [
+                random.bool() ? l : r,
+                Config.BLOCK_HEIGHT / 2,
+                random.integer((-props.depth / 2) + radius + 1, props.depth / 2 - radius)
+            ]
+        }
+
+        outer:
+        for (let i = 0; i < obstacleCount; i++) {
+            let radius = random.pick(radii)
+            let position = getPosition(radius)
+            let attempts = 0
+
+            radii = radii.filter(i => i !== radius)
+
+            while (isTooClose(position, radius, result)) {
+                position = getPosition(radius)
+                attempts++
+
+                if (attempts > 10) {
+                    break outer
                 }
             }
 
-            return false
-        }
-
-        for (let i = 0; i < count; i++) {
-            let obstacle = getObstacle()
-            let attempts = 0
-
-            while (isTooClose(obstacle, result) && attempts <= 8) {
-                obstacle = getObstacle()
-                attempts++
-            }
-
-            if (attempts >= 8) {
-                // stop trying, and use whatever we got working
-                break
-            } else {
-                result.push(obstacle)
-            }
+            result.push({
+                id: uuid.v4(),
+                radius,
+                position
+            })
         }
 
         return result
-    })
+    }, [])
+
+
+    useEffect(() => {
+        let id = setTimeout(() => {
+            let count = random.integer(0, 2)
+
+            for (let i = 0; i < count; i++) {
+                addEnemy([
+                    random.integer(-Config.BLOCK_WIDTH / 2, Config.BLOCK_WIDTH / 2),
+                    props.y,
+                    props.end
+                ])
+            }
+        }, 1200)
+
+        return () => clearTimeout(id)
+    }, [])
 
     return (
         <>
-            {obstacles.map((props, index) => <Obstacle active={active} key={index} {...props} />)}
+            {obstacles.map(i => (
+                <Obstacle
+                    {...i}
+                    mergeGeometry={props.mergeGeometry}
+                    key={i.id}
+                    block={props}
+                />
+            ))}
         </>
     )
 }
+
+export default React.memo(ObstaclesBlock)

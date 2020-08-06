@@ -17,28 +17,16 @@
         <link href="/splashscreens/ipadpro2_splash.<%= htmlWebpackPlugin.options.rev %>.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
 
         <style>
-            body {
-                background-color: rgb(4,60,75);
+            body { 
                 color: #FFF;
             }
-
-            body::after {
-                content: "";
-                display: block;
-                width: 100vw;
-                height: 100vh;
-                background-image: linear-gradient(45deg, rgba(#fbff00, 0), rgba(#fbff00, .1));
-                position: absolute;
-                top: 0;
-                left: 0;
-                pointer-events: none;
-            }
+ 
 
             #spinner {
                 position: absolute;
                 top:50%;
                 left:50%;
-                display: block;
+                display: none;
                 width: 2em;
                 margin-top: -1em;
                 margin-left: -1em;

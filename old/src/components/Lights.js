@@ -59,13 +59,13 @@ export default function Lights() {
     return (
         <>
             <Only if={Config.DEBUG_MODE}>
+            </Only>
                 <directionalLight
                     color={0xffffff}
                     position={[-1, 5, -3]}
                     intensity={.5}
                     onUpdate={self => self.updateMatrixWorld()}
                 />
-            </Only>
 
             <ambientLight color={0x99eeff} intensity={.3} />
             <pointLight

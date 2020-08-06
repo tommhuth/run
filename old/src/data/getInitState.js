@@ -12,18 +12,16 @@ export default function getInitState() {
                 id: uuid.v4(),
                 depth: 75,
                 start: -10,
-                type: BlockType.START,
-                active: true,
+                type: BlockType.START, 
                 y: 0,
                 end: 65
             },
             {
                 id: uuid.v4(),
-                depth: 10,
-                active: true,
+                depth: 10, 
                 start: 65,
                 type: BlockType.PLAIN,
-                y: 2,
+                y: 0,
                 end: 75
             },
         ],

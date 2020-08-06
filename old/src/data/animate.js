@@ -1,17 +1,17 @@
-import anime from "animejs"
+import anime from "animejs" 
 
 export default function animate({
     from,
     to,
-    render = () => { },
+    render,
     complete = () => { },
     timeout = 0,
-    duration = 300,
+    duration=300,
     easing = "easeOutQuart",
     ...rest
 }) {
     let targets = from
-    let id = setTimeout(() => {
+    let id = setTimeout(() => { 
         anime({
             targets,
             ...to,
@@ -19,11 +19,11 @@ export default function animate({
             easing,
             ...rest,
             change() {
-                render(targets)
+                render(targets) 
             },
             complete() {
                 render(targets)
-                complete(targets)
+                complete(targets) 
             }
         })
     }, timeout)
