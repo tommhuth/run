@@ -30,20 +30,18 @@ export default function Player() {
         position: [0, radius * 20, Config.Z_START],
         onCollide({ body: target }) {
             // if other body is below player,
-            // we hit the "top" of the other body and can jump again
-            let intersection = intersectBody(
-                body.position.toArray(),
-                [body.position.x, body.position.y - 20, body.position.z],
-                target
-            )
-            let intersectionForward = intersectBody(
-                body.position.toArray(),
-                [body.position.x, body.position.y - 20, body.position.z + radius],
-                target
-            )
+            // we hit the "top" of the other body and can jump again  
+            for (let z of [body.position.z, body.position.z + radius]) {
+                let intersection = intersectBody(
+                    body.position.toArray(),
+                    [body.position.x, body.position.y - 20, z],
+                    target
+                )
 
-            if (intersection.hasHit || intersectionForward.hasHit) {
-                setCanJump(true)
+                if (intersection.hasHit || intersection.hasHit) {
+                    setCanJump(true)
+                    break
+                }
             }
         }
     }, [canJump])
