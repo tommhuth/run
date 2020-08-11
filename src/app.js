@@ -1,9 +1,9 @@
 import "../assets/styles/app.scss"
 
-import React, { useEffect  } from "react"
+import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
 import { Vector3 } from "three"
-import { Canvas  } from "react-three-fiber"
+import { Canvas } from "react-three-fiber"
 import { CannonProvider } from "./data/cannon"
 import Config from "./Config"
 import Path from "./components/Path"
@@ -12,7 +12,7 @@ import Player from "./components/actors/Player"
 import Post from "./components/Post"
 import Camera from "./components/Camera"
 import GameState from "./data/const/GameState"
-import { useStore } from "./data/store"  
+import { useStore } from "./data/store"
 import ErrorBoundary from "./components/ErrorBoundary"
 import Lights from "./components/Lights"
 
@@ -42,7 +42,7 @@ function Game() {
         window.addEventListener("click", listener)
 
         return () => window.removeEventListener("click", listener)
-    }, [state]) 
+    }, [state])
 
     useEffect(() => {
         if (mustRequestOrientationAccess && !hasDeviceOrientation) {
@@ -57,16 +57,30 @@ function Game() {
         }
     }, [state, mustRequestOrientationAccess, hasDeviceOrientation])
 
+    let [size, sets] = useState({})
+
+    useEffect(() => {
+        setTimeout(() => { 
+            sets({
+                fh: window.innerHeight,
+                w: document.querySelector("canvas").getBoundingClientRect().width ,
+                h: document.querySelector("canvas").getBoundingClientRect().height
+            })
+        }, 2000)
+    }, [])
+
     return (
         <>
             <div className="ui">
-                {state} <br/>
-                Built @ {buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")}
+                {state} <br />
+                Built @ {buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")} <br />
+                {size.w}x{size.h} <br />
+                {size.fh}
             </div>
             <Canvas
                 colorManagement
                 orthographic
-                noEvents 
+                noEvents
                 pixelRatio={Math.min(window.devicePixelRatio, Config.IS_LARGE_SCREEN ? 1 : 2)}
                 camera={{
                     position: new Vector3(5, 6, Config.Z_START - 10),
@@ -80,9 +94,9 @@ function Game() {
                     antialias: false
                 }}
             >
-                <color attach="background" args={[0xD30C7B]} />  
+                <color attach="background" args={[0xD30C7B]} />
 
-                <ErrorBoundary> 
+                <ErrorBoundary>
                     <Post />
                     <Lights />
                     <Camera />
@@ -90,7 +104,7 @@ function Game() {
                     <CannonProvider>
                         <Path />
                         <Only if={[GameState.RUNNING, GameState.GAME_OVER].includes(state)}>
-                            <Player key={attempts} /> 
+                            <Player key={attempts} />
                         </Only>
                     </CannonProvider>
                 </ErrorBoundary>
