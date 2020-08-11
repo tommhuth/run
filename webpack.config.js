@@ -4,14 +4,14 @@ const uuid = require("uuid")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
-const CopyWebpackPlugin = require("copy-webpack-plugin")
-const { InjectManifest } = require("workbox-webpack-plugin")
+const CopyWebpackPlugin = require("copy-webpack-plugin") 
 
 const rev = uuid.v4()
 const plugins = [
     //new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
-        "process.env.REGISTER_SERVICEWORKER": JSON.stringify(process.env.REGISTER_SERVICEWORKER)
+        "process.env.REGISTER_SERVICEWORKER": JSON.stringify(process.env.REGISTER_SERVICEWORKER),
+        "process.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
     }),
     new MiniCssExtractPlugin({
         filename: "css/[name].[hash:6].css"

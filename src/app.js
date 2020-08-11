@@ -24,6 +24,7 @@ function Game() {
     let start = useStore(state => state.start)
     let reset = useStore(state => state.reset)
     let deviceOrientationGranted = useStore(state => state.deviceOrientationGranted)
+    let buildTime = new Date(Config.BUILD_TIME)
 
     useEffect(() => {
         let listener = () => {
@@ -58,7 +59,7 @@ function Game() {
     return (
         <>
             <div className="ui">
-                {state}
+                {state} -- ({buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")})
             </div>
             <Canvas
                 colorManagement
