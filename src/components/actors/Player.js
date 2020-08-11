@@ -95,12 +95,12 @@ export default function Player() {
                 }
             }
 
-            window.addEventListener("click", jump)
-            window.addEventListener("touchstart", jump, { passive: false })
+            document.body.addEventListener("click", jump)
+            document.body.addEventListener("touchstart", jump, { passive: false })
 
             return () => {
-                window.removeEventListener("click", jump)
-                window.removeEventListener("touchstart", jump, { passive: false })
+                document.body.removeEventListener("click", jump)
+                document.body.removeEventListener("touchstart", jump, { passive: false })
             }
         }
     }, [state, canJump])
