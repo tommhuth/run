@@ -36,32 +36,23 @@ function Post() {
             blendFunction: BlendFunction.MULTIPLY,
             samples: 30,
             rings: 7,
-            distanceThreshold: .75,  
-            distanceFalloff: 0.1,  
+            distanceThreshold: .75, // * camera z distance
+            distanceFalloff: 0.1,  // fade out?
             rangeThreshold: 0.05,  
             rangeFalloff: 0.01,
-            luminanceInfluence: 0 ,
-            radius: 18.25, 
+            luminanceInfluence: 0, // does lights affect the shadow 0 = no?
+            radius: 20, // size of shadow itself
             resolutionScale: .75,
             scale: .75,
             bias: 0.05,
             fade: .1,
-            intensity: 50, 
+            intensity: 30, // strength of shadow
         }) 
 
         const effectPass = new EffectPass(
             camera,
             smaaEffect,
-            ssaoEffect
-            /*
-            new BloomEffect({
-                blendFunction: BlendFunction.ADD,
-                kernelSize: KernelSize.VERY_LARGE,
-                luminanceThreshold: 0.97,
-                luminanceSmoothing: 0.075,
-                height: 1600
-            }),*/
-            // new DepthEffect() // Check if depth looks ok.
+            ssaoEffect 
         )
         
         effectPass.renderToScreen = true

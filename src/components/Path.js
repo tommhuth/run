@@ -14,9 +14,9 @@ export default function Path() {
     let { gl } = useThree()
 
     useFrame(() => {
-        gl.info.autoReset = false
+        //gl.info.autoReset = false
         //console.log(gl.info.render.calls)
-        gl.info.reset()
+        //gl.info.reset()
     })
     
 
