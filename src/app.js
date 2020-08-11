@@ -64,12 +64,11 @@ function Game() {
             <Canvas
                 colorManagement
                 orthographic
-                noEvents
-                shadowMap={true}
-                pixelRatio={Math.min(window.devicePixelRatio, window.matchMedia("(min-width: 950px)").matches ? 1 : 2)}
+                noEvents 
+                pixelRatio={Math.min(window.devicePixelRatio, Config.IS_LARGE_SCREEN ? 1 : 2)}
                 camera={{
                     position: new Vector3(5, 6, Config.Z_START - 10),
-                    zoom: 30,
+                    zoom: Config.IS_SMALL_SCREEN ? 25 : 30,
                     near: -75,
                     far: 100
                 }}
