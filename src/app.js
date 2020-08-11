@@ -126,6 +126,7 @@ function Game() {
                 }}
             >
                 <color attach="background" args={[0xD30C7B]} />
+                <fog attach="fog" color={0xFF00FF} near={25} far={220} />
 
                 <Lights />
 
@@ -149,20 +150,7 @@ function Lights() {
     let { scene } = useThree()
 
     useEffect(() => {
-        scene.add(lightRef.current.target)
-
-/*
-        lightRef.current.shadow.camera.left = -20
-        lightRef.current.shadow.camera.right = 20
-        lightRef.current.shadow.camera.top = 30
-        lightRef.current.shadow.camera.bottom = -20
-        lightRef.current.shadow.camera.near = -45
-        lightRef.current.shadow.camera.far = 30
-        lightRef.current.shadow.camera.position.z = 0
-*/
-        //const cameraHelper = new CameraHelper(lightRef.current.shadow.camera)
-
-        //scene.add(cameraHelper)
+        scene.add(lightRef.current.target) 
 
         lightRef.current.position.y = 0
         lightRef.current.target.position.y = -8
@@ -186,24 +174,14 @@ function Lights() {
     return (
         <>
             <directionalLight
-                ref={lightRef}
-                //castShadow
+                ref={lightRef} 
                 color={0xffffff}
                 position={[0, 0, 0]}
                 target-position={[0, 0, -20]}
                 intensity={.65}
                 onUpdate={self => {
                     self.updateMatrixWorld()
-                }} 
-                shadow-mapSize-width={64}
-                shadow-mapSize-height={64}
-                shadow-camera-far={30}
-                shadow-type={PCFShadowMap}
-                shadow-camera-near={-45}
-                shadow-camera-left={-20}
-                shadow-camera-right={20}
-                shadow-camera-top={20}
-                shadow-camera-bottom={-20}
+                }}  
             />
             <hemisphereLight groundColor={"red"} color="blue" intensity={1} />
         </>
