@@ -74,11 +74,13 @@ function Game() {
             <div className="ui">
                 {state} <br />
                 Built @ {buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")} <br />
-                {size.w}x{size.h} <br />
-                {size.fh}
+                <button onClick={()=> location.reload(true)}>Reload</button>
             </div>
             <Canvas
                 colorManagement
+                style={{
+                    overflow: "visible"
+                }}
                 orthographic
                 noEvents
                 pixelRatio={Math.min(window.devicePixelRatio, Config.IS_LARGE_SCREEN ? 1 : 2)}
@@ -93,9 +95,7 @@ function Game() {
                     stencil: false,
                     antialias: false
                 }}
-            >
-                <color attach="background" args={[0xD30C7B]} />
-
+            > 
                 <ErrorBoundary>
                     <Post />
                     <Lights />
