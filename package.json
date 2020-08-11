@@ -11,7 +11,7 @@
     "scripts": {
         "dev": "yarn start & webpack --watch --mode development --config webpack.config.js",
         "start": "node server.js",
-        "ngrok": "ngrok http -host-header=rewrite localhost:3000",
+        "ngrok": "ngrok http -host-header=rewrite localhost:4000",
         "lint": "eslint \"**/*.js\" --fix",
         "build": "webpack --mode production --config webpack.config.js"
     },
