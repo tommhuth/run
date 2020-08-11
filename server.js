@@ -9,7 +9,7 @@ const NODE_ENV = process.env.NODE_ENV || "development"
 const app = express()
 
 app.use(compression())
-app.use(serveStatic(path.join(__dirname, "public"), { maxAge: "10 years"  }))
+app.use(serveStatic(path.join(__dirname, "public"), { maxAge: 0  }))
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public/index.html"))
