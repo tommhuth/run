@@ -24,10 +24,9 @@ body {
     width: 100%;
 }
 
-body {  
-    min-height: 100%;
+body {   
     color: black;
-    background-color: rgb(216, 79, 179);  
+    background-color: rgb(217, 79, 180);  
 } 
 
 #root {
@@ -35,13 +34,12 @@ body {
     height: 100%;
 }
 
-canvas {
-    width: 100vw !important;
-    top:0;
+canvas { 
+    top: 0;
     bottom: 0; 
     position: fixed;
     display: block;
-    right:0;
+    right: 0;
     left: 0;
 }
 
