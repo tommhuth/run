@@ -41,10 +41,11 @@ export function useCannon({
     position = [0, 0, 0],
     velocity = [0, 0, 0],
     collisionFilterGroup,
-    collisionFilterMask
+    collisionFilterMask,
+    onCollide
 }, deps = []) {
-    let ref = useRef() 
-    let world = useContext(context) 
+    let ref = useRef()
+    let world = useContext(context)
     let [body] = useState(() => new Body({
         mass,
         shape,
@@ -56,6 +57,14 @@ export function useCannon({
 
     useEffect(() => {
         body.customData = customData
+
+        if (onCollide) {
+            body.addEventListener("collide", onCollide)
+
+            return () => {
+                body.removeEventListener("collide", onCollide)
+            }
+        }
     }, deps)
 
     useLayoutEffect(() => {
@@ -71,7 +80,7 @@ export function useCannon({
     }, [body])
 
     useFrame(() => {
-        if (ref.current  ) { 
+        if (ref.current) {
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
         }

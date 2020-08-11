@@ -1,21 +1,47 @@
 
 import React, { useEffect, useRef, useState } from "react"
-import { useThree, useFrame } from "react-three-fiber"
-import Block from "../Block"
+import { useThree, useFrame } from "react-three-fiber" 
 import { useStore } from "../../data/store"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
-import { Sphere } from "cannon"
+import { Sphere,RaycastResult,Ray,Vec3 } from "cannon"
 import GameState from "../../data/const/GameState"
 import materials from "../../shared/materials"
 
+
+function intersectBody(from, to, body) {
+    let result = new RaycastResult()
+    let ray = new Ray(
+        new Vec3(...from),
+        new Vec3(...to)
+    )
+
+    ray.intersectBody(body, result)
+
+    return result
+}
+
 export default function Player() {
     let radius = 1
+    let [canJump, setCanJump] = useState(false)
     let { ref, body } = useCannon({
         mass: 2,
         shape: new Sphere(radius),
-        position: [0, radius * 20, Config.Z_START]
-    })
+        position: [0, radius * 20, Config.Z_START],
+        onCollide({ body: target }) {
+            // if other body is below player,
+            // we hit the "top" of the other body and can jump again
+            let intersection = intersectBody(
+                body.position.toArray(),
+                [body.position.x, body.position.y - 20, body.position.z],
+                target
+            )
+
+            if (intersection.hasHit) {
+                setCanJump(true)
+            }
+        }
+    }, [canJump])
     let speed = 6
     let setPosition = useStore(i => i.setPosition)
     let end = useStore(i => i.end)
@@ -60,20 +86,24 @@ export default function Player() {
     // jump
     useEffect(() => {
         if (state === GameState.RUNNING) {
-            let onClick = (e) => {
+            let jump = (e) => {
                 e.preventDefault()
-                body.velocity.y = 8
+
+                if (canJump) {
+                    body.velocity.y = 8 
+                    setCanJump(false)
+                }
             }
 
-            window.addEventListener("click", onClick)
-            window.addEventListener("touchstart", onClick, { passive: false })
+            window.addEventListener("click", jump)
+            window.addEventListener("touchstart", jump, { passive: false })
 
             return () => {
-                window.removeEventListener("click", onClick)
-                window.removeEventListener("touchstart", onClick, { passive: false })
+                window.removeEventListener("click", jump)
+                window.removeEventListener("touchstart", jump, { passive: false })
             }
         }
-    }, [state])
+    }, [state, canJump])
 
     // game over
     useFrame(() => {
