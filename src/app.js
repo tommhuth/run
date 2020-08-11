@@ -1,50 +1,19 @@
 import "../assets/styles/app.scss"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect  } from "react"
 import ReactDOM from "react-dom"
-import { Vector3, CameraHelper,PCFShadowMap } from "three"
-import { Canvas, useFrame, useThree } from 'react-three-fiber'
-import { CannonProvider, useCannon } from './data/cannon'
+import { Vector3 } from "three"
+import { Canvas  } from "react-three-fiber"
+import { CannonProvider } from "./data/cannon"
 import Config from "./Config"
 import Path from "./components/Path"
-import Player from "./components/Player"
+import Player from "./components/actors/Player"
 import Post from "./components/Post"
 import Camera from "./components/Camera"
 import GameState from "./data/const/GameState"
-import { useStore, api } from "./data/store"
-import Color from "./data/const/Color"
-import { softShadows } from "drei"
-import shallow from "zustand/shallow"
-
-
-/*
-softShadows({
-    size:.01
-})
-*/
-
-class ErrorBoundary extends React.Component {
-    state = { hasError: false }
-
-    static getDerivedStateFromError(error) {
-        // Update state so the next render will show the fallback UI.
-        return { hasError: true }
-    }
-
-    componentDidCatch(error, errorInfo) {
-        // You can also log the error to an error reporting service
-        console.log(error, errorInfo)
-    }
-
-    render() {
-        if (this.state.hasError) {
-            // You can render any custom fallback UI
-            return null
-        }
-
-        return this.props.children
-    }
-}
+import { useStore } from "./data/store"  
+import ErrorBoundary from "./components/ErrorBoundary"
+import Lights from "./components/Lights"
 
 function Game() {
     let state = useStore(state => state.state)
@@ -71,21 +40,7 @@ function Game() {
         window.addEventListener("click", listener)
 
         return () => window.removeEventListener("click", listener)
-    }, [state])
-
-    useEffect(() => {
-        let listener = () => {
-            if (document.hidden && state === GameState.RUNNING) {
-                // actions.stopTimer()
-            } else if (!document.hidden && state === GameState.RUNNING) {
-                //  actions.startTimer()
-            }
-        }
-
-        document.addEventListener("visibilitychange", listener)
-
-        return () => document.removeEventListener("visibilitychange", listener)
-    }, [state])
+    }, [state]) 
 
     useEffect(() => {
         if (mustRequestOrientationAccess && !hasDeviceOrientation) {
@@ -99,8 +54,6 @@ function Game() {
             return () => window.removeEventListener("deviceorientation", listener)
         }
     }, [state, mustRequestOrientationAccess, hasDeviceOrientation])
-
-
 
     return (
         <>
@@ -120,19 +73,16 @@ function Game() {
                     far: 100
                 }}
                 gl={{
-                    depth: true,
+                    depth: false,
                     stencil: false,
                     antialias: false
                 }}
             >
-                <color attach="background" args={[0xD30C7B]} />
-                <fog attach="fog" color={0xFF00FF} near={25} far={220} />
+                <color attach="background" args={[0xD30C7B]} />  
 
-                <Lights />
-
-                <ErrorBoundary>
-
+                <ErrorBoundary> 
                     <Post />
+                    <Lights />
 
                     <CannonProvider>
                         <Path />
@@ -141,49 +91,6 @@ function Game() {
                     <Camera />
                 </ErrorBoundary>
             </Canvas>
-        </>
-    )
-}
-
-function Lights() {
-    let lightRef = useRef()
-    let { scene } = useThree()
-
-    useEffect(() => {
-        scene.add(lightRef.current.target) 
-
-        lightRef.current.position.y = 0
-        lightRef.current.target.position.y = -8
-        lightRef.current.updateMatrixWorld()
-
-        return api.subscribe(
-            ([position, lastBlock]) => { 
-                if (lightRef.current && Math.round(position.z) % 3 === 0) {
-                    lightRef.current.position.z = position.z
-                    lightRef.current.position.y = lastBlock.y
-                    lightRef.current.target.position.z = position.z - 20
-                    lightRef.current.target.position.y = lastBlock.y - 8
-                    lightRef.current.updateMatrixWorld()
-                }
-            },
-            store => [store.position, store.blocks[store.blocks.length - 1]],
-            shallow
-        )
-    }, [])
-
-    return (
-        <>
-            <directionalLight
-                ref={lightRef} 
-                color={0xffffff}
-                position={[0, 0, 0]}
-                target-position={[0, 0, -20]}
-                intensity={.65}
-                onUpdate={self => {
-                    self.updateMatrixWorld()
-                }}  
-            />
-            <hemisphereLight groundColor={"red"} color="blue" intensity={1} />
         </>
     )
 }

@@ -52,8 +52,8 @@ export default {
         flatShading: true
     }),
     player: new MeshPhongMaterial({
-        color: 0xe2f3e4,
-        emissive: 0xe2f3e4,
+        color: 0xffffff,
+        emissive: 0xffffff,
         emissiveIntensity: 1,
         flatShading: true
     }),

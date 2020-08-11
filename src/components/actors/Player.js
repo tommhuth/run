@@ -1,13 +1,13 @@
 
 import React, { useEffect, useRef, useState } from "react"
 import { useThree, useFrame } from "react-three-fiber"
-import Block from "./Block"
-import { useStore } from "../data/store"
-import { useCannon } from "../data/cannon"
-import Config from "../Config"
+import Block from "../Block"
+import { useStore } from "../../data/store"
+import { useCannon } from "../../data/cannon"
+import Config from "../../Config"
 import { Sphere } from "cannon"
-import GameState from "../data/const/GameState"
-import materials from "../shared/materials"
+import GameState from "../../data/const/GameState"
+import materials from "../../shared/materials"
 
 export default function Player() {
     let radius = 1
@@ -70,7 +70,7 @@ export default function Player() {
 
             return () => {
                 window.removeEventListener("click", onClick)
-                window.addEventListener("touchstart", onClick, { passive: false })
+                window.removeEventListener("touchstart", onClick, { passive: false })
             }
         }
     }, [state])

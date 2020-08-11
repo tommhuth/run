@@ -6,9 +6,7 @@ import Config from "../../Config"
 import { Vec3, Box } from "cannon"
 import { BoxGeometry, Geometry } from "three"
 import materials from "../../shared/materials"
-import animate from "../../data/animate"
-
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
+import animate from "../../data/animate" 
 
 export function CommonBlock(props) { 
     let [geometry] = useState(() => {

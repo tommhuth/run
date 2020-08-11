@@ -1,10 +1,10 @@
 
-import React, { useEffect, useRef, useState } from "react"
-import { Canvas, useFrame, useThree } from "react-three-fiber"
-import { useCannon } from "../data/cannon"
+import React, { useEffect, useRef } from "react"
+import { useFrame } from "react-three-fiber"
+import { useCannon } from "../../data/cannon"
 import { Sphere } from "cannon"
-import { useStore, api } from "../data/store"
-import materials from "../shared/materials"
+import { useStore, api } from "../../data/store"
+import materials from "../../shared/materials"
 
 function Enemy({ position, radius, speed, id }) {
     let removeEnemy = useStore(i => i.removeEnemy)

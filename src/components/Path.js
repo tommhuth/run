@@ -3,7 +3,7 @@ import React, { useEffect } from "react"
 import { useThree, useFrame } from "react-three-fiber"
 import Block from "./Block"
 import { useStore } from "../data/store"
-import Enemy from "./Enemy"
+import Enemy from "./actors/Enemy"
 import GameState from "../data/const/GameState"
 
 export default function Path() {
@@ -14,20 +14,19 @@ export default function Path() {
     let { gl } = useThree()
 
     useFrame(() => {
-        //gl.info.autoReset = false
-        //console.log(gl.info.render.calls)
-        //gl.info.reset()
+        gl.info.autoReset = false
+        console.log(gl.info.render.calls)
+        gl.info.reset()
     })
-    
 
     useEffect(() => {
-        if (state === GameState.RUNNING) { 
-            let maintain = () =>  setInterval(maintainPath, 500)
+        if (state === GameState.RUNNING) {
+            let maintain = () => setInterval(maintainPath, 500)
             let id = maintain()
             let listener = () => {
-                if  (document.visibilityState === "hidden") { 
+                if (document.visibilityState === "hidden") {
                     clearInterval(id)
-                } else { 
+                } else {
                     id = maintain()
                 }
             }
