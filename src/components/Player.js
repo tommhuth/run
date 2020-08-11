@@ -60,12 +60,17 @@ export default function Player() {
     // jump
     useEffect(() => {
         if (state === GameState.RUNNING) {
-            let onClick = () => body.velocity.y = 8
+            let onClick = (e) => {
+                e.preventDefault()
+                body.velocity.y = 8
+            }
 
             window.addEventListener("click", onClick)
+            window.addEventListener("touchstart", onClick, { passive: false })
 
             return () => {
                 window.removeEventListener("click", onClick)
+                window.addEventListener("touchstart", onClick, { passive: false })
             }
         }
     }, [state])
