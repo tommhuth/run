@@ -1,10 +1,10 @@
 
 import React, { useEffect, useRef, useState } from "react"
-import { useThree, useFrame } from "react-three-fiber" 
+import { useThree, useFrame } from "react-three-fiber"
 import { useStore } from "../../data/store"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
-import { Sphere,RaycastResult,Ray,Vec3 } from "cannon"
+import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
 import GameState from "../../data/const/GameState"
 import materials from "../../shared/materials"
 
@@ -36,8 +36,13 @@ export default function Player() {
                 [body.position.x, body.position.y - 20, body.position.z],
                 target
             )
+            let intersectionForward = intersectBody(
+                body.position.toArray(),
+                [body.position.x, body.position.y - 20, body.position.z + radius],
+                target
+            )
 
-            if (intersection.hasHit) {
+            if (intersection.hasHit || intersectionForward.hasHit) {
                 setCanJump(true)
             }
         }
@@ -90,7 +95,7 @@ export default function Player() {
                 e.preventDefault()
 
                 if (canJump) {
-                    body.velocity.y = 8 
+                    body.velocity.y = 8
                     setCanJump(false)
                 }
             }
@@ -121,14 +126,14 @@ export default function Player() {
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
-            body.velocity.z = speed 
+            body.velocity.z = speed
         }
 
         setPosition(body.position.x, body.position.y, body.position.z)
     })
 
     return (
-        <mesh ref={ref} material={materials.player}> 
+        <mesh ref={ref} material={materials.player}>
             <sphereBufferGeometry attach="geometry" args={[radius, 12, 6]} />
         </mesh>
     )
