@@ -19,28 +19,25 @@
   
 html,
 body {
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
+    overflow: hidden; 
+} 
 
 body {   
     color: black;
-    background-color: rgb(217, 79, 180);  
+    background-color: rgb(235, 61, 184);  
 } 
 
-#root {
-    width: 100%;
-    height: 100%;
+#root { 
+    height: 100vh !important;
+    width: 100% !important;
 }
 
 canvas { 
-    top: 0;
-    bottom: 0; 
+    top: 0; 
     position: fixed;
     display: block;
+    height: 100vh !important;
+    width: 100% !important;
     right: 0;
     left: 0;
 }
