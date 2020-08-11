@@ -87,7 +87,9 @@ function Game() {
 
                     <CannonProvider>
                         <Path />
-                        <Player key={attempts} />
+                        <Only if={[GameState.RUNNING, GameState.GAME_OVER].includes(state)}>
+                            <Player key={attempts} /> 
+                        </Only>
                     </CannonProvider>
                 </ErrorBoundary>
             </Canvas>

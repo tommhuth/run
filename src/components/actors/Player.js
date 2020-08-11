@@ -121,10 +121,10 @@ export default function Player() {
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
-            body.velocity.z = speed
-
-            setPosition(body.position.x, body.position.y, body.position.z)
+            body.velocity.z = speed 
         }
+
+        setPosition(body.position.x, body.position.y, body.position.z)
     })
 
     return (

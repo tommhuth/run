@@ -11,32 +11,35 @@ export default function Camera() {
     let light = useRef()
     let state = useStore(i => i.state)
     let targetPosition = useRef([0, 0, Config.Z_START - 5])
+    let playerY = useRef()
 
     useEffect(() => {
-        if (state === GameState.RUNNING) {
-            camera.position.set(5, 5, Config.Z_START - 10)
-            camera.lookAt(0, 0, 0)
+        camera.position.set(5, 5, Config.Z_START - 10)
+        camera.lookAt(0, 0, 0)
 
-            return api.subscribe(
-                ([{ x, z }, y = 0]) => {
-                    targetPosition.current = [x, y + 5, z + 3]
-                },
-                state => [state.position, state.blocks.find(i => i.start < state.position.z && i.end > state.position.z)?.y],
-                shallow
-            )
-        }
-    }, [state])
+        return api.subscribe(
+            ([{ x, z, y }, blockY = 0]) => {
+                targetPosition.current = [x, blockY + 5, z + 3]
+                playerY.current = y
+            },
+            state => [
+                state.position,
+                state.blocks.find(i => i.start < state.position.z && i.end > state.position.z)?.y
+            ],
+            shallow
+        )
+    }, [])
 
     useFrame(() => {
         if (state === GameState.RUNNING) {
             camera.position.z += (targetPosition.current[2] - camera.position.z) * .1
             camera.position.y += (targetPosition.current[1] - camera.position.y) * .01
             camera.position.x += (targetPosition.current[0] - camera.position.x) * .1
-
-            light.current.position.x = targetPosition.current[0]
-            light.current.position.y = targetPosition.current[1] - 5 + 1
-            light.current.position.z = targetPosition.current[2] - 3
         }
+
+        light.current.position.x = targetPosition.current[0]
+        light.current.position.y = playerY.current + 1
+        light.current.position.z = targetPosition.current[2] - 3
     })
 
     return (
