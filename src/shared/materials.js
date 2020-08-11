@@ -1,19 +1,5 @@
-import { MeshLambertMaterial, MeshPhongMaterial, CubeTextureLoader, EquirectangularReflectionMapping, TextureLoader } from "three"
-import Color from "../data/const/Color"
-
-var envMap = new TextureLoader().load("ref.png")
-
-let cb = new CubeTextureLoader()
-
-let e = cb.load([
-    "skyrender0001.png", "skyrender0004.png",
-    "skyrender0003.png", "skyrender0003.png",
-    "skyrender0005.png", "skyrender0002.png"
-])
-
-
-
-envMap.mapping = EquirectangularReflectionMapping
+import { MeshPhongMaterial } from "three"
+import Color from "../data/const/Color" 
 
 
 export default {
@@ -40,14 +26,14 @@ export default {
     obstacle2: new MeshPhongMaterial({
         color: 0x71d13d,
         emissive: 0x71d13d,
-        emissiveIntensity: .75, envMap,
+        emissiveIntensity: .75,  
         reflectivity: .51,
         flatShading: true
     }),
     obstacle3: new MeshPhongMaterial({
         color: 0x6bd631,
         emissive: 0x6bd631,
-        emissiveIntensity: .75, envMap,
+        emissiveIntensity: .75, 
         reflectivity: .51,
         flatShading: true
     }),
