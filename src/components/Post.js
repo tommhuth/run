@@ -33,7 +33,7 @@ function Post() {
 
         const normalPass = new NormalPass(scene, camera)
         const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
-            blendFunction: BlendFunction.MULTIPLY,
+            blendFunction: BlendFunction.OVERLAY,
             samples: 30,
             rings: 7,
             distanceThreshold: .75, // * camera z distance
@@ -46,12 +46,12 @@ function Post() {
             scale: .75,
             bias: 0.05,
             fade: .1,
-            intensity: 30, // strength of shadow
+            intensity: 50, // strength of shadow
         }) 
 
         const effectPass = new EffectPass(
             camera,
-            smaaEffect,
+            //smaaEffect,
             ssaoEffect 
         )
         
