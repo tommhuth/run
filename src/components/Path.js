@@ -15,7 +15,7 @@ export default function Path() {
 
     useFrame(() => {
         gl.info.autoReset = false
-        // console.log(gl.info.render)
+        //console.log(gl.info.render.calls)
         gl.info.reset()
     })
     

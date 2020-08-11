@@ -1,30 +1,63 @@
 
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useCannon } from "../data/cannon"
-import { Vec3, Box, Sphere } from "cannon" 
-import { SphereGeometry } from "three"
+import materials from "../shared/materials"
+import { Vec3, Box, Sphere } from "cannon"
+import animate from "../data/animate"
+import Config from "../Config"
+import random from "../data/random"
 
-function Obstacle({ mergeGeometry, radius, position, block }) {
-    useCannon({
+function Obstacle({ dead, radius, position, block }) {
+    let { ref, body } = useCannon({
         shape: new Sphere(radius),
         mass: 0,
         position: [
             position[0],
-            block.y,
+            block.y - 20,
             position[2] + block.start + block.depth / 2
         ]
     })
+    let [material] = useState(() => {
+        return materials.ground
+    })
 
     useEffect(() => {
-        let sphere = new SphereGeometry(radius)
+        let mass = random.integer(100, 400)
 
-        sphere.translate(...position)
+        ref.current.visible = false 
 
-        mergeGeometry(sphere) 
+        return animate({
+            from: { y: body.position.y },
+            to: { y: block.y }, 
+            duration: mass + 200,
+            delay: 1200 + mass,
+            start() {
+                ref.current.visible = true 
+            },
+            render({ y }) {
+                body.position.y = y
+            },
+        })
     }, [])
 
+    useEffect(() => {
+        if (dead) {  
+            return animate({
+                from: { y: body.position.y },
+                to: { y: body.position.y - 100 },
+                easing: "easeInCubic",
+                duration: 600,
+                render({ y }) {
+                    body.position.y = y
+                }
+            })
+        }
+    }, [dead])
+
     return (
-        null
+        <mesh ref={ref} material={material} castShadow receiveShadow>
+            <sphereBufferGeometry args={[radius, 8, 8]} attach={"geometry"} />
+        </mesh>
     )
 }
 

@@ -95,6 +95,7 @@ function ObstaclesBlock(props) {
                     mergeGeometry={props.mergeGeometry}
                     key={i.id}
                     block={props}
+                    dead={props.dead}
                 />
             ))}
         </>

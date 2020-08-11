@@ -43,10 +43,8 @@ export function useCannon({
     collisionFilterGroup,
     collisionFilterMask
 }, deps = []) {
-    let ref = useRef()
-    // Get cannon world object
-    let world = useContext(context)
-    // Instantiate a physics body
+    let ref = useRef() 
+    let world = useContext(context) 
     let [body] = useState(() => new Body({
         mass,
         shape,
@@ -73,8 +71,7 @@ export function useCannon({
     }, [body])
 
     useFrame(() => {
-        if (ref.current  ) {
-            // Transport cannon physics into the referenced threejs object
+        if (ref.current  ) { 
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
         }

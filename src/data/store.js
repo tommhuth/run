@@ -68,7 +68,7 @@ const [useStore, api] = create((set, get) => {
                         state: GameState.RUNNING
                     })
                 } else {
-                    throw new Error("Denied")
+                    throw new Error("User denied access")
                 }
             } catch (e) {
                 set({ state: GameState.REQUEST_ORIENTATION_ACCESS_FAIL })
@@ -81,7 +81,7 @@ const [useStore, api] = create((set, get) => {
             set({ position: { x, y, z } })
         },
         addEnemy(position) {
-            let radius = 1.5
+            let radius = random.pick([1.5, 2, 1.75])
 
             set({
                 enemies: [
@@ -107,7 +107,7 @@ const [useStore, api] = create((set, get) => {
         maintainPath() {
             let { position, blocks, addBlock, clearBlocks } = get()
             let forwardBlock = blocks[0]
-            let forwardBuffer = 40
+            let forwardBuffer = 42
 
             while (forwardBlock.end - position.z < forwardBuffer) {
                 forwardBlock = addBlock()
@@ -117,7 +117,7 @@ const [useStore, api] = create((set, get) => {
         },
         clearBlocks(z) {
             let { blocks } = get()
-            let backwardBuffer = 5
+            let backwardBuffer = 0
             let f = blocks.map(i => {
                 let dead = false
 

@@ -34,7 +34,7 @@ function NarrowBlock(props) {
             from: { y: body.position.y },
             to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
             duration: 1500,
-            easing: "spring(1, 80, 10, 0)",
+            //easing: "spring(1, 80, 10, 0)",
             render({ y }) {
                 body.position.y = y
             }
@@ -60,7 +60,7 @@ function NarrowBlock(props) {
 
     return (
         <>
-            <mesh ref={ref} material={materials.ground} >
+            <mesh ref={ref} material={materials.ground}  castShadow receiveShadow>
                 <boxBufferGeometry args={[props.width, Config.BLOCK_HEIGHT, platformDepth]} attach="geometry" />
             </mesh>
         </>

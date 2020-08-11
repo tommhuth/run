@@ -2,7 +2,7 @@ import "../assets/styles/app.scss"
 
 import React, { useEffect, useRef, useState } from "react"
 import ReactDOM from "react-dom"
-import { Vector3 } from "three"
+import { Vector3, CameraHelper,PCFShadowMap } from "three"
 import { Canvas, useFrame, useThree } from 'react-three-fiber'
 import { CannonProvider, useCannon } from './data/cannon'
 import Config from "./Config"
@@ -11,7 +11,17 @@ import Player from "./components/Player"
 import Post from "./components/Post"
 import Camera from "./components/Camera"
 import GameState from "./data/const/GameState"
-import { useStore } from "./data/store"
+import { useStore, api } from "./data/store"
+import Color from "./data/const/Color"
+import { softShadows } from "drei"
+import shallow from "zustand/shallow"
+
+
+/*
+softShadows({
+    size:.01
+})
+*/
 
 class ErrorBoundary extends React.Component {
     state = { hasError: false }
@@ -91,37 +101,35 @@ function Game() {
     }, [state, mustRequestOrientationAccess, hasDeviceOrientation])
 
 
+
     return (
         <>
             <div className="ui">
                 {state}
             </div>
             <Canvas
+                colorManagement
                 orthographic
                 noEvents
+                shadowMap={true}
                 pixelRatio={Math.min(window.devicePixelRatio, window.matchMedia("(min-width: 1300px)").matches ? 1.5 : 2)}
                 camera={{
                     position: new Vector3(5, 6, Config.Z_START - 10),
                     zoom: 30,
-                    near: -100,
-                    far: 85
+                    near: -75,
+                    far: 100
                 }}
                 gl={{
-                    depth: false,
+                    depth: true,
                     stencil: false,
                     antialias: false
                 }}
             >
-                <fog attach="fog" near={110} far={1100} color={0x044747} />
+                <color attach="background" args={[0xD30C7B]} />
+
+                <Lights />
+
                 <ErrorBoundary>
-                    <directionalLight
-                        color={0xffffff}
-                        position={[-1, 5, -3]}
-                        intensity={.4}
-                        onUpdate={self => self.updateMatrixWorld()}
-                    />
-                    <ambientLight intensity={.1} color={0xffffff} />
-                    <fog attach="fog" near={0} far={80} color={0x16045e}/>
 
                     <Post />
 
@@ -136,6 +144,71 @@ function Game() {
     )
 }
 
+function Lights() {
+    let lightRef = useRef()
+    let { scene } = useThree()
+
+    useEffect(() => {
+        scene.add(lightRef.current.target)
+
+/*
+        lightRef.current.shadow.camera.left = -20
+        lightRef.current.shadow.camera.right = 20
+        lightRef.current.shadow.camera.top = 30
+        lightRef.current.shadow.camera.bottom = -20
+        lightRef.current.shadow.camera.near = -45
+        lightRef.current.shadow.camera.far = 30
+        lightRef.current.shadow.camera.position.z = 0
+*/
+        //const cameraHelper = new CameraHelper(lightRef.current.shadow.camera)
+
+        //scene.add(cameraHelper)
+
+        lightRef.current.position.y = 0
+        lightRef.current.target.position.y = -8
+        lightRef.current.updateMatrixWorld()
+
+        return api.subscribe(
+            ([position, lastBlock]) => { 
+                if (lightRef.current && Math.round(position.z) % 3 === 0) {
+                    lightRef.current.position.z = position.z
+                    lightRef.current.position.y = lastBlock.y
+                    lightRef.current.target.position.z = position.z - 20
+                    lightRef.current.target.position.y = lastBlock.y - 8
+                    lightRef.current.updateMatrixWorld()
+                }
+            },
+            store => [store.position, store.blocks[store.blocks.length - 1]],
+            shallow
+        )
+    }, [])
+
+    return (
+        <>
+            <directionalLight
+                ref={lightRef}
+                //castShadow
+                color={0xffffff}
+                position={[0, 0, 0]}
+                target-position={[0, 0, -20]}
+                intensity={.65}
+                onUpdate={self => {
+                    self.updateMatrixWorld()
+                }} 
+                shadow-mapSize-width={64}
+                shadow-mapSize-height={64}
+                shadow-camera-far={30}
+                shadow-type={PCFShadowMap}
+                shadow-camera-near={-45}
+                shadow-camera-left={-20}
+                shadow-camera-right={20}
+                shadow-camera-top={20}
+                shadow-camera-bottom={-20}
+            />
+            <hemisphereLight groundColor={"red"} color="blue" intensity={1} />
+        </>
+    )
+}
 
 
 ReactDOM.render(

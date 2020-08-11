@@ -8,7 +8,9 @@ import { BoxGeometry, Geometry } from "three"
 import materials from "../../shared/materials"
 import animate from "../../data/animate"
 
-export function CommonBlock(props) {
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
+
+export function CommonBlock(props) { 
     let [geometry] = useState(() => {
         let geometry = new Geometry()
 
@@ -32,13 +34,13 @@ export function CommonBlock(props) {
         ]
     })
     let removeBlock = useStore(i => i.removeBlock)
+ 
 
     useEffect(() => {
         return animate({
             from: { y: body.position.y },
-            to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
-            duration: 1500,
-            easing: "spring(1, 80, 10, 0)",
+            to: { y: -Config.BLOCK_HEIGHT / 2 + props.y }, 
+            duration: 700,
             render({ y }) {
                 body.position.y = y
             }
@@ -50,8 +52,8 @@ export function CommonBlock(props) {
             return animate({
                 from: { y: body.position.y },
                 to: { y: -Config.BLOCK_HEIGHT },
-                easing: "easeInCubic",
-                duration: 700,
+                easing: "easeInCubic", 
+                duration: 600,
                 render({ y }) {
                     body.position.y = y
                 },
@@ -68,7 +70,7 @@ export function CommonBlock(props) {
                 mergeGeometry,
                 ...props,
             }) : null}
-            <mesh ref={ref} geometry={geometry} material={materials.ground} />
+            <mesh ref={ref} geometry={geometry} material={materials.ground} receiveShadow  castShadow />
         </>
     )
 }

@@ -3,10 +3,8 @@ import React, { Suspense, useMemo, useEffect } from 'react'
 import { useLoader, useThree , useFrame} from 'react-three-fiber'
 import {
     SMAAImageLoader,
-    BlendFunction,
-    DepthEffect,
-    KernelSize,
-    BloomEffect,
+    BlendFunction, 
+    PixelationEffect,
     EffectComposer,
     EffectPass,
     RenderPass,
@@ -14,6 +12,7 @@ import {
     SSAOEffect,
     NormalPass
 } from "postprocessing" 
+import { Color } from 'three'
 
 // Fix smaa loader signature
 const _load = SMAAImageLoader.prototype.load
@@ -36,25 +35,24 @@ function Post() {
         const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
             blendFunction: BlendFunction.MULTIPLY,
             samples: 30,
-            rings: 4,
-            distanceThreshold: 1.0, // Render distance depends on camera near&far.
-            distanceFalloff: 0.0, // No need for falloff.
-            rangeThreshold: 0.05, // Larger value works better for this camera frustum.
+            rings: 7,
+            distanceThreshold: .75,  
+            distanceFalloff: 0.1,  
+            rangeThreshold: 0.05,  
             rangeFalloff: 0.01,
-            luminanceInfluence: 0.7,
-            radius: 18.25,
-            resolutionScale: .5,
-            scale: 0.9,
-            bias: 0.05
-        })
-
-        // SSAO is supposed to be a subtle effect!
-        ssaoEffect.blendMode.opacity.value = 6.0 // Debug.
+            luminanceInfluence: 0 ,
+            radius: 18.25, 
+            resolutionScale: .75,
+            scale: .75,
+            bias: 0.05,
+            fade: .1,
+            intensity: 50, 
+        }) 
 
         const effectPass = new EffectPass(
             camera,
             smaaEffect,
-            ssaoEffect,
+            ssaoEffect
             /*
             new BloomEffect({
                 blendFunction: BlendFunction.ADD,
@@ -69,7 +67,7 @@ function Post() {
         effectPass.renderToScreen = true
         //normalPass.renderToScreen = true // Check if normals look ok.
         composer.addPass(normalPass)
-        composer.addPass(effectPass)
+        composer.addPass(effectPass) 
  
         return composer
     }, [])
