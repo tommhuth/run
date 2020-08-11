@@ -65,7 +65,7 @@ function Game() {
                 orthographic
                 noEvents
                 shadowMap={true}
-                pixelRatio={Math.min(window.devicePixelRatio, window.matchMedia("(min-width: 1300px)").matches ? 1.5 : 2)}
+                pixelRatio={Math.min(window.devicePixelRatio, window.matchMedia("(min-width: 950px)").matches ? 1 : 2)}
                 camera={{
                     position: new Vector3(5, 6, Config.Z_START - 10),
                     zoom: 30,
@@ -83,12 +83,12 @@ function Game() {
                 <ErrorBoundary> 
                     <Post />
                     <Lights />
+                    <Camera />
 
                     <CannonProvider>
                         <Path />
                         <Player key={attempts} />
                     </CannonProvider>
-                    <Camera />
                 </ErrorBoundary>
             </Canvas>
         </>
