@@ -7,6 +7,7 @@ import { Canvas  } from "react-three-fiber"
 import { CannonProvider } from "./data/cannon"
 import Config from "./Config"
 import Path from "./components/Path"
+import Only from "./components/Only"
 import Player from "./components/actors/Player"
 import Post from "./components/Post"
 import Camera from "./components/Camera"
@@ -59,7 +60,8 @@ function Game() {
     return (
         <>
             <div className="ui">
-                {state} -- ({buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")})
+                {state} <br/>
+                Built @ {buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")}
             </div>
             <Canvas
                 colorManagement
