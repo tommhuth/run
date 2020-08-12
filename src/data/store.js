@@ -24,6 +24,7 @@ const initState = {
     enemies: [],
     attempts: 0,
     position: { x: 0, y: 20, z: Config.Z_START },
+    gameOverReason: null,
 }
 
 const [useStore, api] = create((set, get) => {
@@ -33,8 +34,8 @@ const [useStore, api] = create((set, get) => {
         start() {
             set({ state: GameState.RUNNING })
         },
-        end() {
-            set({ state: GameState.GAME_OVER })
+        end(reason) {
+            set({ state: GameState.GAME_OVER, gameOverReason: reason })
         },
         reset() {
             let {

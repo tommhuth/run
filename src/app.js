@@ -18,6 +18,7 @@ import Lights from "./components/Lights"
 
 function Game() {
     let state = useStore(state => state.state)
+    let gameOverReason = useStore(state => state.gameOverReason)
     let attempts = useStore(state => state.attempts)
     let mustRequestOrientationAccess = useStore(state => state.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.hasDeviceOrientation)
@@ -72,7 +73,7 @@ function Game() {
     return (
         <>
             <div className="ui">
-                {state} <br />
+                {state} {gameOverReason ? <>({gameOverReason})</> : null}<br />
                 Built @ {buildTime.getDate().toString().padStart(2, "0")}.{buildTime.getMonth().toString().padStart(2, "0")} {buildTime.getHours().toString().padStart(2, "0")}:{buildTime.getMinutes().toString().padStart(2, "0")} <br />
                 <button onClick={()=> location.reload(true)}>Reload</button>
             </div>

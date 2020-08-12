@@ -27,6 +27,7 @@ export default function Player() {
     let { ref, body } = useCannon({
         mass: 2,
         shape: new Sphere(radius),
+        customData: { actor: "player" },
         position: [0, radius * 20, Config.Z_START],
         onCollide({ body: target }) {
             // if other body is below player,
@@ -51,6 +52,20 @@ export default function Player() {
     let state = useStore(i => i.state)
     let lastBlock = useStore(i => i.blocks[i.blocks.length - 1])
     let hasDeviceOrientation = useStore(i => i.hasDeviceOrientation)
+    let speedHistory = useRef([])
+    let [ready, setReady] = useState(false)
+
+    useEffect(() => {
+        if (state === GameState.RUNNING) {
+            setTimeout(() => setReady(true), 500)
+        }
+    }, [state])
+
+    useFrame(() => {
+        let size = 5
+
+        speedHistory.current = [...speedHistory.current.slice(-size), body.velocity.z]
+    })
 
     // left/right
     useEffect(() => {
@@ -111,13 +126,19 @@ export default function Player() {
     // game over
     useFrame(() => {
         if (state === GameState.RUNNING) {
-            let buffer = Config.BLOCK_MAX_EXTRA_WIDTH / 2
+            let offsideBuffer = Config.BLOCK_MAX_EXTRA_WIDTH / 2
             let x = body.position.x
+            let offside = x < -(Config.BLOCK_WIDTH / 2 + offsideBuffer) || x > Config.BLOCK_WIDTH / 2 + offsideBuffer
             let y = body.position.y
             let low = y + 1 < lastBlock.y
+            let minSpeed = 1
+            let stalled = speedHistory.current.reduce(
+                (accumulator, value) => accumulator + value,
+                0
+            ) / speedHistory.current.length < minSpeed
 
-            if (low || x < -(Config.BLOCK_WIDTH / 2 + buffer) || x > Config.BLOCK_WIDTH / 2 + buffer) {
-                end()
+            if ((stalled && ready) || low || offside) {
+                end(stalled && ready ? "Stopped" : "Fell off")
             }
         }
     })

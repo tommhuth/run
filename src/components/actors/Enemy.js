@@ -8,9 +8,15 @@ import materials from "../../shared/materials"
 
 function Enemy({ position, radius, speed, id }) {
     let removeEnemy = useStore(i => i.removeEnemy)
+    let end = useStore(i => i.end)
     let { ref, body } = useCannon({
         mass: radius * radius,
         shape: new Sphere(radius),
+        onCollide({ body }) {
+            if (body.customData.actor === "player") {
+                end("Killed")
+            }
+        },
         position
     })
     let playerZ = useRef(0)
@@ -28,7 +34,7 @@ function Enemy({ position, radius, speed, id }) {
     })
 
     return (
-        <mesh ref={ref} material={materials.enemy} castShadow receiveShadow> 
+        <mesh ref={ref} material={materials.enemy} castShadow receiveShadow>
             <sphereBufferGeometry attach="geometry" args={[radius, 10, 10]} />
         </mesh>
     )
