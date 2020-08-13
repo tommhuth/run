@@ -47,7 +47,7 @@ export default function Camera() {
             decay={2}
             ref={light}
             distance={28}
-            intensity={50}
+            intensity={20}
             color={0xff0000}
         />
     )
