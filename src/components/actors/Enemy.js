@@ -5,20 +5,22 @@ import { useCannon } from "../../data/cannon"
 import { Sphere } from "cannon"
 import { useStore, api } from "../../data/store"
 import materials from "../../shared/materials"
+import GameState from "../../data/const/GameState"
 
 function Enemy({ position, radius, speed, id }) {
     let removeEnemy = useStore(i => i.removeEnemy)
+    let state = useStore(i => i.state)
     let end = useStore(i => i.end)
     let { ref, body } = useCannon({
         mass: radius * radius,
         shape: new Sphere(radius),
         onCollide({ body }) {
-            if (body.customData.actor === "player") {
+            if (body.customData?.actor === "player" && state === GameState.RUNNING) {
                 end("Killed")
             }
         },
         position
-    })
+    }, [state])
     let playerZ = useRef(0)
 
     useEffect(() => {
