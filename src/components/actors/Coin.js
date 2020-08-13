@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from "react"
-import { material, geometry } from "../../../old/src/data/resources"
+import React, { useEffect, useState, useRef } from "react" 
 import animate from "../../data/animate"
 import { useFrame } from "react-three-fiber"
 import { useStore, api } from "../../data/store"
@@ -15,22 +14,19 @@ function useFrameNumber(speed = .1, init = 0, predicate) {
     })
 
     return frame
-}
+} 
 
-let i = 0
-
-function Coin({ x, y, z }) {
-    let [count] = useState(() => i++)
+function Coin({ x, y, z, blockDead, index = 0 }) { 
     let [dead, setDead] = useState(false)
     let [ready, setReady] = useState(false)
     let [taken, setTaken] = useState(false)
     let addScore = useStore(state => state.addScore)
-    let frame = useFrameNumber(.05, count, ready)
+    let frame = useFrameNumber(.05, index, ready)
     let ref = useRef()
     let first = useRef(true)
 
     useFrame(() => {
-        if (!dead && ready) {
+        if (!dead && ready && !blockDead) {
             if (ref.current && !taken) {
                 ref.current.rotation.y += .025
                 ref.current.position.y = Math.cos(frame.current) * .5 + y + 1 + .5
@@ -58,9 +54,9 @@ function Coin({ x, y, z }) {
         return animate({
             from: { y: y + 10 },
             to: { y: Math.cos(frame.current) * .5 + y + 1.5 },
-            delay: Config.BLOCK_IN_DURATION + count * 175,
+            delay: Config.BLOCK_IN_DURATION + index * 175,
             easing: "easeOutBounce",
-            duration: 1000,
+            duration: 800,
             start() {
                 ref.current.visible = true
             },
@@ -72,6 +68,20 @@ function Coin({ x, y, z }) {
             }
         })
     }, [])
+
+    useEffect(() => {
+        if (blockDead) {
+            return animate({
+                from: { y: ref.current.position.y },
+                to: { y: y + -Config.BLOCK_HEIGHT / 2 }, 
+                easing: Config.BLOCK_OUT_EASING,
+                duration: Config.BLOCK_OUT_DURATION,
+                render({ y }) {
+                    ref.current.position.y = y
+                }
+            })
+        }
+    }, [blockDead])
 
     useEffect(() => {
         first.current = false

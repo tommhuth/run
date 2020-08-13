@@ -64,6 +64,7 @@ function NarrowBlock(props) {
                 x={0}
                 y={props.y}
                 z={z}
+                blockDead={props.dead}
             />
         </>
     )

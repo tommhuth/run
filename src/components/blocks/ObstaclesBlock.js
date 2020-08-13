@@ -28,7 +28,7 @@ let isTooClose = (position, radius, obstacles) => {
 }
 
 function ObstaclesBlock(props) {
-    let [hasCoin] = useState(() => random.bool())
+    let [hasCoin] = useState(() => random.bool(.35))
     let addEnemy = useStore(i => i.addEnemy)
     let obstacles = useMemo(() => {
         let obstacleCount = random.integer(1, 3)
@@ -105,6 +105,7 @@ function ObstaclesBlock(props) {
                     x={0}
                     y={props.y}
                     z={props.start + props.depth / 2}
+                    blockDead={props.dead}
                 />
             </Only>
         </>
