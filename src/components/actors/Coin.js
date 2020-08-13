@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo, useRef } from "react"
 import { material, geometry } from "../../../old/src/data/resources"
 import animate from "../../data/animate"
 import { useFrame } from "react-three-fiber"
-import { useStore, api } from "../../data/store" 
+import { useStore, api } from "../../data/store"
+import Config from "../../Config"
 
 function useFrameNumber(speed = .1, init = 0, predicate) {
     let frame = useRef(init)
@@ -46,14 +47,20 @@ function Coin({ x, y, z, id, remove }) {
     })
 
     useEffect(() => {
+        if (dead) {
+            ref.current.visible = false
+        }
+    }, [dead])
+
+    useEffect(() => {
         ref.current.visible = false
 
         animate({
             from: { y: y + 10 },
-            to: { y: Math.cos(frame.current) * .5+ y + 1.5 },
-            delay: 750 + count * 200,
-            easing: "easeInSine",
-            duration: 500,
+            to: { y: Math.cos(frame.current) * .5 + y + 1.5 },
+            delay: Config.BLOCK_IN_DURATION + count * 175,
+            easing: "easeOutBounce",
+            duration: 1000,
             start() {
                 ref.current.visible = true
             },
@@ -83,10 +90,6 @@ function Coin({ x, y, z, id, remove }) {
             }
         }, state => state.position)
     }, [id, taken])
-
-    if (dead) {
-        return null
-    }
 
     return (
         <mesh
