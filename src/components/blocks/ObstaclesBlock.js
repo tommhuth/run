@@ -8,7 +8,8 @@ import Obstacle from "../Obstacle"
 import Config from "../../Config"
 import uuid from "uuid"
 import { Vector3 } from "three"
-
+import Coin from "../actors/Coin"
+import Only from "../Only"
 
 let vec1 = new Vector3()
 let vec2 = new Vector3()
@@ -27,6 +28,7 @@ let isTooClose = (position, radius, obstacles) => {
 }
 
 function ObstaclesBlock(props) {
+    let [hasCoin] = useState(() => random.bool())
     let addEnemy = useStore(i => i.addEnemy)
     let obstacles = useMemo(() => {
         let obstacleCount = random.integer(1, 3)
@@ -82,7 +84,7 @@ function ObstaclesBlock(props) {
                     props.end
                 ])
             }
-        }, 1200)
+        }, Config.BLOCK_IN_DURATION)
 
         return () => clearTimeout(id)
     }, [])
@@ -98,6 +100,13 @@ function ObstaclesBlock(props) {
                     dead={props.dead}
                 />
             ))}
+            <Only if={hasCoin}>
+                <Coin
+                    x={0}
+                    y={props.y}
+                    z={props.start + props.depth / 2}
+                />
+            </Only>
         </>
     )
 }

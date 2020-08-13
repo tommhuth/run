@@ -10,14 +10,14 @@ const initState = {
     hasDeviceOrientation: !mustRequestOrientationAccess,
     mustRequestOrientationAccess,
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
-    blocks: [ 
+    blocks: [
         {
             start: Config.Z_START - 30,
             end: Config.Z_START + 50,
             depth: 80,
             id: uuid.v4(),
             width: Config.BLOCK_WIDTH,
-            type: BlockType.PLAIN,
+            type: BlockType.START,
             y: 0
         },
     ],
@@ -25,6 +25,7 @@ const initState = {
     attempts: 0,
     position: { x: 0, y: 20, z: Config.Z_START },
     gameOverReason: null,
+    score: 0,
 }
 
 const [useStore, api] = create((set, get) => {
@@ -80,6 +81,11 @@ const [useStore, api] = create((set, get) => {
         },
         setPosition(x, y, z) {
             set({ position: { x, y, z } })
+        },
+        addScore(incr = 1) {
+            let { score } = get()
+
+            set({ score: score + incr })
         },
         addEnemy(position) {
             let radius = random.pick([1.5, 2, 1.75])
@@ -172,7 +178,7 @@ function getBlock(previous) {
 
 function getNextType(previous) {
     let types = [
-        ...Object.values(BlockType).filter(i => i !== BlockType.START),  
+        ...Object.values(BlockType).filter(i => i !== BlockType.START),
         BlockType.OBSTACLES,
         BlockType.OBSTACLES,
         BlockType.OBSTACLES,

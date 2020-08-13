@@ -2,19 +2,16 @@
 import React, { useEffect } from "react"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
-import { Vec3, Box } from "cannon"
-import uuid from "uuid"
+import { Vec3, Box } from "cannon" 
 import materials from "../../shared/materials"
 import animate from "../../data/animate"
 import { useStore } from "../../data/store"
-import Block from "../Block"
+import Coin from "../actors/Coin"
 import BlockType from "../../data/const/BlockType"
-
-
 
 function NarrowBlock(props) {
     let platformDepth = 5
-    let y = props.previousType === BlockType.NARROW ? props.start + platformDepth / 2 : props.start + props.depth / 2
+    let z = props.previousType === BlockType.NARROW ? props.start + platformDepth / 2 : props.start + props.depth / 2
     let { ref, body } = useCannon({
         mass: 0,
         rotation: [],
@@ -24,7 +21,7 @@ function NarrowBlock(props) {
         position: [
             0,
             -Config.BLOCK_HEIGHT,
-            y
+            z
         ]
     })
     let removeBlock = useStore(i => i.removeBlock)
@@ -33,8 +30,8 @@ function NarrowBlock(props) {
         return animate({
             from: { y: body.position.y },
             to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
-            duration: 1500,
-            //easing: "spring(1, 80, 10, 0)",
+            duration: Config.BLOCK_IN_DURATION, 
+            easing: Config.BLOCK_IN_EASING, 
             render({ y }) {
                 body.position.y = y
             }
@@ -46,8 +43,8 @@ function NarrowBlock(props) {
             return animate({
                 from: { y: body.position.y },
                 to: { y: -Config.BLOCK_HEIGHT },
-                easing: "easeInCubic",
-                duration: 700,
+                duration: Config.BLOCK_OUT_DURATION, 
+                easing: Config.BLOCK_OUT_EASING, 
                 render({ y }) {
                     body.position.y = y
                 },
@@ -60,9 +57,14 @@ function NarrowBlock(props) {
 
     return (
         <>
-            <mesh ref={ref} material={materials.ground}  castShadow receiveShadow>
+            <mesh ref={ref} material={materials.ground}>
                 <boxBufferGeometry args={[props.width, Config.BLOCK_HEIGHT, platformDepth]} attach="geometry" />
             </mesh>
+            <Coin
+                x={0}
+                y={props.y}
+                z={z}
+            />
         </>
     )
 }

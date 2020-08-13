@@ -6,9 +6,9 @@ import Config from "../../Config"
 import { Vec3, Box } from "cannon"
 import { BoxGeometry, Geometry } from "three"
 import materials from "../../shared/materials"
-import animate from "../../data/animate" 
+import animate from "../../data/animate"
 
-export function CommonBlock(props) { 
+export function CommonBlock(props) {
     let [geometry] = useState(() => {
         let geometry = new Geometry()
 
@@ -32,13 +32,13 @@ export function CommonBlock(props) {
         ]
     })
     let removeBlock = useStore(i => i.removeBlock)
- 
 
     useEffect(() => {
         return animate({
             from: { y: body.position.y },
-            to: { y: -Config.BLOCK_HEIGHT / 2 + props.y }, 
-            duration: 700,
+            to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
+            duration: Config.BLOCK_IN_DURATION,
+            easing: Config.BLOCK_IN_EASING,
             render({ y }) {
                 body.position.y = y
             }
@@ -50,8 +50,8 @@ export function CommonBlock(props) {
             return animate({
                 from: { y: body.position.y },
                 to: { y: -Config.BLOCK_HEIGHT },
-                easing: "easeInCubic", 
-                duration: 600,
+                easing: Config.BLOCK_OUT_EASING,
+                duration: Config.BLOCK_OUT_DURATION,
                 render({ y }) {
                     body.position.y = y
                 },
@@ -68,7 +68,13 @@ export function CommonBlock(props) {
                 mergeGeometry,
                 ...props,
             }) : null}
-            <mesh ref={ref} geometry={geometry} material={materials.ground} receiveShadow  castShadow />
+            <mesh
+                ref={ref}
+                geometry={geometry}
+                material={materials.ground}
+                receiveShadow
+                castShadow
+            />
         </>
     )
 }
