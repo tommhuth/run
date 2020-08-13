@@ -55,7 +55,7 @@ function Obstacle({ dead, radius, position, block }) {
     }, [dead])
 
     return (
-        <mesh ref={ref} material={material} castShadow receiveShadow>
+        <mesh ref={ref} material={material}>
             <sphereBufferGeometry args={[radius, 10, 8]} attach={"geometry"} />
         </mesh>
     )
