@@ -28,7 +28,7 @@ let isTooClose = (position, radius, obstacles) => {
 }
 
 function ObstaclesBlock(props) {
-    let [hasCoin] = useState(() => random.bool(.35))
+    let [hasCoin] = useState(() => random.boolean(.35))
     let addEnemy = useStore(i => i.addEnemy)
     let obstacles = useMemo(() => {
         let obstacleCount = random.integer(1, 3)
@@ -39,7 +39,7 @@ function ObstaclesBlock(props) {
             let r = random.integer(radius, Config.BLOCK_WIDTH / 2 - radius)
 
             return [
-                random.bool() ? l : r,
+                random.boolean() ? l : r,
                 Config.BLOCK_HEIGHT / 2,
                 random.integer((-props.depth / 2) + radius + 1, props.depth / 2 - radius)
             ]
@@ -47,7 +47,7 @@ function ObstaclesBlock(props) {
 
         outer:
         for (let i = 0; i < obstacleCount; i++) {
-            let radius = random.pick(radii)
+            let radius = random.pick(...radii)
             let position = getPosition(radius)
             let attempts = 0
 

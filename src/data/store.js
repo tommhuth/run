@@ -88,7 +88,7 @@ const [useStore, api] = create((set, get) => {
             set({ score: score + incr })
         },
         addEnemy(position) {
-            let radius = random.pick([1.5, 2, 1.75])
+            let radius = random.pick(1.5, 2, 1.75)
 
             set({
                 enemies: [
@@ -101,7 +101,7 @@ const [useStore, api] = create((set, get) => {
                             position[1] + radius * 1.5,
                             position[2] + radius
                         ],
-                        speed: random.real(-3, -7)
+                        speed: random.float(-3, -7)
                     }
                 ]
             })
@@ -157,7 +157,7 @@ const [useStore, api] = create((set, get) => {
 })
 
 function getBlock(previous) {
-    let stepUp = [BlockType.NARROW].includes(previous.type) ? false : random.bool(.9)
+    let stepUp = [BlockType.NARROW].includes(previous.type) ? false : random.boolean(.9)
     let type = getNextType(previous)
     let block = {
         id: uuid.v4(),
@@ -190,10 +190,10 @@ function getNextType(previous) {
         [BlockType.OBSTACLES]: [],
         [BlockType.NARROW]: []
     }
-    let type = random.pick(types)
+    let type = random.pick(...types)
 
     while (illegalNext[previous.type].includes(type)) {
-        type = random.pick(types)
+        type = random.pick(...types)
     }
 
     return type
