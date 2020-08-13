@@ -19,7 +19,7 @@ function useFrameNumber(speed = .1, init = 0, predicate) {
 
 let i = 0
 
-function Coin({ x, y, z, id, remove }) {
+function Coin({ x, y, z, id }) {
     let [count] = useState(() => i++)
     let [dead, setDead] = useState(false)
     let [ready, setReady] = useState(false)
@@ -55,7 +55,7 @@ function Coin({ x, y, z, id, remove }) {
     useEffect(() => {
         ref.current.visible = false
 
-        animate({
+        return animate({
             from: { y: y + 10 },
             to: { y: Math.cos(frame.current) * .5 + y + 1.5 },
             delay: Config.BLOCK_IN_DURATION + count * 175,
