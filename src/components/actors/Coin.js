@@ -54,7 +54,7 @@ function Coin({ x, y, z, blockDead, index = 0 }) {
         return animate({
             from: { y: y + 10 },
             to: { y: Math.cos(frame.current) * .5 + y + 1.5 },
-            delay: Config.BLOCK_IN_DURATION + index * 175,
+            delay: Config.BLOCK_IN_DURATION * 3 + index * 175,
             easing: "easeOutBounce",
             duration: 800,
             start() {
