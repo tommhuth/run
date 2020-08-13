@@ -1,5 +1,5 @@
-import create from 'zustand'
-import uuid from 'uuid'
+import create from "zustand"
+import uuid from "uuid"
 import Config from "../Config"
 import random from "../data/random"
 import GameState from "../data/const/GameState"
@@ -12,9 +12,9 @@ const initState = {
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
     blocks: [
         {
-            start: Config.Z_START - 30,
+            start: Config.Z_START ,
             end: Config.Z_START + 50,
-            depth: 80,
+            depth: 50,
             id: uuid.v4(),
             width: Config.BLOCK_WIDTH,
             type: BlockType.START,

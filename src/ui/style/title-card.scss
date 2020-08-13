@@ -13,8 +13,7 @@
     font-weight: 500;
     letter-spacing: -.01em;
     white-space: pre;
-    color: #e1ff00;
-    mix-blend-mode: lighten; 
+    color: #ffffff; 
     @include fluid-type(60px, 200px);
 
     &--big {

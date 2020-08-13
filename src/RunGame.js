@@ -66,19 +66,22 @@ export default function Game() {
                 noEvents
                 pixelRatio={Math.min(window.devicePixelRatio, Config.IS_LARGE_SCREEN ? 1 : 2)}
                 camera={{
-                    position: new Vector3(5, 6, Config.Z_START - 10),
+                    position: new Vector3(5, 6, Config.Z_INIT),
                     zoom: Config.IS_SMALL_SCREEN ? 25 : 30,
                     near: -75,
                     far: 100
                 }}
                 gl={{
-                    depth: false,
+                    depth: !Config.DO_POST_PROCESSING,
                     stencil: false,
-                    antialias: false
+                    antialias: !Config.DO_POST_PROCESSING
                 }}
             > 
+                <Only if={Config.DO_POST_PROCESSING}>
+                    <Post /> 
+                </Only>
+
                 <ErrorBoundary>
-                    <Post />
                     <Lights />
                     <Camera />
 

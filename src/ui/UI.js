@@ -1,12 +1,18 @@
 import React from "react"
 import Config from "../Config"
 import { useStore } from "../data/store"
+import GameState from "../data/const/GameState"
+import TitleCard from "./TitleCard"
 
 export default function Ui() {
     let state = useStore(state => state.state)
     let gameOverReason = useStore(state => state.gameOverReason)
     let score = useStore(state => state.score)
     let buildTime = new Date(Config.BUILD_TIME)
+
+    if (state === GameState.READY) {
+        //return <TitleCard lines={["Run,", "Britney"]} big />
+    }   
 
     return ( 
         <div className="ui">

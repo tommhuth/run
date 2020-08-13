@@ -4,7 +4,7 @@ const uuid = require("uuid")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
-const CopyWebpackPlugin = require("copy-webpack-plugin") 
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 const { InjectManifest } = require("workbox-webpack-plugin")
 
 const rev = uuid.v4()
@@ -23,7 +23,7 @@ const plugins = [
         rev
     }),
     new CopyWebpackPlugin(
-        [
+        [ 
             {
                 from: path.join(__dirname, "assets", "splashscreens/*.png"),
                 to: "splashscreens/[name]." + rev + ".[ext]"
@@ -57,17 +57,17 @@ const plugins = [
             }
         ]
     }),
-    new InjectManifest({
-        swSrc: "./src/serviceworker.js",
-        swDest: "serviceworker.js",
-        exclude: ["serviceworker.js"],
-        //templatedURLs: {
-        //    "/": uuid.v4()
-        //}
-    })
 ]
 
 module.exports = (env, options) => {
+    if (options.mode === "production") {
+        plugins.push(new InjectManifest({
+            swSrc: "./src/serviceworker.js",
+            swDest: "serviceworker.js",
+            exclude: ["serviceworker.js"],
+        }))
+    }
+
     return {
         entry: { app: "./src/app.js" },
         devtool: options.mode === "development" ? "eval-cheap-module-source-map" : false,
