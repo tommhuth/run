@@ -5,7 +5,7 @@ export default function Lights() {
         <>
             <directionalLight 
                 color={0xff0000}
-                position={[5, 5, -10]} 
+                position={[3, 5, -10]} 
                 intensity={2}
                 onUpdate={self => {
                     self.updateMatrixWorld()
