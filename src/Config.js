@@ -9,5 +9,6 @@ export default {
     BLOCK_OUT_EASING: "easeInCubic",
     IS_SMALL_SCREEN: window.matchMedia("(max-width: 650px)").matches,
     IS_LARGE_SCREEN: window.matchMedia("(min-width: 950px)").matches,
-    BUILD_TIME: process.env.BUILD_TIME
+    BUILD_TIME: process.env.BUILD_TIME,
+    REGISTER_SERVICEWORKER: process.env.REGISTER_SERVICEWORKER === "true"
 }

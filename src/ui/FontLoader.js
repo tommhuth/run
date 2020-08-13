@@ -4,7 +4,7 @@ import FontFaceObserver from "fontfaceobserver"
 export default function FontLoader({
     children
 }) {
-    let fonts = useMemo(() => new FontFaceObserver("Oswald"), [])
+    let fonts = useMemo(() => new FontFaceObserver("Oswald", {  weight: 300, style: "normal" }), [])
     let [loading, setLoading] = useState(true)
     let load = useCallback(async () => {
         try {
