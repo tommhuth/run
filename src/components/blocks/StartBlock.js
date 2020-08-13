@@ -1,7 +1,7 @@
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useMemo } from "react"
 import Coin from "../actors/Coin"
-import { TextGeometry, FontLoader, Font } from "three"
+import { TextGeometry, Font } from "three"
 import materials from "../../shared/materials"
 import animate from "../../data/animate"
 import oswaldFont from "../../../assets/fonts/oswald.json"
@@ -12,43 +12,38 @@ function Text({
     index = 0,
     ...rest
 }) {
-    let [geometry, setGeometry] = useState()
+    let geometry = useMemo(() => {
+        return new TextGeometry(children, {
+            font: new Font(oswaldFont),
+            size: 12,
+            height: 50,
+            curveSegments: 4,
+            bevelEnabled: false,
+        })
+    }, [children])
     let ref = useRef()
 
     useEffect(() => {
-        let font = new Font(oswaldFont)
-        let geometry = new TextGeometry(children, {
-            font,
-            size: 12,
-            height: 50,
-            curveSegments: 8,
-            bevelEnabled: false,
-        })
-
-        setGeometry(geometry)
-
         ref.current.position.x = position[0]
         ref.current.position.z = position[2]
         ref.current.position.y = -100
     }, [])
 
     useEffect(() => {
-        if (geometry) {
-            return animate({
-                from: { y: -100 },
-                to: { y: -50 },
-                duration: 2000,
-                delay: index * 150,
-                easing: "easeOutBack",
-                render({ y }) {
-                    ref.current.position.y = y
-                }
-            })
-        }
-    }, [geometry])
+        return animate({
+            from: { y: -100 },
+            to: { y: -50 },
+            duration: 2000,
+            delay: index * 150,
+            easing: "easeOutBack",
+            render({ y }) {
+                ref.current.position.y = y
+            }
+        })
+    }, [])
 
     return (
-        <mesh ref={ref} geometry={geometry} material={materials.ground}  {...rest} />
+        <mesh ref={ref} geometry={geometry} material={materials.ground} {...rest} />
     )
 }
 
