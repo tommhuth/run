@@ -7,8 +7,7 @@ import { Workbox } from "workbox-window"
 import Config from "./Config"
 
 ReactDOM.render(
-    <FontLoader>
-        dfsafasdf
+    <FontLoader> 
         <Ui />
         <RunGame />
     </FontLoader>,
