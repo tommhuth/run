@@ -1,11 +1,6 @@
 
-import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
-import { useThree } from "react-three-fiber"
-import { useStore } from "../../data/store"
-import { useCannon } from "../../data/cannon"
-import random from "../../data/random"
+import React from "react" 
 import Coin from "../actors/Coin"
-
 
 function StartBlock(props) {  
     return (
