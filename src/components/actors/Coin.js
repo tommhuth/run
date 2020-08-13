@@ -19,7 +19,7 @@ function useFrameNumber(speed = .1, init = 0, predicate) {
 
 let i = 0
 
-function Coin({ x, y, z, id }) {
+function Coin({ x, y, z }) {
     let [count] = useState(() => i++)
     let [dead, setDead] = useState(false)
     let [ready, setReady] = useState(false)
@@ -89,7 +89,7 @@ function Coin({ x, y, z, id }) {
                 addScore()
             }
         }, state => state.position)
-    }, [id, taken])
+    }, [taken])
 
     return (
         <mesh
