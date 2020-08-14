@@ -14,9 +14,9 @@ export default {
         flatShading: true
     }),
     enemy: new MeshPhongMaterial({
-        color: 0x72DDC8,
-        emissive: 0x72DDC8,
-        emissiveIntensity: .75,  
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: .5,  
         flatShading: true
     }),
     player: new MeshPhongMaterial({

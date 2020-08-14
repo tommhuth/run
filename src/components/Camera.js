@@ -49,7 +49,7 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        if (!Config.DO_POST_PROCESSING) {
+        if (!Config.DO_FULL_POST_PROCESSING) {
             light2.current.position.z = 0
             light2.current.position.y = -30
             light2.current.position.x = 50
@@ -63,7 +63,7 @@ export default function Camera() {
             camera.position.x += (targetPosition.current[0] - camera.position.x) * .1
         }
 
-        if (!Config.DO_POST_PROCESSING && state === GameState.RUNNING) {
+        if (!Config.DO_FULL_POST_PROCESSING && state === GameState.RUNNING) {
             light2.current.position.z += (targetPosition.current[2] + 10 - light2.current.position.z) * .05
             light2.current.position.y = targetPosition.current[1] - 30
             light2.current.position.x = 50
@@ -83,7 +83,7 @@ export default function Camera() {
                 intensity={20}
                 color={0xff0000}
             />
-            <Only if={!Config.DO_POST_PROCESSING}>
+            <Only if={!Config.DO_FULL_POST_PROCESSING}>
                 <pointLight
                     decay={2}
                     ref={light2}

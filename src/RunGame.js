@@ -1,6 +1,6 @@
 import "../assets/styles/app.scss"
 
-import React, { useEffect } from "react" 
+import React, { useEffect } from "react"
 import { Vector3 } from "three"
 import { Canvas } from "react-three-fiber"
 import { CannonProvider } from "./data/cannon"
@@ -8,7 +8,7 @@ import Config from "./Config"
 import Path from "./components/Path"
 import Only from "./components/Only"
 import Player from "./components/actors/Player"
-import Post from "./components/Post"
+import { SimplePost, FullPost } from "./components/Post"
 import Camera from "./components/Camera"
 import GameState from "./data/const/GameState"
 import { useStore } from "./data/store"
@@ -72,14 +72,12 @@ export default function Game() {
                     far: 100
                 }}
                 gl={{
-                    depth: !Config.DO_POST_PROCESSING,
+                    depth: false,
                     stencil: false,
-                    antialias: !Config.DO_POST_PROCESSING
+                    antialias: false
                 }}
-            > 
-                <Only if={Config.DO_POST_PROCESSING}>
-                    <Post /> 
-                </Only>
+            >
+                {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <SimplePost />}
 
                 <ErrorBoundary>
                     <Lights />
@@ -96,4 +94,3 @@ export default function Game() {
         </>
     )
 }
- 

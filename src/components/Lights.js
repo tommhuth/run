@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react" 
+import Config from "../Config"
 
 export default function Lights() { 
     return (
@@ -11,7 +12,7 @@ export default function Lights() {
                     self.updateMatrixWorld()
                 }}
             />
-            <hemisphereLight groundColor="red" color="blue" intensity={1} />
+            <hemisphereLight groundColor="red" color="blue" intensity={Config.DO_FULL_POST_PROCESSING ? 1 : 1.5} />
         </>
     )
 }
