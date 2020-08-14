@@ -48,8 +48,6 @@ function Text({
 }
 
 function StartBlock(props) {
-
-
     return (
         <>
             <Text
@@ -57,7 +55,7 @@ function StartBlock(props) {
                 rotation-y={Math.PI}
                 rotation-x={Math.PI / 2}
                 rotation-z={-Math.PI / 2}
-                index={0}
+                index={1}
             >
                 R
             </Text>
@@ -66,7 +64,7 @@ function StartBlock(props) {
                 rotation-y={Math.PI}
                 rotation-x={Math.PI / 2}
                 rotation-z={-Math.PI / 2}
-                index={1}
+                index={2}
             >
                 U
             </Text>
@@ -75,7 +73,7 @@ function StartBlock(props) {
                 rotation-y={Math.PI}
                 rotation-x={Math.PI / 2}
                 rotation-z={-Math.PI / 2}
-                index={2}
+                index={3}
             >
                 N
             </Text>
