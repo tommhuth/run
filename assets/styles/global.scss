@@ -32,7 +32,7 @@ body {
     width: 100% !important;
 }
 
-canvas { 
+.main canvas { 
     top: 0; 
     position: fixed;
     display: block;
@@ -59,4 +59,7 @@ canvas {
     left:1em;
     z-index: 1000;
     padding-top: env(safe-area-inset-top);
+    color: #FFF;
+    mix-blend-mode: soft-light;
+    opacity: 1;
 }

@@ -30,6 +30,7 @@
         "copy-webpack-plugin": "^5.1.1",
         "core-js": "3.6.4",
         "css-loader": "^3.4.2",
+        "drei": "^0.0.72",
         "eslint": "^6.8.0",
         "eslint-plugin-babel": "^5.3.0",
         "eslint-plugin-react": "^7.19.0",

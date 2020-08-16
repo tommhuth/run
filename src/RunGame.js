@@ -2,7 +2,7 @@ import "../assets/styles/app.scss"
 
 import React, { useEffect } from "react"
 import { Vector3 } from "three"
-import { Canvas } from "react-three-fiber"
+import { Canvas, useThree, useFrame } from "react-three-fiber"
 import { CannonProvider } from "./data/cannon"
 import Config from "./Config"
 import Path from "./components/Path"
@@ -14,6 +14,7 @@ import GameState from "./data/const/GameState"
 import { useStore } from "./data/store"
 import ErrorBoundary from "./components/ErrorBoundary"
 import Lights from "./components/Lights"
+import { Stats } from "drei"
 
 export default function Game() {
     let state = useStore(state => state.state)
@@ -62,9 +63,10 @@ export default function Game() {
                 style={{
                     overflow: "visible"
                 }}
+                className="main"
                 orthographic
                 noEvents
-                pixelRatio={Math.min(window.devicePixelRatio, Config.IS_LARGE_SCREEN ? 1 : 2)}
+                pixelRatio={Math.min(1.5, window.devicePixelRatio)}
                 camera={{
                     position: new Vector3(5, 6, Config.Z_INIT),
                     zoom: Config.IS_SMALL_SCREEN ? 25 : 30,
@@ -78,7 +80,7 @@ export default function Game() {
                 }}
             >
                 {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <SimplePost />}
-
+                <Stats />
                 <ErrorBoundary>
                     <Lights />
                     <Camera />
@@ -90,7 +92,22 @@ export default function Game() {
                         </Only>
                     </CannonProvider>
                 </ErrorBoundary>
+                
             </Canvas>
         </>
     )
+}
+
+
+function X() {
+
+    let { gl } = useThree()
+
+    useFrame(() => {
+        gl.info.autoReset = false
+        console.log(gl.info.render.calls)
+        gl.info.reset()
+    })
+
+    return null
 }

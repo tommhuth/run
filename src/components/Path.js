@@ -11,13 +11,6 @@ export default function Path() {
     let enemies = useStore(i => i.enemies)
     let state = useStore(i => i.state)
     let maintainPath = useStore(i => i.maintainPath)
-    let { gl } = useThree()
-
-    useFrame(() => {
-        //gl.info.autoReset = false
-        //console.log(gl.info.render.calls)
-        //gl.info.reset()
-    })
 
     useEffect(() => {
         if (state === GameState.RUNNING) {
