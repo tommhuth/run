@@ -1,5 +1,5 @@
 const random = {
-    boolean(likelyhood = .5) {
+    boolean(likelyhood = .5) { 
         return Math.random() < likelyhood
     },
     float(min, max) {
@@ -9,7 +9,7 @@ const random = {
         return Math.round(random.float(min, max))
     },
     pick(...list) {
-        return list[Math.floor(Math.random() * list.length)]
+        return list[random.integer(0, list.length - 1)]
     }
 } 
 
