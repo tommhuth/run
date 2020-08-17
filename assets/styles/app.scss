@@ -16,5 +16,7 @@
 }
 
 .fps {
-    top: env(safe-area-inset-top);
+    top: env(safe-area-inset-top) !important;
+    left: auto !important;
+    right:1em !important ;
 }

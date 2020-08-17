@@ -80,7 +80,7 @@ export default function Game() {
                 }}
             >
                 {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <SimplePost />}
-                <Stats />
+                <Stats className="fps" />
                 <ErrorBoundary>
                     <Lights />
                     <Camera />
