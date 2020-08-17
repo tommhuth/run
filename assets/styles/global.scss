@@ -52,14 +52,3 @@ body {
     padding: 0;
     border: 0;
 } 
-
-.ui {
-    position: absolute;
-    top:1em;
-    left:1em;
-    z-index: 1000;
-    padding-top: env(safe-area-inset-top);
-    color: #FFF;
-    mix-blend-mode: soft-light;
-    opacity: 1;
-}
