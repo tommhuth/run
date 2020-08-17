@@ -1,18 +1,21 @@
 
-import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
-import { useThree } from "react-three-fiber"
+import React, { useEffect, useRef, useState, useMemo } from "react"
 import { useStore } from "../../data/store"
-import { useCannon } from "../../data/cannon"
 import random from "../../data/random"
 import Obstacle from "../Obstacle"
 import Config from "../../Config"
+import materials from "../../shared/materials"
 import uuid from "uuid"
 import { Vector3 } from "three"
 import Coin from "../actors/Coin"
 import Only from "../Only"
+import { TextGeometry, Font } from "three"
+import oswaldFont from "../../../assets/fonts/oswald.json"
+import animate from "../../data/animate"
 
 let vec1 = new Vector3()
 let vec2 = new Vector3()
+let font = new Font(oswaldFont)
 
 let isTooClose = (position, radius, obstacles) => {
     for (let obstacle of obstacles) {
@@ -25,6 +28,72 @@ let isTooClose = (position, radius, obstacles) => {
     }
 
     return false
+}
+
+
+function Text({
+    x = 0,
+    y = 0,
+    z = 0,
+    text,
+    size = 1,
+    index = 0,
+    blockDead,
+    ...rest
+}) {
+    let ref = useRef()
+
+    useEffect(() => {
+        if (blockDead) {
+            return animate({
+                from: { x: x + 10 },
+                to: { x: x - 50 },
+                duration: Config.BLOCK_OUT_DURATION,
+                easing: "easeInQuart",
+                render({ x }) {
+                    ref.current.position.x = x
+                }
+            })
+        }
+    }, [blockDead, x])
+
+    useEffect(() => {
+        ref.current.position.set(x + 100, y, z)
+
+        return animate({
+            from: { x: x + 100 },
+            to: { x: x + 10 },
+            duration: 1600,
+            delay: index * 250 + 1000,
+            easing: "easeOutCubic",
+            render({ x }) {
+                ref.current.position.x = x
+            }
+        })
+    }, [x, y, z, index])
+
+    return (
+        <mesh
+            scale={[-1, 1, 1]}
+            ref={ref}
+            material={materials.player}
+            {...rest}
+        >
+            <textGeometry
+                attach="geometry"
+                args={[
+                    text,
+                    {
+                        size,
+                        font,
+                        height: .75,
+                        curveSegments: 3,
+                        bevelEnabled: false
+                    }
+                ]}
+            />
+        </mesh>
+    )
 }
 
 function ObstaclesBlock(props) {
@@ -108,8 +177,29 @@ function ObstaclesBlock(props) {
                     blockDead={props.dead}
                 />
             </Only>
+            <Only if={props.distanceMarker}>
+                <Text
+                    text={props.distanceMarker + ""}
+                    size={9}
+                    x={1}
+                    y={props.y + 15}
+                    index={0}
+                    z={props.start + props.depth / 2}
+                    blockDead={props.dead}
+                />
+                <Text
+                    text={"METERS"}
+                    size={4}
+                    x={0}
+                    index={1}
+                    y={props.y + 10}
+                    z={props.start + props.depth / 2}
+                    blockDead={props.dead}
+                />
+            </Only>
         </>
     )
 }
 
 export default React.memo(ObstaclesBlock)
+

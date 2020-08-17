@@ -5,6 +5,7 @@ import random from "../data/random"
 import GameState from "../data/const/GameState"
 import BlockType from "./const/BlockType"
 
+const distanceIncrement = 200
 const mustRequestOrientationAccess = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission
 const initState = {
     hasDeviceOrientation: !mustRequestOrientationAccess,
@@ -12,7 +13,7 @@ const initState = {
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
     blocks: [
         {
-            start: Config.Z_START ,
+            start: Config.Z_START,
             end: Config.Z_START + 50,
             depth: 50,
             id: uuid.v4(),
@@ -25,6 +26,8 @@ const initState = {
     attempts: 0,
     position: { x: 0, y: 20, z: Config.Z_START },
     gameOverReason: null,
+    distance: 0,
+    nextDistanceThreshold: distanceIncrement,
     score: 0,
 }
 
@@ -145,11 +148,22 @@ const [useStore, api] = create((set, get) => {
             set({ blocks: blocks.filter(i => i.id !== id) })
         },
         addBlock() {
-            let { blocks } = get()
+            let { blocks, distance, nextDistanceThreshold } = get()
             let forwardBlock = blocks[0]
             let nextBlock = getBlock(forwardBlock)
 
-            set({ blocks: [nextBlock, ...blocks] })
+            if (nextBlock.end > nextDistanceThreshold) {
+                distance += distanceIncrement
+                nextDistanceThreshold += distanceIncrement
+
+                nextBlock.distanceMarker = distance
+            }
+
+            set({
+                blocks: [nextBlock, ...blocks],
+                distance,
+                nextDistanceThreshold
+            })
 
             return nextBlock
         }
@@ -168,6 +182,7 @@ function getBlock(previous) {
         type,
         ...makeBlock[type](previous)
     }
+
 
     return {
         ...block,
