@@ -116,7 +116,7 @@ const [useStore, api] = create((set, get) => {
         maintainPath() {
             let { position, blocks, addBlock, clearBlocks } = get()
             let forwardBlock = blocks[0]
-            let forwardBuffer = 42
+            let forwardBuffer = 35
 
             while (forwardBlock.end - position.z < forwardBuffer) {
                 forwardBlock = addBlock()
