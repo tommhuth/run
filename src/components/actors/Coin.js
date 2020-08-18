@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react" 
+import React, { useEffect, useState, useRef } from "react"
 import animate from "../../data/animate"
 import { useFrame } from "react-three-fiber"
 import { useStore, api } from "../../data/store"
@@ -14,9 +14,9 @@ function useFrameNumber(speed = .1, init = 0, predicate) {
     })
 
     return frame
-} 
+}
 
-function Coin({ x, y, z, blockDead, index = 0 }) { 
+function Coin({ x, y, z, index = 0, dead: blockDead }) {
     let [dead, setDead] = useState(false)
     let [ready, setReady] = useState(false)
     let [taken, setTaken] = useState(false)
@@ -73,7 +73,7 @@ function Coin({ x, y, z, blockDead, index = 0 }) {
         if (blockDead) {
             return animate({
                 from: { y: ref.current.position.y },
-                to: { y: y + -Config.BLOCK_HEIGHT / 2 }, 
+                to: { y: y + -Config.BLOCK_HEIGHT / 2 },
                 easing: Config.BLOCK_OUT_EASING,
                 duration: Config.BLOCK_OUT_DURATION,
                 render({ y }) {

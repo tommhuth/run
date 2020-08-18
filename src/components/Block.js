@@ -3,7 +3,7 @@ import React from "react"
 import ObstaclesBlock from "./blocks/ObstaclesBlock"
 import BlockType from "../data/const/BlockType"
 import NarrowBlock from "./blocks/NarrowBlock"
-import CommonBlock from "./blocks/CommonBlock"
+import CommonBlock from "./CommonBlock"
 import StartBlock from "./blocks/StartBlock"
 
 function Block(props) {
@@ -11,7 +11,7 @@ function Block(props) {
         case BlockType.START:
             return (
                 <CommonBlock {...props}>
-                    <StartBlock />
+                    <StartBlock  />
                 </CommonBlock>
             )
         case BlockType.PLAIN:

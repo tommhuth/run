@@ -1,24 +1,13 @@
 
-import React, { useEffect, useState, useCallback } from "react"
-import { useStore } from "../../data/store"
-import { useCannon } from "../../data/cannon"
-import Config from "../../Config"
-import { Vec3, Box } from "cannon"
-import { BoxGeometry, Geometry } from "three"
-import materials from "../../shared/materials"
-import animate from "../../data/animate"
+import React, { useEffect } from "react"
+import { useStore } from "../data/store"
+import { useCannon } from "../data/cannon"
+import Config from "../Config"
+import { Vec3, Box } from "cannon" 
+import materials from "../shared/materials"
+import animate from "../data/animate"
 
 export function CommonBlock(props) {
-    let [geometry] = useState(() => {
-        let geometry = new Geometry()
-
-        geometry.merge(new BoxGeometry(props.width, Config.BLOCK_HEIGHT, props.depth))
-
-        return geometry
-    })
-    let mergeGeometry = useCallback((other) => {
-        geometry.merge(other)
-    }, [geometry])
     let { ref, body } = useCannon({
         mass: 0,
         rotation: [],
@@ -65,16 +54,14 @@ export function CommonBlock(props) {
     return (
         <>
             {props.children ? React.cloneElement(props.children, {
-                mergeGeometry,
                 ...props,
             }) : null}
             <mesh
                 ref={ref}
-                geometry={geometry}
                 material={materials.ground}
-                receiveShadow
-                castShadow
-            />
+            >
+                <boxBufferGeometry args={[props.width, Config.BLOCK_HEIGHT, props.depth]} attach="geometry" />
+            </mesh>
         </>
     )
 }

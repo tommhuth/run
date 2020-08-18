@@ -2,8 +2,10 @@
 import React, { useEffect } from "react"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
-import { Vec3, Box } from "cannon" 
+import { Vec3, Box } from "cannon"
 import materials from "../../shared/materials"
+import Only from "../Only"
+import DistanceMarker from "../DistanceMarker"
 import animate from "../../data/animate"
 import { useStore } from "../../data/store"
 import Coin from "../actors/Coin"
@@ -30,8 +32,8 @@ function NarrowBlock(props) {
         return animate({
             from: { y: body.position.y },
             to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
-            duration: Config.BLOCK_IN_DURATION, 
-            easing: Config.BLOCK_IN_EASING, 
+            duration: Config.BLOCK_IN_DURATION,
+            easing: Config.BLOCK_IN_EASING,
             render({ y }) {
                 body.position.y = y
             }
@@ -43,8 +45,8 @@ function NarrowBlock(props) {
             return animate({
                 from: { y: body.position.y },
                 to: { y: -Config.BLOCK_HEIGHT },
-                duration: Config.BLOCK_OUT_DURATION, 
-                easing: Config.BLOCK_OUT_EASING, 
+                duration: Config.BLOCK_OUT_DURATION,
+                easing: Config.BLOCK_OUT_EASING,
                 render({ y }) {
                     body.position.y = y
                 },
@@ -64,8 +66,17 @@ function NarrowBlock(props) {
                 x={0}
                 y={props.y}
                 z={z}
-                blockDead={props.dead}
+                dead={props.dead}
             />
+
+            <Only if={props.distance}>
+                <DistanceMarker
+                    y={props.y}
+                    z={props.start + props.depth / 2}
+                    distance={props.distance}
+                    dead={props.dead}
+                />
+            </Only>
         </>
     )
 }

@@ -158,21 +158,21 @@ function StartBlock(props) {
                 x={0}
                 y={props.y}
                 z={props.start + props.depth - 30}
-                blockDead={props.dead}
+                dead={props.dead}
             />
             <Coin
                 x={0}
                 y={props.y}
                 z={props.start + props.depth - 25}
                 index={1}
-                blockDead={props.dead}
+                dead={props.dead}
             />
             <Coin
                 x={0}
                 y={props.y}
                 z={props.start + props.depth - 20}
                 index={2}
-                blockDead={props.dead}
+                dead={props.dead}
             />
 
         </>
