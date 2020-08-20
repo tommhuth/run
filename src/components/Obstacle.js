@@ -5,7 +5,7 @@ import materials from "../shared/materials"
 import { Vec3, Box, Sphere } from "cannon"
 import animate from "../data/animate"
 import Config from "../Config"
-import random from "../data/random"
+import random from "@huth/random"
 
 function Obstacle({ dead, radius, position, block }) {
     let { ref, body } = useCannon({

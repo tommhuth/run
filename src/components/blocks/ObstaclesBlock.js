@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useMemo } from "react"
 import { useStore } from "../../data/store"
-import random from "../../data/random"
+import random from "@huth/random"
 import Obstacle from "../Obstacle"
 import Config from "../../Config"
 import uuid from "uuid"

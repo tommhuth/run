@@ -1,7 +1,7 @@
 import create from "zustand"
 import uuid from "uuid"
 import Config from "../Config"
-import random from "../data/random"
+import random from "@huth/random"
 import GameState from "../data/const/GameState"
 import BlockType from "./const/BlockType"
 

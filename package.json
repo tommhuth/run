@@ -20,6 +20,7 @@
         "@babel/plugin-proposal-optional-chaining": "^7.8.3",
         "@babel/preset-env": "^7.9.0",
         "@babel/preset-react": "^7.8.3",
+        "@huth/random": "0.1.0",
         "animejs": "^3.2.0",
         "autoprefixer": "^9.7.4",
         "babel-eslint": "^10.1.0",
