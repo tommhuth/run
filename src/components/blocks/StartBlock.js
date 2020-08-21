@@ -71,7 +71,7 @@ function StartBlock(props) {
                 rotation-z={-Math.PI / 2}
                 index={2}
             >
-                U
+                O
             </Text>
             <Text
                 position={[-.5, -50, -16]}
@@ -80,7 +80,16 @@ function StartBlock(props) {
                 rotation-z={-Math.PI / 2}
                 index={3}
             >
-                N
+                L
+            </Text>
+            <Text
+                position={[-.5, -50, -23]}
+                rotation-y={Math.PI}
+                rotation-x={Math.PI / 2}
+                rotation-z={-Math.PI / 2}
+                index={4}
+            >
+                L
             </Text>
 
 

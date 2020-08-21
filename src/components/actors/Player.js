@@ -58,7 +58,7 @@ export default function Player() {
     useEffect(() => {
         if (state === GameState.RUNNING) {
             setTimeout(() => setReady(true), 500)
-        }
+        }  
     }, [state])
 
     useFrame(() => {

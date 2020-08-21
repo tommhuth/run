@@ -1,12 +1,12 @@
 import React from "react"
 import { useStore } from "../data/store"
-import Only from "./Only"
+import Only from "../components/Only"
 
 import "./style/game-over-stats.scss"
 
 export default function GameOverStats() {
-    let score = useStore(state => state.data.score)
-    let hasNewPersonalBest = useStore(state => state.data.hasNewPersonalBest)
+    let score = useStore(state => state.score)
+    let hasNewPersonalBest = useStore(state => state.hasNewPersonalBest)
 
     return (
         <div className="game-over-stats"> 

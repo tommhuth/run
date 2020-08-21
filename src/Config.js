@@ -2,7 +2,7 @@ export default {
     Z_START: -30,
     Z_INIT: -200,
     Y_INIT: 100,
-    Y_START: 5,
+    Y_START: 6,
     BLOCK_WIDTH: 28,
     BLOCK_HEIGHT: 100,
     BLOCK_MAX_EXTRA_WIDTH: 5,

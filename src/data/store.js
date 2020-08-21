@@ -38,7 +38,9 @@ const [useStore, api] = create((set, get) => {
             set({ state: GameState.RUNNING })
         },
         end(reason) {
-            set({ state: GameState.GAME_OVER, gameOverReason: reason })
+            let {position} = get()
+
+            set({ state: GameState.GAME_OVER, gameOverReason: reason, score: Math.floor(position.z)  })
         },
         reset() {
             let {

@@ -14,11 +14,16 @@ import GameState from "./data/const/GameState"
 import { useStore } from "./data/store"
 import ErrorBoundary from "./components/ErrorBoundary"
 import Lights from "./components/Lights"
+import TitleCard from "./ui/TitleCard"
+import GameOverStats from "./ui/GameOverStats"
+import Message from "./ui/Message"
+import RunnerStats from "./ui/RunnerStats"
 import { Stats } from "drei"
 
 export default function Game() {
     let state = useStore(state => state.state)
     let attempts = useStore(state => state.attempts)
+    let gameOverReason = useStore(state => state.gameOverReason)
     let mustRequestOrientationAccess = useStore(state => state.mustRequestOrientationAccess)
     let hasDeviceOrientation = useStore(state => state.hasDeviceOrientation)
     let requestDeviceOrientation = useStore(state => state.requestDeviceOrientation)
@@ -58,6 +63,22 @@ export default function Game() {
 
     return (
         <>
+            <Only if={[GameState.REQUEST_ORIENTATION_ACCESS, GameState.READY, GameState.INTRO].includes(state)}>
+                <TitleCard lines={["Roll,", "Britney"]} big />
+                <Message text="Tap to start" />
+            </Only>
+            
+            <Only if={state === GameState.GAME_OVER}>
+                <TitleCard lines={["Gurl, u", gameOverReason]} />
+                <Message text="Tap to restart" />
+
+                <GameOverStats />
+            </Only>
+
+            <Only if={state === GameState.RUNNING}>
+                <RunnerStats />
+            </Only>
+
             <Canvas
                 colorManagement
                 style={{
@@ -69,7 +90,7 @@ export default function Game() {
                 pixelRatio={Math.min(1.5, window.devicePixelRatio)}
                 camera={{
                     position: new Vector3(5, Config.Y_INIT, Config.Z_START),
-                    zoom:  Config.IS_SMALL_SCREEN ? 25 : 30,
+                    zoom: Config.IS_SMALL_SCREEN ? 25 : 30,
                     near: -75,
                     far: 100
                 }}
@@ -80,7 +101,7 @@ export default function Game() {
                 }}
             >
                 {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <SimplePost />}
-                <Stats className="fps" />
+
                 <ErrorBoundary>
                     <Lights />
                     <Camera />
@@ -92,22 +113,7 @@ export default function Game() {
                         </Only>
                     </CannonProvider>
                 </ErrorBoundary>
-                
             </Canvas>
         </>
     )
-}
-
-
-function X() {
-
-    let { gl } = useThree()
-
-    useFrame(() => {
-        gl.info.autoReset = false
-        console.log(gl.info.render.calls)
-        gl.info.reset()
-    })
-
-    return null
-}
+} 

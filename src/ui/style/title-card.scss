@@ -5,29 +5,39 @@
     display: block;
     top: 50%;
     z-index: 1;
-    margin-top: -.5em;
+    margin-top: -.2em;
+    letter-spacing: -.1em;
     left: 50%;
-    transform: translate(-50%, -50%) skewY(-14deg) translateZ(1px);
+    margin-left: -.125em;
+    transform: translate(-50%, -50%) skewY(-12deg) translateZ(1px);
     user-select: none;
     line-height: 1.05;
     font-weight: 500;
     letter-spacing: -.01em;
     white-space: pre;
-    color: #ffffff; 
+    color: #FFF;
+    -webkit-text-stroke: 2px white;
+    -webkit-text-fill-color: transparent;
+    mix-blend-mode: hard-light; 
     @include fluid-type(60px, 200px);
 
+    @media (max-width: 600px) {
+        -webkit-text-stroke-width: 1px;
+    }
+
     &--big {
-        @include fluid-type(85px, 250px);
+        @include fluid-type(90px, 250px);
     }
 
     &__letter {
-        animation: title-card-letter-in .25s both ease-out; 
+        animation: title-card-letter-in .45s both; 
         display: inline-block; 
         transform-style: preserve-3d;
+        margin: 0 -.005em;
 
         @for $i from 1 through 35 {
             &:nth-child(#{$i}) {
-                animation-delay: (($i - 1) * .065) + s;
+                animation-delay: (($i - 1) * .075) + s;
             }
         }
     }
@@ -36,15 +46,11 @@
 @keyframes title-card-letter-in {
     0% {
         opacity: 0;
-        transform: translateX(0);
-    }
-
-    50% {
-        transform: translateX(20px);
+        transform: translateX(-.5em);
     }
 
     100% {
         opacity: 1;
         transform: translateX(0);
-    }
+    } 
 }

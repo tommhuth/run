@@ -2,7 +2,7 @@
 
 .runner-stats { 
     position: fixed;
-    font-weight: 300;
+    font-weight: 200;
     color: #fff;
     user-select: none;
     mix-blend-mode: overlay;
@@ -18,17 +18,9 @@
     line-height: 1;
     z-index: 1;
     user-select: none; 
-
-    &--right { 
-        left: 50%;
-        margin-left: .35em;  
-    }
-
-    &--left { 
-        margin-right: .35em;
-        right: 50%;
-        text-align: right; 
-    } 
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
 
     &__label { 
         display: block; 
