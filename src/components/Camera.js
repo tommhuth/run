@@ -17,10 +17,7 @@ export default function Camera() {
     let targetPosition = useRef([0, 0, 0])
     let blockY = useRef()
 
-    useEffect(() => {
-        camera.position.set(5, 5, Config.Z_INIT)
-        camera.lookAt(0, 0, Config.Z_INIT + 10)
-
+    useEffect(() => { 
         return api.subscribe(
             ([{ x, z, y }, currentBlockY = 0]) => {
                 targetPosition.current = [x, currentBlockY + 5, z + 3]
@@ -35,15 +32,18 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
+        camera.position.set(5, Config.Y_INIT, Config.Z_START)
+        camera.lookAt(0, Config.Y_INIT - 5, Config.Z_START + 10)
+
         return animate({
-            from: { z: Config.Z_INIT },
-            to: { z: -30 },
-            duration: 4000,
+            from: { y: Config.Y_INIT },
+            to: { y:  Config.Y_START },
+            duration: 2600,
             complete() {
                 setReady(true)
             },
-            render({ z }) {
-                camera.position.z = z
+            render({ y }) {
+                camera.position.y = y
             }
         })
     }, [])

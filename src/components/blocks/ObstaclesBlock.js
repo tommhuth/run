@@ -8,10 +8,10 @@ import uuid from "uuid"
 import { Vector3 } from "three"
 import Coin from "../actors/Coin"
 import Only from "../Only"
-import DistanceMarker from "../DistanceMarker"
+import DistanceMarker from "../DistanceMarker" 
 
 let vec1 = new Vector3()
-let vec2 = new Vector3()
+let vec2 = new Vector3() 
 
 let isTooClose = (position, radius, obstacles) => {
     for (let obstacle of obstacles) {

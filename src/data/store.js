@@ -3,7 +3,7 @@ import uuid from "uuid"
 import Config from "../Config"
 import random from "@huth/random"
 import GameState from "../data/const/GameState"
-import BlockType from "./const/BlockType"
+import BlockType from "./const/BlockType" 
 
 const mustRequestOrientationAccess = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission
 const initState = {
@@ -12,8 +12,8 @@ const initState = {
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
     blocks: [
         {
-            start: Config.Z_START,
-            end: Config.Z_START + 50,
+            start: Config.Z_START + 30,
+            end: Config.Z_START + 50 + 30,
             depth: 50,
             id: uuid.v4(),
             width: Config.BLOCK_WIDTH,
@@ -23,7 +23,7 @@ const initState = {
     ],
     enemies: [],
     attempts: 0,
-    position: { x: 0, y: 20, z: Config.Z_START },
+    position: { x: 0, y: 20, z: 0 },
     gameOverReason: null,
     distance: 0,
     nextDistanceThreshold: Config.DISTANCE_INCREMENT,

@@ -28,7 +28,7 @@ export default function Player() {
         mass: 2,
         shape: new Sphere(radius),
         customData: { actor: "player" },
-        position: [0, radius * 20, Config.Z_START],
+        position: [0, radius * 20, 0],
         onCollide({ body: target }) {
             // if other body is below player,
             // we hit the "top" of the other body and can jump again  

@@ -1,10 +1,12 @@
 
 import React, { useEffect, useRef, useMemo } from "react"
 import Coin from "../actors/Coin"
-import { TextGeometry, Font } from "three"
+import { Font } from "three"
 import materials from "../../shared/materials"
 import animate from "../../data/animate"
 import oswaldFont from "../../../assets/fonts/oswald.json"
+
+let font = new Font(oswaldFont)
 
 function Text({
     position = [0, 0, 0],
@@ -12,29 +14,18 @@ function Text({
     index = 0,
     ...rest
 }) {
-    let geometry = useMemo(() => {
-        return new TextGeometry(children, {
-            font: new Font(oswaldFont),
-            size: 12,
-            height: 50,
-            curveSegments: 4,
-            bevelEnabled: false,
-        })
-    }, [children])
-    let ref = useRef()
+    let ref = useRef() 
 
     useEffect(() => {
         ref.current.position.x = position[0]
         ref.current.position.z = position[2]
-        ref.current.position.y = -100
-    }, [])
+        ref.current.position.y = -75
 
-    useEffect(() => {
         return animate({
-            from: { y: -100 },
+            from: { y: -75 },
             to: { y: -50 },
             duration: 2000,
-            delay: index * 150,
+            delay: index * 200,
             easing: "easeOutBack",
             render({ y }) {
                 ref.current.position.y = y
@@ -43,7 +34,21 @@ function Text({
     }, [])
 
     return (
-        <mesh ref={ref} geometry={geometry} material={materials.ground} {...rest} />
+        <mesh ref={ref} material={materials.ground} {...rest}>
+            <textGeometry
+                attach="geometry" 
+                args={[
+                    children, 
+                    {
+                        font,
+                        size: 12,
+                        height: 50,
+                        curveSegments: 3,
+                        bevelEnabled: false,
+                    }
+                ]}
+            />
+        </mesh>
     )
 }
 
@@ -153,28 +158,7 @@ function StartBlock(props) {
                 distance={40}
                 position={[20, -10, -20]}
             />
-
-            <Coin
-                x={0}
-                y={props.y}
-                z={props.start + props.depth - 30}
-                dead={props.dead}
-            />
-            <Coin
-                x={0}
-                y={props.y}
-                z={props.start + props.depth - 25}
-                index={1}
-                dead={props.dead}
-            />
-            <Coin
-                x={0}
-                y={props.y}
-                z={props.start + props.depth - 20}
-                index={2}
-                dead={props.dead}
-            />
-
+ 
         </>
     )
 }
@@ -182,26 +166,4 @@ function StartBlock(props) {
 export default React.memo(StartBlock)
 
 
-
-/*
-
-            <Text
-                position={[14, -50, 1.5]}
-                rotation-y={Math.PI}
-                rotation-x={Math.PI / 2}
-                rotation-z={-Math.PI / 2}
-            >
-                BRITNEY
-            </Text>
-
-            <Text
-                position={[-.5, -50, -24]}
-                rotation-y={Math.PI}
-                rotation-x={Math.PI / 2}
-                rotation-z={-Math.PI / 2}
-                index={3}
-            >
-                ,
-            </Text>
-
-*/
+ 
