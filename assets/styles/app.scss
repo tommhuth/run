@@ -15,6 +15,15 @@
     opacity: 1;
 }
 
+#testy {
+    background-color: #FFF;
+    color: black;
+    position: absolute;
+    bottom:1em;
+    right:1em;
+    z-index: 1000;
+}
+
 .fps {
     top: env(safe-area-inset-top) !important;
     left: auto !important;

@@ -21,7 +21,8 @@ export function CannonProvider({
     }, [world])
 
     // Run world stepper every frame
-    useFrame(() => {
+    useFrame((state, delta) => { 
+        document.getElementById("testy").innerText = delta.toFixed(5)
         world.step(1 / 30)
     })
 
