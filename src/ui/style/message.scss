@@ -6,9 +6,8 @@
     bottom: calc(min(max(8vw, 3rem), 4rem) + env(safe-area-inset-bottom, 0)) ;
     left: 50%;
     transform: translateX(-50%);
-    letter-spacing: .1em;
-    color: #FFF;
-    mix-blend-mode: overlay;
+    letter-spacing: .1em; 
+    mix-blend-mode: multiply; 
     font-weight: 300;
     animation: message-in .35s both 1s;
     opacity: .4;

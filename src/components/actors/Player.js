@@ -23,12 +23,13 @@ function intersectBody(from, to, body) {
 
 export default function Player() {
     let radius = 1
+    let {z} = useStore(i => i.position)
     let [canJump, setCanJump] = useState(false)
     let { ref, body } = useCannon({
         mass: 2,
         shape: new Sphere(radius),
         customData: { actor: "player" },
-        position: [0, radius * 20, 0],
+        position: [0, radius * 20, z],
         onCollide({ body: target }) {
             // if other body is below player,
             // we hit the "top" of the other body and can jump again  

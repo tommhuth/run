@@ -2,10 +2,9 @@
 
 .runner-stats { 
     position: fixed;
-    font-weight: 200;
-    color: #fff;
+    font-weight: 200; 
     user-select: none;
-    mix-blend-mode: overlay;
+    mix-blend-mode: multiply; 
     text-transform: uppercase; 
     white-space: nowrap; 
     animation-duration: .3s;

@@ -3,7 +3,7 @@ import uuid from "uuid"
 import Config from "../Config"
 import random from "@huth/random"
 import GameState from "../data/const/GameState"
-import BlockType from "./const/BlockType" 
+import BlockType from "./const/BlockType"
 
 const mustRequestOrientationAccess = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission
 const initState = {
@@ -12,23 +12,33 @@ const initState = {
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
     blocks: [
         {
-            start: Config.Z_START + 30,
-            end: Config.Z_START + 50 + 30,
-            depth: 50,
+            start: -10,
+            end:   50,
+            depth: 60,
             id: uuid.v4(),
-            width: Config.BLOCK_WIDTH,
-            type: BlockType.START,
-            y: 0
-        },
+            width: Config.BLOCK_WIDTH ,
+            type: BlockType.OBSTACLES,
+            y: 0,
+        }, 
+        ...new Array(5).fill().map((i, index) => ({
+            start:  - (index * 10) - 20,
+            end:   - (index * 10)-10,
+            depth: 10,
+            id: uuid.v4(),
+            width: Config.BLOCK_WIDTH  - index * 2,
+            type: BlockType.OBSTACLES,
+            y: -(index + 1) * 2
+        }))
     ],
     enemies: [],
     attempts: 0,
-    position: { x: 0, y: 20, z: 0 },
+    position: { x: 0, y: 20, z: -10 },
     gameOverReason: null,
     distance: 0,
     nextDistanceThreshold: Config.DISTANCE_INCREMENT,
     score: 0,
 }
+console.log(initState.blocks)
 
 const [useStore, api] = create((set, get) => {
     return {
@@ -38,9 +48,9 @@ const [useStore, api] = create((set, get) => {
             set({ state: GameState.RUNNING })
         },
         end(reason) {
-            let {position} = get()
+            let { position } = get()
 
-            set({ state: GameState.GAME_OVER, gameOverReason: reason, score: Math.floor(position.z)  })
+            set({ state: GameState.GAME_OVER, gameOverReason: reason, score: Math.floor(position.z) })
         },
         reset() {
             let {

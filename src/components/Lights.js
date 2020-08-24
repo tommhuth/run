@@ -7,12 +7,12 @@ export default function Lights() {
             <directionalLight 
                 color={0xff0000}
                 position={[3, 5, -10]} 
-                intensity={2}
+                intensity={5}
                 onUpdate={self => {
                     self.updateMatrixWorld()
                 }}
             />
-            <hemisphereLight groundColor="red" color="blue" intensity={Config.DO_FULL_POST_PROCESSING ? 1 : 1.5} />
+            <hemisphereLight groundColor="red" color="blue" intensity={Config.DO_FULL_POST_PROCESSING ? 1 : 2} />
         </>
     )
 }

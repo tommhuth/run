@@ -161,12 +161,6 @@ function StartBlock(props) {
 
 
 
-            <pointLight
-                color={0xFF0000}
-                intensity={30}
-                distance={40}
-                position={[20, -10, -20]}
-            />
  
         </>
     )
@@ -175,4 +169,14 @@ function StartBlock(props) {
 export default React.memo(StartBlock)
 
 
- 
+ /*
+
+
+            <pointLight
+                color={0xFF0000}
+                intensity={30}
+                distance={40}
+                position={[20, -10, -20]}
+            />
+
+            */

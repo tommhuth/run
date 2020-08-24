@@ -69,7 +69,7 @@ export default function Game() {
             </Only>
             
             <Only if={state === GameState.GAME_OVER}>
-                <TitleCard lines={["Gurl, u", gameOverReason]} />
+                <TitleCard lines={["You ", gameOverReason]} />
                 <Message text="Tap to restart" />
 
                 <GameOverStats />
@@ -100,7 +100,7 @@ export default function Game() {
                     antialias: false
                 }}
             >
-                {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <SimplePost />}
+                {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <FullPost />}
 
                 <ErrorBoundary>
                     <Lights />
