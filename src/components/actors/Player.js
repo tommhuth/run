@@ -23,13 +23,12 @@ function intersectBody(from, to, body) {
 
 export default function Player() {
     let radius = 1
-    let {z} = useStore(i => i.position)
     let [canJump, setCanJump] = useState(false)
     let { ref, body } = useCannon({
         mass: 2,
         shape: new Sphere(radius),
         customData: { actor: "player" },
-        position: [0, radius * 20, z],
+        position: [...Config.PLAYER_START],
         onCollide({ body: target }) {
             // if other body is below player,
             // we hit the "top" of the other body and can jump again  
@@ -57,9 +56,9 @@ export default function Player() {
     let [ready, setReady] = useState(false)
 
     useEffect(() => {
-        if (state === GameState.RUNNING) {
+        if (state === GameState.RUNNING) { 
             setTimeout(() => setReady(true), 500)
-        }  
+        }
     }, [state])
 
     useFrame(() => {
@@ -139,7 +138,7 @@ export default function Player() {
             ) / speedHistory.current.length < minSpeed
 
             if ((stalled && ready) || low || offside) {
-                end(stalled && ready ? "Stopped" : "Fell off")
+                end(stalled && ready ? "Crashed" : "Fell off")
             }
         }
     })

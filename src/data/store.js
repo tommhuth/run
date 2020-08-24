@@ -12,38 +12,54 @@ const initState = {
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
     blocks: [
         {
-            start: -10,
-            end:   50,
-            depth: 60,
+            start: 40,
+            end: 60,
+            depth: 20,
             id: uuid.v4(),
-            width: Config.BLOCK_WIDTH ,
+            width: Config.BLOCK_WIDTH,
             type: BlockType.OBSTACLES,
+            hasEnemies: false,
+            y: 2,
+        },
+        {
+            start: -10,
+            end: 40,
+            depth: 50,
+            id: uuid.v4(),
+            width: Config.BLOCK_WIDTH,
+            type: BlockType.OBSTACLES,
+            coinLikelihood: 0,
+            hasEnemies: false,
             y: 0,
-        }, 
-        ...new Array(5).fill().map((i, index) => ({
-            start:  - (index * 10) - 20,
-            end:   - (index * 10)-10,
+        },
+        ...new Array(4).fill().map((i, index) => ({
+            start: -(index * 10) - 20,
+            end: -(index * 10) - 10,
             depth: 10,
             id: uuid.v4(),
-            width: Config.BLOCK_WIDTH  - index * 2,
+            width: Config.BLOCK_WIDTH - index * 2,
             type: BlockType.OBSTACLES,
             y: -(index + 1) * 2
         }))
     ],
     enemies: [],
     attempts: 0,
-    position: { x: 0, y: 20, z: -10 },
+    position: {
+        x: Config.PLAYER_START[0],
+        y: Config.PLAYER_START[1],
+        z: Config.PLAYER_START[2]
+    },
     gameOverReason: null,
     distance: 0,
     nextDistanceThreshold: Config.DISTANCE_INCREMENT,
     score: 0,
 }
-console.log(initState.blocks)
 
 const [useStore, api] = create((set, get) => {
     return {
         ...initState,
-        // 
+
+        // actions
         start() {
             set({ state: GameState.RUNNING })
         },
@@ -66,7 +82,11 @@ const [useStore, api] = create((set, get) => {
                 mustRequestOrientationAccess
             }
 
-            data.blocks[0].id = uuid.v4()
+            for (let block of data.blocks ) { 
+                block.id = uuid.v4()
+            }
+
+            data.blocks = data.blocks.slice(0, 3)
 
             set(data)
         },

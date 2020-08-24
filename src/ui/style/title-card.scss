@@ -17,6 +17,7 @@
     white-space: pre;
     color: purple; 
     mix-blend-mode: multiply; 
+    text-shadow: 0 0 .5em rgba(black, 0.2);
     @include fluid-type(95px, 300px); 
 
     &--big {

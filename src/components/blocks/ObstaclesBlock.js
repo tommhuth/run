@@ -8,10 +8,10 @@ import uuid from "uuid"
 import { Vector3 } from "three"
 import Coin from "../actors/Coin"
 import Only from "../Only"
-import DistanceMarker from "../DistanceMarker" 
+import DistanceMarker from "../DistanceMarker"
 
 let vec1 = new Vector3()
-let vec2 = new Vector3() 
+let vec2 = new Vector3()
 
 let isTooClose = (position, radius, obstacles) => {
     for (let obstacle of obstacles) {
@@ -28,8 +28,18 @@ let isTooClose = (position, radius, obstacles) => {
 
 
 
-function ObstaclesBlock(props) {
-    let [hasCoin] = useState(() => random.boolean(.35))
+function ObstaclesBlock({
+    dead,
+    start,
+    end,
+    depth,
+    distance,
+    width,
+    y,
+    hasEnemies = true,
+    coinLikelihood = .35
+}) {
+    let [hasCoin] = useState(() => random.boolean(coinLikelihood))
     let addEnemy = useStore(i => i.addEnemy)
     let obstacles = useMemo(() => {
         let obstacleCount = random.integer(1, 3)
@@ -42,7 +52,7 @@ function ObstaclesBlock(props) {
             return [
                 random.boolean() ? l : r,
                 Config.BLOCK_HEIGHT / 2,
-                random.integer((-props.depth / 2) + radius + 1, props.depth / 2 - radius)
+                random.integer((-depth / 2) + radius + 1, depth / 2 - radius)
             ]
         }
 
@@ -73,48 +83,49 @@ function ObstaclesBlock(props) {
         return result
     }, [])
 
-
     useEffect(() => {
-        let id = setTimeout(() => {
-            let count = random.integer(0, 2)
+        if (hasEnemies) {
+            let id = setTimeout(() => {
+                let count = random.integer(0, 2)
 
-            for (let i = 0; i < count; i++) {
-                addEnemy([
-                    random.integer(-Config.BLOCK_WIDTH / 2, Config.BLOCK_WIDTH / 2),
-                    props.y,
-                    props.end
-                ])
-            }
-        }, Config.BLOCK_IN_DURATION)
+                for (let i = 0; i < count; i++) {
+                    addEnemy([
+                        random.integer(-Config.BLOCK_WIDTH / 2, Config.BLOCK_WIDTH / 2),
+                        y,
+                        end
+                    ])
+                }
+            }, Config.BLOCK_IN_DURATION)
 
-        return () => clearTimeout(id)
-    }, [])
+            return () => clearTimeout(id)
+        }
+
+    }, [hasEnemies])
 
     return (
         <>
             {obstacles.map(i => (
                 <Obstacle
                     {...i}
-                    mergeGeometry={props.mergeGeometry}
                     key={i.id}
-                    block={props}
-                    dead={props.dead}
+                    block={{ start, end, depth, width, y }}
+                    dead={dead}
                 />
             ))}
             <Only if={hasCoin}>
                 <Coin
                     x={0}
-                    y={props.y}
-                    z={props.start + props.depth / 2}
-                    dead={props.dead}
+                    y={y}
+                    z={start + depth / 2}
+                    dead={dead}
                 />
             </Only>
-            <Only if={props.distance}>
+            <Only if={distance}>
                 <DistanceMarker
-                    y={props.y}
-                    z={props.start + props.depth / 2}
-                    distance={props.distance}
-                    dead={props.dead}
+                    y={y}
+                    z={start + depth / 2}
+                    distance={distance}
+                    dead={dead}
                 />
             </Only>
         </>

@@ -5,6 +5,8 @@ import oswaldFont from "../../assets/fonts/oswald.json"
 import animate from "../data/animate"
 import Config from "../Config"
 import materials from "../shared/materials"
+import { useStore } from "../data/store"
+import GameState from "../data/const/GameState"
 
 const font = new Font(oswaldFont)
 
@@ -19,9 +21,10 @@ function Text({
     ...rest
 }) {
     let ref = useRef()
+    let state = useStore(i => i.state)
 
     useEffect(() => {
-        if (dead) {
+        if (dead || state === GameState.GAME_OVER) {
             return animate({
                 from: { x: x + 10 },
                 to: { x: x - 50 },
@@ -32,7 +35,7 @@ function Text({
                 }
             })
         }
-    }, [dead, x])
+    }, [dead, x, state])
 
     useEffect(() => {
         ref.current.position.set(x + 100, y, z)
@@ -53,7 +56,7 @@ function Text({
         <mesh
             scale={[-1, 1, 1]}
             ref={ref}
-            material={materials.player}
+            material={materials.ground}
             {...rest}
         >
             <textGeometry

@@ -16,7 +16,7 @@ function Enemy({ position, radius, speed, id }) {
         shape: new Sphere(radius),
         onCollide({ body }) {
             if (body.customData?.actor === "player" && state === GameState.RUNNING) {
-                end("Killed")
+                end("Dead")
             }
         },
         position
@@ -30,7 +30,7 @@ function Enemy({ position, radius, speed, id }) {
     useFrame(() => {
         body.velocity.z = speed
 
-        if (body.position.y < -100) {
+        if (body.position.y < -75) {
             removeEnemy(id)
         }
     })

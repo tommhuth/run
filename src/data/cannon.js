@@ -23,7 +23,7 @@ export function CannonProvider({
     // Run world stepper every frame
     useFrame((state, delta) => { 
         //document.getElementById("testy").innerText = delta.toFixed(5)
-        world.step(1 / (delta >= 1/30 ? 15 : 30))
+        world.step(delta * 2)
     }) 
 
     // Distribute world via context

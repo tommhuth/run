@@ -10,14 +10,14 @@ import animate from "../data/animate"
 
 export default function Camera() {
     let { camera } = useThree()
-    let light = useRef()
-    let light2 = useRef()
+    let light = useRef() 
     let [ready, setReady] = useState(false)
     let state = useStore(i => i.state)
+    let attempts = useStore(i => i.attempts)
     let targetPosition = useRef([0, 0, 0])
     let blockY = useRef()
 
-    useEffect(() => { 
+    useEffect(() => {
         return api.subscribe(
             ([{ x, z, y }, currentBlockY = 0]) => {
                 targetPosition.current = [x, currentBlockY + 5, z + 3]
@@ -32,12 +32,12 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        camera.position.set(5, Config.Y_INIT, Config.Z_START)
-        camera.lookAt(0, Config.Y_INIT - 5, Config.Z_START + 10)
+        camera.position.set(...Config.CAMERA_PRESTART)
+        camera.lookAt(Config.CAMERA_PRESTART[0] - 5, Config.CAMERA_PRESTART[1] - 5, Config.CAMERA_PRESTART[2] + 10)
 
         return animate({
-            from: { y: Config.Y_INIT },
-            to: { y:  Config.Y_START },
+            from: { y: Config.CAMERA_PRESTART[1] },
+            to: { y: Config.CAMERA_START[1] },
             duration: 2600,
             complete() {
                 setReady(true)
@@ -46,32 +46,20 @@ export default function Camera() {
                 camera.position.y = y
             }
         })
-    }, [])
+    }, []) 
 
     useEffect(() => {
-        /*
-        if (!Config.DO_FULL_POST_PROCESSING) {
-            light2.current.position.z = 0
-            light2.current.position.y = -30
-            light2.current.position.x = 50
+        if (state === GameState.RUNNING && attempts > 0) { 
+            camera.position.set(...Config.CAMERA_START)
         }
-        */
-    }, [])
+    }, [state, attempts])
 
     useFrame(() => {
         if (state === GameState.RUNNING && ready) {
             camera.position.z += (targetPosition.current[2] - camera.position.z) * .1
             camera.position.y += (targetPosition.current[1] - camera.position.y) * .01
             camera.position.x += (targetPosition.current[0] - camera.position.x) * .1
-        }
-
-        /*
-        if (!Config.DO_FULL_POST_PROCESSING && state === GameState.RUNNING) {
-            light2.current.position.z += (targetPosition.current[2] + 10 - light2.current.position.z) * .05
-            light2.current.position.y = targetPosition.current[1] - 30
-            light2.current.position.x = 50
-        }
-        */
+        } 
 
         light.current.position.x = targetPosition.current[0]
         light.current.position.y = blockY.current + 1
@@ -86,21 +74,8 @@ export default function Camera() {
                 distance={28}
                 intensity={20}
                 color={0xff0000}
-            />
-            <Only if={!Config.DO_FULL_POST_PROCESSING}>
-                
-            </Only>
+            /> 
         </>
     )
 }
-
-/*
-<pointLight
-                    decay={2}
-                    ref={light2}
-                    distance={90}
-                    intensity={0}
-                    color={0xffff00}
-                />
-
-                */
+ 
