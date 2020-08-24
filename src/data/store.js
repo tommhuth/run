@@ -29,7 +29,7 @@ const initState = {
             width: Config.BLOCK_WIDTH,
             type: BlockType.OBSTACLES,
             coinLikelihood: 0,
-            hasEnemies: false,
+            hasEnemies: true,
             y: 0,
         },
         ...new Array(4).fill().map((i, index) => ({
@@ -39,7 +39,8 @@ const initState = {
             id: uuid.v4(),
             width: Config.BLOCK_WIDTH - index * 2,
             type: BlockType.OBSTACLES,
-            y: -(index + 1) * 2
+            y: -(index + 1) * 2,
+            hasEnemies: false
         }))
     ],
     enemies: [],
@@ -50,6 +51,7 @@ const initState = {
         z: Config.PLAYER_START[2]
     },
     gameOverReason: null,
+    canStart: false,
     distance: 0,
     nextDistanceThreshold: Config.DISTANCE_INCREMENT,
     score: 0,
@@ -60,8 +62,13 @@ const [useStore, api] = create((set, get) => {
         ...initState,
 
         // actions
+        canBegin() { 
+            set({ canStart: true  }) 
+        },
         start() {
-            set({ state: GameState.RUNNING })
+            if (get().canStart) {
+                set({ state: GameState.RUNNING })
+            }
         },
         end(reason) {
             let { position } = get()
@@ -72,23 +79,27 @@ const [useStore, api] = create((set, get) => {
             let {
                 hasDeviceOrientation,
                 mustRequestOrientationAccess,
-                attempts
+                attempts, 
+                canStart
             } = get()
-            let data = {
-                ...initState,
-                state: GameState.RUNNING,
-                attempts: attempts + 1,
-                hasDeviceOrientation,
-                mustRequestOrientationAccess
-            }
 
-            for (let block of data.blocks ) { 
-                block.id = uuid.v4()
-            }
+            if (canStart) {
+                let data = {
+                    ...initState,
+                    state: GameState.RUNNING,
+                    attempts: attempts + 1,
+                    hasDeviceOrientation,
+                    mustRequestOrientationAccess
+                }
 
-            data.blocks = data.blocks.slice(0, 3)
+                for (let block of data.blocks) {
+                    block.id = uuid.v4()
+                }
 
-            set(data)
+                data.blocks = data.blocks.slice(0, 3)
+
+                set(data)
+            } 
         },
         ready() {
             set({ state: GameState.READY })

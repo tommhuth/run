@@ -28,9 +28,10 @@ export default function Game() {
     let hasDeviceOrientation = useStore(state => state.hasDeviceOrientation)
     let requestDeviceOrientation = useStore(state => state.requestDeviceOrientation)
     let start = useStore(state => state.start)
+    let canBegin = useStore(state => state.canBegin)
+    let canStart = useStore(state => state.canStart)
     let reset = useStore(state => state.reset)
     let deviceOrientationGranted = useStore(state => state.deviceOrientationGranted)
-
     useEffect(() => {
         let listener = () => {
             switch (state) {
@@ -49,6 +50,13 @@ export default function Game() {
     }, [state])
 
     useEffect(() => {
+        if ([GameState.GAME_OVER, GameState.READY].includes(state)) {
+            console.log("reset, wait", attempts)
+            setTimeout(() => canBegin(), attempts === 0 ? 3000 : 2500)
+        }
+    }, [state, attempts])
+
+    useEffect(() => {
         if (mustRequestOrientationAccess && !hasDeviceOrientation) {
             let listener = () => {
                 deviceOrientationGranted()
@@ -65,14 +73,19 @@ export default function Game() {
         <>
             <Only if={[GameState.REQUEST_ORIENTATION_ACCESS, GameState.READY, GameState.INTRO].includes(state)}>
                 <TitleCard lines={["Roll,", "Britney"]} big />
-                <Message text="Tap to start" />
+                <Only if={canStart}>
+                    <Message text="Tap to start" /> 
+                </Only>
             </Only>
-            
-            <Only if={state === GameState.GAME_OVER}>
-                <TitleCard lines={["You ", gameOverReason]} />
-                <Message text="Tap to restart" />
 
+            <Only if={state === GameState.GAME_OVER}>
                 <GameOverStats />
+
+                <TitleCard lines={["You ", gameOverReason]} />
+
+                <Only if={canStart}> 
+                    <Message text="Tap to restart" />
+                </Only> 
             </Only>
 
             <Only if={state === GameState.RUNNING}>
