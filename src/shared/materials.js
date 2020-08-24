@@ -19,6 +19,11 @@ export default {
         emissiveIntensity: .5,  
         flatShading: true
     }),
+    sign: new MeshPhongMaterial({
+        shininess: 30, 
+        color: Color.DARK_BLUE,     
+        flatShading: true
+    }),
     player: new MeshPhongMaterial({
         color: 0xffffff,
         emissive: 0xffffff,

@@ -56,7 +56,7 @@ function Text({
         <mesh
             scale={[-1, 1, 1]}
             ref={ref}
-            material={materials.ground}
+            material={materials.sign}
             {...rest}
         >
             <textGeometry
@@ -66,7 +66,7 @@ function Text({
                     {
                         size,
                         font,
-                        height: .5,
+                        height: 2,
                         curveSegments: 2,
                         bevelEnabled: false
                     }

@@ -9,7 +9,7 @@ export default {
     BLOCK_OUT_DURATION: 600,
     BLOCK_IN_EASING: "easeOutQuart",
     BLOCK_OUT_EASING: "easeInCubic",
-    DISTANCE_INCREMENT: 30,
+    DISTANCE_INCREMENT: 200,
     IS_SMALL_SCREEN: window.matchMedia("(max-width: 650px)").matches,
     IS_LARGE_SCREEN: window.matchMedia("(min-width: 950px)").matches,
     DO_FULL_POST_PROCESSING: true ,//window.matchMedia("(max-width: 850px)").matches,

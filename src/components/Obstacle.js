@@ -22,17 +22,17 @@ function Obstacle({ dead, radius, position, block }) {
     })
 
     useEffect(() => {
-        let mass = random.integer(100, 400)
-
-        ref.current.visible = false 
+        let duration = random.integer(100, 400)
 
         return animate({
             from: { y: body.position.y },
-            to: { y: block.y }, 
-            duration: mass + 200,
-            delay: Config.BLOCK_IN_DURATION + mass,
+            to: { y: block.y },
+            duration: duration + 200,
+            delay: Config.BLOCK_IN_DURATION + duration,
             start() {
-                ref.current.visible = true 
+                if (ref.current) {
+                    ref.current.visible = true 
+                }
             },
             render({ y }) {
                 body.position.y = y
@@ -41,7 +41,7 @@ function Obstacle({ dead, radius, position, block }) {
     }, [])
 
     useEffect(() => {
-        if (dead) {  
+        if (dead) {
             return animate({
                 from: { y: body.position.y },
                 to: { y: body.position.y - 100 },
