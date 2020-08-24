@@ -26,8 +26,6 @@ let isTooClose = (position, radius, obstacles) => {
     return false
 }
 
-
-
 function ObstaclesBlock({
     dead,
     start,
@@ -91,7 +89,7 @@ function ObstaclesBlock({
                 for (let i = 0; i < count; i++) {
                     addEnemy([
                         random.integer(-Config.BLOCK_WIDTH / 2, Config.BLOCK_WIDTH / 2),
-                        y,
+                        y + 15,
                         end
                     ])
                 }
@@ -100,7 +98,7 @@ function ObstaclesBlock({
             return () => clearTimeout(id)
         }
 
-    }, [hasEnemies])
+    }, [hasEnemies, y])
 
     return (
         <>
