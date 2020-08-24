@@ -32,7 +32,7 @@
 
         @for $i from 1 through 35 {
             &:nth-child(#{$i}) {
-                animation-delay: (($i - 1) * .075) + s;
+                animation-delay: (($i + 2) * .075) + s;
             }
         }
     }
