@@ -33,6 +33,7 @@ function ObstaclesBlock({
     depth,
     distance,
     width,
+    initial = false,
     y,
     hasEnemies = true,
     coinLikelihood = .35
@@ -106,7 +107,7 @@ function ObstaclesBlock({
                 <Obstacle
                     {...i}
                     key={i.id}
-                    block={{ start, end, depth, width, y }}
+                    block={{ start, end, depth, width, y, initial }}
                     dead={dead}
                 />
             ))}

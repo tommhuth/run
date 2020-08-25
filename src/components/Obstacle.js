@@ -34,7 +34,7 @@ function Obstacle({ dead, radius, position, block }) {
             from: { y: body.position.y },
             to: { y: block.y },
             duration: duration + 200,
-            delay: Config.BLOCK_IN_DURATION + duration,
+            delay: block.initial ? 0 : Config.BLOCK_IN_DURATION + duration,
             start() {
                 if (ref.current) {
                     ref.current.visible = true 

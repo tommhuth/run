@@ -23,9 +23,20 @@ const initState = {
             y: 2,
         },
         {
-            start: -10,
+            start: 15,
             end: 40,
-            depth: 50,
+            depth: 25,
+            id: uuid.v4(),
+            width: Config.BLOCK_WIDTH,
+            type: BlockType.OBSTACLES,
+            coinLikelihood: 0,
+            hasEnemies: false, 
+            y: 0,
+        },
+        {
+            start: -10,
+            end: 15,
+            depth: 25,
             id: uuid.v4(),
             width: Config.BLOCK_WIDTH,
             type: BlockType.OBSTACLES,
@@ -96,6 +107,7 @@ const [useStore, api] = create((set, get) => {
 
                 for (let block of data.blocks) {
                     block.id = uuid.v4()
+                    block.initial = true
                 }
 
                 data.blocks = data.blocks.slice(0, 3)

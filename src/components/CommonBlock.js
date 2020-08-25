@@ -16,7 +16,7 @@ export function CommonBlock(props) {
         ),
         position: [
             0,
-            -Config.BLOCK_HEIGHT,
+            props.initial ? -Config.BLOCK_HEIGHT/2: -Config.BLOCK_HEIGHT,
             props.start + props.depth / 2
         ]
     })
