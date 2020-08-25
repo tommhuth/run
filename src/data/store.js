@@ -19,6 +19,7 @@ const initState = {
             width: Config.BLOCK_WIDTH,
             type: BlockType.OBSTACLES,
             hasEnemies: false,
+            coinLikelihood: 0,
             y: 2,
         },
         {
@@ -29,7 +30,7 @@ const initState = {
             width: Config.BLOCK_WIDTH,
             type: BlockType.OBSTACLES,
             coinLikelihood: 0,
-            hasEnemies: true,
+            hasEnemies: false, 
             y: 0,
         },
         ...new Array(4).fill().map((i, index) => ({
@@ -40,7 +41,8 @@ const initState = {
             width: Config.BLOCK_WIDTH - index * 2,
             type: BlockType.OBSTACLES,
             y: -(index + 1) * 2,
-            hasEnemies: false
+            hasEnemies: false,
+            coinLikelihood: index > 0 && index < 2 ? 1 : 0
         }))
     ],
     enemies: [],
