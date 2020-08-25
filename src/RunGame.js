@@ -32,6 +32,7 @@ export default function Game() {
     let canStart = useStore(state => state.canStart)
     let reset = useStore(state => state.reset)
     let deviceOrientationGranted = useStore(state => state.deviceOrientationGranted)
+    
     useEffect(() => {
         let listener = () => {
             switch (state) {
@@ -52,7 +53,7 @@ export default function Game() {
     useEffect(() => {
         if ([GameState.GAME_OVER, GameState.READY].includes(state)) {
             console.log("reset, wait", attempts)
-            setTimeout(() => canBegin(), attempts === 0 ? 3000 : 2500)
+            setTimeout(() => canBegin(), attempts === 0 ? 3250 : 2500)
         }
     }, [state, attempts])
 

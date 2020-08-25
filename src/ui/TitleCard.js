@@ -4,15 +4,30 @@ import cn from "classnames"
 import "./style/title-card.scss"
 
 export default function TitleCard({ lines = [], big }) {
+    let c = 0
+
     return (
         <div className={cn("title-card", { "title-card--big": big })}>
-            {lines.map((j, index) => {
+            <span className="visually-hidden">{lines.join(" ")}</span>
+
+            {lines.map((j, index1) => {
                 return (
                     <React.Fragment key={j}>
-                        {j.split("").map((i, index) => {
-                            return <span className="title-card__letter" key={j + index}>{i}</span>
+                        {j.split("").map((i, index2) => {
+                            c++
+
+                            return (
+                                <span
+                                    className="title-card__letter"
+                                    key={j + index2}
+                                    aria-hidden
+                                    style={{ "--delay": (c * .075 + (big ? .25 : 0)) + "s" }}
+                                >
+                                    {i}
+                                </span>
+                            )
                         })}
-                        {index === lines.length - 1 ? null : <br />}
+                        {index1 === lines.length - 1 ? null : <br />}
                     </React.Fragment>
                 )
             })}

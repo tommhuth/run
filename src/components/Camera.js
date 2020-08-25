@@ -39,6 +39,7 @@ export default function Camera() {
             from: { y: Config.CAMERA_PRESTART[1] },
             to: { y: Config.CAMERA_START[1] },
             duration: 2600,
+            delay: 250,
             complete() {
                 setReady(true)
             },
