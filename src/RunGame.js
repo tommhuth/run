@@ -81,7 +81,7 @@ export default function Game() {
             <Only if={state === GameState.GAME_OVER}>
                 <GameOverStats />
 
-                <TitleCard lines={["You ", gameOverReason]} />
+                <TitleCard lines={["You", gameOverReason]} />
 
                 <Only if={canStart}> 
                     <Message text="Tap to restart" />
