@@ -44,8 +44,8 @@ function ObstaclesBlock({
         let result = []
         let radii = [2.5, 2, 3, 4, 5]
         let getPosition = (radius) => {
-            let l = random.integer(-(Config.BLOCK_WIDTH / 2) + radius, -radius)
-            let r = random.integer(radius, Config.BLOCK_WIDTH / 2 - radius)
+            let l = random.integer(-(width/ 2) + radius, -radius)
+            let r = random.integer(radius, width / 2 - radius)
 
             return [
                 random.boolean() ? l : r,
