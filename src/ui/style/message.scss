@@ -10,7 +10,7 @@
     mix-blend-mode: multiply; 
     font-weight: 300;
     animation: message-in .35s both 1s;
-    opacity: .65;
+    opacity: 1;
     user-select: none;
     text-transform: uppercase;
     @include fluid-type(18px, 24px);

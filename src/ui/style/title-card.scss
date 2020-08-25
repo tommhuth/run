@@ -6,29 +6,31 @@
     text-align: center;
     top: 50%;
     z-index: 1;
-    margin-top: -.2em;
-    letter-spacing: -.1em;
+    margin-top: -.2em; 
     left: 50%; 
     transform: translate(-50%, -50%) skewY(-11.5deg) translateZ(1px);
     user-select: none;
     line-height: .95;
-    font-weight: 500;
-    letter-spacing: -.01em;
+    font-weight: 500; 
     transform-style: preserve-3d;
     white-space: pre;
     color: rgb(47, 0, 77); 
-    opacity: .75;  
+    opacity: .925;  
     @include fluid-type(95px, 300px); 
 
     &--big {
         @include fluid-type(95px, 325px);
+
+        @media (max-width: 650px) { 
+            @include fluid-type(170px, 325px);
+        }
     }
 
     &__letter {
         --delay: 0s;
         animation: title-card-letter-in .45s var(--delay) both; 
         display: inline-block; 
-        margin: 0 -.025em; 
+        margin: 0 -.0375em; 
     }
 }
 

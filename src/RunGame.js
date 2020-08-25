@@ -73,7 +73,7 @@ export default function Game() {
     return (
         <>
             <Only if={[GameState.REQUEST_ORIENTATION_ACCESS, GameState.READY, GameState.INTRO].includes(state)}>
-                <TitleCard lines={["Roll", "Britney"]} big />
+                <TitleCard lines={Config.IS_SMALL_SCREEN ? ["Roll", "Brit", "ney"] : ["Roll", "Britney"]} big />
                 <Only if={canStart}>
                     <Message text="Tap to start" /> 
                 </Only>
