@@ -1,6 +1,6 @@
 export default {
     CAMERA_START: [0,6,0],
-    CAMERA_PRESTART: [5, 70, -30],
+    CAMERA_PRESTART: [5, 70, 0],
     PLAYER_START: [0, 15, 0],   
     BLOCK_WIDTH: 28,
     BLOCK_HEIGHT: 100,

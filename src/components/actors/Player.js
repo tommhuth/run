@@ -50,7 +50,9 @@ export default function Player() {
     let setPosition = useStore(i => i.setPosition)
     let end = useStore(i => i.end)
     let state = useStore(i => i.state)
-    let lastBlock = useStore(i => i.blocks[i.blocks.length - 1])
+    let lastBlock = useStore(i => {
+        return i.blocks.reduce((min, curr) => Math.min(min,curr.y), i.blocks[i.blocks.length-1].y) 
+    })
     let hasDeviceOrientation = useStore(i => i.hasDeviceOrientation)
     let speedHistory = useRef([])
     let [ready, setReady] = useState(false)
@@ -130,7 +132,7 @@ export default function Player() {
             let x = body.position.x
             let offside = x < -(Config.BLOCK_WIDTH / 2 + offsideBuffer) || x > Config.BLOCK_WIDTH / 2 + offsideBuffer
             let y = body.position.y
-            let low = y + 1 < lastBlock.y
+            let low = y + 1 < lastBlock
             let minSpeed = 1
             let stalled = speedHistory.current.reduce(
                 (accumulator, value) => accumulator + value,

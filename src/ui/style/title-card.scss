@@ -17,8 +17,10 @@
     color: rgb(47, 0, 77); 
     opacity: .925;  
     @include fluid-type(95px, 300px); 
+    --delay: 0s;
 
     &--big {
+        --delay: .75s;
         @include fluid-type(95px, 325px);
 
         @media (max-width: 650px) { 
@@ -27,7 +29,6 @@
     }
 
     &__letter {
-        --delay: 0s;
         animation: title-card-letter-in .45s var(--delay) both; 
         display: inline-block; 
         margin: 0 -.0375em; 

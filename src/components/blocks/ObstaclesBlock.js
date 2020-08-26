@@ -36,12 +36,13 @@ function ObstaclesBlock({
     initial = false,
     y,
     hasEnemies = true,
-    coinLikelihood = .35
+    coinLikelihood = .35,
+    obstacleCount 
 }) {
     let [hasCoin] = useState(() => random.boolean(coinLikelihood))
     let addEnemy = useStore(i => i.addEnemy)
     let obstacles = useMemo(() => {
-        let obstacleCount = random.integer(1, 3)
+        let count = typeof obstacleCount === "number" ? obstacleCount : random.integer(1, 3)
         let result = []
         let radii = [2.5, 2, 3, 4, 5]
         let getPosition = (radius) => {
@@ -56,7 +57,7 @@ function ObstaclesBlock({
         }
 
         outer:
-        for (let i = 0; i < obstacleCount; i++) {
+        for (let i = 0; i < count; i++) {
             let radius = random.pick(...radii)
             let position = getPosition(radius)
             let attempts = 0

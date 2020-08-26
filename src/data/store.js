@@ -12,49 +12,44 @@ const initState = {
     state: mustRequestOrientationAccess ? GameState.REQUEST_ORIENTATION_ACCESS : GameState.READY,
     blocks: [
         {
-            start: 40,
-            end: 60,
+            start: 25,
+            end: 45,
+            depth: 20,
+            id: uuid.v4(),
+            width: Config.BLOCK_WIDTH,
+            type: BlockType.OBSTACLES,
+            coinLikelihood: 0,
+            obstacleCount: 2,
+            hasEnemies: false,
+            y: 0,
+            step: -2
+        },
+        {
+            start: 0,
+            end: 25,
+            depth: 25,
+            id: uuid.v4(),
+            width: Config.BLOCK_WIDTH,
+            type: BlockType.OBSTACLES,
+            coinLikelihood: 0,
+            obstacleCount: 3,
+            hasEnemies: false,
+            y: 2,
+            step: 2
+        },
+        {
+            start: -20,
+            end: 0,
             depth: 20,
             id: uuid.v4(),
             width: Config.BLOCK_WIDTH,
             type: BlockType.OBSTACLES,
             hasEnemies: false,
+            obstacleCount: 3,
             coinLikelihood: 0,
-            y: 2,
-        },
-        {
-            start: 15,
-            end: 40,
-            depth: 25,
-            id: uuid.v4(),
-            width: Config.BLOCK_WIDTH,
-            type: BlockType.OBSTACLES,
-            coinLikelihood: 0,
-            hasEnemies: false, 
             y: 0,
+            step: 0
         },
-        {
-            start: -10,
-            end: 15,
-            depth: 25,
-            id: uuid.v4(),
-            width: Config.BLOCK_WIDTH,
-            type: BlockType.OBSTACLES,
-            coinLikelihood: 0,
-            hasEnemies: false, 
-            y: 0,
-        },
-        ...new Array(4).fill().map((i, index) => ({
-            start: -(index * 10) - 20,
-            end: -(index * 10) - 10,
-            depth: 10,
-            id: uuid.v4(),
-            width: Config.BLOCK_WIDTH - index * 2,
-            type: BlockType.OBSTACLES,
-            y: -(index + 1) * 2,
-            hasEnemies: false,
-            coinLikelihood: index > 0 && index < 2 ? 1 : 0
-        }))
     ],
     enemies: [],
     attempts: 0,
@@ -75,8 +70,8 @@ const [useStore, api] = create((set, get) => {
         ...initState,
 
         // actions
-        canBegin() { 
-            set({ canStart: true  }) 
+        canBegin() {
+            set({ canStart: true })
         },
         start() {
             if (get().canStart) {
@@ -92,7 +87,7 @@ const [useStore, api] = create((set, get) => {
             let {
                 hasDeviceOrientation,
                 mustRequestOrientationAccess,
-                attempts, 
+                attempts,
                 canStart
             } = get()
 
@@ -110,10 +105,8 @@ const [useStore, api] = create((set, get) => {
                     block.initial = true
                 }
 
-                data.blocks = data.blocks.slice(0, 3)
-
                 set(data)
-            } 
+            }
         },
         ready() {
             set({ state: GameState.READY })
@@ -205,8 +198,7 @@ const [useStore, api] = create((set, get) => {
         },
         addBlock() {
             let { blocks, distance, nextDistanceThreshold } = get()
-            let forwardBlock = blocks[0]
-            let nextBlock = getBlock(forwardBlock)
+            let nextBlock = getBlock(blocks) 
 
             if (nextBlock.end > nextDistanceThreshold) {
                 distance += Config.DISTANCE_INCREMENT
@@ -226,7 +218,16 @@ const [useStore, api] = create((set, get) => {
     }
 })
 
-function getBlock(previous) {
+let i = 0
+
+function getNextStep(blocks) {
+    let next = i % 3 === 0 && i > 0 ? blocks[0].step : random.pick(-2, 2)
+
+    return next
+}
+
+function getBlock(blocks) {
+    let previous = blocks[0]
     let stepUp = [BlockType.NARROW].includes(previous.type) ? false : random.boolean(.9)
     let type = getNextType(previous)
     let block = {
@@ -239,11 +240,15 @@ function getBlock(previous) {
         ...makeBlock[type](previous)
     }
 
+    let step = getNextStep(blocks)
+
+    i++
 
     return {
         ...block,
         end: block.start + block.depth,
-        y: previous.y + (block.stepUp ? 2 : 0)
+        y: previous.y + (block.stepUp ? step : 0),
+        step: block.stepUp ? step : 0
     }
 }
 
