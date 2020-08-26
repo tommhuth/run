@@ -51,8 +51,7 @@ export default function Game() {
     }, [state])
 
     useEffect(() => {
-        if ([GameState.GAME_OVER, GameState.READY].includes(state)) {
-            console.log("reset, wait", attempts)
+        if ([GameState.GAME_OVER, GameState.READY].includes(state)) { 
             setTimeout(() => canBegin(), attempts === 0 ? 3250 : 2500)
         }
     }, [state, attempts])
