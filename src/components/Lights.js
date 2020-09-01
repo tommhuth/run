@@ -11,10 +11,11 @@ export default function Lights() {
     let light = useRef()
     let state = useStore(store => store.data.state)
     let position = useRef({ x: 0, y: 10, z: 40 }) //  0, 2, 40
-    let targetDistance = useRef(21)
+    let extraDistance = Config.IS_SMALL_SCREEN ? 1.65 : 1
+    let targetDistance = useRef(21 * extraDistance)
 
     useLayoutEffect(() => {
-        light.current.position.set(0, -100, 30)
+        light.current.position.set(0, -100, -30)
     }, [])
 
     useFrame(() => { 
@@ -38,7 +39,7 @@ export default function Lights() {
 
     useEffect(() => {
         return animate({
-            from: { z: 20, y: 25 },
+            from: { z: -30, y: 25 },
             to: { z: 40, y: 5 },
             easing: "easeInOutSine",
             duration: 1800,
@@ -63,9 +64,9 @@ export default function Lights() {
             <pointLight
                 ref={light}
                 color={0xffffff}
-                decay={1.25}
+                decay={1.5}
                 intensity={2}
-                distance={21}
+                distance={21 * extraDistance}
             />
         </>
     )

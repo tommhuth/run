@@ -102,15 +102,14 @@ export default function RunGame() {
                 orthographic
                 noEvents
                 colorManagement
-                pixelRatio={1}
+                pixelRatio={Config.IS_SMALL_SCREEN ? Math.min(window.devicePixelRatio, 2): 1.25}
                 gl={{
                     alpha: true,
                     stencil: false,
                     depth: false,
                     antialias: false
                 }}
-                camera={{
-                    
+                camera={{ 
                     zoom: Config.DEBUG_MODE ? 15 : small ? 20 : 35,
                     near: -50,
                     far: 100,
@@ -124,7 +123,7 @@ export default function RunGame() {
 
                 <Lights />
                 <Camera />
-                
+
                 <primitive attach="background" object={c} />
 
                 <CannonProvider 
