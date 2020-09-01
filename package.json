@@ -45,6 +45,7 @@
         "ngrok": "^3.2.7",
         "node-sass": "^4.13.1",
         "postcss-loader": "^3.0.0",
+        "postprocessing": "^6.17.2",
         "react": "^16.13.0",
         "react-dom": "^16.13.0",
         "react-three-fiber": "^4.2.20",

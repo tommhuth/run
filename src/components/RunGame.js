@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, Suspense } from "react"
 import { CannonProvider } from "../data/cannon"
 import { Canvas } from "react-three-fiber"
 import Lights from "./Lights"
@@ -9,11 +9,14 @@ import Player from "./Player"
 import { useStore } from "../data/store"
 import GameState from "../data/const/GameState"
 import Config from "../data/Config"
-import { Vector3 } from "three"
+import { Vector3, Color } from "three"
 import TitleCard from "./TitleCard" 
 import Message from "./Message"
 import RunnerStats from "./RunnerStats"
 import GameOverStats from "./GameOverStats"
+import { FullPost } from "./Post"
+
+let c = new Color("rgb(2, 121, 132)").convertSRGBToLinear()
 
 export default function RunGame() {
     let state = useStore(state => state.data.state)
@@ -102,6 +105,8 @@ export default function RunGame() {
                 pixelRatio={1}
                 gl={{
                     alpha: true,
+                    stencil: false,
+                    depth: false,
                     antialias: false
                 }}
                 camera={{
@@ -113,6 +118,12 @@ export default function RunGame() {
                     right: 25
                 }}
             >   
+                <Suspense>
+                    <FullPost />
+                </Suspense>
+
+                <primitive attach="background" object={c} />
+
                 <CannonProvider 
                     defaultFriction={.8}
                     defaultRestitution={.5}
