@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react"
 import Coin from "./Coin"
 import uuid from "uuid"
-import random from "../data/random"
+import random from "@huth/random"
 
 export default function CoinLine({ x = 0, y, z, depth, count: defaultCount }) {
     let [coins, setCoins] = useState(() => {

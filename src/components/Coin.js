@@ -79,8 +79,7 @@ function Coin({ x, y, z, id, remove }) {
             position={first.current ? [x, y + 1 + .5, z] : undefined}
             scale={[.65, 1, .65]}
             geometry={geometry.coin}
-            material={taken ? takenMaterial : material.white}
-            dispose={null}
+            material={taken ? takenMaterial : material.white} 
         />
     )
 }

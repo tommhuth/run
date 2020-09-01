@@ -26,7 +26,7 @@ function intersectBody(from, to, body) {
 }
 
 export default function Player({
-    speed = 4
+    speed = 5
 }) {
     let world = useWorld() 
     let [active, setActive] = useState(true)
@@ -80,7 +80,7 @@ export default function Player({
                 let averageVelocity = frames.current.reduce((total, current) => total + current, 0) / frameCount
 
                 if (averageVelocity < 2) {
-                    actions.end("U crashed")
+                    actions.end("crashed")
                     setActive(false)
                 }
             }
@@ -170,7 +170,7 @@ export default function Player({
             }
 
             if (canJump) {
-                body.velocity.y = speed * 2.5
+                body.velocity.y = 8  
                 setCanJump(false)
             }
         }

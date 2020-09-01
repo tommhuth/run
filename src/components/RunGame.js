@@ -85,7 +85,7 @@ export default function RunGame() {
             </Only>
 
             <Only if={state === GameState.GAME_OVER}>
-                <TitleCard lines={["Gurl,", reason]} /> 
+                <TitleCard lines={reason === "crashed" ? ["You", reason] : ["Gurl,", reason]} /> 
                 <Message text="Tap to restart" /> 
 
                 <GameOverStats />
@@ -98,19 +98,22 @@ export default function RunGame() {
             <Canvas
                 orthographic
                 noEvents
-                pixelRatio={small ? Math.min(window.devicePixelRatio, 2) : 1}
+                colorManagement
+                pixelRatio={1}
+                gl={{
+                    alpha: true,
+                    antialias: false
+                }}
                 camera={{
                     position: new Vector3(5, 6, 15),
                     zoom: Config.DEBUG_MODE ? 15 : small ? 20 : 35,
                     near: -50,
                     far: 100,
-                    left: -50,
-                    right: 50
+                    left: -25,
+                    right: 25
                 }}
-            >
-                <fogExp2 args={[0xc1fc1e, .0125]}   attach="fog" />
-
-                <CannonProvider
+            >   
+                <CannonProvider 
                     defaultFriction={.8}
                     defaultRestitution={.5}
                 >

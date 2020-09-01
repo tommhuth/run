@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import random from "../../data/random"
+import random from "@huth/random"
 import Obstacle from "../Obstacle"
 import { Vector3 } from "three"
 
@@ -10,18 +10,18 @@ export default function ObstaclesBlock({
     y
 }) {
     let [obstacles] = useState(() => {
-        let count = depth * random.pick([.2, .25])
+        let count = depth * random.pick(.2, .25)
         let result = []
         let getObstacle = () => {
             let radii = [
                 8, 9, 6, 7, 5, 4, 3, 14
             ].filter(i => i * 1.5 < depth)  
-            let radius = random.pick(radii)
+            let radius = random.pick(...radii)
             let border = 30 // outer border 
 
             return {
                 radius,
-                z: random.real(start + radius, start + depth - radius),
+                z: random.float(start + radius, start + depth - radius),
                 y: y,
                 x: random.integer(-border + radius, border - radius)
             }

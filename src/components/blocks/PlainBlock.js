@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import CoinLine from "../CoinLine"
-import random from "../../data/random"
+import random from "@huth/random"
 
 export default function PlainBlock({
     depth,

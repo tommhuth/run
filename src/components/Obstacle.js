@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { Vec3, Sphere } from "cannon"
 import { useCannon } from "../data/cannon"
-import random from "../data/random"
+import random from "@huth/random"
 import { material, geometry } from "../data/resources"
 
 export default React.memo(({
@@ -20,12 +20,12 @@ export default React.memo(({
     })
 
     useEffect(() => {
-        let axis = new Vec3(...random.pick([
+        let axis = new Vec3(...random.pick(
             [1, 0, 0],
             [0, 1, 0],
             [0, 0, 1]
-        ]))
-        let angle = random.real(0, Math.PI * 2)
+        ))
+        let angle = random.float(0, Math.PI * 2)
 
         body.quaternion.setFromAxisAngle(axis, angle)
     }, [body])
@@ -35,8 +35,7 @@ export default React.memo(({
             scale={[radius, radius, radius]}
             geometry={geometry.sphere}
             ref={ref}
-            material={material.blue}
-            dispose={null}
+            material={material.blue} 
         />
     )
 })

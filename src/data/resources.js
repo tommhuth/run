@@ -1,13 +1,13 @@
 import {  MeshPhongMaterial, SphereBufferGeometry, DodecahedronBufferGeometry } from "three"
 
-const material = {
-    red: new MeshPhongMaterial({ color: 0xff0000, flatShading: true }),
+const material = { 
     blue: new MeshPhongMaterial({ color: 0x00d5ff, flatShading: true, shininess: 1 }),
     white: new MeshPhongMaterial({ 
-        color: 0xffffff, 
+        color: 0xffec3d, 
+        emissive: 0xffec3d,
+        emissiveIntensity: .25,
+        specular: 0xffffff,
         shininess: 100, 
-        emissive: 0x006666, 
-        specular: 0x00FFFF,
         flatShading: true 
     }),
 }

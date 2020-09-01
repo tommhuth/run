@@ -5,13 +5,14 @@
     display: block;
     top: 50%;
     z-index: 1;
+    text-align: center;
     margin-top: -.5em;
     left: 50%;
     transform: translate(-50%, -50%) skewY(-14deg) translateZ(1px);
     user-select: none;
     line-height: 1.05;
     font-weight: 500;
-    letter-spacing: -.01em;
+    letter-spacing: -.03em;
     white-space: pre;
     color: #e1ff00;
     mix-blend-mode: lighten; 

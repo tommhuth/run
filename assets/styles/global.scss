@@ -21,25 +21,9 @@ html,
 body {
     overflow: hidden;
     height: 100%;
-    width: 100%;
-}
-
-body {  
+    width: 100%; 
     min-height: 100%;
-    color: #FFF;
-    background-color: var(--teal); 
-    
-    &::after {
-        content: "";
-        display: block;
-        width: 100vw;
-        height: 100vh;
-        background-image: linear-gradient(45deg, rgba(var(--yellow), 0), rgba(var(--yellow), .1));
-        position: absolute;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-    }
+    color: #FFF;  
 } 
 
 #root {

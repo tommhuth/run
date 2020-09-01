@@ -4,7 +4,7 @@ import { useThree, useFrame } from "react-three-fiber"
 import { api, useStore } from "../data/store"
 import GameState from "../data/const/GameState"
 import animate from "../data/animate"
-import random from "../data/random"
+import random from "@huth/random"
 
 export default function Camera() {
     let { camera } = useThree()
@@ -16,8 +16,8 @@ export default function Camera() {
         let maxShake = Math.PI / 32
         let shake = trauma.current * trauma.current
 
-        camera.rotation.x = rotation.current.x + (maxShake * shake * random.real(-1, 1))
-        camera.rotation.z = rotation.current.z + (maxShake * shake * random.real(-1, 1))
+        camera.rotation.x = rotation.current.x + (maxShake * shake * random.float(-1, 1))
+        camera.rotation.z = rotation.current.z + (maxShake * shake * random.float(-1, 1))
 
         if (trauma.current > 0) {
             trauma.current -= .02
@@ -59,7 +59,7 @@ export default function Camera() {
     }, [state])
 
     useEffect(() => {
-        camera.lookAt(0, 0, 20)
+        camera.lookAt(0, 3, 20)
         rotation.current = { x: camera.rotation.x, z: camera.rotation.z }
     }, [])
 

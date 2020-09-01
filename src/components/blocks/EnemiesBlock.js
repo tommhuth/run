@@ -1,5 +1,5 @@
 import React, { useState } from "react" 
-import random from "../../data/random"
+import random from "@huth/random"
 import Enemy from "../Enemy" 
 
 export default function EnemiesBlock({
@@ -15,7 +15,7 @@ export default function EnemiesBlock({
         for (let i = 0; i < count; i++) {
             let border = 50
             let radius = random.integer(2, 6)
-            let x = random.pick([border, -border])
+            let x = random.pick(border, -border)
             let velocityX = random.integer(10, 16) * -x / border
             let z = start + random.integer(2, depth - 2)
 

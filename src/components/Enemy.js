@@ -2,12 +2,12 @@ import React, { useEffect, useState, useRef } from "react"
 import { api } from "../data/store"
 import { Sphere } from "cannon"
 import { useCannon } from "../data/cannon"
-import random from "../data/random"
+import random from "@huth/random"
 import { material, geometry } from "../data/resources"
 
 function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
     let [active, setActive] = useState(false)
-    let [velocityZ] = useState(random.real(-1, 1))
+    let [velocityZ] = useState(random.float(-1, 1))
     let position = [x, y + radius, z]
     let first = useRef(true)
     let { ref } = useCannon({
@@ -48,10 +48,10 @@ function Enemy({ x, y, z, velocityX, triggerZ, radius }) {
             position={first.current ? position : undefined}
             geometry={geometry.sphere}
             ref={ref}
-            material={material.blue}
-            dispose={null}
+            material={material.blue} 
         />
     )
 }
 
-export default React.memo(Enemy)
+export default React.memo(Enemy) 
+

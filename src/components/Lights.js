@@ -67,12 +67,12 @@ export default function Lights() {
                 />
             </Only>
 
-            <ambientLight color={0x99eeff} intensity={.3} />
+            <ambientLight color={0xffffff} intensity={.2} />
             <pointLight
                 ref={wideLight}
-                color={0x00ffff}
-                decay={1.1}
-                intensity={1.15}
+                color={0xffffff}
+                decay={1.25}
+                intensity={2}
                 distance={21}
                 position={first.current ? [0, -100, 30] : undefined}
             />

@@ -21,8 +21,8 @@ export function CannonProvider({
     }, [world])
 
     // Run world stepper every frame
-    useFrame(() => {
-        world.step(1 / 30)
+    useFrame((state, delta) => {
+        world.step(delta * 2)
     })
 
     // Distribute world via context

@@ -27,7 +27,7 @@ export default function BoomButton({ boom }) {
                 boom()
             }}
         >
-            Bitch
+            Boom
         </button>
     )
 }

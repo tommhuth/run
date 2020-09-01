@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react"
 import animate from "../data/animate"
-import random from "../data/random"
+import random from "@huth/random"
 
 export default function Boom({ id, remove, owner }) {
     let ref = useRef()
-    let [offsetY] = useState(() => random.real(-.1, .1))
+    let [offsetY] = useState(() => random.float(-.1, .1))
 
     useEffect(() => {
         return animate({
