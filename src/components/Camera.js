@@ -9,6 +9,7 @@ import random from "@huth/random"
 export default function Camera() {
     let { camera } = useThree()
     let state = useStore(state => state.data.state)
+    let attempts = useStore(state => state.data.attempts)
     let trauma = useRef(0)
     let rotation = useRef({ x: 0, z: 0 })
 
