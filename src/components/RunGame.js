@@ -110,7 +110,7 @@ export default function RunGame() {
                     antialias: false
                 }}
                 camera={{
-                    position: new Vector3(5, 6, 15),
+                    
                     zoom: Config.DEBUG_MODE ? 15 : small ? 20 : 35,
                     near: -50,
                     far: 100,
@@ -122,14 +122,15 @@ export default function RunGame() {
                     <FullPost />
                 </Suspense>
 
+                <Lights />
+                <Camera />
+                
                 <primitive attach="background" object={c} />
 
                 <CannonProvider 
                     defaultFriction={.8}
                     defaultRestitution={.5}
                 >
-                    <Lights />
-                    <Camera />
                     <Path /> 
                     
                     <Only if={[GameState.RUNNING, GameState.GAME_OVER].includes(state)}>

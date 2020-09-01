@@ -53,7 +53,7 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        if ([GameState.RUNNING].includes(state)) {
+        if ([GameState.RUNNING].includes(state) && attempts > 0 ) {
             camera.position.set(5, 6, 25)
         }
     }, [state])
