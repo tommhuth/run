@@ -1,1 +1,1 @@
-Infinite runner clone. 
+Infinite runner clone made with react-three-fiber.

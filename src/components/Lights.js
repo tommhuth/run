@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useLayoutEffect } from "react"
 import { api, useStore } from "../data/store"
 import Config from "../data/Config"
 import Only from "./Only"
@@ -8,27 +8,28 @@ import { useFrame } from "react-three-fiber"
 import GameState from "../data/const/GameState"
 
 export default function Lights() {
-    let wideLight = useRef()
-    let first = useRef(true)
+    let light = useRef()
     let state = useStore(store => store.data.state)
-    let position = useRef({ x: 0, y: 0, z: 0 })
+    let position = useRef({ x: 0, y: 10, z: 40 }) //  0, 2, 40
     let targetDistance = useRef(21)
 
-    useFrame(() => {
-        if (!wideLight.current || state !== GameState.RUNNING) {
+    useLayoutEffect(() => {
+        light.current.position.set(0, -100, 30)
+    }, [])
+
+    useFrame(() => { 
+        if (!light.current || state !== GameState.RUNNING) {
             return
         }
 
-        wideLight.current.distance += (targetDistance.current - wideLight.current.distance) * .025
+        light.current.distance += (targetDistance.current - light.current.distance) * .025
 
-        wideLight.current.position.z = position.current.z
-        wideLight.current.position.y += (position.current.y + 8 - wideLight.current.position.y) * .1
-        wideLight.current.position.x = position.current.x
+        light.current.position.z = position.current.z
+        light.current.position.y += (position.current.y + 8 - light.current.position.y) * .1
+        light.current.position.x = position.current.x
     })
 
     useEffect(() => {
-        first.current = false
-
         return api.subscribe(({ x, y, z }) => {
             position.current = { x, y, z }
 
@@ -40,10 +41,10 @@ export default function Lights() {
             from: { z: 20, y: 25 },
             to: { z: 40, y: 5 },
             easing: "easeInOutSine",
-            duration: 2000,
+            duration: 1800,
             render({ z, y }) {
-                wideLight.current.position.z = z
-                wideLight.current.position.y = y + 4
+                light.current.position.z = z
+                light.current.position.y = y + 4
             }
         })
     }, [])
@@ -57,24 +58,14 @@ export default function Lights() {
     }, [])
 
     return (
-        <>
-            <Only if={Config.DEBUG_MODE}>
-                <directionalLight
-                    color={0xffffff}
-                    position={[-1, 5, -3]}
-                    intensity={.5}
-                    onUpdate={self => self.updateMatrixWorld()}
-                />
-            </Only>
-
+        <> 
             <ambientLight color={0xffffff} intensity={.2} />
             <pointLight
-                ref={wideLight}
+                ref={light}
                 color={0xffffff}
                 decay={1.25}
                 intensity={2}
                 distance={21}
-                position={first.current ? [0, -100, 30] : undefined}
             />
         </>
     )

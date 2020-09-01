@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useLayoutEffect } from "react"
 import { useThree, useFrame } from "react-three-fiber"
 import { api, useStore } from "../data/store"
 import GameState from "../data/const/GameState"
@@ -13,7 +13,13 @@ export default function Camera() {
     let trauma = useRef(0)
     let rotation = useRef({ x: 0, z: 0 })
 
-    useFrame(() => {
+    useLayoutEffect(() => {
+        camera.position.set(5, 6, 15)
+        camera.lookAt(0, 3, 20)
+        rotation.current = { x: camera.rotation.x, z: camera.rotation.z }
+    }, [])
+
+    useFrame(() => { 
         let maxShake = Math.PI / 32
         let shake = trauma.current * trauma.current
 
@@ -54,15 +60,10 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        if ([GameState.RUNNING].includes(state) && attempts > 0 ) {
+        if ([GameState.RUNNING].includes(state) && attempts > 0) {
             camera.position.set(5, 6, 25)
         }
-    }, [state])
-
-    useEffect(() => {
-        camera.lookAt(0, 3, 20)
-        rotation.current = { x: camera.rotation.x, z: camera.rotation.z }
-    }, [])
+    }, [state, attempts]) 
 
     return null
 }
