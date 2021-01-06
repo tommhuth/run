@@ -86,7 +86,7 @@ function ObstaclesBlock({
     useEffect(() => {
         if (hasEnemies) {
             let id = setTimeout(() => {
-                let count = random.integer(0, 2)
+                let count = random.integer(0, 1)
 
                 for (let i = 0; i < count; i++) {
                     addEnemy([
@@ -119,15 +119,7 @@ function ObstaclesBlock({
                     z={start + depth / 2}
                     dead={dead}
                 />
-            </Only>
-            <Only if={distance}>
-                <DistanceMarker
-                    y={y}
-                    z={start + depth / 2}
-                    distance={distance}
-                    dead={dead}
-                />
-            </Only>
+            </Only> 
         </>
     )
 }

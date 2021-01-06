@@ -1,8 +1,19 @@
 import React, { useEffect, useState, useRef } from "react"
-import animate from "../../data/animate"
+import animate from "@huth/animate"
 import { useFrame } from "react-three-fiber"
 import { useStore, api } from "../../data/store"
 import Config from "../../Config"
+import { MeshPhongMaterial, SphereBufferGeometry } from "three"
+
+let geo = new SphereBufferGeometry(1, 6, 2)
+let mat = new MeshPhongMaterial({
+    color: 0xF5B82E,
+    specular: 0xffffff,
+    emissive: 0xF5B82E,
+    emissiveIntensity: .5,
+    flatShading: true,
+    shininess: 50
+})
 
 function useFrameNumber(speed = .1, init = 0, predicate) {
     let frame = useRef(init)
@@ -52,18 +63,18 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
         ref.current.visible = false
 
         return animate({
-            from: { y: y + 10 },
-            to: { y: Math.cos(frame.current) * .5 + y + 1.5 },
-            delay: Config.BLOCK_IN_DURATION * 2 + index * 175,
-            easing: "easeOutBounce",
-            duration: 800,
+            from: y + 10,
+            to: Math.cos(frame.current) * .5 + y + 1.5,
+            delay: Config.BLOCK_IN_DURATION * 1 + index * 175,
+            easing: "easeInSin",
+            duration: 350,
             start() {
                 ref.current.visible = true
             },
-            complete() {
+            end() {
                 setReady(true)
             },
-            render({ y }) {
+            render(y) {
                 ref.current.position.y = y
             }
         })
@@ -72,11 +83,11 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
     useEffect(() => {
         if (blockDead) {
             return animate({
-                from: { y: ref.current.position.y },
-                to: { y: y + -Config.BLOCK_HEIGHT / 2 },
+                from: ref.current.position.y,
+                to: y + -Config.BLOCK_HEIGHT / 2,
                 easing: Config.BLOCK_OUT_EASING,
                 duration: Config.BLOCK_OUT_DURATION,
-                render({ y }) {
+                render(y) {
                     ref.current.position.y = y
                 }
             })
@@ -106,18 +117,10 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
             ref={ref}
             position={first.current ? [x, y + 1 + .5, z] : undefined}
             scale={[.85, 1, .85]}
-        >
-            <sphereBufferGeometry args={[1, 6, 2]} attach="geometry" />
-            <meshPhongMaterial
-                color={0xF5B82E}
-                specular={0xffffff}
-                emissive={0xF5B82E}
-                emissiveIntensity={.5}
-                attach="material"
-                flatShading
-                shininess={50}
-            />
-        </mesh>
+            material={mat}
+            geometry={geo}
+            dispose={null}
+        />
     )
 }
 

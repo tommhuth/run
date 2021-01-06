@@ -177,19 +177,18 @@ const [useStore, api] = create((set, get) => {
         },
         clearBlocks(z) {
             let { blocks } = get()
-            let backwardBuffer = 0
-            let f = blocks.map(i => {
-                let dead = false
-
-                if (i.end < z - backwardBuffer) {
-                    dead = true
-                }
-
-                return dead ? { ...i, dead } : i
-            })
+            let backwardBuffer = 1 
 
             set({
-                blocks: f
+                blocks: blocks.map(i => {
+                    let dead = false
+    
+                    if (i.end < z - backwardBuffer) {
+                        dead = true
+                    }
+    
+                    return dead ? { ...i, dead } : i
+                })
             })
         },
         removeBlock(id) {

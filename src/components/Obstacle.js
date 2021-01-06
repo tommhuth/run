@@ -1,11 +1,14 @@
 
-import React, { useEffect, useState, useLayoutEffect } from "react"
+import React, { useEffect, useLayoutEffect } from "react"
 import { useCannon } from "../data/cannon"
 import materials from "../shared/materials"
-import { Vec3, Box, Sphere } from "cannon"
-import animate from "../data/animate"
+import { Sphere } from "cannon"
+import animate from "@huth/animate"
 import Config from "../Config"
+import { SphereBufferGeometry } from "three"
 import random from "@huth/random"
+
+let geometry = new SphereBufferGeometry(1, 18, 14)
 
 function Obstacle({ dead, radius, position, block }) {
     let { ref, body } = useCannon({
@@ -16,14 +19,11 @@ function Obstacle({ dead, radius, position, block }) {
             block.y - 20,
             position[2] + block.start + block.depth / 2
         ]
-    })
-    let [material] = useState(() => {
-        return materials.ground
-    })
+    }) 
 
-    useLayoutEffect(()=> {
+    useLayoutEffect(() => {
         if (ref.current) {
-            ref.current.visible = false 
+            ref.current.visible = false
         }
     }, [])
 
@@ -31,16 +31,17 @@ function Obstacle({ dead, radius, position, block }) {
         let duration = random.integer(100, 400)
 
         return animate({
-            from: { y: body.position.y },
-            to: { y: block.y },
+            from: body.position.y,
+            to: block.y,
             duration: duration + 200,
+            easing: "easeOutQuart",
             delay: block.initial ? 0 : Config.BLOCK_IN_DURATION + duration,
             start() {
                 if (ref.current) {
-                    ref.current.visible = true 
+                    ref.current.visible = true
                 }
             },
-            render({ y }) {
+            render(y) {
                 body.position.y = y
             },
         })
@@ -49,11 +50,11 @@ function Obstacle({ dead, radius, position, block }) {
     useEffect(() => {
         if (dead) {
             return animate({
-                from: { y: body.position.y },
-                to: { y: body.position.y - 100 },
+                from: body.position.y,
+                to: body.position.y - 50,
                 easing: "easeInCubic",
                 duration: 600,
-                render({ y }) {
+                render(y) {
                     body.position.y = y
                 }
             })
@@ -61,9 +62,15 @@ function Obstacle({ dead, radius, position, block }) {
     }, [dead])
 
     return (
-        <mesh ref={ref} material={material}>
-            <sphereBufferGeometry args={[radius, 10, 8]} attach={"geometry"} />
-        </mesh>
+        <mesh
+            ref={ref}
+            material={materials.ground}
+            geometry={geometry}
+            castShadow
+            receiveShadow
+            dispose={null}
+            scale={[radius, radius, radius]}
+        />
     )
 }
 

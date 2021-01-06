@@ -3,10 +3,8 @@ import React, { useEffect } from "react"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
 import { Vec3, Box } from "cannon"
-import materials from "../../shared/materials"
-import Only from "../Only"
-import DistanceMarker from "../DistanceMarker"
-import animate from "../../data/animate"
+import materials from "../../shared/materials" 
+import animate from "@huth/animate"
 import { useStore } from "../../data/store"
 import Coin from "../actors/Coin"
 import BlockType from "../../data/const/BlockType"
@@ -30,11 +28,11 @@ function NarrowBlock(props) {
 
     useEffect(() => {
         return animate({
-            from: { y: body.position.y },
-            to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
+            from: body.position.y,
+            to: -Config.BLOCK_HEIGHT / 2 + props.y,
             duration: Config.BLOCK_IN_DURATION,
             easing: Config.BLOCK_IN_EASING,
-            render({ y }) {
+            render(y) {
                 body.position.y = y
             }
         })
@@ -43,14 +41,14 @@ function NarrowBlock(props) {
     useEffect(() => {
         if (props.dead) {
             return animate({
-                from: { y: body.position.y },
-                to: { y: -Config.BLOCK_HEIGHT },
+                from: body.position.y,
+                to: -Config.BLOCK_HEIGHT,
                 duration: Config.BLOCK_OUT_DURATION,
                 easing: Config.BLOCK_OUT_EASING,
-                render({ y }) {
+                render(y) {
                     body.position.y = y
                 },
-                complete() {
+                end() {
                     removeBlock(props.id)
                 }
             })
@@ -68,15 +66,6 @@ function NarrowBlock(props) {
                 z={z}
                 dead={props.dead}
             />
-
-            <Only if={props.distance}>
-                <DistanceMarker
-                    y={props.y}
-                    z={props.start + props.depth / 2}
-                    distance={props.distance}
-                    dead={props.dead}
-                />
-            </Only>
         </>
     )
 }

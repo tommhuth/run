@@ -7,8 +7,7 @@ import { CannonProvider } from "./data/cannon"
 import Config from "./Config"
 import Path from "./components/Path"
 import Only from "./components/Only"
-import Player from "./components/actors/Player"
-import { SimplePost, FullPost } from "./components/Post"
+import Player from "./components/actors/Player" 
 import Camera from "./components/Camera"
 import GameState from "./data/const/GameState"
 import { useStore } from "./data/store"
@@ -17,8 +16,7 @@ import Lights from "./components/Lights"
 import TitleCard from "./ui/TitleCard"
 import GameOverStats from "./ui/GameOverStats"
 import Message from "./ui/Message"
-import RunnerStats from "./ui/RunnerStats"
-import { Stats } from "drei"
+import RunnerStats from "./ui/RunnerStats"  
 
 export default function Game() {
     let state = useStore(state => state.state)
@@ -100,21 +98,22 @@ export default function Game() {
                 className="main"
                 orthographic
                 noEvents
+                shadowMap 
                 pixelRatio={Math.min(1.5, window.devicePixelRatio)}
                 camera={{
                     position: new Vector3(...Config.CAMERA_PRESTART),
-                    zoom: Config.IS_SMALL_SCREEN ? 25 : 30,
+                    zoom: Config.IS_SMALL_SCREEN ? 25 : 20,
                     near: -75,
                     far: 100
                 }}
                 gl={{
-                    depth: false,
+                    depth: true,
                     stencil: false,
-                    antialias: false
+                    alpha: true,
+                    antialias: true
                 }}
             >
-                {Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <FullPost />}
-
+                <fog attach="fog" />
                 <ErrorBoundary>
                     <Lights />
                     <Camera />
@@ -130,3 +129,6 @@ export default function Game() {
         </>
     )
 } 
+
+//{Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <FullPost />}
+//

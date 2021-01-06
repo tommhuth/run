@@ -1,9 +1,8 @@
 
-import React, { useEffect, useRef, useMemo } from "react"
-import Coin from "../actors/Coin"
+import React, { useEffect, useRef } from "react"
+import animate from "@huth/animate"
 import { Font } from "three"
-import materials from "../../shared/materials"
-import animate from "../../data/animate"
+import materials from "../../shared/materials" 
 import oswaldFont from "../../../assets/fonts/oswald.json"
 
 let font = new Font(oswaldFont)
@@ -14,7 +13,7 @@ function Text({
     index = 0,
     ...rest
 }) {
-    let ref = useRef() 
+    let ref = useRef()
 
     useEffect(() => {
         ref.current.position.x = position[0]
@@ -22,12 +21,12 @@ function Text({
         ref.current.position.y = -75
 
         return animate({
-            from: { y: -75 },
-            to: { y: -50 },
+            from: -75,
+            to: -50,
             duration: 2000,
             delay: index * 200,
             easing: "easeOutBack",
-            render({ y }) {
+            render(y) {
                 ref.current.position.y = y
             }
         })
@@ -36,9 +35,9 @@ function Text({
     return (
         <mesh ref={ref} material={materials.ground} {...rest}>
             <textGeometry
-                attach="geometry" 
+                attach="geometry"
                 args={[
-                    children, 
+                    children,
                     {
                         font,
                         size: 12,
@@ -157,7 +156,7 @@ function StartBlock(props) {
                 index={6}
             >
                 Y
-            </Text> 
+            </Text>
         </>
     )
 }

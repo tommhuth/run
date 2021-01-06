@@ -46,7 +46,7 @@ export default function Player() {
             }
         }
     }, [canJump])
-    let speed = 6
+    let speed = 8
     let setPosition = useStore(i => i.setPosition)
     let end = useStore(i => i.end)
     let state = useStore(i => i.state)
@@ -155,7 +155,7 @@ export default function Player() {
 
     return (
         <mesh ref={ref} material={materials.player}>
-            <sphereBufferGeometry attach="geometry" args={[radius, 12, 6]} />
+            <sphereBufferGeometry attach="geometry" args={[radius, 12, 12]} />
         </mesh>
     )
 }

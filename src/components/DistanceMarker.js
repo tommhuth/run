@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react"
 import { Font } from "three"
 import oswaldFont from "../../assets/fonts/oswald.json"
-import animate from "../data/animate"
+import animate from "@huth/animate"
 import Config from "../Config"
 import materials from "../shared/materials"
 import { useStore } from "../data/store"
@@ -26,11 +26,11 @@ function Text({
     useEffect(() => {
         if (dead || state === GameState.GAME_OVER) {
             return animate({
-                from: { x: x + 10 },
-                to: { x: x - 50 },
+                from: x + 10,
+                to: x - 50,
                 duration: Config.BLOCK_OUT_DURATION,
                 easing: "easeInQuart",
-                render({ x }) {
+                render(x) {
                     ref.current.position.x = x
                 }
             })
@@ -41,12 +41,12 @@ function Text({
         ref.current.position.set(x + 100, y, z)
 
         return animate({
-            from: { x: x + 100 },
-            to: { x: x + 10 },
+            from: x + 100,
+            to: x + 10,
             duration: 1600,
             delay: index * 250 + 1000,
             easing: "easeOutCubic",
-            render({ x }) {
+            render(x) {
                 ref.current.position.x = x
             }
         })

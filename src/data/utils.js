@@ -61,7 +61,7 @@ const makeBlock = {
 
 export function getBlock(blocks) {
     let previous = blocks[0]
-    let stepUp = [BlockType.NARROW].includes(previous.type) ? false : random.boolean(.9)
+    let stepUp = [BlockType.NARROW].includes(previous.type) ? false : true //  random.boolean(.9)
     let type = getNextType(previous)
     let block = {
         id: uuid.v4(),

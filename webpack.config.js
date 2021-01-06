@@ -107,7 +107,7 @@ module.exports = (env, options) => {
                             loader: "postcss-loader",
                             options: {
                                 sourceMap: false,
-                                config: {
+                                postcssOptions: {
                                     path: "postcss.config.js"
                                 }
                             }

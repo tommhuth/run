@@ -3,9 +3,12 @@ import React, { useEffect } from "react"
 import { useStore } from "../data/store"
 import { useCannon } from "../data/cannon"
 import Config from "../Config"
-import { Vec3, Box } from "cannon" 
-import materials from "../shared/materials"
-import animate from "../data/animate"
+import { Vec3, Box } from "cannon"
+import materials from "../shared/materials"  
+import animate from "@huth/animate"
+import { BoxBufferGeometry } from "three"
+
+const geo = new BoxBufferGeometry(1, 1, 1)
 
 export function CommonBlock(props) {
     let { ref, body } = useCannon({
@@ -16,7 +19,7 @@ export function CommonBlock(props) {
         ),
         position: [
             0,
-            props.initial ? -Config.BLOCK_HEIGHT/2: -Config.BLOCK_HEIGHT,
+            props.initial ? -Config.BLOCK_HEIGHT / 2 : -Config.BLOCK_HEIGHT,
             props.start + props.depth / 2
         ]
     })
@@ -24,11 +27,11 @@ export function CommonBlock(props) {
 
     useEffect(() => {
         return animate({
-            from: { y: body.position.y },
-            to: { y: -Config.BLOCK_HEIGHT / 2 + props.y },
+            from: body.position.y,
+            to: -Config.BLOCK_HEIGHT / 2 + props.y,
             duration: Config.BLOCK_IN_DURATION,
             easing: Config.BLOCK_IN_EASING,
-            render({ y }) {
+            render(y) {
                 body.position.y = y
             }
         })
@@ -37,14 +40,14 @@ export function CommonBlock(props) {
     useEffect(() => {
         if (props.dead) {
             return animate({
-                from: { y: body.position.y },
-                to: { y: -Config.BLOCK_HEIGHT },
+                from: body.position.y,
+                to: -Config.BLOCK_HEIGHT,
                 easing: Config.BLOCK_OUT_EASING,
                 duration: Config.BLOCK_OUT_DURATION,
-                render({ y }) {
+                render(y) {
                     body.position.y = y
                 },
-                complete() {
+                end() {
                     removeBlock(props.id)
                 }
             })
@@ -59,9 +62,12 @@ export function CommonBlock(props) {
             <mesh
                 ref={ref}
                 material={materials.ground}
-            >
-                <boxBufferGeometry args={[props.width, Config.BLOCK_HEIGHT, props.depth]} attach="geometry" />
-            </mesh>
+                scale={[props.width, Config.BLOCK_HEIGHT, props.depth]}
+                geometry={geo}
+                castShadow
+                receiveShadow
+                dispose={null}
+            />
         </>
     )
 }

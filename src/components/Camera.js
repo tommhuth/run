@@ -3,14 +3,14 @@ import React, { useEffect, useRef, useState } from "react"
 import { api, useStore } from "../data/store"
 import Config from "../Config"
 import { useFrame, useThree } from "react-three-fiber"
-import GameState from "../data/const/GameState"
-import Only from "./Only"
-import shallow from "zustand/shallow"
-import animate from "../data/animate"
+import GameState from "../data/const/GameState" 
+import shallow from "zustand/shallow" 
+import animate from "@huth/animate"
+
 
 export default function Camera() {
     let { camera } = useThree()
-    let light = useRef() 
+    let light = useRef()
     let [ready, setReady] = useState(false)
     let state = useStore(i => i.state)
     let attempts = useStore(i => i.attempts)
@@ -36,21 +36,22 @@ export default function Camera() {
         camera.lookAt(Config.CAMERA_PRESTART[0] - 5, Config.CAMERA_PRESTART[1] - 5, Config.CAMERA_PRESTART[2] + 10)
 
         return animate({
-            from: { y: Config.CAMERA_PRESTART[1] },
-            to: { y: Config.CAMERA_START[1] },
+            from: Config.CAMERA_PRESTART[1],
+            to: Config.CAMERA_START[1],
             duration: 2600,
             delay: 750,
-            complete() {
+            easing: "easeOutQuart",
+            end() {
                 setReady(true)
             },
-            render({ y }) {
+            render(y) {
                 camera.position.y = y
             }
         })
-    }, []) 
+    }, [])
 
     useEffect(() => {
-        if (state === GameState.RUNNING && attempts > 0) { 
+        if (state === GameState.RUNNING && attempts > 0) {
             camera.position.set(...Config.CAMERA_START)
         }
     }, [state, attempts])
@@ -60,7 +61,7 @@ export default function Camera() {
             camera.position.z += (targetPosition.current[2] - camera.position.z) * .1
             camera.position.y += (targetPosition.current[1] - camera.position.y) * .01
             camera.position.x += (targetPosition.current[0] - camera.position.x) * .1
-        } 
+        }
 
         light.current.position.x = targetPosition.current[0]
         light.current.position.y = blockY.current + 1
@@ -72,11 +73,10 @@ export default function Camera() {
             <pointLight
                 decay={2}
                 ref={light}
-                distance={28}
+                distance={24}
                 intensity={20}
                 color={0xff0000}
-            /> 
+            />
         </>
     )
 }
- 
