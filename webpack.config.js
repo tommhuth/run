@@ -6,10 +6,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const { InjectManifest } = require("workbox-webpack-plugin")
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
 
 const rev = uuid.v4()
-const plugins = [ 
+const plugins = [
     new webpack.DefinePlugin({
         "process.env.REGISTER_SERVICEWORKER": JSON.stringify(process.env.REGISTER_SERVICEWORKER),
         "process.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
@@ -22,14 +22,14 @@ const plugins = [
         filename: "index.html",
         rev
     }),
-    new CopyWebpackPlugin(
-        [ 
+    new CopyWebpackPlugin({
+        patterns: [
             {
                 from: path.join(__dirname, "assets", "splashscreens/*.png"),
                 to: "splashscreens/[name]." + rev + ".[ext]"
             }
         ]
-    ),
+    }),
     new WebpackPwaManifest({
         name: "Run",
         short_name: "Run",

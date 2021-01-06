@@ -35,5 +35,6 @@ registerRoute(
     })
 )
 
-// app shell routing
+// return a specific response for all navigation requests
+// https://developers.google.com/web/tools/workbox/modules/workbox-routing
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/index.html")))

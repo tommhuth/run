@@ -8,7 +8,9 @@ export default function RunnerStats() {
 
     useEffect(() => {
         return api.subscribe((distance) => {
-            distanceRef.current.innerHTML = Math.max(distance, 0)  
+            if (distanceRef.current) {
+                distanceRef.current.innerHTML = Math.max(distance, 0)  
+            }
         }, state => Math.floor(state.position.z))
     }, [])
 

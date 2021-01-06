@@ -3,17 +3,9 @@ import animate from "@huth/animate"
 import { useFrame } from "react-three-fiber"
 import { useStore, api } from "../../data/store"
 import Config from "../../Config"
-import { MeshPhongMaterial, SphereBufferGeometry } from "three"
+import { SphereBufferGeometry } from "three"
 
-let geo = new SphereBufferGeometry(1, 6, 2)
-let mat = new MeshPhongMaterial({
-    color: 0xF5B82E,
-    specular: 0xffffff,
-    emissive: 0xF5B82E,
-    emissiveIntensity: .5,
-    flatShading: true,
-    shininess: 50
-})
+let geometry = new SphereBufferGeometry(1, 6, 2) 
 
 function useFrameNumber(speed = .1, init = 0, predicate) {
     let frame = useRef(init)
@@ -56,6 +48,7 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
     useEffect(() => {
         if (dead) {
             ref.current.visible = false
+            ref.current.material.dispose()
         }
     }, [dead])
 
@@ -116,12 +109,21 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
         <mesh
             ref={ref}
             position={first.current ? [x, y + 1 + .5, z] : undefined}
-            scale={[.85, 1, .85]}
-            material={mat}
-            geometry={geo}
+            scale={[.85, 1, .85]} 
+            geometry={geometry}
             dispose={null}
-        />
+        >
+            <meshPhongMaterial 
+                color={0xF5B82E}
+                specular={0xffffff}
+                emissive={0xF5B82E}
+                emissiveIntensity={.5}
+                flatShading={false}
+                shininess={50}
+            />
+        </mesh>
     )
 }
+ 
 
 export default React.memo(Coin)
