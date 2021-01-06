@@ -15,7 +15,7 @@ const plugins = [
         "process.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
     }),
     new MiniCssExtractPlugin({
-        filename: "css/[name].[hash:6].css"
+        filename: "css/[name].[contenthash:6].css"
     }),
     new HtmlWebpackPlugin({
         template: path.join(__dirname, "assets/views", "index.html"),
@@ -42,7 +42,7 @@ const plugins = [
         ios: {
             "apple-mobile-web-app-status-bar-style": "black-translucent"
         },
-        filename: "./manifest-[hash:6].json",
+        filename: "./manifest-[contenthash:6].json",
         icons: [
             {
                 src: path.join("assets", "icons/pwa-icon.png"),
@@ -74,7 +74,7 @@ module.exports = (env, options) => {
         devtool: options.mode === "development" ? "eval-cheap-module-source-map" : false,
         output: {
             path: path.resolve(__dirname, "public"),
-            filename: "[name].bundle.[hash:6].js",
+            filename: "[name].bundle.[contenthash:6].js",
             publicPath: "/"
         },
         stats: {
