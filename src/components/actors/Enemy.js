@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react"
 import { useFrame } from "react-three-fiber"
 import { useCannon } from "../../data/cannon"
-import { Sphere } from "cannon"
+import { Sphere } from "cannon-es"
 import { useStore, api } from "../../data/store"
 import materials from "../../shared/materials"
 import GameState from "../../data/const/GameState"

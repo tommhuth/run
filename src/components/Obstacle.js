@@ -2,7 +2,7 @@
 import React, { useEffect, useLayoutEffect } from "react"
 import { useCannon } from "../data/cannon"
 import materials from "../shared/materials"
-import { Sphere } from "cannon"
+import { Sphere } from "cannon-es"
 import animate from "@huth/animate"
 import Config from "../Config"
 import { SphereBufferGeometry } from "three"

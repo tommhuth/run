@@ -1,6 +1,4 @@
-
 import React, { useEffect } from "react"
-import { useThree, useFrame } from "react-three-fiber"
 import Block from "./Block"
 import { useStore } from "../data/store"
 import Enemy from "./actors/Enemy"

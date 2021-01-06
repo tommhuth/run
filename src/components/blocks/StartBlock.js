@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react"
 import animate from "@huth/animate"
 import { Font } from "three"

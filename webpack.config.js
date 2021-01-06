@@ -9,8 +9,7 @@ const { InjectManifest } = require("workbox-webpack-plugin")
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
 
 const rev = uuid.v4()
-const plugins = [
-    //new CleanWebpackPlugin(),
+const plugins = [ 
     new webpack.DefinePlugin({
         "process.env.REGISTER_SERVICEWORKER": JSON.stringify(process.env.REGISTER_SERVICEWORKER),
         "process.env.BUILD_TIME": JSON.stringify(new Date().toISOString())

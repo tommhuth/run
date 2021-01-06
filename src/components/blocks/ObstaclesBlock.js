@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from "react"
 import { useStore } from "../../data/store"
 import random from "@huth/random"
@@ -7,8 +6,7 @@ import Config from "../../Config"
 import uuid from "uuid"
 import { Vector3 } from "three"
 import Coin from "../actors/Coin"
-import Only from "../Only"
-import DistanceMarker from "../DistanceMarker"
+import Only from "../Only" 
 
 let vec1 = new Vector3()
 let vec2 = new Vector3()
@@ -125,4 +123,3 @@ function ObstaclesBlock({
 }
 
 export default React.memo(ObstaclesBlock)
-

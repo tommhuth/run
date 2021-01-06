@@ -2,7 +2,7 @@
 import React, { useEffect } from "react"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
-import { Vec3, Box } from "cannon"
+import { Vec3, Box } from "cannon-es"
 import materials from "../../shared/materials" 
 import animate from "@huth/animate"
 import { useStore } from "../../data/store"

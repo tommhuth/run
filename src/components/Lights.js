@@ -1,13 +1,11 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
-import Config from "../Config"
 import { api } from "../data/store"
-import { useFrame, useThree } from "react-three-fiber"
+import { useThree } from "react-three-fiber"
 
 export default function Lights() {
     let ref = useRef()
-    let { scene } = useThree()
-    let position = useRef([0, 0, 0])
-    let [p, sets] = useState(0)
+    let { scene } = useThree() 
+    let [z, setZ] = useState(0)
 
     useLayoutEffect(() => {
         ref.current.shadow.camera.near = -75
@@ -23,14 +21,14 @@ export default function Lights() {
 
     useEffect(() => { 
         return api.subscribe(i => {
-            sets(Math.floor(i.z))
+            setZ(Math.floor(i.z))
         }, i => i.position)
     }, []) 
 
     useEffect(() => {
-        ref.current.position.z = p
-        ref.current.target.position.z = p + 15   
-    }, [Math.floor(p / 10)])
+        ref.current.position.z = z
+        ref.current.target.position.z = z + 15   
+    }, [Math.floor(z / 10)])
 
     return (
         <>

@@ -2,7 +2,7 @@ import "../assets/styles/app.scss"
 
 import React, { useEffect } from "react"
 import { Vector3 } from "three"
-import { Canvas, useThree, useFrame } from "react-three-fiber"
+import { Canvas } from "react-three-fiber"
 import { CannonProvider } from "./data/cannon"
 import Config from "./Config"
 import Path from "./components/Path"
@@ -114,7 +114,7 @@ export default function Game() {
                 }}
             >
                 <fog attach="fog" />
-                <ErrorBoundary>
+                <ErrorBoundary >
                     <Lights />
                     <Camera />
 
@@ -129,6 +129,3 @@ export default function Game() {
         </>
     )
 } 
-
-//{Config.DO_FULL_POST_PROCESSING ? <FullPost /> : <FullPost />}
-//

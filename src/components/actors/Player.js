@@ -1,13 +1,11 @@
-
 import React, { useEffect, useRef, useState } from "react"
-import { useThree, useFrame } from "react-three-fiber"
+import { useFrame } from "react-three-fiber"
 import { useStore } from "../../data/store"
 import { useCannon } from "../../data/cannon"
 import Config from "../../Config"
-import { Sphere, RaycastResult, Ray, Vec3 } from "cannon"
+import { Sphere, RaycastResult, Ray, Vec3 } from "cannon-es"
 import GameState from "../../data/const/GameState"
 import materials from "../../shared/materials"
-
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
