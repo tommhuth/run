@@ -1,6 +1,6 @@
 import "../assets/styles/app.scss"
 
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { Vector3 } from "three"
 import { Canvas } from "react-three-fiber"
 import { CannonProvider } from "./data/cannon"

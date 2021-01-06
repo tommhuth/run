@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react"
 import { useStore } from "../data/store"
 import { useCannon } from "../data/cannon"
@@ -10,7 +9,7 @@ import { BoxBufferGeometry } from "three"
 
 const geo = new BoxBufferGeometry(1, 1, 1)
 
-export function CommonBlock(props) {
+function CommonBlock(props) {
     let { ref, body } = useCannon({
         mass: 0,
         rotation: [],

@@ -1,4 +1,3 @@
-import React from "react"
 import "./style/message.scss"
 
 export default function Message({ text }) {

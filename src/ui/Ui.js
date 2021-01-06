@@ -1,7 +1,5 @@
-import React from "react"
 import Config from "../Config"
-import { useStore } from "../data/store"
-import GameState from "../data/const/GameState" 
+import { useStore } from "../data/store" 
 
 export default function Ui() {
     let state = useStore(state => state.state)

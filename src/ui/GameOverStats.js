@@ -1,4 +1,3 @@
-import React from "react"
 import { useStore } from "../data/store"
 import Only from "../components/Only"
 

@@ -1,4 +1,4 @@
-import { MeshPhongMaterial, MeshLambertMaterial } from "three"
+import { MeshPhongMaterial } from "three"
 import Color from "../data/const/Color"
 import fogParsVert from "./fog_pars_vertex.glsl"
 import fogVert from "./fog_vertex.glsl"

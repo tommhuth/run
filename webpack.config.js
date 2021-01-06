@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const { InjectManifest } = require("workbox-webpack-plugin")
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
+//const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
 
 const rev = uuid.v4()
 const plugins = [

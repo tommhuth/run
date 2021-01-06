@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { api } from "../data/store" 
 
 import "./style/runner-stats.scss"

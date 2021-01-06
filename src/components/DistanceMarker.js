@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import { Font } from "three"
 import oswaldFont from "../../assets/fonts/oswald.json"
 import animate from "@huth/animate"

@@ -1,9 +1,8 @@
-
-import React from "react"
 import ObstaclesBlock from "./blocks/ObstaclesBlock"
 import BlockType from "../data/const/BlockType"
 import NarrowBlock from "./blocks/NarrowBlock"
 import CommonBlock from "./CommonBlock"
+import React from "react"
 
 function Block(props) {
     switch (props.type) {

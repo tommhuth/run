@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useFrame } from "react-three-fiber"
 import { useStore } from "../../data/store"
 import { useCannon } from "../../data/cannon"

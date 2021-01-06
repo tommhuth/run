@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
 
 // https://github.com/react-spring/react-three-fiber/blob/master/src/targets/shared/web/Dom.tsx

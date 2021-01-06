@@ -1,5 +1,4 @@
-import RunGame from "./RunGame" 
-import React from "react"
+import RunGame from "./RunGame"  
 import ReactDOM from "react-dom"
 import FontLoader from "./ui/FontLoader"
 import { Workbox } from "workbox-window"
