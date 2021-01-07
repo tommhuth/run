@@ -12,7 +12,7 @@ export default function GameOverStats() {
             <Only if={hasNewPersonalBest}>
                 <div className="game-over-stats__personal-best">New personal best</div>
             </Only> 
-            <div className="game-over-stats__score">{score} meters</div>
+            <div className="game-over-stats__score">{score.toLocaleString()} meters</div>
         </div>
     )
 }

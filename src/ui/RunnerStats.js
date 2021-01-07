@@ -9,7 +9,7 @@ export default function RunnerStats() {
     useEffect(() => {
         return api.subscribe((distance) => {
             if (distanceRef.current) {
-                distanceRef.current.innerHTML = Math.max(distance, 0)  
+                distanceRef.current.innerHTML = Math.max(distance, 0).toLocaleString()
             }
         }, state => Math.floor(state.position.z))
     }, [])
