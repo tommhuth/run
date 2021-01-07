@@ -183,7 +183,7 @@ const [useStore, api] = create((set, get) => {
         },
         clearBlocks(z) {
             let { blocks } = get()
-            let backwardBuffer = 1 
+            let backwardBuffer = 0 
 
             set({
                 blocks: blocks.map(i => {
