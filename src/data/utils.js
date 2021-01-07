@@ -1,6 +1,5 @@
 import random from "@huth/random"
-import Config from "../Config"
-import uuid from "uuid"
+import Config from "../Config" 
 import BlockType from "./const/BlockType"
 
 function getNextType(previous) {
@@ -49,7 +48,7 @@ export function getBlock(blocks) {
     let previous = blocks[0]
     let type = getNextType(previous)
     let block = {
-        id: uuid.v4(),
+        id: random.id(),
         start: previous.end,
         width: random.integer(Config.BLOCK_WIDTH, Config.BLOCK_WIDTH + Config.BLOCK_MAX_EXTRA_WIDTH),
         previousType: previous.type,

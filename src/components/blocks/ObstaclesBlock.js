@@ -2,8 +2,7 @@ import React, { useEffect, useState, useMemo } from "react"
 import { useStore } from "../../data/store"
 import random from "@huth/random"
 import Obstacle from "../Obstacle"
-import Config from "../../Config"
-import uuid from "uuid"
+import Config from "../../Config" 
 import { Vector3 } from "three"
 import Coin from "../actors/Coin"
 import Only from "../Only" 
@@ -72,7 +71,7 @@ function ObstaclesBlock({
             }
 
             result.push({
-                id: uuid.v4(),
+                id: random.id(),
                 radius,
                 position
             })
