@@ -34,8 +34,8 @@ export default function Path() {
     return (
         <>
             {enemies.map(i => <Enemy {...i} key={i.id} />)}
-            {blocks.map(i => (
-                <Block  {...i} key={i.id} />
+            {blocks.map((i, index) => (
+                <Block  {...i} key={i.id} nextBlock={blocks[index - 1]} />
             ))}
         </>
     )

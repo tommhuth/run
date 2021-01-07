@@ -11,7 +11,7 @@ function Block(props) {
         case BlockType.OBSTACLES:
             return (
                 <CommonBlock {...props}>
-                    <ObstaclesBlock />
+                    <ObstaclesBlock  />
                 </CommonBlock>
             )
         case BlockType.NARROW:

@@ -32,22 +32,10 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        camera.position.set(...Config.CAMERA_PRESTART)
-        camera.lookAt(Config.CAMERA_PRESTART[0] - 5, Config.CAMERA_PRESTART[1] - 5, Config.CAMERA_PRESTART[2] + 10)
+        camera.position.set(...Config.CAMERA_START) 
+        camera.lookAt(Config.CAMERA_START[0] - 5, Config.CAMERA_START[1] - 5, Config.CAMERA_START[2] + 10)
 
-        return animate({
-            from: Config.CAMERA_PRESTART[1],
-            to: Config.CAMERA_START[1],
-            duration: 2600,
-            delay: 750,
-            easing: "easeOutQuart",
-            end() {
-                setReady(true)
-            },
-            render(y) {
-                camera.position.y = y
-            }
-        })
+        setReady(true)
     }, [])
 
     useEffect(() => {

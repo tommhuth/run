@@ -37,7 +37,7 @@ function Enemy({ position, radius, speed, id }) {
 
     return (
         <mesh ref={ref} material={materials.enemy} castShadow receiveShadow>
-            <sphereBufferGeometry attach="geometry" args={[radius, 10, 10]} />
+            <sphereBufferGeometry attach="geometry" args={[radius, 24, 24]} />
         </mesh>
     )
 }

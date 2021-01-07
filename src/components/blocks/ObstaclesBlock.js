@@ -31,6 +31,7 @@ function ObstaclesBlock({
     depth, 
     width,
     initial = false,
+    delay,
     y,
     hasEnemies = true,
     coinLikelihood = .35,
@@ -105,8 +106,8 @@ function ObstaclesBlock({
                 <Obstacle
                     {...i}
                     key={i.id}
-                    block={{ start, end, depth, width, y, initial }}
-                    dead={dead}
+                    block={{ start,delay, end, depth, width, y, initial }}
+                    dead={dead} 
                 />
             ))}
             <Only if={hasCoin}>

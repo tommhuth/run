@@ -9,14 +9,13 @@ import { useStore } from "../../data/store"
 import Coin from "../actors/Coin"
 import BlockType from "../../data/const/BlockType"
 
-function NarrowBlock(props) {
-    let platformDepth = 5
-    let z = props.previousType === BlockType.NARROW ? props.start + platformDepth / 2 : props.start + props.depth / 2
+function NarrowBlock(props) { 
+    let z = props.previousType === BlockType.NARROW ? props.start + Config.PLATFORM_DEPTH / 2 : props.start + props.depth / 2
     let { ref, body } = useCannon({
         mass: 0,
         rotation: [],
         shape: new Box(
-            new Vec3(props.width / 2, Config.BLOCK_HEIGHT / 2, platformDepth / 2)
+            new Vec3(props.width / 2, Config.BLOCK_HEIGHT / 2, Config.PLATFORM_DEPTH / 2)
         ),
         position: [
             0,
@@ -57,8 +56,8 @@ function NarrowBlock(props) {
 
     return (
         <>
-            <mesh ref={ref} material={materials.ground}>
-                <boxBufferGeometry args={[props.width, Config.BLOCK_HEIGHT, platformDepth]} attach="geometry" />
+            <mesh ref={ref} material={materials.ground} receiveShadow>
+                <boxBufferGeometry args={[props.width, Config.BLOCK_HEIGHT, Config.PLATFORM_DEPTH]} attach="geometry" />
             </mesh>
             <Coin
                 x={0}

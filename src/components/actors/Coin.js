@@ -82,6 +82,7 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
                 duration: Config.BLOCK_OUT_DURATION,
                 render(y) {
                     ref.current.position.y = y
+                    ref.current.material.dispose()
                 }
             })
         }
@@ -114,11 +115,11 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
             dispose={null}
         >
             <meshPhongMaterial 
-                color={0xF5B82E}
+                color={0xD7CEB2}
                 specular={0xffffff}
-                emissive={0xF5B82E}
+                emissive={0xffffff}
                 emissiveIntensity={.5}
-                flatShading={false}
+                flatShading={true}
                 shininess={50}
             />
         </mesh>

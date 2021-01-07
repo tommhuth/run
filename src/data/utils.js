@@ -3,20 +3,9 @@ import Config from "../Config"
 import uuid from "uuid"
 import BlockType from "./const/BlockType"
 
-let i = 0
-
-function getNextStep(blocks) {
-    let next = i % 3 === 0 && i > 0 ? blocks[0].step : random.pick(-2, 2)
-
-    return next
-}
-
 function getNextType(previous) {
     let types = [
         ...Object.values(BlockType).filter(i => i !== BlockType.START),
-        BlockType.OBSTACLES,
-        BlockType.OBSTACLES,
-        BlockType.OBSTACLES,
         BlockType.OBSTACLES,
     ]
     let illegalNext = {
@@ -28,59 +17,51 @@ function getNextType(previous) {
     let type = random.pick(...types)
 
     while (illegalNext[previous.type].includes(type)) {
-        type = random.pick(...types)
+        type = random.pick(...types.filter(i => i !== type))
     }
 
     return type
 }
 
 const makeBlock = {
-    [BlockType.START]() {
-        return {
-            depth: 35
-        }
-    },
     [BlockType.PLAIN]() {
         return {
-            depth: random.integer(7, 10)
+            depth: random.integer(10, 14),
+            stepChange: true
         }
     },
     [BlockType.OBSTACLES]() {
         return {
-            depth: random.integer(15, 20)
+            depth: random.integer(20, 25),
+            stepChange: true
         }
     },
     [BlockType.NARROW](previous) {
         return {
-            depth: previous.type === BlockType.NARROW ? 11 : 16,
+            depth: previous.type === BlockType.NARROW ? 18 - (18 - Config.PLATFORM_DEPTH) / 2 : 18,
             width: 7,
-            stepUp: false
+            stepChange: false
         }
     }
-} 
+}
 
 export function getBlock(blocks) {
     let previous = blocks[0]
-    let stepUp = [BlockType.NARROW].includes(previous.type) ? false : true //  random.boolean(.9)
     let type = getNextType(previous)
     let block = {
         id: uuid.v4(),
         start: previous.end,
         width: random.integer(Config.BLOCK_WIDTH, Config.BLOCK_WIDTH + Config.BLOCK_MAX_EXTRA_WIDTH),
         previousType: previous.type,
-        stepUp,
         type,
         ...makeBlock[type](previous)
     }
-
-    let step = getNextStep(blocks)
-
-    i++
+    let step = previous.type === BlockType.NARROW ? 0 : random.pick(-2, 2)
 
     return {
         ...block,
         end: block.start + block.depth,
-        y: previous.y + (block.stepUp ? step : 0),
-        step: block.stepUp ? step : 0
+        y: previous.y + (block.stepChange && previous.y > -4 ? step : previous.y <= -4 ? 2 : 0),
+        step: block.stepChange ? step : 0
     }
 }

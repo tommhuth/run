@@ -1,5 +1,4 @@
-import create from "zustand"
-import uuid from "uuid"
+import create from "zustand" 
 import Config from "../Config"
 import random from "@huth/random"
 import GameState from "../data/const/GameState"
@@ -16,12 +15,14 @@ const initState = {
             start: 25,
             end: 45,
             depth: 20,
-            id: uuid.v4(),
+            id: random.id(),
             width: Config.BLOCK_WIDTH - 1,
             type: BlockType.OBSTACLES,
             coinLikelihood: 0,
             obstacleCount: 2,
             hasEnemies: false,
+            initial: true,
+            delay: 750,
             y: 0,
             step: -2
         },
@@ -29,12 +30,14 @@ const initState = {
             start: 0,
             end: 25,
             depth: 25,
-            id: uuid.v4(),
+            id: random.id(),
             width: Config.BLOCK_WIDTH + 2,
             type: BlockType.OBSTACLES,
             coinLikelihood: 0,
             obstacleCount: 2,
             hasEnemies: false,
+            initial: true,
+            delay: 500,
             y: 2,
             step: 2
         },
@@ -42,12 +45,14 @@ const initState = {
             start: -20,
             end: 0,
             depth: 20,
-            id: uuid.v4(),
+            id: random.id(),
             width: Config.BLOCK_WIDTH - 2, 
             type: BlockType.OBSTACLES,
             hasEnemies: false,
+            initial: true,
             obstacleCount: 3,
             coinLikelihood: 0,
+            delay: 0,
             y: 0,
             step: 0
         },
@@ -101,9 +106,10 @@ const [useStore, api] = create((set, get) => {
                     mustRequestOrientationAccess
                 }
 
-                for (let block of data.blocks) {
-                    block.id = uuid.v4()
-                    block.initial = true
+                for (let [index, block] of data.blocks.entries()) {
+                    block.id = random.id() 
+                    block.reset = true
+                    block.delay = (data.blocks.length- index ) * 150
                 }
 
                 set(data)
@@ -147,7 +153,7 @@ const [useStore, api] = create((set, get) => {
                 enemies: [
                     ...get().enemies,
                     {
-                        id: uuid.v4(),
+                        id: random.id(),
                         radius,
                         position: [
                             random.integer(-(Config.BLOCK_WIDTH / 2) + radius, Config.BLOCK_WIDTH / 2 - radius),
@@ -210,7 +216,8 @@ const [useStore, api] = create((set, get) => {
             set({
                 blocks: [nextBlock, ...blocks],
                 distance,
-                nextDistanceThreshold
+                nextDistanceThreshold,
+                delay: 0
             })
 
             return nextBlock

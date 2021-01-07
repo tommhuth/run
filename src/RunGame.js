@@ -50,7 +50,7 @@ export default function Game() {
 
     useEffect(() => {
         if ([GameState.GAME_OVER, GameState.READY].includes(state)) { 
-            setTimeout(() => canBegin(), attempts === 0 ? 3250 : 2500)
+            setTimeout(() => canBegin(), 1000)
         }
     }, [state, attempts])
 
@@ -102,7 +102,7 @@ export default function Game() {
                 pixelRatio={Math.min(1.5, window.devicePixelRatio)}
                 camera={{
                     position: new Vector3(...Config.CAMERA_PRESTART),
-                    zoom: Config.IS_SMALL_SCREEN ? 25 : 20,
+                    zoom: Config.IS_SMALL_SCREEN ? 20 : 20,
                     near: -75,
                     far: 100
                 }}

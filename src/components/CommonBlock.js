@@ -5,9 +5,9 @@ import Config from "../Config"
 import { Vec3, Box } from "cannon-es"
 import materials from "../shared/materials"  
 import animate from "@huth/animate"
-import { BoxBufferGeometry } from "three"
+import { BoxBufferGeometry } from "three" 
 
-const geo = new BoxBufferGeometry(1, 1, 1)
+const geometry = new BoxBufferGeometry(1, 1, 1)
 
 function CommonBlock(props) {
     let { ref, body } = useCannon({
@@ -18,7 +18,7 @@ function CommonBlock(props) {
         ),
         position: [
             0,
-            props.initial ? -Config.BLOCK_HEIGHT / 2 : -Config.BLOCK_HEIGHT,
+            -Config.BLOCK_HEIGHT,
             props.start + props.depth / 2
         ]
     })
@@ -28,7 +28,8 @@ function CommonBlock(props) {
         return animate({
             from: body.position.y,
             to: -Config.BLOCK_HEIGHT / 2 + props.y,
-            duration: Config.BLOCK_IN_DURATION,
+            duration: Config.BLOCK_IN_DURATION * (props.reset ? .5 : 1),
+            delay: props.delay,
             easing: Config.BLOCK_IN_EASING,
             render(y) {
                 body.position.y = y
@@ -51,7 +52,7 @@ function CommonBlock(props) {
                 }
             })
         }
-    }, [props.dead])
+    }, [props.dead]) 
 
     return (
         <>
@@ -62,7 +63,7 @@ function CommonBlock(props) {
                 ref={ref}
                 material={materials.ground}
                 scale={[props.width, Config.BLOCK_HEIGHT, props.depth]}
-                geometry={geo}
+                geometry={geometry}
                 castShadow
                 receiveShadow
                 dispose={null}
