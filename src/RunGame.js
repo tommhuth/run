@@ -102,7 +102,7 @@ export default function Game() {
                 pixelRatio={Math.min(1.5, window.devicePixelRatio)}
                 camera={{
                     position: new Vector3(...Config.CAMERA_PRESTART),
-                    zoom: Config.IS_SMALL_SCREEN ? 20 : 20,
+                    zoom: Config.IS_SMALL_SCREEN ? 10 : 20,
                     near: -75,
                     far: 100
                 }}
