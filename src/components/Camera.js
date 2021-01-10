@@ -3,10 +3,8 @@ import { useEffect, useRef, useState } from "react"
 import { api, useStore } from "../data/store"
 import Config from "../Config"
 import { useFrame, useThree } from "react-three-fiber"
-import GameState from "../data/const/GameState" 
-import shallow from "zustand/shallow" 
-import animate from "@huth/animate"
-
+import GameState from "../data/const/GameState"
+import shallow from "zustand/shallow"
 
 export default function Camera() {
     let { camera } = useThree()
@@ -15,7 +13,7 @@ export default function Camera() {
     let state = useStore(i => i.state)
     let attempts = useStore(i => i.attempts)
     let targetPosition = useRef([0, 0, 0])
-    let blockY = useRef()
+    let blockY = useRef() 
 
     useEffect(() => {
         return api.subscribe(
@@ -32,7 +30,7 @@ export default function Camera() {
     }, [])
 
     useEffect(() => {
-        camera.position.set(...Config.CAMERA_START) 
+        camera.position.set(...Config.CAMERA_START)
         camera.lookAt(Config.CAMERA_START[0] - 5, Config.CAMERA_START[1] - 5, Config.CAMERA_START[2] + 10)
 
         setReady(true)
@@ -53,7 +51,7 @@ export default function Camera() {
 
         light.current.position.x = targetPosition.current[0]
         light.current.position.y = blockY.current + 1
-        light.current.position.z = targetPosition.current[2] - 3
+        light.current.position.z = targetPosition.current[2] - 3 
     })
 
     return (

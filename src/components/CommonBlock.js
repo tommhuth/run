@@ -4,10 +4,8 @@ import { useCannon } from "../data/cannon"
 import Config from "../Config"
 import { Vec3, Box } from "cannon-es"
 import materials from "../shared/materials"  
-import animate from "@huth/animate"
-import { BoxBufferGeometry } from "three" 
-
-const geometry = new BoxBufferGeometry(1, 1, 1)
+import animate from "@huth/animate" 
+import geometry from "../shared/geometry"
 
 function CommonBlock(props) {
     let { ref, body } = useCannon({
@@ -63,7 +61,7 @@ function CommonBlock(props) {
                 ref={ref}
                 material={materials.ground}
                 scale={[props.width, Config.BLOCK_HEIGHT, props.depth]}
-                geometry={geometry}
+                geometry={geometry.box}
                 castShadow
                 receiveShadow
                 dispose={null}

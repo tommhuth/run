@@ -6,6 +6,7 @@ import Config from "../../Config"
 import { Sphere, RaycastResult, Ray, Vec3 } from "cannon-es"
 import GameState from "../../data/const/GameState"
 import materials from "../../shared/materials"
+import geometry from "../../shared/geometry"
 
 function intersectBody(from, to, body) {
     let result = new RaycastResult()
@@ -45,18 +46,18 @@ export default function Player() {
         }
     }, [canJump])
     let speed = 8
-    let setPosition = useStore(i => i.setPosition) 
-    let end = useStore(i => i.end) 
+    let setPosition = useStore(i => i.setPosition)
+    let end = useStore(i => i.end)
     let state = useStore(i => i.state)
     let lastBlock = useStore(i => {
-        return i.blocks.reduce((min, curr) => Math.min(min,curr.y), i.blocks[i.blocks.length-1].y) 
+        return i.blocks.reduce((min, curr) => Math.min(min, curr.y), i.blocks[i.blocks.length - 1].y)
     })
     let hasDeviceOrientation = useStore(i => i.hasDeviceOrientation)
     let speedHistory = useRef([])
     let [ready, setReady] = useState(false)
 
     useEffect(() => {
-        if (state === GameState.RUNNING) { 
+        if (state === GameState.RUNNING) {
             setTimeout(() => setReady(true), 500)
         }
     }, [state])
@@ -152,8 +153,10 @@ export default function Player() {
     })
 
     return (
-        <mesh ref={ref} material={materials.player}>
-            <sphereBufferGeometry attach="geometry" args={[radius, 24, 24]} />
-        </mesh>
+        <mesh
+            ref={ref}
+            material={materials.player}
+            geometry={geometry.sphere}
+        />
     )
 }

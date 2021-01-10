@@ -6,6 +6,7 @@ import { Sphere } from "cannon-es"
 import { useStore, api } from "../../data/store"
 import materials from "../../shared/materials"
 import GameState from "../../data/const/GameState"
+import geometry from "../../shared/geometry"
 
 function Enemy({ position, radius, speed, id }) {
     let removeEnemy = useStore(i => i.removeEnemy)
@@ -36,9 +37,15 @@ function Enemy({ position, radius, speed, id }) {
     })
 
     return (
-        <mesh ref={ref} material={materials.enemy} castShadow receiveShadow>
-            <sphereBufferGeometry attach="geometry" args={[radius, 24, 24]} />
-        </mesh>
+        <mesh
+            ref={ref}
+            material={materials.enemy}
+            geometry={geometry.sphere}
+            dispose={null}
+            scale={[radius, radius, radius]}
+            castShadow 
+            receiveShadow 
+        />  
     )
 }
 

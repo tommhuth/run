@@ -1,12 +1,9 @@
 import random from "@huth/random"
-import Config from "../Config" 
+import Config from "../Config"
 import BlockType from "./const/BlockType"
 
 function getNextType(previous) {
-    let types = [
-        ...Object.values(BlockType).filter(i => i !== BlockType.START),
-        BlockType.OBSTACLES,
-    ]
+    let types = Object.values(BlockType)
     let illegalNext = {
         [BlockType.START]: [BlockType.NARROW],
         [BlockType.PLAIN]: [BlockType.PLAIN],
@@ -26,20 +23,20 @@ const makeBlock = {
     [BlockType.PLAIN]() {
         return {
             depth: random.integer(10, 14),
-            stepChange: true
+            steps: [2, -2]
         }
     },
     [BlockType.OBSTACLES]() {
         return {
             depth: random.integer(20, 25),
-            stepChange: true
+            steps: [2, -2]
         }
     },
     [BlockType.NARROW](previous) {
         return {
-            depth: previous.type === BlockType.NARROW ? 18 - (18 - Config.PLATFORM_DEPTH) / 2 : 18,
+            depth: previous.type === BlockType.NARROW ? 24 - (24 - Config.PLATFORM_DEPTH) / 2 : 24,
             width: 7,
-            stepChange: false
+            steps: [0]
         }
     }
 }
@@ -55,12 +52,20 @@ export function getBlock(blocks) {
         type,
         ...makeBlock[type](previous)
     }
-    let step = previous.type === BlockType.NARROW ? 0 : random.pick(-2, 2)
+    let step = random.pick(...block.steps)
+
+    if (previous.y <= -4 && step < 0) {
+        step = 2
+    }
+
+    if (previous.type === BlockType.NARROW) {
+        step = 0
+    }
 
     return {
         ...block,
         end: block.start + block.depth,
-        y: previous.y + (block.stepChange && previous.y > -4 ? step : previous.y <= -4 ? 2 : 0),
-        step: block.stepChange ? step : 0
+        y: previous.y + step,
+        step
     }
 }

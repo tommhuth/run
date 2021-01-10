@@ -3,11 +3,9 @@ import { useCannon } from "../data/cannon"
 import materials from "../shared/materials"
 import { Sphere } from "cannon-es"
 import animate from "@huth/animate"
-import Config from "../Config"
-import { SphereBufferGeometry } from "three"
-import random from "@huth/random"
-
-let geometry = new SphereBufferGeometry(1, 24, 24)
+import Config from "../Config" 
+import random from "@huth/random" 
+import geometry from "../shared/geometry"
 
 function Obstacle({ dead, radius, position, block }) {
     let { ref, body } = useCannon({
@@ -65,7 +63,7 @@ function Obstacle({ dead, radius, position, block }) {
         <mesh
             ref={ref}
             material={materials.ground}
-            geometry={geometry}
+            geometry={geometry.sphere}
             castShadow
             receiveShadow
             dispose={null}

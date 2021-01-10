@@ -3,9 +3,8 @@ import animate from "@huth/animate"
 import { useFrame } from "react-three-fiber"
 import { useStore, api } from "../../data/store"
 import Config from "../../Config"
-import { SphereBufferGeometry } from "three"
-
-let geometry = new SphereBufferGeometry(1, 6, 2) 
+import { SphereBufferGeometry } from "three" 
+import geometry from "../../shared/geometry"
 
 function useFrameNumber(speed = .1, init = 0, predicate) {
     let frame = useRef(init)
@@ -111,7 +110,8 @@ function Coin({ x, y, z, index = 0, dead: blockDead }) {
             ref={ref}
             position={first.current ? [x, y + 1 + .5, z] : undefined}
             scale={[.85, 1, .85]} 
-            geometry={geometry}
+            geometry={geometry.coin}
+            castShadow={!taken}
             dispose={null}
         >
             <meshPhongMaterial 
