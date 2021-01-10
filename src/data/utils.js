@@ -4,8 +4,7 @@ import BlockType from "./const/BlockType"
 
 function getNextType(previous) {
     let types = Object.values(BlockType)
-    let illegalNext = {
-        [BlockType.START]: [BlockType.NARROW],
+    let illegalNext = { 
         [BlockType.PLAIN]: [BlockType.PLAIN],
         [BlockType.OBSTACLES]: [],
         [BlockType.NARROW]: []

@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from "react"
 import animate from "@huth/animate"
 import { useFrame } from "react-three-fiber"
 import { useStore, api } from "../../data/store"
-import Config from "../../Config"
-import { SphereBufferGeometry } from "three" 
+import Config from "../../Config" 
 import geometry from "../../shared/geometry"
 
 function useFrameNumber(speed = .1, init = 0, predicate) {
