@@ -5,8 +5,6 @@
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-    letter-spacing: inherit;
-    font-weight: inherit;
     color: inherit;
     outline: none;
     text-decoration: none;
@@ -14,27 +12,16 @@
     background-color: transparent;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0) !important;
     appearance: none; 
-    text-transform: inherit;
 } 
-  
-html,
-body {
-    overflow: hidden; 
-}  
 
-#root { 
-    height: 100vh !important;
-    width: 100% !important;
+html {
+    background-color: #000; 
 }
 
-.main canvas { 
-    top: 0; 
-    position: fixed;
-    display: block;
-    height: 100vh !important;
-    width: 100% !important;
-    right: 0;
-    left: 0;
+html, 
+body {
+    height: 100vh;
+    overflow: hidden;
 }
 
 .visually-hidden {
@@ -46,4 +33,36 @@ body {
     margin: -1px;
     padding: 0;
     border: 0;
-} 
+}
+
+::selection {
+    background-color: #000;
+    opacity: 1;
+    color: #FFF;
+}
+
+  
+html,
+body {
+    overflow: hidden; 
+    background-color: #0059FF;
+}  
+
+#root { 
+    height: 100vh !important;
+    width: 100% !important;
+}
+
+canvas { 
+    top: 0; 
+    position: fixed;
+    display: block;
+    height: 100vh !important; 
+    width: 100% !important;
+    right: 0;
+    left: 0;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
