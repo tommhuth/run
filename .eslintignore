@@ -1,4 +1,2 @@
-node_modules/
-dist/
-public/
-src/addons
+node_modules/ 
+public/ 

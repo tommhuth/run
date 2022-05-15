@@ -1,5 +1,5 @@
-export default { 
-    PLAIN: "plain", 
-    OBSTACLES: "obstacles",  
-    NARROW: "narrow"
+export default {
+    PLAIN: "plain",
+    GAP: "gap",
+    ISLAND: "island"
 }

@@ -3,13 +3,13 @@ const serveStatic = require("serve-static")
 const path = require("path")
 const compression = require("compression") 
 
-const PORT = process.env.PORT || "3000"
+const PORT = process.env.PORT || "4000"
 const NODE_ENV = process.env.NODE_ENV || "development" 
 
 const app = express()
 
 app.use(compression())
-app.use(serveStatic(path.join(__dirname, "public"), { maxAge: 0  }))
+app.use(serveStatic(path.join(__dirname, "public"), { maxAge: null }))
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public/index.html"))

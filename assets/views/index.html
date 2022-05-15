@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Run</title>
+        <title>Zax</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         
         <link href="/splashscreens/iphone5_splash.<%= htmlWebpackPlugin.options.rev %>.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
         <link href="/splashscreens/iphone6_splash.<%= htmlWebpackPlugin.options.rev %>.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
@@ -15,55 +17,12 @@
         <link href="/splashscreens/ipadpro1_splash.<%= htmlWebpackPlugin.options.rev %>.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
         <link href="/splashscreens/ipadpro3_splash.<%= htmlWebpackPlugin.options.rev %>.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
         <link href="/splashscreens/ipadpro2_splash.<%= htmlWebpackPlugin.options.rev %>.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
-       
-        <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;500&display=swap" rel="stylesheet">
-        <style> 
-            body {   
-                color: purple;
-                background-color: rgb(235, 61, 184);  
-                background-image: linear-gradient(to bottom, rgba(0,0,255,0), rgba(127, 127, 253, 0.3));
-            } 
-
-            #spinner {
-                position: absolute;
-                top:50%;
-                z-index: 0;
-                left:50%;
-                display: block;
-                width: 2em;
-                margin-top: -3em; 
-                mix-blend-mode: multiply; 
-                opacity: 1;
-                margin-left: -1em;
-                z-index: 1000;
-                fill: currentColor;
-                transform-origin: 50% 50%;
-                animation: spin linear 1s infinite;
-            }
-
-            @keyframes spin {
-                from { 
-                    transform: rotate(0);
-                }
-
-                to { 
-                    transform: rotate(360deg);
-                }
-            }
-        </style>
     </head>
 
     <body>
-        <h1 class="visually-hidden">Run</h1>
-        <p class="visually-hidden">Infinite runner made with Threejs. <a href="https://github.com/tommhuth/run">GitHub</a></p>
-        
         <div id="root"></div>
-         
-        <!-- loading by Pundimon from the Noun Project -->
-        <svg id="spinner" width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-             
-                    <path d="M47.089,74.161 C30.439,77.636 13.81,68.684 7.54,52.878 C1.585,37.87 6.68,20.958 19.629,11.685 L18.39,20.048 C18.187,21.414 19.13,22.685 20.496,22.888 C20.62,22.906 20.743,22.915 20.865,22.915 C22.084,22.915 23.151,22.022 23.335,20.781 L25.245,7.892 C25.343,7.236 25.175,6.568 24.78,6.036 C24.384,5.503 23.794,5.15 23.138,5.053 L10.251,3.147 C8.864,2.944 7.614,3.889 7.412,5.254 C7.21,6.62 8.153,7.891 9.518,8.093 L15.013,8.906 C1.471,19.733 -3.65,38.234 2.893,54.722 C9.025,70.183 23.829,79.908 39.899,79.907 C42.611,79.907 45.362,79.63 48.111,79.056 C49.463,78.774 50.33,77.45 50.048,76.098 C49.765,74.745 48.433,73.877 47.089,74.161 Z M71.646,71.45 L65.643,70.56 C78.695,59.664 83.544,41.496 77.105,25.274 C69.938,7.21 50.919,-3.022 31.896,0.943 C30.544,1.224 29.676,2.548 29.958,3.9 C30.24,5.253 31.565,6.124 32.915,5.838 C49.561,2.368 66.187,11.321 72.458,27.12 C78.223,41.644 73.641,57.952 61.608,67.394 L62.778,59.497 C62.981,58.131 62.038,56.86 60.672,56.657 C59.312,56.457 58.035,57.398 57.833,58.763 L55.923,71.648 C55.825,72.304 55.992,72.972 56.388,73.504 C56.783,74.037 57.373,74.391 58.03,74.488 L70.914,76.397 C71.038,76.415 71.161,76.424 71.283,76.424 C72.502,76.424 73.569,75.531 73.753,74.29 C73.956,72.924 73.013,71.653 71.646,71.45 Z"></path>
-               
-        </svg>
+        <noscript>
+            <h1>You need to enable Javascript to use this site.</h1>
+        </noscript> 
     </body>
 </html>
