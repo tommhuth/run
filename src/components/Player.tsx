@@ -1,5 +1,5 @@
 import { useBody } from "@data/cannon"
-import { store, setState } from "@data/store"
+import { store, setState, hasRequestMotionPermission, requestMotionPermission } from "@data/store"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
@@ -10,19 +10,6 @@ interface PlayerProps {
     speed?: number
 }
 
-interface DeviceMotionEventiOS extends DeviceMotionEvent {
-    requestPermission?: () => Promise<"granted" | "denied">;
-}
-
-let hasRequestPermission = !!(DeviceMotionEvent as unknown as DeviceMotionEventiOS).requestPermission
-
-function requestMotionPermission() {
-    let event = DeviceMotionEvent as unknown as DeviceMotionEventiOS
-
-    if (event.requestPermission) {
-        return event.requestPermission()
-    }
-}
 
 export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
@@ -33,7 +20,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     })
     let motion = useMemo(() => ({ alpha: 0, beta: 0, gamma: 0 }), [])
     let keys = useMemo<Record<string, boolean>>(() => ({}), [])
-    let [motionAccess, setMotionAccess] = useState(hasRequestPermission ? false : true)
+    let [motionAccess, setMotionAccess] = useState(hasRequestMotionPermission ? false : true)
 
     useEffect(() => {
         setState({ player: { mesh: ref.current, body } })
@@ -71,9 +58,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         }
 
         let pointerdown = async () => {
-            let { state } = store.getState()
-
-            if (state === "intro" && hasRequestPermission) {
+            if (hasRequestMotionPermission) {
                 try {
                     let permission = await requestMotionPermission()
 
@@ -83,14 +68,13 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
                 } catch (e) {
                     alert(e.message)
                 }
-
             }
         }
 
-        window.addEventListener("click", pointerdown)
+        window.addEventListener("pointerdown", pointerdown)
 
         return () => {
-            window.removeEventListener("click", pointerdown)
+            window.removeEventListener("pointerdown", pointerdown)
         }
     }, [motionAccess])
 
@@ -172,7 +156,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         }
 
         r.current.innerHTML = `
-            hasRequestPermission=${JSON.stringify(hasRequestPermission)}<br/>
+            hasRequestMotionPermission=${JSON.stringify(hasRequestMotionPermission)}<br/>
             motionAccess=${JSON.stringify(motionAccess)}<br/>
             alpha=${motion.alpha.toFixed(5)} <br/>
             beta=${motion.beta.toFixed(5)} <br/>

@@ -15,10 +15,25 @@ interface PathSection {
 }
 interface Store {
     state: "intro" | "gameover" | "running"
+    hasMotionAccess: boolean
     path: PathSection[]
     player: {
         mesh: Mesh | null
         body: Body | null
+    }
+}
+
+interface DeviceMotionEventiOS extends DeviceMotionEvent {
+    requestPermission?: () => Promise<"granted" | "denied">;
+}
+
+export let hasRequestMotionPermission = !!(DeviceMotionEvent as unknown as DeviceMotionEventiOS).requestPermission
+
+export function requestMotionPermission() {
+    let event = DeviceMotionEvent as unknown as DeviceMotionEventiOS
+
+    if (event.requestPermission) {
+        return event.requestPermission()
     }
 }
 
@@ -50,6 +65,7 @@ export function setState(data: Partial<Store>) {
 const store = create(
     subscribeWithSelector<Store>(() => ({
         state: "intro",
+        hasMotionAccess: hasRequestMotionPermission ? false : true,
         player: {
             mesh: null,
             body: null
