@@ -68,6 +68,8 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             if (state === "intro" && requestPermission) {
                 let permission = await requestPermission()
 
+                alert(permission)
+
                 setMotionAccess(permission === "granted")
             }
         }
@@ -148,6 +150,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             body.applyForce(new Vec3(0, 0, speed))
         }
     })
+
     let r = useRef<HTMLDivElement>(null)
 
     useFrame(() => {
@@ -156,6 +159,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         }
 
         r.current.innerHTML = `
+            motionAccess=${JSON.stringify(motionAccess)}<br/>
             alpha=${motion.alpha.toFixed(5)} <br/>
             beta=${motion.beta.toFixed(5)} <br/>
             gamma=${motion.gamma.toFixed(5)}  
@@ -164,14 +168,14 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
 
     return (
         <>
-            <Html>
-                <div ref={r}>
-
-                </div>
-            </Html>
             <mesh ref={ref} castShadow receiveShadow>
                 <sphereGeometry args={[radius, 16, 16]} />
                 <meshPhongMaterial dithering color="red" />
+                <Html>
+                    <div ref={r}>
+
+                    </div>
+                </Html>
             </mesh>
         </>
     )
