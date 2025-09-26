@@ -1,4 +1,14 @@
-@import "global.scss";
-@import "variables.scss";
-@import "typography.scss";
-@import "utils.scss";
+@use "global.scss";
+@use "variables.scss";
+@use "typography.scss";
+
+#root,
+canvas {
+    top: 0;
+    position: fixed;
+    display: block;
+    height: 100vh !important;
+    width: 100% !important;
+    right: 0;
+    left: 0;
+}
