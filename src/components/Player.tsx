@@ -122,7 +122,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             body.velocity.x -= .1
         } else {
             if (Math.abs(motion.gamma) > 10) {
-                body.velocity.x += -(motion.gamma / 360) * .1
+                body.velocity.x += (motion.gamma / 90) * .5
             }
         }
 
