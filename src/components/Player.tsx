@@ -10,11 +10,11 @@ interface PlayerProps {
     speed?: number
 }
 
-interface DeviceOrientationEventiOS extends DeviceOrientationEvent {
+interface DeviceMotionEventiOS extends DeviceMotionEvent {
     requestPermission?: () => Promise<"granted" | "denied">;
 }
 
-let requestPermission = (DeviceMotionEvent as unknown as DeviceOrientationEventiOS).requestPermission
+let requestPermission = (DeviceMotionEvent as unknown as DeviceMotionEventiOS).requestPermission
 
 export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
@@ -66,7 +66,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             let { state } = store.getState()
 
             if (state === "intro" && requestPermission) {
-                let permission = await requestPermission()
+                let permission = await DeviceMotionEvent.requestPermission()
 
                 alert(permission)
 
@@ -74,10 +74,10 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             }
         }
 
-        window.addEventListener("pointerdown", pointerdown)
+        window.addEventListener("click", pointerdown)
 
         return () => {
-            window.removeEventListener("pointerdown", pointerdown)
+            window.removeEventListener("click", pointerdown)
         }
     }, [motionAccess])
 
