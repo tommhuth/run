@@ -112,17 +112,17 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         }
     }, [])
 
-    useFrame(() => {
+    useFrame((_, delta) => {
         let { state, path, player } = store.getState()
         let playerMesh = player.mesh
 
         if (keys.KeyA) {
-            body.velocity.x += .1
+            body.velocity.x += 6 * delta
         } else if (keys.KeyD) {
-            body.velocity.x -= .1
+            body.velocity.x -= 6 * delta
         } else {
             if (Math.abs(motion.gamma) > 10) {
-                body.velocity.x += (motion.gamma / 90) * .5
+                body.velocity.x += (motion.gamma / 90) * .75 * delta
             }
         }
 
