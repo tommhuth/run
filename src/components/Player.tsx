@@ -74,11 +74,16 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             let { state } = store.getState()
 
             if (state === "intro" && hasRequestPermission) {
-                let permission = await requestMotionPermission()
+                try {
+                    let permission = await requestMotionPermission()
 
-                alert(permission)
+                    alert(permission)
 
-                setMotionAccess(permission === "granted")
+                    setMotionAccess(permission === "granted")
+                } catch (e) {
+                    alert(e.message)
+                }
+
             }
         }
 
