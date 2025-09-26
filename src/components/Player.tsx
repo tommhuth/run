@@ -65,8 +65,8 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
                     alert(permission)
 
                     setMotionAccess(permission === "granted")
-                } catch (e) {
-                    alert(e.message)
+                } catch {
+                    // nothing
                 }
             }
         }
@@ -118,10 +118,15 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
 
         if (keys.KeyA) {
             body.velocity.x += .1
-        }
-        if (keys.KeyD) {
+        } else if (keys.KeyD) {
             body.velocity.x -= .1
+        } else {
+            if (Math.abs(motion.gamma) > 10) {
+                body.velocity.x += -(motion.gamma / 360) * .1
+            }
         }
+
+
 
         if (playerMesh && state === "running") {
             let bottomBuffer = 3
@@ -160,7 +165,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             motionAccess=${JSON.stringify(motionAccess)}<br/>
             alpha=${motion.alpha.toFixed(5)} <br/>
             beta=${motion.beta.toFixed(5)} <br/>
-            gamma=${motion.gamma.toFixed(5)}  
+            gamma=${(motion.gamma % 360).toFixed(5)}  
         `
     })
 
