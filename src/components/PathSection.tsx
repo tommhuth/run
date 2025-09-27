@@ -4,7 +4,7 @@ import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
 import { useMemo, useState, Suspense, useRef } from "react"
-import { gray } from "../materials"
+import { gray, white } from "../materials"
 import { Tuple3 } from "../types/global"
 import { BoxGeometry, Object3D } from "three"
 import Rock from "./Rock"
@@ -111,9 +111,8 @@ export default function PathSection({
                 scale={[width + .5, .01, depth + .5]}
                 geometry={box}
                 ref={foamRef}
-            >
-                <meshBasicMaterial color="white" />
-            </mesh>
+                material={white}
+            />
 
             <Suspense>
                 {Array.from({ length: 5 }).map((i, index) => (

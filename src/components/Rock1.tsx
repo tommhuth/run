@@ -2,16 +2,15 @@ import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef, useLayoutEffect } from "react"
-import { gray } from "../materials"
+import { gray, white } from "../materials"
 import { Tuple3 } from "../types/global"
 import { damp } from "three/src/math/MathUtils.js"
 
 import model from "@assets/models/rock1.glb"
 import Cloud from "./Cloud"
 import { useFoam } from "./PathSection"
-import { CylinderGeometry, MeshLambertMaterial } from "three"
+import { CylinderGeometry, Group } from "three"
 
-let white = new MeshLambertMaterial({ emissive: "#fff", emissiveIntensity: .25 })
 let cylinder = new CylinderGeometry(1, 1, .01, 7, 1)
 
 export function Rock1({
@@ -33,14 +32,22 @@ export function Rock1({
             damping: random.float(2, 7) * (2 - scale)
         }
     }, [x, y, z])
-    let rockRef = useRef(null)
+    let rockRef = useRef<Group>(null)
     let foamRef = useFoam([scale * 1.25, scale * 1.25, scale * 1.25])
 
     useLayoutEffect(() => {
+        if (!rockRef.current) {
+            return
+        }
+
         rockRef.current.position.y = y - 10
     }, [])
 
     useFrame((state, delta) => {
+        if (!rockRef.current) {
+            return
+        }
+
         rockRef.current.position.y = damp(rockRef.current.position.y, position[1], damping, delta)
     })
 
@@ -58,30 +65,34 @@ export function Rock1({
                     ]}
                 />
             )}
-            <group
-                position-x={position[0]}
-                position-z={position[2]}
-                scale={scale}
-                rotation-y={rotation}
-                dispose={null}
-                ref={rockRef}
-            >
+            <>
+                <group
+                    position-x={position[0]}
+                    position-z={position[2]}
+                    scale={scale}
+                    rotation-y={rotation}
+                    dispose={null}
+                    ref={rockRef}
+                >
+                    <mesh
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.rock1.geometry}
+                        material={gray}
+                    />
+                </group>
+
                 <mesh
-                    castShadow
+                    position={position}
+                    position-y={-4.5}
+                    scale={scale * 1.25}
+                    ref={foamRef}
                     receiveShadow
-                    geometry={nodes.rock1.geometry}
-                    material={gray}
+                    material={white}
+                    dispose={null}
+                    geometry={cylinder}
                 />
-            </group>
-            <mesh
-                position={position}
-                position-y={-4.5}
-                scale={scale * 1.25}
-                ref={foamRef}
-                receiveShadow
-                material={white}
-                geometry={cylinder}
-            />
+            </>
         </>
     )
 }

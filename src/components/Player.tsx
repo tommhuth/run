@@ -14,14 +14,13 @@ interface PlayerProps {
 }
 
 
-export default function Player({ radius = .2, speed = 3, debug = false }: PlayerProps) {
+export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
     let [ref, body] = useBody({
         mass: 2,
         definition: shape,
         position: [0, 1, 0],
     })
-    let statsRef = useRef<HTMLDivElement>(null)
     let motion = useMemo(() => ({ alpha: 0, beta: 0, gamma: 0 }), [])
     let keys = useMemo<Record<string, boolean>>(() => ({}), [])
     let hasMotionAccess = useStore(i => i.hasMotionAccess)
@@ -100,6 +99,7 @@ export default function Player({ radius = .2, speed = 3, debug = false }: Player
 
             if (["gameover", "intro"].includes(state)) {
                 setState({ state: "running" })
+                body.wakeUp()
             }
         }
 
@@ -155,16 +155,6 @@ export default function Player({ radius = .2, speed = 3, debug = false }: Player
         }
     })
 
-    useFrame(() => {
-        if (!statsRef.current) {
-            return
-        }
-
-        statsRef.current.innerHTML = ` 
-            gamma=${(motion.gamma).toFixed(5)}  <br/> 
-            beta=${(motion.beta).toFixed(5)}  
-        `
-    })
 
     return (
         <mesh
@@ -174,12 +164,28 @@ export default function Player({ radius = .2, speed = 3, debug = false }: Player
         >
             <sphereGeometry args={[radius, 16, 16]} />
             <meshPhongMaterial dithering color="red" />
-
-            {debug && (
-                <Html>
-                    <div ref={statsRef} />
-                </Html>
-            )}
         </mesh>
     )
-} 
+}
+
+/*
+
+    let statsRef = useRef<HTMLDivElement>(null)
+useFrame(() => {
+    if (!statsRef.current) {
+        return
+    }
+
+    statsRef.current.innerHTML = ` 
+            gamma=${(motion.gamma).toFixed(5)}  <br/> 
+            beta=${(motion.beta).toFixed(5)}  
+        `
+})
+{
+    debug && (
+        <Html>
+            <div ref={statsRef} />
+        </Html>
+    )
+}
+    */

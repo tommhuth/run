@@ -20,11 +20,11 @@ export default function Rock({
     position: [x, y, z],
     ready = false
 }: RockProps) {
-    let s = useMemo(() => new Sphere(radius), [radius])
+    let definition = useMemo(() => new Sphere(radius), [radius])
     let mass = useMemo(() => random.float(.1, .5), [])
     let [ref, body] = useBody({
         mass,
-        definition: s,
+        definition,
         position: [x, y - 10, z],
     })
 
@@ -49,6 +49,7 @@ export default function Rock({
             castShadow
             receiveShadow
             material={gray}
+            dispose={null}
             scale={radius}
             geometry={geometry}
         />

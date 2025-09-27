@@ -181,6 +181,7 @@ export default function Cloud(props) {
             userData={{ ignoreDepthWrite: true }}
             scale={scale}
             rotation-x={.2}
+            dispose={null}
         >
             <meshBasicMaterial
                 onBeforeCompile={onBeforeCompile}
