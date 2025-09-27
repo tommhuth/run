@@ -8,6 +8,7 @@ import path from "path"
 export default defineConfig({
     server: {
         port: 3000,
+        allowedHosts: ["huth.ngrok.app"]
     },
     assetsInclude: ["**/*.glb"],
     resolve: {

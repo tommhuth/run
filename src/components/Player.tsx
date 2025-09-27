@@ -1,26 +1,30 @@
 import { useBody } from "@data/cannon"
-import { store, setState, hasRequestMotionPermission, requestMotionPermission } from "@data/store"
+import { store, setState, requestMotionPermission, useStore } from "@data/store"
+import { clamp } from "@data/utils"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
-import { useMemo, useEffect, useState, useRef } from "react"
+import { useMemo, useEffect, useRef } from "react"
+import { damp } from "three/src/math/MathUtils.js"
 
 interface PlayerProps {
     radius?: number
     speed?: number
+    debug?: boolean
 }
 
 
-export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
+export default function Player({ radius = .2, speed = 3, debug = false }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
     let [ref, body] = useBody({
         mass: 2,
         definition: shape,
         position: [0, 1, 0],
     })
+    let statsRef = useRef<HTMLDivElement>(null)
     let motion = useMemo(() => ({ alpha: 0, beta: 0, gamma: 0 }), [])
     let keys = useMemo<Record<string, boolean>>(() => ({}), [])
-    let [motionAccess, setMotionAccess] = useState(hasRequestMotionPermission ? false : true)
+    let hasMotionAccess = useStore(i => i.hasMotionAccess)
 
     useEffect(() => {
         setState({ player: { mesh: ref.current, body } })
@@ -53,33 +57,27 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     }, [body])
 
     useEffect(() => {
-        if (motionAccess) {
+        if (hasMotionAccess) {
             return
         }
 
-        let pointerdown = async () => {
-            if (hasRequestMotionPermission) {
-                try {
-                    let permission = await requestMotionPermission()
-
-                    alert(permission)
-
-                    setMotionAccess(permission === "granted")
-                } catch {
-                    // nothing
-                }
+        let click = async () => {
+            try {
+                await requestMotionPermission()
+            } catch {
+                // nothing 
             }
         }
 
-        window.addEventListener("pointerdown", pointerdown)
+        window.addEventListener("click", click)
 
         return () => {
-            window.removeEventListener("pointerdown", pointerdown)
+            window.removeEventListener("click", click)
         }
-    }, [motionAccess])
+    }, [hasMotionAccess])
 
     useEffect(() => {
-        if (!motionAccess) {
+        if (!hasMotionAccess) {
             return
         }
 
@@ -94,7 +92,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         return () => {
             window.removeEventListener("deviceorientation", deviceorientation)
         }
-    }, [motionAccess])
+    }, [hasMotionAccess])
 
     useEffect(() => {
         let pointerdown = () => {
@@ -115,33 +113,37 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     useFrame((_, delta) => {
         let { state, path, player } = store.getState()
         let playerMesh = player.mesh
+        let buffer = 15
+        let deadzone = 15
+
+        if (state !== "running" || !playerMesh) {
+            return
+        }
 
         if (keys.KeyA) {
             body.velocity.x += 6 * delta
         } else if (keys.KeyD) {
             body.velocity.x -= 6 * delta
-        } else {
-            if (Math.abs(motion.gamma) > 10) {
-                body.velocity.x += (motion.gamma / 90) * .75 * delta
-            }
+        } else if (Math.abs(motion.gamma) > 0) {
+            let scale = clamp(Math.abs((motion.gamma - deadzone) / buffer), 0, 1)
+            let speed = 4
+            let gamma = (-motion.gamma * scale / 90) * speed * (motion.beta < 90 ? 1 : -1)
+
+            body.velocity.x = damp(body.velocity.x, gamma, 6, delta)
         }
 
+        let bottomBuffer = 3
+        let activeSection = path.find(({ size, position }) => {
+            return position[2] - size[2] / 2 < playerMesh.position.z
+                && position[2] + size[2] / 2 > playerMesh.position.z
+        })
 
+        if (!activeSection) {
+            return
+        }
 
-        if (playerMesh && state === "running") {
-            let bottomBuffer = 3
-            let currentSection = path.find(({ size, position }) => {
-                return position[2] - size[2] / 2 < playerMesh.position.z
-                    && position[2] + size[2] / 2 > playerMesh.position.z
-            })
-
-            if (!currentSection) {
-                return
-            }
-
-            if (currentSection.position[1] + currentSection.size[1] / 2 - bottomBuffer > playerMesh.position.y) {
-                setState({ state: "gameover" })
-            }
+        if (activeSection.position[1] + activeSection.size[1] / 2 - bottomBuffer > playerMesh.position.y) {
+            setState({ state: "gameover" })
         }
     })
 
@@ -153,33 +155,31 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         }
     })
 
-    let r = useRef<HTMLDivElement>(null)
-
     useFrame(() => {
-        if (!r.current) {
+        if (!statsRef.current) {
             return
         }
 
-        r.current.innerHTML = `
-            hasRequestMotionPermission=${JSON.stringify(hasRequestMotionPermission)}<br/>
-            motionAccess=${JSON.stringify(motionAccess)}<br/>
-            alpha=${motion.alpha.toFixed(5)} <br/>
-            beta=${motion.beta.toFixed(5)} <br/>
-            gamma=${(motion.gamma % 360).toFixed(5)}  
+        statsRef.current.innerHTML = ` 
+            gamma=${(motion.gamma).toFixed(5)}  <br/> 
+            beta=${(motion.beta).toFixed(5)}  
         `
     })
 
     return (
-        <>
-            <mesh ref={ref} castShadow receiveShadow>
-                <sphereGeometry args={[radius, 16, 16]} />
-                <meshPhongMaterial dithering color="red" />
-                <Html>
-                    <div ref={r}>
+        <mesh
+            ref={ref}
+            castShadow
+            receiveShadow
+        >
+            <sphereGeometry args={[radius, 16, 16]} />
+            <meshPhongMaterial dithering color="red" />
 
-                    </div>
+            {debug && (
+                <Html>
+                    <div ref={statsRef} />
                 </Html>
-            </mesh>
-        </>
+            )}
+        </mesh>
     )
-}
+} 

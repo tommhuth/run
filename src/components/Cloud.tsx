@@ -1,25 +1,23 @@
-
-import cloud from "@assets/textures/11.png"
+import cloudImage from "@assets/textures/11.png"
 import { useShader } from "@data/hooks"
-import { store } from "@data/store"
+import { store, useStore } from "@data/store"
 import { glsl } from "@data/utils"
 import random from "@huth/random"
 import { useTexture } from "@react-three/drei"
 import { useThree, useFrame } from "@react-three/fiber"
-import { useRef, useMemo, useLayoutEffect } from "react"
+import { useRef, useMemo, useLayoutEffect, useEffect } from "react"
 import { Mesh, Vector2, Vector3, MeshBasicMaterial, PlaneGeometry } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
+let geometry = new PlaneGeometry(12, 5, 1, 1)
 
-
-let g = new PlaneGeometry(12, 5, 1, 1)
-
-g.rotateY(Math.PI * 1)
+geometry.rotateY(Math.PI * 1)
 
 export default function Cloud(props) {
-    let text = useTexture(cloud)
+    let map = useTexture(cloudImage)
     let ref = useRef<Mesh>(null)
-    let { camera, gl } = useThree()
+    let { camera, viewport, size } = useThree()
+    let depthTexture = useStore(i => i.depthTexture)
     let { onBeforeCompile, uniforms } = useShader({
         uniforms: {
             cameraNear: {
@@ -29,7 +27,7 @@ export default function Cloud(props) {
                 value: camera.far,
             },
             resolution: {
-                value: gl.getSize(new Vector2()).multiplyScalar(gl.getPixelRatio()),
+                value: new Vector2(),
             },
             playerPosition: {
                 value: new Vector3()
@@ -40,8 +38,8 @@ export default function Cloud(props) {
             projectionMatrixInverse: {
                 value: camera.projectionMatrixInverse
             },
-            tDepth: {
-                value: props.depthTexture,
+            depthTexture: {
+                value: depthTexture,
             }
         },
         shared: glsl` 
@@ -52,11 +50,11 @@ export default function Cloud(props) {
 			uniform vec3 playerPosition;
 			uniform mat4 cameraMatrixWorld;
 			uniform mat4 projectionMatrixInverse;
-			uniform sampler2D tDepth; 
+			uniform sampler2D depthTexture; 
 
             // reconstruct linear view-space Z from depth texture
             float getWorldZ(vec2 uv) {
-                float depth = texture2D(tDepth, uv).r;
+                float depth = texture2D(depthTexture, uv).r;
 
                 // depth -> NDC z [-1..1]
                 float z = depth * 2.0 - 1.0;
@@ -82,8 +80,7 @@ export default function Cloud(props) {
 
                 return alpha;
             }
- 
-
+  
             float smoothAlpha(vec2 uv, float baseAlpha, float radius) {
                 float texel = 1.0 / resolution.x;
 
@@ -128,54 +125,68 @@ export default function Cloud(props) {
                 gl_FragColor.a *= (fadein(depthWorld, worldPos.z, minDist, fadeDist)) * 1.;  
                 gl_FragColor.a *= clamp((worldPos.z - playerPosition.z - 1.) / 6. , 0., 1.);  
 
-                gl_FragColor.a *= smoothAlpha(uv, gl_FragColor.a, 6.); 
+                gl_FragColor.a *= smoothAlpha(uv, gl_FragColor.a, 16.); 
  
             `
         }
     })
+    let scale = useMemo(() => {
+        let base = random.float(1, 1.5)
 
-
+        return [
+            random.pick(-1, 1) * base,
+            random.pick(-1, 1) * base,
+            random.pick(-1, 1) * base,
+        ]
+    }, [])
     let speed = useMemo(() => random.pick(.1, .25), [])
-    let mat = useRef<MeshBasicMaterial>(null)
+    let material = useRef<MeshBasicMaterial>(null)
+
+    useEffect(() => {
+        uniforms.depthTexture.value = depthTexture
+        uniforms.resolution.value.set(size.width, size.height)
+            .multiplyScalar(viewport.dpr)
+    }, [size, depthTexture])
 
     useLayoutEffect(() => {
-        mat.current.opacity = 0
+        if (!material.current) {
+            return
+        }
+
+        material.current.opacity = 0
     }, [])
 
-    useFrame(({ gl, scene, camera, clock }, delta) => {
-        uniforms.tDepth.needsUpdate = true
-        uniforms.cameraMatrixWorld.value.copy(camera.matrixWorld)
-        uniforms.cameraMatrixWorld.needsUpdate = true
+    useFrame(({ camera }) => {
+        let { player: { mesh } } = store.getState()
 
-        ref.current.position.x -= delta * speed
-
-        mat.current.opacity = damp(mat.current.opacity, 1, .35, delta)
-
-        if (store.getState().player.mesh) {
+        if (mesh) {
             uniforms.playerPosition.value.copy(camera.position)
-            uniforms.playerPosition.needsUpdate = true
         }
     })
 
-    let sx = useMemo(() => random.pick(-1, 1), [])
-    let sx2 = useMemo(() => random.pick(-1, 1), [])
-    let sx3 = useMemo(() => random.pick(-1, 1), [])
-    let scale = useMemo(() => random.float(1, 1.5), [])
+    useFrame((state, delta) => {
+        if (!ref.current || !material.current) {
+            return
+        }
+
+        material.current.opacity = damp(material.current.opacity, 1, .35, delta)
+        ref.current.position.x -= delta * speed
+    })
 
     return (
         <mesh
             {...props}
-            geometry={g}
+            geometry={geometry}
             ref={ref}
-            userData={{ cloud: true }}
-            scale={[sx * scale, sx3 * scale, sx2 * scale]}
+            userData={{ ignoreDepthWrite: true }}
+            scale={scale}
             rotation-x={.2}
         >
             <meshBasicMaterial
                 onBeforeCompile={onBeforeCompile}
                 transparent
-                map={text}
-                ref={mat}
+                map={map}
+                ref={material}
                 attach="material"
                 color="white"
                 fog={false}

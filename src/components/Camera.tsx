@@ -2,6 +2,7 @@ import { store } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useLayoutEffect, useRef } from "react"
 import { Tuple3 } from "src/types/global"
+import { damp } from "three/src/math/MathUtils.js"
 
 export default function Camera() {
     let { camera } = useThree()
@@ -11,7 +12,6 @@ export default function Camera() {
         camera.position.set(0, 3, -3)
         camera.lookAt(0, 0, 6)
     }, [camera])
-
 
     useFrame(() => {
         let { state, path, player: { body } } = store.getState()
@@ -31,11 +31,14 @@ export default function Camera() {
         ]
     })
 
+    useFrame((state, delta) => {
+        let lambdas = [4, 2, 1.5]
 
-    useFrame(() => {
-        camera.position.x += (cameraTarget.current[0] - camera.position.x) * .1
-        camera.position.y += (cameraTarget.current[1] - camera.position.y) * .025
-        camera.position.z += (cameraTarget.current[2] - camera.position.z) * .05
+        for (let i = 0; i < 3; i++) {
+            let value = damp(camera.position.getComponent(i), cameraTarget.current[i], lambdas[i], delta)
+
+            camera.position.setComponent(i, value)
+        }
     })
 
     return null

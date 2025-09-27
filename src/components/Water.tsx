@@ -73,7 +73,7 @@ export default function Water({ position = [0, 0, 0], size = 100 }) {
                     }}
                     args={[size, size * 2]}
                 />
-                <meshBasicMaterial
+                <meshPhongMaterial
                     attach="material"
                     color={deepcolor}
                     transparent

@@ -4,7 +4,6 @@ import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
 import { useMemo, useState, Suspense, useRef } from "react"
-import { Fragment } from "react"
 import { gray } from "../materials"
 import { Tuple3 } from "../types/global"
 import { BoxGeometry } from "three"
@@ -28,7 +27,6 @@ export function useFoam(scale = [1, 1, 1], rot = 0, maxr = .5) {
     useFrame((state, delta) => {
         ref.current.scale.x = scale[0] + Math.cos(t.current) * .1
         ref.current.scale.z = scale[2] + Math.sin(t.current) * .075
-
         ref.current.rotation.y = rot + Math.cos(t.current * .25) * maxr
 
         t.current += delta
@@ -42,13 +40,12 @@ export default function PathSection({
     id,
     size: [width, height, depth],
     position: [x, y, z],
-    depthTexture,
 }: PathSectionProps) {
-    let s = useMemo(() => new Box(new Vec3(width / 2, height / 2, depth / 2)), [])
+    let definition = useMemo(() => new Box(new Vec3(width / 2, height / 2, depth / 2)), [])
     let rotation = useMemo(() => random.float(-.35, .35), [])
-    let [ref, body] = useBody({
+    let [sectionRef, body] = useBody({
         mass: 0,
-        definition: s,
+        definition,
         position: [x, fixed ? y : y - 10, z],
         rotation: [0, rotation, 0]
     })
@@ -68,19 +65,20 @@ export default function PathSection({
             }
         })
     }, [])
-    let ref2 = useFoam([width + .5, .01, depth + .5], rotation, .1)
+    let foamRef = useFoam([width + .5, .01, depth + .5], rotation, .1)
 
     useFrame(() => {
         body.position.y += (y - body.position.y) * .1
 
-
-        setReady(y - body.position.y < 2.5)
+        if (!ready) {
+            setReady(y - body.position.y < 2.5)
+        }
     })
 
     useFrame(({ camera }) => {
-        let buffer = 0
+        let backwardsBuffer = 3
 
-        if (camera.position.z - buffer > z + depth / 2) {
+        if (camera.position.z - backwardsBuffer > z + depth / 2) {
             removePathSection(id)
         }
     })
@@ -96,7 +94,7 @@ export default function PathSection({
                 )
             })}
             <mesh
-                ref={ref}
+                ref={sectionRef}
                 castShadow
                 receiveShadow
                 geometry={box}
@@ -108,16 +106,14 @@ export default function PathSection({
                 rotation-y={rotation}
                 scale={[width + .5, .01, depth + .5]}
                 geometry={box}
-                ref={ref2}
+                ref={foamRef}
             >
                 <meshBasicMaterial color="white" />
             </mesh>
 
             <Suspense>
                 {Array.from({ length: 5 }).map((i, index) => (
-                    <Fragment key={index}>
-                        <Rock1 position={[x, y, z]} depthTexture={depthTexture} />
-                    </Fragment>
+                    <Rock1 key={index} position={[x, y, z]} />
                 ))}
             </Suspense>
         </>

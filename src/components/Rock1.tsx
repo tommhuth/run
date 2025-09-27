@@ -12,11 +12,10 @@ import { useFoam } from "./PathSection"
 
 export function Rock1({
     position: [x, y, z],
-    depthTexture
 }: { position: Tuple3 }) {
-    const { nodes } = useGLTF(model)
+    let { nodes } = useGLTF(model)
     let should = useMemo(() => random.boolean(.5), [])
-    const { position, damping, scale, rotation } = useMemo(() => {
+    let { position, damping, scale, rotation } = useMemo(() => {
         let scale = random.float(.5, 1.5)
 
         return {
@@ -51,8 +50,11 @@ export function Rock1({
         <>
             {should && (
                 <Cloud
-                    position={[position[0], position[1] + 7, position[2] + 1 - off]}
-                    depthTexture={depthTexture}
+                    position={[
+                        position[0],
+                        position[1] + 7,
+                        position[2] + 1 - off
+                    ]}
                 />
             )}
             <group
@@ -75,9 +77,14 @@ export function Rock1({
                 position-y={-4.5}
                 scale={scale}
                 ref={ref2}
+                receiveShadow
             >
                 <cylinderGeometry args={[1.25, 1.25, .01, edge, 1]} />
-                <meshBasicMaterial color="white" />
+                <meshLambertMaterial
+                    emissive={"white"}
+                    emissiveIntensity={.25}
+                    color="white"
+                />
             </mesh>
         </>
     )
