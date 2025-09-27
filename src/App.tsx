@@ -14,7 +14,6 @@ export default function App() {
     return (
         <>
             <fogExp2 attach={"fog"} args={["white", .04]} />
-            <axesHelper visible={false} scale={5} position-y={.55} />
             <color args={["white"]} attach={"background"} />
 
             <Water />

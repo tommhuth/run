@@ -3,13 +3,17 @@ import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
 import { useMemo, useEffect } from "react"
-import { Tuple3 } from "src/types/global"
+import { gray } from "../materials"
+import { Tuple3 } from "../types/global"
+import { SphereGeometry } from "three"
 
 interface RockProps {
     radius: number
     position: Tuple3
     ready?: boolean
 }
+
+const geometry = new SphereGeometry(1)
 
 export default function Rock({
     radius,
@@ -33,17 +37,21 @@ export default function Rock({
     useFrame(() => {
         if (!ready) {
             body.position.y += (y - body.position.y) * .1
-
         }
+
         body.velocity.x *= .99
         body.velocity.z *= .99
     })
 
     return (
-        <mesh ref={ref} castShadow receiveShadow>
-            <sphereGeometry args={[radius]} />
-            <meshPhongMaterial color="gray" />
-        </mesh>
+        <mesh
+            ref={ref}
+            castShadow
+            receiveShadow
+            material={gray}
+            scale={radius}
+            geometry={geometry}
+        />
     )
 }
 

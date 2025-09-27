@@ -12,7 +12,6 @@ export default function DepthTexturex() {
         Math.ceil(size * viewport.dpr),
         Math.ceil(size * viewport.dpr * (1 / viewport.aspect))
     ], [viewport])
-
     let fbo = useFBO(width, height, {
         stencilBuffer: false,
         depthBuffer: true,

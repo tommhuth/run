@@ -7,7 +7,7 @@ import { Mesh } from "three"
 
 export const deepcolor = "darkblue"
 
-export default function Water({ position = [0, 0, 0], size = 100 }) {
+export default function Water({ size = 100 }: { size?: number }) {
     let ref = useRef<Mesh>(null)
     let { onBeforeCompile } = useShader({
         uniforms: {
@@ -75,10 +75,9 @@ export default function Water({ position = [0, 0, 0], size = 100 }) {
                 />
                 <meshPhongMaterial
                     attach="material"
-                    color={deepcolor}
+                    color={"#009163"}
                     transparent
                     opacity={.4}
-                //onBeforeCompile={onBeforeCompile}
                 />
             </mesh>
         </group>

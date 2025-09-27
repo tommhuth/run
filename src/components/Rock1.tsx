@@ -9,6 +9,10 @@ import { damp } from "three/src/math/MathUtils.js"
 import model from "@assets/models/rock1.glb"
 import Cloud from "./Cloud"
 import { useFoam } from "./PathSection"
+import { CylinderGeometry, MeshLambertMaterial } from "three"
+
+let white = new MeshLambertMaterial({ emissive: "#fff", emissiveIntensity: .25 })
+let cylinder = new CylinderGeometry(1, 1, .01, 7, 1)
 
 export function Rock1({
     position: [x, y, z],
@@ -29,21 +33,18 @@ export function Rock1({
             damping: random.float(2, 7) * (2 - scale)
         }
     }, [x, y, z])
-
-    let ref2 = useFoam([scale, scale, scale])
-    let ref = useRef(null)
-
+    let rockRef = useRef(null)
+    let foamRef = useFoam([scale * 1.25, scale * 1.25, scale * 1.25])
 
     useLayoutEffect(() => {
-        ref.current.position.y = y - 10
+        rockRef.current.position.y = y - 10
     }, [])
 
     useFrame((state, delta) => {
-        ref.current.position.y = damp(ref.current.position.y, position[1], damping, delta)
+        rockRef.current.position.y = damp(rockRef.current.position.y, position[1], damping, delta)
     })
 
 
-    let edge = useMemo(() => random.integer(6, 8), [])
     let off = useMemo(() => random.float(.1, .5), [])
 
     return (
@@ -63,7 +64,7 @@ export function Rock1({
                 scale={scale}
                 rotation-y={rotation}
                 dispose={null}
-                ref={ref}
+                ref={rockRef}
             >
                 <mesh
                     castShadow
@@ -75,17 +76,12 @@ export function Rock1({
             <mesh
                 position={position}
                 position-y={-4.5}
-                scale={scale}
-                ref={ref2}
+                scale={scale * 1.25}
+                ref={foamRef}
                 receiveShadow
-            >
-                <cylinderGeometry args={[1.25, 1.25, .01, edge, 1]} />
-                <meshLambertMaterial
-                    emissive={"white"}
-                    emissiveIntensity={.25}
-                    color="white"
-                />
-            </mesh>
+                material={white}
+                geometry={cylinder}
+            />
         </>
     )
 }

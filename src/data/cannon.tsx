@@ -47,7 +47,7 @@ function useCannonBody({
     angularDamping,
     velocity = [0, 0, 0],
     userData = {},
-    allowSleep = false,
+    allowSleep = true,
 }: BaseBodyOptions) {
     const body = useMemo(() => {
         const body = new Body({

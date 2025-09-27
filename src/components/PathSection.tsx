@@ -6,7 +6,7 @@ import { Box, Vec3 } from "cannon-es"
 import { useMemo, useState, Suspense, useRef } from "react"
 import { gray } from "../materials"
 import { Tuple3 } from "../types/global"
-import { BoxGeometry } from "three"
+import { BoxGeometry, Object3D } from "three"
 import Rock from "./Rock"
 import { Rock1 } from "./Rock1"
 
@@ -21,10 +21,14 @@ interface PathSectionProps {
 }
 
 export function useFoam(scale = [1, 1, 1], rot = 0, maxr = .5) {
-    let ref = useRef(null)
+    let ref = useRef<Object3D>(null)
     let t = useRef(Math.random() * 10)
 
     useFrame((state, delta) => {
+        if (!ref.current) {
+            return
+        }
+
         ref.current.scale.x = scale[0] + Math.cos(t.current) * .1
         ref.current.scale.z = scale[2] + Math.sin(t.current) * .075
         ref.current.rotation.y = rot + Math.cos(t.current * .25) * maxr
@@ -76,7 +80,7 @@ export default function PathSection({
     })
 
     useFrame(({ camera }) => {
-        let backwardsBuffer = 3
+        let backwardsBuffer = 2
 
         if (camera.position.z - backwardsBuffer > z + depth / 2) {
             removePathSection(id)

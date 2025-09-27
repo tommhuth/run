@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@huth/random": "^6.0.2",
+        "@react-spring/core": "^10.0.3",
         "@react-three/drei": "^10.7.6",
         "@react-three/fiber": "^9.3.0",
         "@types/node": "^24.3.2",

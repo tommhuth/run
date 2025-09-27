@@ -5,15 +5,16 @@ import { useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import PathSection from "./PathSection"
 
+let counter = 0
+
 export default function Path() {
     let path = useStore(i => i.path)
     let timer = useRef(0)
 
-    useFrame(({ camera, clock }, delta) => {
+    useFrame(({ camera }, delta) => {
         let last = path[0]
         let forwardBuffer = 25
         let checkInterval = 250
-        let time = clock.getElapsedTime()
 
         if (
             last
@@ -22,12 +23,13 @@ export default function Path() {
         ) {
             let size: Tuple3 = [random.integer(4, 6), 20, random.integer(4, 8)]
             let position: Tuple3 = [
-                random.integer(-1, 1) + Math.sin(time * .45) * 2,
-                -10 + Math.sin(time * .4) * 3,
+                random.integer(-1, 1) + Math.sin(counter * .45) * 2,
+                -10 + Math.sin(counter * .4) * 3,
                 last.position[2] + last.size[2] / 2 + size[2] / 2
             ]
 
             timer.current = 0
+            counter++
             addPathSection(size, position)
         } else {
             timer.current += delta * 1000

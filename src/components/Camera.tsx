@@ -1,12 +1,21 @@
 import { store } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
-import { useLayoutEffect, useRef } from "react"
+import { useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { damp } from "three/src/math/MathUtils.js"
+import { config, SpringValue } from "@react-spring/core"
+
 
 export default function Camera() {
     let { camera } = useThree()
     let cameraTarget = useRef<Tuple3>([0, 3, -3])
+    let dir = useMemo(() => {
+        return {
+            x: new SpringValue(0, { config: config.stiff }),
+            y: new SpringValue(0, { config: config.molasses }),
+            z: new SpringValue(0, { config: config.gentle }),
+        }
+    }, [])
 
     useLayoutEffect(() => {
         camera.position.set(0, 3, -3)
@@ -32,12 +41,11 @@ export default function Camera() {
     })
 
     useFrame((state, delta) => {
-        let lambdas = [4, 2, 1.5]
+        let axs = ["x", "y", "z"]
 
-        for (let i = 0; i < 3; i++) {
-            let value = damp(camera.position.getComponent(i), cameraTarget.current[i], lambdas[i], delta)
-
-            camera.position.setComponent(i, value)
+        for (let [key, value] of Object.entries(dir)) {
+            value.start(cameraTarget.current[axs.indexOf(key)])
+            camera.position[key] = value.get()
         }
     })
 
