@@ -141,9 +141,11 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
         }
 
         window.addEventListener("click", click, { passive: true })
+        window.addEventListener("touchstart", click, { passive: true })
 
         return () => {
             window.removeEventListener("click", click)
+            window.removeEventListener("touchstart", click)
         }
     }, [])
 
@@ -210,6 +212,7 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
             ref={meshRef}
             castShadow
             receiveShadow
+            onClick={() => alert("test")}
         >
             <sphereGeometry args={[radius, 24, 24]} />
             <meshPhongMaterial dithering color="red" name="player" />

@@ -9,7 +9,8 @@ export default function Ui() {
                 style={{
                     position: "absolute",
                     left: "2em",
-                    bottom: "3em"
+                    bottom: "3em",
+                    background: "red"
                 }}
             >
                 Run
@@ -28,7 +29,7 @@ export default function Ui() {
                     translate: "-50% 0",
                     maxWidth: "75%",
                     width: "100%",
-                    zIndex: 100
+                    zIndex: 100,
                 }}
             >
                 You need to allow motion access, reload and try again
@@ -42,7 +43,12 @@ function Debug() {
 
     return (
         <div
-            style={{ position: "absolute", bottom: "100%", marginBottom: "1em" }}
+            style={{
+                position: "absolute",
+                bottom: "100%",
+                marginBottom: "1em",
+                background: "red"
+            }}
         >
             <div>{state}</div>
         </div>
