@@ -212,7 +212,7 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
             receiveShadow
         >
             <sphereGeometry args={[radius, 24, 24]} />
-            <meshPhongMaterial dithering color="red" name="player" />
+            <meshPhongMaterial dithering color="#0ff" name="player" />
 
             {Config.DEBUG && (
                 <Html>

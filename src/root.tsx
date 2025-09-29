@@ -13,7 +13,7 @@ function getConfiguration() {
             position: [0, 0, 0],
         },
         flat: true,
-        shadows: true,
+        shadows: "variance",
         dpr: clamp(window.devicePixelRatio * .75, 1, 2),
         size: {
             width: window.innerWidth,
