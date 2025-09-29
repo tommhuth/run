@@ -19,7 +19,7 @@
 
 html,
 body {
-    height: 100%;
+    height: calc(100% + env(safe-area-inset-top)) !important;
     overflow: hidden;
     background-color: var(--background-color);
 }
