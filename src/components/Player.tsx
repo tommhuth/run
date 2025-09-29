@@ -144,7 +144,6 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
 
         return () => {
             window.removeEventListener("click", click)
-            window.removeEventListener("touchstart", click)
         }
     }, [])
 

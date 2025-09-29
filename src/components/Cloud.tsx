@@ -189,7 +189,7 @@ export default function Cloud({
                 transparent
                 map={map}
                 name="cloud"
-                color="red"
+                color="white"
                 fog={false}
                 depthWrite={false}
                 dispose={null}

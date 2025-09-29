@@ -10,7 +10,6 @@ export default function Ui() {
                     position: "absolute",
                     left: "2em",
                     bottom: "3em",
-                    background: "red"
                 }}
             >
                 Run
@@ -47,7 +46,6 @@ function Debug() {
                 position: "absolute",
                 bottom: "100%",
                 marginBottom: "1em",
-                background: "red"
             }}
         >
             <div>{state}</div>
