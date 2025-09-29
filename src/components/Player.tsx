@@ -93,9 +93,9 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
 
     useEffect(() => {
         let pointerdown = () => {
-            let { state, hasMotionAccess } = store.getState()
+            let { state } = store.getState()
 
-            if (["gameover", "intro"].includes(state) && hasMotionAccess) {
+            if (["gameover", "intro"].includes(state)) {
                 setState({ state: "running" })
             }
         }
