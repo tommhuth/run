@@ -5,7 +5,7 @@ import { DirectionalLight } from "three"
 
 export default function Lights() {
     let shadowLightRef = useRef<DirectionalLight>(null)
-    let { scene } = useThree()
+    let { scene, viewport } = useThree()
     let time = useRef(0)
     let forwardOffset = 10
     let targetPosition = [10, -20, 6]
@@ -42,7 +42,7 @@ export default function Lights() {
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                shadow-mapSize={[512, 512]}
+                shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
                 shadow-camera-near={-10} // z
                 shadow-camera-far={20}
                 shadow-camera-left={-15} // x back/forwards
