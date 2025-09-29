@@ -8,13 +8,11 @@ import { clamp } from "@data/utils"
 function getConfiguration() {
     return {
         camera: {
-            //  zoom: 1,
             near: .01,
             far: 150,
             position: [0, 0, 0],
         },
         flat: true,
-        //orthographic: false,
         shadows: true,
         dpr: clamp(window.devicePixelRatio * .75, 1, 2),
         size: {
