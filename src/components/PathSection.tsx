@@ -3,13 +3,13 @@ import { removePathSection } from "@data/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
-import { useMemo, useState, Suspense, useRef, startTransition } from "react"
+import { useMemo, useState, Suspense, useRef, startTransition, memo } from "react"
 import { gray, white } from "../materials"
 import { Tuple3 } from "../types/global"
 import { BoxGeometry, Object3D } from "three"
 import Rock from "./Rock"
-import { Rock1 } from "./Rock1"
 import { ndelta } from "@data/utils"
+import Rock1 from "./Rock1"
 
 const box = new BoxGeometry(1, 1, 1, 1, 1, 1)
 
@@ -40,7 +40,7 @@ export function useFoam(scale = [1, 1, 1], rot = 0, maxr = .5) {
     return ref
 }
 
-export default function PathSection({
+function PathSection({
     fixed,
     id,
     size: [width, height, depth],
@@ -105,6 +105,7 @@ export default function PathSection({
                 geometry={box}
                 scale={[width, height, depth]}
                 material={gray}
+                dispose={null}
             />
             <mesh
                 position={[x, -4.5, z]}
@@ -113,6 +114,7 @@ export default function PathSection({
                 geometry={box}
                 ref={foamRef}
                 material={white}
+                dispose={null}
             />
 
             <Suspense>
@@ -124,4 +126,4 @@ export default function PathSection({
     )
 }
 
-
+export default memo(PathSection)

@@ -1,7 +1,7 @@
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { useMemo, useRef, useLayoutEffect } from "react"
+import { useMemo, useRef, useLayoutEffect, memo } from "react"
 import { gray, white } from "../materials"
 import { GLTFModel, Tuple3 } from "../types/global"
 import { damp } from "three/src/math/MathUtils.js"
@@ -13,7 +13,7 @@ import { ndelta } from "@data/utils"
 
 let cylinder = new CylinderGeometry(1, 1, .01, 7, 1)
 
-export function Rock1({
+function Rock1({
     position: [x, y, z],
 }: { position: Tuple3 }) {
     let { nodes } = useGLTF(model) as unknown as GLTFModel<["rock1"]>
@@ -58,7 +58,6 @@ export function Rock1({
                     position-z={position[2]}
                     scale={scale}
                     rotation-y={rotation}
-                    dispose={null}
                     ref={rockRef}
                 >
                     <mesh
@@ -66,6 +65,7 @@ export function Rock1({
                         receiveShadow
                         geometry={nodes.rock1.geometry}
                         material={gray}
+                        dispose={null}
                     />
                 </group>
 
@@ -83,3 +83,5 @@ export function Rock1({
         </>
     )
 }
+
+export default memo(Rock1)

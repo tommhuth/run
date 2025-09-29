@@ -1,17 +1,12 @@
 import { useBody } from "@data/cannon"
 import Config from "@data/Config"
 import { store, setState, requestMotionPermission, useStore } from "@data/store"
-import { ndelta } from "@data/utils"
+import { clamp, ndelta } from "@data/utils"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
-import { useMemo, useEffect, useRef } from "react"
+import { useMemo, useEffect, useRef, startTransition } from "react"
 
-interface PlayerProps {
-    radius?: number
-    speed?: number
-    debug?: boolean
-}
 
 interface Motion {
     alpha: number
@@ -24,18 +19,24 @@ interface Motion {
 // this is sick? https://stackoverflow.com/a/42799567 
 // https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Orientation_and_motion_data_explained
 // axis move with device so raw values alone doesn’t map cleanly to Z rotation
-// this fixes that: project beta & gamma onto a plane perpendicular to the forward axis (Z)
-function getSpin(e: Motion) {
+// this fixes that: project beta - gamma onto a plane perpendicular to the forward axis (Z)
+function getRotationZ(e: Motion) {
     let betaR = e.beta / 180 * Math.PI
     let gammaR = e.gamma / 180 * Math.PI
-    let spinR = Math.atan2(Math.cos(betaR) * Math.sin(gammaR), Math.sin(betaR))
+    let rotationZ = Math.atan2(Math.cos(betaR) * Math.sin(gammaR), Math.sin(betaR))
 
-    return spinR * 180 / Math.PI
+    return rotationZ * 180 / Math.PI
 }
 
-const _speed = new Vec3()
+const _forwardSpeed = new Vec3()
 
-export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
+interface PlayerProps {
+    radius?: number
+    forwardSpeed?: number
+    debug?: boolean
+}
+
+export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
     let [meshRef, body] = useBody({
         mass: 2,
@@ -74,7 +75,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
 
         window.addEventListener("keydown", keydown)
         window.addEventListener("keyup", keyup)
-        window.addEventListener("pointerdown", pointerdown)
+        window.addEventListener("pointerdown", pointerdown, { passive: true })
 
         return () => {
             window.removeEventListener("keydown", keydown)
@@ -96,7 +97,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             }
         }
 
-        window.addEventListener("click", click)
+        window.addEventListener("click", click, { passive: true })
 
         return () => {
             window.removeEventListener("click", click)
@@ -109,13 +110,17 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         }
 
         let deviceorientation = (e: DeviceOrientationEvent) => {
+            if (e.alpha === null) {
+                return
+            }
+
             motion.alpha = e.alpha || 0
             motion.beta = e.beta || 0
             motion.gamma = e.gamma || 0
 
             if (motion.initialSpin === null) {
                 // get initial orientation, average over x seconds instead?
-                motion.initialSpin = getSpin(motion)
+                motion.initialSpin = getRotationZ(motion)
             }
         }
 
@@ -127,7 +132,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     }, [hasMotionAccess])
 
     useEffect(() => {
-        let pointerdown = () => {
+        let click = () => {
             let { state } = store.getState()
 
             if (["gameover", "intro"].includes(state)) {
@@ -135,10 +140,10 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             }
         }
 
-        window.addEventListener("pointerdown", pointerdown)
+        window.addEventListener("click", click, { passive: true })
 
         return () => {
-            window.removeEventListener("pointerdown", pointerdown)
+            window.removeEventListener("click", click)
         }
     }, [])
 
@@ -152,8 +157,8 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             return
         }
 
-        if (body.velocity.length() < speed) {
-            body.applyForce(_speed.set(0, 0, speed))
+        if (body.velocity.length() < forwardSpeed) {
+            body.applyForce(_forwardSpeed.set(0, 0, forwardSpeed))
         }
 
         body.wakeUp()
@@ -163,9 +168,14 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         } else if (keys.KeyD) {
             body.velocity.x -= 6 * nd
         } else if (motion.initialSpin !== null) {
-            let spin = motion.initialSpin - getSpin(motion)
+            let deltaRotation = motion.initialSpin - getRotationZ(motion)
+            let deadzone = 2
+            let fadedist = 2
+            let scale = clamp((Math.abs(deltaRotation) - deadzone) / fadedist, 0, 1)
+            let horizontalSpeed = 10
+            let range = 60
 
-            body.velocity.x = spin
+            body.velocity.x = clamp(deltaRotation / range, -1, 1) * scale * horizontalSpeed
         }
 
         let bottomBuffer = 3
@@ -201,8 +211,9 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             castShadow
             receiveShadow
         >
-            <sphereGeometry args={[radius, 16, 16]} />
+            <sphereGeometry args={[radius, 24, 24]} />
             <meshPhongMaterial dithering color="red" name="player" />
+
             {Config.DEBUG && (
                 <Html>
                     <div ref={debugRef} />

@@ -17,6 +17,7 @@ interface PathSection {
 interface Store {
     state: "intro" | "gameover" | "running"
     hasMotionAccess: boolean
+    motionAccessDenied: boolean
     path: PathSection[]
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
@@ -38,7 +39,10 @@ export async function requestMotionPermission() {
     if (event.requestPermission) {
         let permission = await event.requestPermission()
 
-        setState({ hasMotionAccess: permission === "granted" })
+        setState({
+            hasMotionAccess: permission === "granted",
+            motionAccessDenied: permission === "denied"
+        })
 
         return permission
     }
@@ -74,7 +78,7 @@ const store = create(
         state: "intro",
         hasMotionAccess: hasRequestMotionPermission ? false : true,
         depthTexture: null,
-
+        motionAccessDenied: false,
         materials: {} as Store["materials"],
         player: {
             mesh: null,

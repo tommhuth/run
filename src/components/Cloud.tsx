@@ -1,10 +1,11 @@
 import cloudImage from "@assets/textures/11.png"
 import { useShader } from "@data/hooks"
 import { store, useStore } from "@data/store"
-import { glsl } from "@data/utils"
+import { glsl, ndelta } from "@data/utils"
 import { useTexture } from "@react-three/drei"
 import { useThree, useFrame } from "@react-three/fiber"
-import { useRef, useLayoutEffect, useEffect, ComponentPropsWithoutRef } from "react"
+import { useRef, useLayoutEffect, useEffect } from "react"
+import { Tuple3 } from "src/types/global"
 import { Mesh, Vector2, Vector3, PlaneGeometry, BufferGeometry, Material } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
@@ -12,12 +13,20 @@ let geometry = new PlaneGeometry(12, 5, 1, 1)
 
 geometry.rotateY(Math.PI * 1)
 
+export interface CloudProps {
+    damping: number
+    speed: number
+    position: Tuple3
+    scale?: number
+    id: string
+}
+
 export default function Cloud({
     speed,
     position,
     damping,
-    ...props
-}: ComponentPropsWithoutRef<"group"> & { damping: number; speed: number }) {
+    scale,
+}: CloudProps) {
     let map = useTexture(cloudImage)
     let ref = useRef<Mesh<BufferGeometry, Material>>(null)
     let { camera, viewport, size } = useThree()
@@ -162,27 +171,28 @@ export default function Cloud({
             return
         }
 
-        ref.current.material.opacity = damp(ref.current.material.opacity, 1, damping, delta)
-        ref.current.position.x -= delta * speed
+        ref.current.material.opacity = damp(ref.current.material.opacity, 1, damping, ndelta(delta))
+        ref.current.position.x -= ndelta(delta) * speed
     })
 
     return (
         <mesh
-            {...props}
             position={position}
             geometry={geometry}
             ref={ref}
             userData={{ ignoreDepthWrite: true }}
             rotation-x={.2}
+            scale={scale}
         >
             <meshBasicMaterial
                 onBeforeCompile={onBeforeCompile}
                 transparent
                 map={map}
                 name="cloud"
-                color="white"
+                color="red"
                 fog={false}
                 depthWrite={false}
+                dispose={null}
             />
         </mesh>
     )
