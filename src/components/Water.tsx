@@ -59,6 +59,7 @@ export default function Water({ size = 100 }: { size?: number }) {
                     onBeforeCompile={onBeforeCompile}
                     color={deepcolor}
                     fog={false}
+                    name="waterbackground"
                 />
             </mesh>
             <mesh
@@ -78,6 +79,7 @@ export default function Water({ size = 100 }: { size?: number }) {
                     color={"#009163"}
                     transparent
                     opacity={.4}
+                    name="water"
                 />
             </mesh>
         </group>

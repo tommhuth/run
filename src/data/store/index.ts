@@ -2,9 +2,11 @@ import random from "@huth/random"
 import { Body } from "cannon-es"
 import { startTransition } from "react"
 import { Tuple3 } from "src/types/global"
-import { DepthTexture, Mesh } from "three"
+import { DepthTexture, Material, Mesh } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
+
+export type MaterialName = "cloud"
 
 interface PathSection {
     id: string
@@ -17,6 +19,7 @@ interface Store {
     hasMotionAccess: boolean
     path: PathSection[]
     depthTexture: null | DepthTexture
+    materials: Record<MaterialName, Material>
     player: {
         mesh: Mesh | null
         body: Body | null
@@ -71,6 +74,8 @@ const store = create(
         state: "intro",
         hasMotionAccess: hasRequestMotionPermission ? false : true,
         depthTexture: null,
+
+        materials: {} as Store["materials"],
         player: {
             mesh: null,
             body: null
@@ -85,6 +90,17 @@ const store = create(
         ]
     }))
 )
+
 const useStore = store
+
+
+export function setMaterial(name: MaterialName, material: Material) {
+    store.setState({
+        materials: {
+            ...store.getState().materials,
+            [name]: material,
+        }
+    })
+}
 
 export { store, useStore }

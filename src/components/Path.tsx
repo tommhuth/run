@@ -4,6 +4,7 @@ import { useFrame } from "@react-three/fiber"
 import { useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import PathSection from "./PathSection"
+import { ndelta } from "@data/utils"
 
 let counter = 0
 
@@ -32,7 +33,7 @@ export default function Path() {
             counter++
             addPathSection(size, position)
         } else {
-            timer.current += delta * 1000
+            timer.current += ndelta(delta) * 1000
         }
     })
 

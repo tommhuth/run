@@ -3,12 +3,13 @@ import { removePathSection } from "@data/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
-import { useMemo, useState, Suspense, useRef } from "react"
+import { useMemo, useState, Suspense, useRef, startTransition } from "react"
 import { gray, white } from "../materials"
 import { Tuple3 } from "../types/global"
 import { BoxGeometry, Object3D } from "three"
 import Rock from "./Rock"
 import { Rock1 } from "./Rock1"
+import { ndelta } from "@data/utils"
 
 const box = new BoxGeometry(1, 1, 1, 1, 1, 1)
 
@@ -33,7 +34,7 @@ export function useFoam(scale = [1, 1, 1], rot = 0, maxr = .5) {
         ref.current.scale.z = scale[2] + Math.sin(t.current) * .075
         ref.current.rotation.y = rot + Math.cos(t.current * .25) * maxr
 
-        t.current += delta
+        t.current += ndelta(delta)
     })
 
     return ref
@@ -75,7 +76,7 @@ export default function PathSection({
         body.position.y += (y - body.position.y) * .1
 
         if (!ready) {
-            setReady(y - body.position.y < 2.5)
+            startTransition(() => setReady(y - body.position.y < 2.5))
         }
     })
 

@@ -1,10 +1,9 @@
 import { useBody } from "@data/cannon"
 import { store, setState, requestMotionPermission, useStore } from "@data/store"
-import { clamp } from "@data/utils"
-import { Html } from "@react-three/drei"
+import { clamp, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
-import { useMemo, useEffect, useRef } from "react"
+import { useMemo, useEffect } from "react"
 import { damp } from "three/src/math/MathUtils.js"
 
 interface PlayerProps {
@@ -12,7 +11,6 @@ interface PlayerProps {
     speed?: number
     debug?: boolean
 }
-
 
 export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
@@ -95,11 +93,10 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
 
     useEffect(() => {
         let pointerdown = () => {
-            let { state } = store.getState()
+            let { state, hasMotionAccess } = store.getState()
 
-            if (["gameover", "intro"].includes(state)) {
+            if (["gameover", "intro"].includes(state) && hasMotionAccess) {
                 setState({ state: "running" })
-                body.wakeUp()
             }
         }
 
@@ -115,21 +112,24 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
         let playerMesh = player.mesh
         let buffer = 15
         let deadzone = 15
+        let nd = ndelta(delta)
 
         if (state !== "running" || !playerMesh) {
             return
         }
 
+        body.wakeUp()
+
         if (keys.KeyA) {
-            body.velocity.x += 6 * delta
+            body.velocity.x += 6 * nd
         } else if (keys.KeyD) {
-            body.velocity.x -= 6 * delta
+            body.velocity.x -= 6 * nd
         } else if (Math.abs(motion.gamma) > 0) {
             let scale = clamp(Math.abs((motion.gamma - deadzone) / buffer), 0, 1)
             let speed = 4
             let gamma = (-motion.gamma * scale / 90) * speed * (motion.beta < 90 ? 1 : -1)
 
-            body.velocity.x = damp(body.velocity.x, gamma, 6, delta)
+            body.velocity.x = damp(body.velocity.x, gamma, 6, nd)
         }
 
         let bottomBuffer = 3
@@ -163,29 +163,7 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             receiveShadow
         >
             <sphereGeometry args={[radius, 16, 16]} />
-            <meshPhongMaterial dithering color="red" />
+            <meshPhongMaterial dithering color="red" name="player" />
         </mesh>
     )
 }
-
-/*
-
-    let statsRef = useRef<HTMLDivElement>(null)
-useFrame(() => {
-    if (!statsRef.current) {
-        return
-    }
-
-    statsRef.current.innerHTML = ` 
-            gamma=${(motion.gamma).toFixed(5)}  <br/> 
-            beta=${(motion.beta).toFixed(5)}  
-        `
-})
-{
-    debug && (
-        <Html>
-            <div ref={statsRef} />
-        </Html>
-    )
-}
-    */

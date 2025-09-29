@@ -2,20 +2,24 @@ import cloudImage from "@assets/textures/11.png"
 import { useShader } from "@data/hooks"
 import { store, useStore } from "@data/store"
 import { glsl } from "@data/utils"
-import random from "@huth/random"
 import { useTexture } from "@react-three/drei"
 import { useThree, useFrame } from "@react-three/fiber"
-import { useRef, useMemo, useLayoutEffect, useEffect } from "react"
-import { Mesh, Vector2, Vector3, MeshBasicMaterial, PlaneGeometry } from "three"
+import { useRef, useLayoutEffect, useEffect, ComponentPropsWithoutRef } from "react"
+import { Mesh, Vector2, Vector3, PlaneGeometry, BufferGeometry, Material } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
 let geometry = new PlaneGeometry(12, 5, 1, 1)
 
 geometry.rotateY(Math.PI * 1)
 
-export default function Cloud(props) {
+export default function Cloud({
+    speed,
+    position,
+    damping,
+    ...props
+}: ComponentPropsWithoutRef<"group"> & { damping: number; speed: number }) {
     let map = useTexture(cloudImage)
-    let ref = useRef<Mesh>(null)
+    let ref = useRef<Mesh<BufferGeometry, Material>>(null)
     let { camera, viewport, size } = useThree()
     let depthTexture = useStore(i => i.depthTexture)
     let { onBeforeCompile, uniforms } = useShader({
@@ -130,17 +134,6 @@ export default function Cloud(props) {
             `
         }
     })
-    let scale = useMemo(() => {
-        let base = random.float(1, 1.5)
-
-        return [
-            random.pick(-1, 1) * base,
-            random.pick(-1, 1) * base,
-            random.pick(-1, 1) * base,
-        ]
-    }, [])
-    let speed = useMemo(() => random.pick(.1, .25), [])
-    let material = useRef<MeshBasicMaterial>(null)
 
     useEffect(() => {
         uniforms.depthTexture.value = depthTexture
@@ -149,12 +142,12 @@ export default function Cloud(props) {
     }, [size, depthTexture])
 
     useLayoutEffect(() => {
-        if (!material.current) {
+        if (!ref.current) {
             return
         }
 
-        material.current.opacity = 0
-    }, [])
+        ref.current.material.opacity = 0
+    }, [position])
 
     useFrame(({ camera }) => {
         let { player: { mesh } } = store.getState()
@@ -165,30 +158,28 @@ export default function Cloud(props) {
     })
 
     useFrame((state, delta) => {
-        if (!ref.current || !material.current) {
+        if (!ref.current) {
             return
         }
 
-        material.current.opacity = damp(material.current.opacity, 1, .35, delta)
+        ref.current.material.opacity = damp(ref.current.material.opacity, 1, damping, delta)
         ref.current.position.x -= delta * speed
     })
 
     return (
         <mesh
             {...props}
+            position={position}
             geometry={geometry}
             ref={ref}
             userData={{ ignoreDepthWrite: true }}
-            scale={scale}
             rotation-x={.2}
-            dispose={null}
         >
             <meshBasicMaterial
                 onBeforeCompile={onBeforeCompile}
                 transparent
                 map={map}
-                ref={material}
-                attach="material"
+                name="cloud"
                 color="white"
                 fog={false}
                 depthWrite={false}
