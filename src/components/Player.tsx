@@ -1,10 +1,11 @@
 import { useBody } from "@data/cannon"
+import Config from "@data/Config"
 import { store, setState, requestMotionPermission, useStore } from "@data/store"
-import { clamp, ndelta } from "@data/utils"
+import { ndelta } from "@data/utils"
+import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
-import { useMemo, useEffect } from "react"
-import { damp } from "three/src/math/MathUtils.js"
+import { useMemo, useEffect, useRef } from "react"
 
 interface PlayerProps {
     radius?: number
@@ -12,19 +13,48 @@ interface PlayerProps {
     debug?: boolean
 }
 
+interface Motion {
+    alpha: number
+    beta: number
+    gamma: number
+    spin: number
+    initialSpin: number | null
+}
+
+// this is sick? https://stackoverflow.com/a/42799567 
+// https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Orientation_and_motion_data_explained
+// axis move with device so raw values alone doesn’t map cleanly to Z rotation
+// this fixes that: project beta & gamma onto a plane perpendicular to the forward axis (Z)
+function getSpin(e: Motion) {
+    let betaR = e.beta / 180 * Math.PI
+    let gammaR = e.gamma / 180 * Math.PI
+    let spinR = Math.atan2(Math.cos(betaR) * Math.sin(gammaR), Math.sin(betaR))
+
+    return spinR * 180 / Math.PI
+}
+
+const _speed = new Vec3()
+
 export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
-    let [ref, body] = useBody({
+    let [meshRef, body] = useBody({
         mass: 2,
         definition: shape,
         position: [0, 1, 0],
     })
-    let motion = useMemo(() => ({ alpha: 0, beta: 0, gamma: 0 }), [])
+    let motion = useMemo<Motion>(() => ({
+        alpha: 0,
+        beta: 0,
+        gamma: 0,
+        spin: 0,
+        initialSpin: null,
+    }), [])
+    let debugRef = useRef<HTMLDivElement>(null)
     let keys = useMemo<Record<string, boolean>>(() => ({}), [])
     let hasMotionAccess = useStore(i => i.hasMotionAccess)
 
     useEffect(() => {
-        setState({ player: { mesh: ref.current, body } })
+        setState({ player: { mesh: meshRef.current, body } })
     }, [])
 
     useEffect(() => {
@@ -82,6 +112,11 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             motion.alpha = e.alpha || 0
             motion.beta = e.beta || 0
             motion.gamma = e.gamma || 0
+
+            if (motion.initialSpin === null) {
+                // get initial orientation, average over x seconds instead?
+                motion.initialSpin = getSpin(motion)
+            }
         }
 
         window.addEventListener("deviceorientation", deviceorientation)
@@ -110,12 +145,15 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     useFrame((_, delta) => {
         let { state, path, player } = store.getState()
         let playerMesh = player.mesh
-        let buffer = 15
-        let deadzone = 15
         let nd = ndelta(delta)
+
 
         if (state !== "running" || !playerMesh) {
             return
+        }
+
+        if (body.velocity.length() < speed) {
+            body.applyForce(_speed.set(0, 0, speed))
         }
 
         body.wakeUp()
@@ -124,12 +162,10 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
             body.velocity.x += 6 * nd
         } else if (keys.KeyD) {
             body.velocity.x -= 6 * nd
-        } else if (Math.abs(motion.gamma) > 0) {
-            let scale = clamp(Math.abs((motion.gamma - deadzone) / buffer), 0, 1)
-            let speed = 4
-            let gamma = (-motion.gamma * scale / 90) * speed * (motion.beta < 90 ? 1 : -1)
+        } else if (motion.initialSpin !== null) {
+            let spin = motion.initialSpin - getSpin(motion)
 
-            body.velocity.x = damp(body.velocity.x, gamma, 6, nd)
+            body.velocity.x = spin
         }
 
         let bottomBuffer = 3
@@ -148,22 +184,30 @@ export default function Player({ radius = .2, speed = 3 }: PlayerProps) {
     })
 
     useFrame(() => {
-        let { state } = store.getState()
-
-        if (body.velocity.length() < speed && state === "running") {
-            body.applyForce(new Vec3(0, 0, speed))
+        if (!debugRef.current) {
+            return
         }
-    })
 
+        debugRef.current.innerHTML = ` 
+            spin=${motion.spin?.toFixed(3)}<br/> 
+            initialSpin=${motion.initialSpin?.toFixed(3)}<br/> 
+            velx=${body.velocity.x.toFixed(3)}
+        `
+    })
 
     return (
         <mesh
-            ref={ref}
+            ref={meshRef}
             castShadow
             receiveShadow
         >
             <sphereGeometry args={[radius, 16, 16]} />
             <meshPhongMaterial dithering color="red" name="player" />
+            {Config.DEBUG && (
+                <Html>
+                    <div ref={debugRef} />
+                </Html>
+            )}
         </mesh>
     )
 }
