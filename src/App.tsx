@@ -10,6 +10,7 @@ import DepthTexture from "@components/DepthTexture"
 import { Perf } from "r3f-perf"
 import CloudSystem from "@components/CloudSystem"
 import Config from "@data/Config"
+import SpeedParticles from "@components/SpeedParticles"
 
 extend(extensions)
 
@@ -20,6 +21,7 @@ export default function App() {
             <color args={["white"]} attach={"background"} />
 
             <CloudSystem />
+            <SpeedParticles />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
             <Water />

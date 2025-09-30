@@ -201,7 +201,8 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
         debugRef.current.innerHTML = ` 
             spin=${motion.spin?.toFixed(3)}<br/> 
             initialSpin=${motion.initialSpin?.toFixed(3)}<br/> 
-            velx=${body.velocity.x.toFixed(3)}
+            velocity.x=${body.velocity.x.toFixed(3)}<br/>
+            velocity.z=${body.velocity.z.toFixed(3)}
         `
     })
 
