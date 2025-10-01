@@ -17,7 +17,7 @@ interface Particle {
 let speed = new SpringValue(0, { config: config.molasses })
 
 export default function SpeedParticles() {
-    let count = 80
+    let count = 200
     let ref = useRef<InstancedMesh>(null)
     let particles = useMemo(() => {
         return Array.from({ length: count }).fill(null).map(() => {
@@ -38,7 +38,7 @@ export default function SpeedParticles() {
         })
     }, [count])
 
-    useFrame((_, delta) => {
+    useFrame(({ camera }, delta) => {
         let { player: { mesh, body }, state } = store.getState()
 
         if (!ref.current || !mesh || !body) {
@@ -48,15 +48,15 @@ export default function SpeedParticles() {
         speed.start(state === "running" ? body.velocity.z : 0)
 
         for (let [index, { position, velocity, scale }] of particles.entries()) {
-            let playerScaler = 1 - clamp((mesh.position.z - position.z - 2) / 3, 0, 1)
-            let speedScale = clamp(speed.get() / 3, 0, 1) ** 2 * playerScaler
+            let playerScaler = 1 - clamp((camera.position.z - position.z - 1) / 2, 0, 1)
+            let speedScale = clamp(speed.get() / 3, 0, 1) ** 2
 
             setMatrixAt({
                 instance: ref.current,
                 index,
                 rotation: [.1, 0, 0],
                 position: position.toArray(),
-                scale: [scale[0] * speedScale, scale[1] * speedScale, scale[2] * speedScale]
+                scale: [scale[0] * speedScale, scale[1] * speedScale * playerScaler, scale[2] * speedScale]
             })
 
             position.x += velocity.x * delta
@@ -77,7 +77,7 @@ export default function SpeedParticles() {
             args={[undefined, undefined, count]}
             frustumCulled={false}
         >
-            <meshBasicMaterial color="#cbfcff" />
+            <meshBasicMaterial color="#cbfcffff" />
             <sphereGeometry args={[1, 6, 6]} />
         </instancedMesh>
     )

@@ -1,13 +1,20 @@
+import Counter from "@data/Counter"
 import random from "@huth/random"
 import { Body } from "cannon-es"
 import { startTransition } from "react"
 import { Tuple3 } from "src/types/global"
-import { DepthTexture, Material, Mesh } from "three"
+import { DepthTexture, InstancedMesh, Material, Mesh } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
-export type MaterialName = "cloud"
+export type InstanceName = "box" | "circle"
 
+export type MaterialName = "cloud"
+export interface Instance {
+    mesh: InstancedMesh;
+    maxCount: number;
+    index: Counter;
+}
 interface PathSection {
     id: string
     size: Tuple3
@@ -19,6 +26,7 @@ interface Store {
     hasMotionAccess: boolean
     motionAccessDenied: boolean
     path: PathSection[]
+    instances: Record<InstanceName, Instance>
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
     player: {
@@ -46,6 +54,19 @@ export async function requestMotionPermission() {
 
         return permission
     }
+}
+
+export function setInstance(name: string, mesh: InstancedMesh, maxCount: number) {
+    store.setState({
+        instances: {
+            ...store.getState().instances,
+            [name]: {
+                mesh,
+                maxCount,
+                index: new Counter(maxCount)
+            }
+        }
+    })
 }
 
 export function addPathSection(size: Tuple3, position: Tuple3) {
@@ -80,6 +101,8 @@ const store = create(
         depthTexture: null,
         motionAccessDenied: false,
         materials: {} as Store["materials"],
+
+        instances: {} as Store["instances"],
         player: {
             mesh: null,
             body: null

@@ -6,6 +6,8 @@ import { useMemo, useEffect } from "react"
 import { gray } from "../materials"
 import { Tuple3 } from "../types/global"
 import { SphereGeometry } from "three"
+import useWaterIntersection from "@data/useWaterIntersecton"
+import { mergeRefs } from "react-merge-refs"
 
 interface RockProps {
     radius: number
@@ -22,11 +24,16 @@ export default function Rock({
 }: RockProps) {
     let definition = useMemo(() => new Sphere(radius), [radius])
     let mass = useMemo(() => random.float(.1, .5), [])
-    let [ref, body] = useBody({
+    let [bodyRef, body] = useBody({
         mass,
         definition,
         position: [x, y - 10, z],
     })
+    let intersectionRef = useWaterIntersection({
+        type: "circle",
+        size: [radius * 2, radius * 2, radius * 2]
+    })
+    let ref = mergeRefs([intersectionRef, bodyRef])
 
     useEffect(() => {
         if (ready) {

@@ -22,6 +22,7 @@
         "r3f-perf": "^7.2.3",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
+        "react-merge-refs": "^3.0.2",
         "three": "^0.180.0",
         "three-csm": "^4.2.1",
         "use-animation-frame": "^0.2.1",

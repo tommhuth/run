@@ -1,5 +1,5 @@
 import { glsl } from "@data/utils"
-import { MeshBasicMaterial, MeshPhongMaterial, WebGLProgramParametersWithUniforms } from "three"
+import { MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, WebGLProgramParametersWithUniforms } from "three"
 
 interface ShaderPart {
     main?: string
@@ -43,7 +43,7 @@ export function patchShader(
     `)
 }
 
-export abstract class PatchedPhongMaterial<TUniforms> extends MeshPhongMaterial {
+export abstract class PatchedPhongMaterial<TUniforms> extends MeshLambertMaterial {
     shader?: ShaderParts
     private rafId?: number
     abstract uniforms: TUniforms

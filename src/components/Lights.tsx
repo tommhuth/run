@@ -1,7 +1,7 @@
 import { useStore } from "@data/store"
 import { useThree, useFrame } from "@react-three/fiber"
 import { useRef, useEffect } from "react"
-import { DirectionalLight } from "three"
+import { CameraHelper, DirectionalLight } from "three"
 
 export default function Lights() {
     let shadowLightRef = useRef<DirectionalLight>(null)
@@ -15,7 +15,7 @@ export default function Lights() {
             return
         }
 
-        // scene.add(new CameraHelper(shadowLightRef.current.shadow.camera))
+        //scene.add(new CameraHelper(shadowLightRef.current.shadow.camera))
         scene.add(shadowLightRef.current.target)
     }, [scene])
 
@@ -23,8 +23,8 @@ export default function Lights() {
     useFrame((_, delta) => {
         let { player, state } = useStore.getState()
 
-        // update camera shadow position every 1s
-        if (shadowLightRef.current && time.current >= 1000 && player.mesh && state === "running") {
+        // update camera shadow position 
+        if (shadowLightRef.current && time.current >= 750 && player.mesh && state === "running") {
             let z = player.mesh.position.z + forwardOffset
 
             shadowLightRef.current.position.z = z
@@ -45,14 +45,12 @@ export default function Lights() {
                 intensity={2}
                 shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
                 shadow-camera-near={-10} // z
-                shadow-camera-far={20}
-                shadow-camera-left={-15} // x back/forwards
-                shadow-camera-right={20}
-                shadow-camera-top={15} // y
-                shadow-camera-bottom={-10}
-                shadow-radius={5}
-                shadow-normalBias={.01}
-                shadow-bias={.0001} // 0.0001
+                shadow-camera-far={25}
+                shadow-camera-left={-20} // x back/forwards
+                shadow-camera-right={25}
+                shadow-camera-top={20} // y
+                shadow-camera-bottom={-20}
+                shadow-radius={2}
                 shadow-blurSamples={8} //8
             />
             <ambientLight intensity={.25} color={"rgb(0, 136, 255)"} />

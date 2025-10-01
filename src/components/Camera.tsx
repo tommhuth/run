@@ -2,7 +2,6 @@ import { store } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
-import { damp } from "three/src/math/MathUtils.js"
 import { config, SpringValue } from "@react-spring/core"
 
 
@@ -40,7 +39,7 @@ export default function Camera() {
         ]
     })
 
-    useFrame((state, delta) => {
+    useFrame(() => {
         let axs = ["x", "y", "z"]
 
         for (let [key, value] of Object.entries(dir)) {

@@ -1,11 +1,16 @@
 import { useBody } from "@data/cannon"
 import Config from "@data/Config"
 import { store, setState, requestMotionPermission, useStore } from "@data/store"
-import { clamp, ndelta } from "@data/utils"
+import { clamp, ndelta, setMatrixAt } from "@data/utils"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
 import { useMemo, useEffect, useRef, startTransition } from "react"
+import { mergeRefs } from "react-merge-refs";
+import { Tuple3 } from "src/types/global"
+import { Object3D } from "three"
+import { useInstance } from "./InstancedMesh"
+import useWaterIntersection from "@data/useWaterIntersecton"
 
 
 interface Motion {
@@ -36,6 +41,7 @@ interface PlayerProps {
     debug?: boolean
 }
 
+
 export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
     let [meshRef, body] = useBody({
@@ -53,6 +59,11 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
     let debugRef = useRef<HTMLDivElement>(null)
     let keys = useMemo<Record<string, boolean>>(() => ({}), [])
     let hasMotionAccess = useStore(i => i.hasMotionAccess)
+    let intrseref = useWaterIntersection({
+        size: [radius * 2, radius * 2, radius * 2],
+        type: "circle"
+    })
+    let ref = mergeRefs([meshRef, intrseref])
 
     useEffect(() => {
         setState({ player: { mesh: meshRef.current, body } })
@@ -208,7 +219,7 @@ export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
 
     return (
         <mesh
-            ref={meshRef}
+            ref={ref}
             castShadow
             receiveShadow
         >

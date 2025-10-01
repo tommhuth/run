@@ -10,6 +10,8 @@ import { BoxGeometry, Object3D } from "three"
 import Rock from "./Rock"
 import { ndelta } from "@data/utils"
 import Rock1 from "./Rock1"
+import useWaterIntersection from "@data/useWaterIntersecton"
+import { mergeRefs } from "react-merge-refs"
 
 const box = new BoxGeometry(1, 1, 1, 1, 1, 1)
 
@@ -70,7 +72,12 @@ function PathSection({
             }
         })
     }, [])
-    let foamRef = useFoam([width + .5, .01, depth + .5], rotation, .1)
+    let intersectionRef = useWaterIntersection({
+        size: [width, height, depth],
+        extension: .65,
+        type: "box"
+    })
+    let ref = mergeRefs([intersectionRef, sectionRef])
 
     useFrame(() => {
         body.position.y += (y - body.position.y) * .1
@@ -98,8 +105,9 @@ function PathSection({
                     />
                 )
             })}
+
             <mesh
-                ref={sectionRef}
+                ref={ref}
                 castShadow
                 receiveShadow
                 geometry={box}
@@ -107,19 +115,10 @@ function PathSection({
                 material={gray}
                 dispose={null}
             />
-            <mesh
-                position={[x, -4.5, z]}
-                rotation-y={rotation}
-                scale={[width + .5, .01, depth + .5]}
-                geometry={box}
-                ref={foamRef}
-                material={white}
-                dispose={null}
-            />
 
             <Suspense>
                 {Array.from({ length: 5 }).map((i, index) => (
-                    <Rock1 key={index} position={[x, y, z]} />
+                    <Rock1 key={index} position={[x, -4.5, z]} />
                 ))}
             </Suspense>
         </>
