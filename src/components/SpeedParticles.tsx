@@ -17,7 +17,7 @@ interface Particle {
 let speed = new SpringValue(0, { config: config.molasses })
 
 export default function SpeedParticles() {
-    let count = 150
+    let count = 90
     let ref = useRef<InstancedMesh>(null)
     let particles = useMemo(() => {
         return Array.from({ length: count }).fill(null).map(() => {
