@@ -3,7 +3,7 @@ import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
 import { useMemo, useEffect } from "react"
-import { gray } from "../materials"
+import { ball, gray } from "../materials"
 import { Tuple3 } from "../types/global"
 import { SphereGeometry } from "three"
 import useWaterIntersection from "@data/useWaterIntersecton"
@@ -55,7 +55,7 @@ export default function Rock({
             ref={ref}
             castShadow
             receiveShadow
-            material={gray}
+            material={ball}
             dispose={null}
             scale={radius}
             geometry={geometry}

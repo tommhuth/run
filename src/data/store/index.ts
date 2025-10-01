@@ -111,7 +111,7 @@ const store = create(
             {
                 id: random.id(),
                 size: [7, 20, 7],
-                position: [0, -10, 0],
+                position: [0, -10.1, 0],
                 fixed: true
             }
         ]

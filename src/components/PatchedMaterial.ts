@@ -43,7 +43,7 @@ export function patchShader(
     `)
 }
 
-export abstract class PatchedPhongMaterial<TUniforms> extends MeshLambertMaterial {
+export abstract class PatchedPhongMaterial<TUniforms> extends MeshPhongMaterial {
     shader?: ShaderParts
     private rafId?: number
     abstract uniforms: TUniforms

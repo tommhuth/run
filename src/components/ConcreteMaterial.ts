@@ -22,6 +22,7 @@ export default class ConcreteMaterial extends PatchedPhongMaterial<ConcreteMater
             uniform float uTime;
             uniform vec3 uFogColor;
             varying vec3 worldPosition;
+            varying vec2 vUv;
 
             float sinNoise(float x) {
                 return 0.5 + 0.5 * (sin(x) * 0.1 + sin(x * 2.1) * 0.125 + sin(x * 2.2) * 0.125);
@@ -34,6 +35,7 @@ export default class ConcreteMaterial extends PatchedPhongMaterial<ConcreteMater
         vertex: {
             main: glsl`
                 worldPosition = (modelMatrix * vec4(position, 1.)).xyz;
+                vUv = uv;
             `
         },
         fragment: {
@@ -43,6 +45,12 @@ export default class ConcreteMaterial extends PatchedPhongMaterial<ConcreteMater
                     uFogColor, 
                     smoothstep(0., 1., clamp((worldPosition.y - 1.) / -10., 0., 1.))  
                 );  
+
+                gl_FragColor.rgb = mix(
+                    gl_FragColor.rgb, 
+                    vec3(1.), 
+                    vUv.x * .75 * clamp((worldPosition.y + 4.5) / 1., 0., 1.)
+                );
             `,
         }
     }
