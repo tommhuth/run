@@ -17,7 +17,7 @@ interface Particle {
 let speed = new SpringValue(0, { config: config.molasses })
 
 export default function SpeedParticles() {
-    let count = 200
+    let count = 150
     let ref = useRef<InstancedMesh>(null)
     let particles = useMemo(() => {
         return Array.from({ length: count }).fill(null).map(() => {
@@ -48,7 +48,7 @@ export default function SpeedParticles() {
         speed.start(state === "running" ? body.velocity.z : 0)
 
         for (let [index, { position, velocity, scale }] of particles.entries()) {
-            let playerScaler = 1 - clamp((camera.position.z - position.z - 1) / 2, 0, 1)
+            let playerScaler = 1 - clamp((camera.position.z - position.z - 0) / 2, 0, 1)
             let speedScale = clamp(speed.get() / 3, 0, 1) ** 2
 
             setMatrixAt({
@@ -77,7 +77,7 @@ export default function SpeedParticles() {
             args={[undefined, undefined, count]}
             frustumCulled={false}
         >
-            <meshBasicMaterial color="#cbfcffff" />
+            <meshBasicMaterial color="#dffdff" />
             <sphereGeometry args={[1, 6, 6]} />
         </instancedMesh>
     )

@@ -22,7 +22,7 @@ function Rock1({
         return {
             position: [
                 random.pick(5, 7, 10, 14) * random.pick(-1, 1) + x,
-                y + random.integer(1, 9) - baseSize[1] / 2 * scale,
+                y + random.integer(-3, 3) - baseSize[1] / 2 * scale,
                 z + random.integer(-5, 5)
             ] as Tuple3,
             rotation: random.float(0, Math.PI * 2),
@@ -33,8 +33,8 @@ function Rock1({
     let rockRef = useWaterIntersection({
         size: [baseSize[0] * scale, baseSize[1] * scale, baseSize[2] * scale],
         type: "circle",
-        extension: .75 * scale,
-        threshold: .1
+        extension: .85 * scale,
+        threshold: .15
     })
 
     useLayoutEffect(() => {

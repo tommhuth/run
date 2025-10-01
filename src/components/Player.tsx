@@ -41,7 +41,6 @@ interface PlayerProps {
     debug?: boolean
 }
 
-
 export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
     let [meshRef, body] = useBody({

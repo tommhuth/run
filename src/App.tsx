@@ -47,7 +47,7 @@ function Foam() {
 
                 dir.y = 0.;
 
-                transformed += dir * noise(wp.xyz * vec3(.35, .3, 1.2) + uTime * .5) * .1 * (1. / getScale(modelMatrix)); 
+                transformed += dir * noise(wp.xyz * vec3(2., 0., 3.2) + uTime * .5) * .125; 
             `
         }
     })

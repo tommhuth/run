@@ -118,7 +118,7 @@ function PathSection({
 
             <Suspense>
                 {Array.from({ length: 5 }).map((i, index) => (
-                    <Rock1 key={index} position={[x, -4.5, z]} />
+                    <Rock1 key={index} position={[x, y + height / 2, z]} />
                 ))}
             </Suspense>
         </>
