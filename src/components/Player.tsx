@@ -1,15 +1,12 @@
 import { useBody } from "@data/cannon"
 import Config from "@data/Config"
 import { store, setState, requestMotionPermission, useStore } from "@data/store"
-import { clamp, ndelta, setMatrixAt } from "@data/utils"
+import { clamp, ndelta, } from "@data/utils"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
-import { useMemo, useEffect, useRef, startTransition } from "react"
-import { mergeRefs } from "react-merge-refs";
-import { Tuple3 } from "src/types/global"
-import { Object3D } from "three"
-import { useInstance } from "./InstancedMesh"
+import { useMemo, useEffect, useRef } from "react"
+import { mergeRefs } from "react-merge-refs"
 import useWaterIntersection from "@data/useWaterIntersecton"
 
 
@@ -41,7 +38,7 @@ interface PlayerProps {
     debug?: boolean
 }
 
-export default function Player({ radius = .2, forwardSpeed = 3 }: PlayerProps) {
+export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     let shape = useMemo(() => new Sphere(radius), [])
     let [meshRef, body] = useBody({
         mass: 2,
