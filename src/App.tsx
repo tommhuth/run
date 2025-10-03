@@ -82,6 +82,7 @@ function Foam() {
     )
 }
 
+
 export default function App() {
     return (
         <>
@@ -90,10 +91,7 @@ export default function App() {
 
             <CloudSystem />
             <SpeedParticles />
-
             <Foam />
-
-            {Config.STATS && <Perf deepAnalyze antialias={false} />}
             <Water />
             <Camera />
             <Lights />
@@ -105,6 +103,8 @@ export default function App() {
 
             {/* at the very end */}
             <DepthTexture />
+
+            {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
     )
 } 

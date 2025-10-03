@@ -2,7 +2,7 @@ import Counter from "@data/Counter"
 import random from "@huth/random"
 import { Body } from "cannon-es"
 import { startTransition } from "react"
-import { Tuple3 } from "src/types/global"
+import { Tuple2, Tuple3 } from "src/types/global"
 import { DepthTexture, InstancedMesh, Material, Mesh } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
@@ -20,6 +20,7 @@ interface PathSection {
     size: Tuple3
     position: Tuple3
     fixed?: boolean
+    gap: boolean
 }
 interface Store {
     state: "intro" | "gameover" | "running"
@@ -69,12 +70,30 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
     })
 }
 
-export function addPathSection(size: Tuple3, position: Tuple3) {
+let counter = 0
+
+export function addPathSection(last: PathSection) {
+    let gap = random.boolean(.5)
+    let height = 20
+    let depthRange: Tuple2 = gap ? [11, 15] : [4, 8]
+    let size: Tuple3 = [
+        random.integer(4, 6),
+        height,
+        random.integer(...depthRange)
+    ]
+    let position: Tuple3 = [
+        random.integer(-1, 1) + Math.sin(counter * .45) * 2,
+        -height / 2 + Math.sin(counter * .4) * 3,
+        last.position[2] + last.size[2] / 2 + size[2] / 2
+    ]
+
+    counter++
     setState({
         path: [
             {
                 id: random.id(),
                 size,
+                gap,
                 position
             },
             ...store.getState().path,
@@ -87,6 +106,7 @@ export function removePathSection(id: string) {
         path: store.getState().path.filter(i => i.id !== id)
     })
 }
+
 
 export function setState(data: Partial<Store>) {
     startTransition(() => {
@@ -112,7 +132,8 @@ const store = create(
                 id: random.id(),
                 size: [7, 20, 7],
                 position: [0, -10.1, 0],
-                fixed: true
+                fixed: true,
+                gap: false
             }
         ]
     }))

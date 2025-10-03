@@ -11,6 +11,7 @@ function getConfiguration() {
             near: .01,
             far: 150,
             position: [0, 0, 0],
+            fov: 65
         },
         flat: true,
         shadows: "variance",
