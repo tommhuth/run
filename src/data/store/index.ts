@@ -72,7 +72,8 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
 
 let counter = 0
 
-export function addPathSection(last: PathSection) {
+export function addPathSection() {
+    let last = store.getState().path[0]
     let gap = random.boolean(.5)
     let height = 20
     let depthRange: Tuple2 = gap ? [11, 15] : [4, 8]

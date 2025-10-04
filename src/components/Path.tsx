@@ -18,7 +18,7 @@ export default function Path() {
             && camera.position.z > forwardSection?.position[2] - forwardBuffer
             && timer.current > checkInterval
         ) {
-            addPathSection(forwardSection)
+            addPathSection()
         } else {
             timer.current += ndelta(delta) * 1000
         }
