@@ -48,7 +48,7 @@ function Rock({
         mass: 0,
         definition,
         rotation: [0, rotation, 0],
-        position: [x, y, z],
+        position: [x, y - 10, z],
         active
     })
     let ref = mergeRefs([bodyRef, rockRef])
@@ -71,14 +71,6 @@ function Rock({
             setActive(Math.abs(closest[0] - x) < 7)
         })
     }, [z])
-
-    useLayoutEffect(() => {
-        if (!rockRef.current) {
-            return
-        }
-
-        body.position.set(x, y - 10, z)
-    }, [x, y, z])
 
     useFrame((state, delta) => {
         if (!rockRef.current) {
@@ -113,7 +105,7 @@ const xRange: Tuple2 = [4, 13]
 const yRange: Tuple2 = [1, 8]
 const scaleRange: Tuple2 = [1, 1.25]
 
-export default function RockSystem({ count = 35 }) {
+export default function RockSystem({ count = 25 }) {
     let [rocks, setRocks] = useState(() => {
         return Array.from({ length: count })
             .fill(null)

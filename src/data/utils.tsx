@@ -1,8 +1,10 @@
 import { Tuple2, Tuple3, Tuple4 } from "src/types/global"
 import { BufferAttribute, BufferGeometry, Color, ColorRepresentation, Euler, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three"
-import { clamp as threeClamp, mapLinear as map } from "three/src/math/MathUtils.js"
+import { clamp as threeClamp, mapLinear } from "three/src/math/MathUtils.js"
 
-export { map }
+export function map(x: number, a1: number, a2: number, b1: number, b2: number) {
+    return mapLinear(clamp(x, a1, a2), a1, a2, b1, b2)
+}
 
 export function clamp(value: number, min = 1, max = 1) {
     return threeClamp(value, min, max)

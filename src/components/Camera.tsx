@@ -3,11 +3,16 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { config, SpringValue } from "@react-spring/core"
+import { map } from "@data/utils"
 
+function getOffset() {
+    return -(3.5 + map(window.innerWidth, 400, 800, .5, 0))
+}
 
 export default function Camera() {
     let { camera } = useThree()
-    let cameraTarget = useRef<Tuple3>([0, 3, -3])
+    let offset = getOffset()
+    let cameraTarget = useRef<Tuple3>([0, 3, offset])
     let dir = useMemo(() => {
         return {
             x: new SpringValue(0, { config: config.stiff }),
@@ -28,14 +33,14 @@ export default function Camera() {
                 && position[2] + size[2] / 2 > body.position.z
         })
 
-        if (state !== "running" || !currentSection || !body) {
+        if (state === "gameover" || !currentSection || !body) {
             return
         }
 
         cameraTarget.current = [
             body.position.x,
             currentSection.position[1] + currentSection?.size[1] / 2 + 3,
-            body.position.z - 3
+            body.position.z + offset
         ]
     })
 
