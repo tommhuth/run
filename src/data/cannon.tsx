@@ -75,6 +75,8 @@ function useCannonBody({
         } else {
             body.addShape(definition)
         }
+
+        body.position.set(...position)
     }, [body, definition])
 
     useEffect(() => {
