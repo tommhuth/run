@@ -1,54 +1,61 @@
 import { useInstance } from "@components/InstancedMesh"
 import { useFrame } from "@react-three/fiber"
-import { useRef } from "react"
+import { useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { Object3D } from "three"
 import { store } from "./store"
 import { setMatrixAt } from "./utils"
+import random from "@huth/random"
 
-interface UseWaterIntersectorProps {
+// thanks chattyman
+function intersectsWaterPlane(planeY: number, object: Object3D, size: Tuple3, threshold = 1, smooth = true) {
+    const top = object.position.y + size[1] / 2
+    const bottom = object.position.y - size[1] / 2
+
+    const distTop = planeY - top
+    const distBottom = planeY - bottom
+
+    // object fully below -> both positive
+    if (distTop > threshold) {
+        return 0
+    }
+    // fully above -> both negative
+    if (distBottom < -threshold) {
+        return 0
+    }
+
+    // distance from fully below (0) to fully above (1)
+    let t = (threshold - distTop) / (2 * threshold)
+
+    t = Math.max(0, Math.min(1, t))
+
+    if (smooth) {
+        t = t * t * (3 - 2 * t)
+    }
+
+    return t
+}
+
+interface UseWaterIntersectorParams {
     waterLevel?: number
     size: Tuple3
     type: "circle" | "box"
     threshold?: number
-    detail?: number
     extension?: number
-}
-
-function easeOutCubic(x: number): number {
-    return 1 - Math.pow(1 - x, 3)
-}
-function easeInCubic(x: number): number {
-    return x * x * x
-}
-
-// thanks chattyman
-function intersectsWaterPlane(y: number, obj: Object3D, size: Tuple3, bufferDown = 0, bufferUp = 0) {
-    const bottom = obj.position.y - size[1] / 2 - bufferDown
-    const top = obj.position.y + size[1] / 2 + bufferUp
-    const mid = (top + bottom) / 2
-
-    if (y <= bottom || y >= top) return 0
-
-    if (y < mid) {
-        // ramp up from bottom - mid
-        return easeInCubic((y - bottom) / (mid - bottom))
-    } else {
-        // ramp down from mid - top
-        return easeOutCubic((top - y) / (top - mid))
-    }
 }
 
 export default function useWaterIntersection({
     waterLevel = -4.5,
-    threshold = 3,
+    threshold = 1,
     type = "circle",
     size,
-    extension = .0
-
-}: UseWaterIntersectorProps) {
+    extension: incomingExtension = .25
+}: UseWaterIntersectorParams) {
     let ref = useRef<Object3D>(null)
     let [index] = useInstance(type)
+    let extension = useMemo(() => {
+        return incomingExtension * random.float(.85, 1.1)
+    }, [incomingExtension])
 
     useFrame(() => {
         let { instances } = store.getState()

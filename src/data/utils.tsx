@@ -1,8 +1,12 @@
 import { Tuple2, Tuple3, Tuple4 } from "src/types/global"
 import { BufferAttribute, BufferGeometry, Color, ColorRepresentation, Euler, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three"
-import { clamp, mapLinear as map } from "three/src/math/MathUtils.js"
+import { clamp as threeClamp, mapLinear as map } from "three/src/math/MathUtils.js"
 
-export { clamp, map }
+export { map }
+
+export function clamp(value: number, min = 1, max = 1) {
+    return threeClamp(value, min, max)
+}
 
 export function ndelta(delta: number) {
     const nDelta = clamp(delta, 0, 1 / 30)

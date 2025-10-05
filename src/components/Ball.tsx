@@ -31,7 +31,8 @@ export default function Ball({
     })
     let intersectionRef = useWaterIntersection({
         type: "circle",
-        size: [radius * 2, radius * 2, radius * 2]
+        size: [radius * 2, radius * 2, radius * 2],
+        threshold: radius / 2
     })
     let ref = mergeRefs([intersectionRef, bodyRef])
 

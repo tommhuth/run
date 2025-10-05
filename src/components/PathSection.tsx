@@ -3,10 +3,9 @@ import { removePathSection } from "@data/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
-import { useMemo, useState, Suspense, startTransition, memo } from "react"
+import { useMemo, useState, startTransition, memo } from "react"
 import { Tuple3 } from "../types/global"
 import { BoxGeometry } from "three"
-import Rock1 from "./Rock1"
 import useWaterIntersection from "@data/useWaterIntersecton"
 import { mergeRefs } from "react-merge-refs"
 import dirtModel from "@assets/models/dirt.glb"
@@ -44,7 +43,7 @@ function Block({
     })
     let intersectionRef = useWaterIntersection({
         size: [width, height, depth],
-        extension: .65,
+        extension: .35,
         type: "box"
     })
     let ref = mergeRefs([intersectionRef, sectionRef])
@@ -85,6 +84,7 @@ function Block({
                     scale={[width, height, depth]}
                     material={gray}
                     dispose={null}
+
                 />
                 {dirt && (
                     <ExternalModel
@@ -182,12 +182,6 @@ function PathSection({
                     size={[width, height, depth]}
                 />
             )}
-
-            <Suspense>
-                {Array.from({ length: 5 }).map((i, index) => (
-                    <Rock1 key={index} position={[x, y + height / 2, z]} />
-                ))}
-            </Suspense>
         </>
     )
 }

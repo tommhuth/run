@@ -19,6 +19,7 @@ interface BaseBodyOptions<T = unknown> {
     linearDamping?: number
     allowSleep?: boolean
     userData?: Record<string, T>
+    active?: boolean
 }
 
 const context = React.createContext(null as unknown as World)
@@ -48,41 +49,50 @@ function useCannonBody({
     velocity = [0, 0, 0],
     userData = {},
     allowSleep = true,
+    active = true
 }: BaseBodyOptions) {
+    const world = useCannonWorld()
     const body = useMemo(() => {
-        const body = new Body({
+        return new Body({
             mass,
             allowSleep,
             sleepSpeedLimit: .1,
             position: new Vec3(...position),
             velocity: new Vec3(...velocity),
-            shape: !Array.isArray(definition) ? definition : undefined,
             quaternion: new Quaternion().setFromEuler(...rotation),
             angularDamping,
             linearDamping,
         })
+    }, [mass])
+
+    useEffect(() => {
+        body.shapes = []
 
         if (Array.isArray(definition)) {
             for (const shapeDefinition of definition) {
                 body.addShape(...shapeDefinition)
             }
+        } else {
+            body.addShape(definition)
+        }
+    }, [body, definition])
+
+    useEffect(() => {
+        if (!active) {
+            return
         }
 
-        return body
-    }, [mass, definition])
-    const world = useCannonWorld()
-
-    useEffect(() => {
-        body.userData = userData
-    }, [userData, body])
-
-    useEffect(() => {
         world.addBody(body)
 
         return () => {
             world.removeBody(body)
         }
-    }, [body, world])
+    }, [body, world, active])
+
+    useEffect(() => {
+        body.userData = userData
+        // console.log(world.bodies.length)
+    }, [userData, body])
 
     return [body, world] as const
 }
@@ -114,7 +124,11 @@ export function CannonProvider({
             gravity: new Vec3(...gravity),
         })
 
-        world.broadphase = new SAPBroadphase(world)
+        let sap = new SAPBroadphase(world)
+
+        sap.axisIndex = 2
+
+        world.broadphase = sap
         world.defaultContactMaterial.restitution = defaultRestitution
 
         return world

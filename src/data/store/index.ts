@@ -131,7 +131,7 @@ const store = create(
         path: [
             {
                 id: random.id(),
-                size: [7, 20, 7],
+                size: [5, 20, 5],
                 position: [0, -10.1, 0],
                 fixed: true,
                 gap: false

@@ -55,11 +55,12 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     let debugRef = useRef<HTMLDivElement>(null)
     let keys = useMemo<Record<string, boolean>>(() => ({}), [])
     let hasMotionAccess = useStore(i => i.hasMotionAccess)
-    let intrseref = useWaterIntersection({
+    let intersectionRef = useWaterIntersection({
         size: [radius * 2, radius * 2, radius * 2],
-        type: "circle"
+        type: "circle",
+        threshold: radius * .5
     })
-    let ref = mergeRefs([meshRef, intrseref])
+    let ref = mergeRefs([meshRef, intersectionRef])
 
     useEffect(() => {
         setState({ player: { mesh: meshRef.current, body } })

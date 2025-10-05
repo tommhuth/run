@@ -13,7 +13,7 @@ function getPosition(y = 0, z = 0): Tuple3 {
     ]
 }
 
-export default function CloudSystem({ size = 10 }: { size?: number }) {
+export default function CloudSystem({ size = 14 }: { size?: number }) {
     let [clouds, setClouds] = useState<CloudProps[]>(() => {
         return Array.from({ length: size }).fill(null).map((i, index) => {
             return {
