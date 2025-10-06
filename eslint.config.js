@@ -87,6 +87,10 @@ export default [
                     }
                 }
             ],
+            "no-console": [
+                "error",
+                { allow: ["error"] }
+            ],
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": [
                 "error",
