@@ -87,17 +87,6 @@ export default [
                     }
                 }
             ],
-            "max-len": [
-                "error",
-                {
-                    code: 140,            // max characters per line
-                    tabWidth: 2,
-                    ignoreUrls: true,
-                    ignoreStrings: true,
-                    ignoreTemplateLiterals: true,
-                    ignoreRegExpLiterals: true,
-                }
-            ],
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": [
                 "error",
