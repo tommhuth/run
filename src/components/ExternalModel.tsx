@@ -10,7 +10,7 @@ interface ExternalModelProps extends ComponentPropsWithoutRef<"mesh"> {
 }
 
 export default function ExternalModel({ url, children, name, ...props }: ExternalModelProps) {
-    let dirt = useLoader(GLTFLoader, url)
+    const dirt = useLoader(GLTFLoader, url)
 
     return (
         <mesh {...props}>

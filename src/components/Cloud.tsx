@@ -3,13 +3,13 @@ import { useShader } from "@data/hooks"
 import { store, useStore } from "@data/store"
 import { glsl, ndelta } from "@data/utils"
 import { useTexture } from "@react-three/drei"
-import { useThree, useFrame } from "@react-three/fiber"
-import { useRef, useLayoutEffect, useEffect } from "react"
+import { useFrame,useThree } from "@react-three/fiber"
+import { useEffect,useLayoutEffect, useRef } from "react"
 import { Tuple3 } from "src/types/global"
-import { Mesh, Vector2, Vector3, PlaneGeometry, BufferGeometry, Material } from "three"
+import { BufferGeometry, Material,Mesh, PlaneGeometry, Vector2, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
-let geometry = new PlaneGeometry(12, 5, 1, 1)
+const geometry = new PlaneGeometry(12, 5, 1, 1)
 
 geometry.rotateY(Math.PI * 1)
 
@@ -27,11 +27,11 @@ export default function Cloud({
     damping,
     scale,
 }: CloudProps) {
-    let map = useTexture(cloudImage)
-    let ref = useRef<Mesh<BufferGeometry, Material>>(null)
-    let { camera, viewport, size } = useThree()
-    let depthTexture = useStore(i => i.depthTexture)
-    let { onBeforeCompile, uniforms } = useShader({
+    const map = useTexture(cloudImage)
+    const ref = useRef<Mesh<BufferGeometry, Material>>(null)
+    const { camera, viewport, size } = useThree()
+    const depthTexture = useStore(i => i.depthTexture)
+    const { onBeforeCompile, uniforms } = useShader({
         uniforms: {
             cameraNear: {
                 value: camera.near,
@@ -159,7 +159,7 @@ export default function Cloud({
     }, [position])
 
     useFrame(({ camera }) => {
-        let { player: { mesh } } = store.getState()
+        const { player: { mesh } } = store.getState()
 
         if (mesh) {
             uniforms.playerPosition.value.copy(camera.position)

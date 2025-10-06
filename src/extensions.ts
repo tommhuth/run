@@ -1,12 +1,12 @@
 import ConcreteMaterial from "@components/ConcreteMaterial"
 import {
-    Group, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial,
-    Mesh, BoxGeometry, AmbientLight, DirectionalLight, SphereGeometry,
-    AxesHelper, FogExp2,
-    PlaneGeometry,
+    AmbientLight,     AxesHelper, BoxGeometry,     Color,
     CylinderGeometry,
-    Color,
-    InstancedMesh,
+    DirectionalLight, FogExp2,
+    Group,     InstancedMesh,
+    Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial,
+    PlaneGeometry,
+    SphereGeometry,
 } from "three"
 
 export default {

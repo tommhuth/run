@@ -1,13 +1,13 @@
 import { useBody } from "@data/cannon"
 import Config from "@data/Config"
-import { store, setState, requestMotionPermission, useStore } from "@data/store"
+import { requestMotionPermission, setState, store, useStore } from "@data/store"
+import useWaterIntersection from "@data/useWaterIntersecton"
 import { clamp, ndelta, } from "@data/utils"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
-import { useMemo, useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { mergeRefs } from "react-merge-refs"
-import useWaterIntersection from "@data/useWaterIntersecton"
 
 
 interface Motion {
@@ -23,9 +23,9 @@ interface Motion {
 // axis move with device so raw values alone doesn’t map cleanly to Z rotation
 // this fixes that: project beta - gamma onto a plane perpendicular to the forward axis (Z)
 function getRotationZ(e: Motion) {
-    let betaR = e.beta / 180 * Math.PI
-    let gammaR = e.gamma / 180 * Math.PI
-    let rotationZ = Math.atan2(Math.cos(betaR) * Math.sin(gammaR), Math.sin(betaR))
+    const betaR = e.beta / 180 * Math.PI
+    const gammaR = e.gamma / 180 * Math.PI
+    const rotationZ = Math.atan2(Math.cos(betaR) * Math.sin(gammaR), Math.sin(betaR))
 
     return rotationZ * 180 / Math.PI
 }
@@ -39,45 +39,45 @@ interface PlayerProps {
 }
 
 export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
-    let shape = useMemo(() => new Sphere(radius), [])
-    let [meshRef, body] = useBody({
+    const shape = useMemo(() => new Sphere(radius), [])
+    const [meshRef, body] = useBody({
         mass: 2,
         definition: shape,
         position: [0, 1, 0],
     })
-    let motion = useMemo<Motion>(() => ({
+    const motion = useMemo<Motion>(() => ({
         alpha: 0,
         beta: 0,
         gamma: 0,
         spin: 0,
         initialSpin: null,
     }), [])
-    let debugRef = useRef<HTMLDivElement>(null)
-    let keys = useMemo<Record<string, boolean>>(() => ({}), [])
-    let hasMotionAccess = useStore(i => i.hasMotionAccess)
-    let intersectionRef = useWaterIntersection({
+    const debugRef = useRef<HTMLDivElement>(null)
+    const keys = useMemo<Record<string, boolean>>(() => ({}), [])
+    const hasMotionAccess = useStore(i => i.hasMotionAccess)
+    const intersectionRef = useWaterIntersection({
         size: [radius * 2, radius * 2, radius * 2],
         type: "circle",
         threshold: radius * .5
     })
-    let ref = mergeRefs([meshRef, intersectionRef])
+    const ref = mergeRefs([meshRef, intersectionRef])
 
     useEffect(() => {
         setState({ player: { mesh: meshRef.current, body } })
     }, [])
 
     useEffect(() => {
-        let keydown = (e: KeyboardEvent) => {
+        const keydown = (e: KeyboardEvent) => {
             keys[e.code] = true
 
             if (e.code === "Space") {
                 body.velocity.y = 6.75
             }
         }
-        let keyup = (e: KeyboardEvent) => {
+        const keyup = (e: KeyboardEvent) => {
             keys[e.code] = false
         }
-        let pointerdown = () => {
+        const pointerdown = () => {
             body.velocity.y = 6.75
         }
 
@@ -97,7 +97,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             return
         }
 
-        let click = async () => {
+        const click = async () => {
             try {
                 await requestMotionPermission()
             } catch {
@@ -117,7 +117,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             return
         }
 
-        let deviceorientation = (e: DeviceOrientationEvent) => {
+        const deviceorientation = (e: DeviceOrientationEvent) => {
             if (e.alpha === null) {
                 return
             }
@@ -140,8 +140,8 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [hasMotionAccess])
 
     useEffect(() => {
-        let click = () => {
-            let { state } = store.getState()
+        const click = () => {
+            const { state } = store.getState()
 
             if (["gameover", "intro"].includes(state)) {
                 setState({ state: "running" })
@@ -156,9 +156,9 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [])
 
     useFrame((_, delta) => {
-        let { state, path, player } = store.getState()
-        let playerMesh = player.mesh
-        let nd = ndelta(delta)
+        const { state, path, player } = store.getState()
+        const playerMesh = player.mesh
+        const nd = ndelta(delta)
 
 
         if (state !== "running" || !playerMesh) {
@@ -176,18 +176,18 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         } else if (keys.KeyD) {
             body.velocity.x -= 6 * nd
         } else if (motion.initialSpin !== null) {
-            let deltaRotation = motion.initialSpin - getRotationZ(motion)
-            let deadzone = 2
-            let fadedist = 2
-            let scale = clamp((Math.abs(deltaRotation) - deadzone) / fadedist, 0, 1)
-            let horizontalSpeed = 10
-            let range = 60
+            const deltaRotation = motion.initialSpin - getRotationZ(motion)
+            const deadzone = 2
+            const fadedist = 2
+            const scale = clamp((Math.abs(deltaRotation) - deadzone) / fadedist, 0, 1)
+            const horizontalSpeed = 10
+            const range = 60
 
             body.velocity.x = clamp(deltaRotation / range, -1, 1) * scale * horizontalSpeed
         }
 
-        let bottomBuffer = 3
-        let activeSection = path.find(({ size, position }) => {
+        const bottomBuffer = 3
+        const activeSection = path.find(({ size, position }) => {
             return position[2] - size[2] / 2 < playerMesh.position.z
                 && position[2] + size[2] / 2 > playerMesh.position.z
         })

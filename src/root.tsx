@@ -1,9 +1,10 @@
+import { clamp } from "@data/utils"
+import { createRoot, RenderProps } from "@react-three/fiber"
+import { lazy, ReactNode } from "react"
 import { createRoot as createUiRoot } from "react-dom/client"
 import { registerSW } from "virtual:pwa-register"
-import { lazy, ReactNode } from "react"
-import { createRoot, RenderProps } from "@react-three/fiber"
+
 import Ui from "./ui/Ui"
-import { clamp } from "@data/utils"
 
 function getConfiguration() {
     return {
@@ -49,7 +50,7 @@ window.addEventListener("resize", () => {
     canvasRoot.configure(getConfiguration())
 })
 
-let updateSW = registerSW({
+const updateSW = registerSW({
     onNeedRefresh() {
         console.info("New services worker ready")
         updateSW(true)

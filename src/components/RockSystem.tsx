@@ -1,20 +1,20 @@
+import model from "@assets/models/rock1.glb"
+import { useBody } from "@data/cannon"
+import { store } from "@data/store"
+import useWaterIntersection from "@data/useWaterIntersecton"
+import { ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { useMemo, useLayoutEffect, useState, useEffect, startTransition } from "react"
-import { gray } from "../materials"
-import { GLTFModel, Tuple2, Tuple3 } from "../types/global"
+import { Cylinder } from "cannon-es"
+import { startTransition,useEffect, useMemo, useState } from "react"
+import { mergeRefs } from "react-merge-refs"
 import { damp } from "three/src/math/MathUtils.js"
 
-import model from "@assets/models/rock1.glb"
-import { ndelta } from "@data/utils"
-import useWaterIntersection from "@data/useWaterIntersecton"
-import { store } from "@data/store"
-import { useBody } from "@data/cannon"
-import { mergeRefs } from "react-merge-refs"
-import { Cylinder } from "cannon-es"
+import { gray } from "../materials"
+import { GLTFModel, Tuple2, Tuple3 } from "../types/global"
 
-let baseSize = [2, 16, 2]
+const baseSize = [2, 16, 2]
 
 interface RockProps {
     position: Tuple3
@@ -26,40 +26,40 @@ function Rock({
     position: [x, y, z],
     scale = 1
 }: RockProps) {
-    let { nodes } = useGLTF(model) as unknown as GLTFModel<["rock1"]>
-    let { damping, rotation } = useMemo(() => {
+    const { nodes } = useGLTF(model) as unknown as GLTFModel<["rock1"]>
+    const { damping, rotation } = useMemo(() => {
         return {
             rotation: random.float(0, Math.PI * 2),
             damping: random.float(2, 7) * (2 - scale)
         }
     }, [x, y, z])
-    let rockRef = useWaterIntersection({
+    const rockRef = useWaterIntersection({
         size: [baseSize[0] * scale, baseSize[1] * scale, baseSize[2] * scale],
         type: "circle",
         extension: .35 * scale
     })
-    let [active, setActive] = useState(false)
-    let definition = useMemo(() => {
-        let radius = baseSize[0] / 2 * scale
+    const [active, setActive] = useState(false)
+    const definition = useMemo(() => {
+        const radius = baseSize[0] / 2 * scale
 
         return new Cylinder(radius, radius, baseSize[1] * scale, 7)
     }, [scale])
-    let [bodyRef, body] = useBody({
+    const [bodyRef, body] = useBody({
         mass: 0,
         definition,
         rotation: [0, rotation, 0],
         position: [x, y - 10, z],
         active
     })
-    let ref = mergeRefs([bodyRef, rockRef])
+    const ref = mergeRefs([bodyRef, rockRef])
 
     useEffect(() => {
         let minDistance = Infinity
-        let { path } = store.getState()
+        const { path } = store.getState()
         let closest: Tuple3 = [0, 0, 0]
 
-        for (let { position } of path) {
-            let distance = Math.abs(position[2] - z)
+        for (const { position } of path) {
+            const distance = Math.abs(position[2] - z)
 
             if (distance < minDistance) {
                 minDistance = distance
@@ -106,7 +106,7 @@ const yRange: Tuple2 = [1, 8]
 const scaleRange: Tuple2 = [1, 1.25]
 
 export default function RockSystem({ count = 25 }) {
-    let [rocks, setRocks] = useState(() => {
+    const [rocks, setRocks] = useState(() => {
         return Array.from({ length: count })
             .fill(null)
             .map(() => {
@@ -123,14 +123,14 @@ export default function RockSystem({ count = 25 }) {
     })
 
     useFrame(({ camera }) => {
-        let { path, state } = store.getState()
-        let forward = path[0]
+        const { path, state } = store.getState()
+        const forward = path[0]
 
         if (state != "running") {
             return
         }
 
-        for (let { position, id } of rocks) {
+        for (const { position, id } of rocks) {
             if (position[2] < camera.position.z - 2) {
                 setRocks([
                     ...rocks.filter(i => i.id !== id),

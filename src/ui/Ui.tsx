@@ -1,7 +1,7 @@
 import { store } from "@data/store"
 
 export default function Ui() {
-    let motionAccessDenied = store(i => i.motionAccessDenied)
+    const motionAccessDenied = store(i => i.motionAccessDenied)
 
     return (
         <>
@@ -38,7 +38,7 @@ export default function Ui() {
 }
 
 function Debug() {
-    let state = store(i => i.state)
+    const state = store(i => i.state)
 
     return (
         <div

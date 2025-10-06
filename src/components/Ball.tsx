@@ -1,13 +1,14 @@
 import { useBody } from "@data/cannon"
+import useWaterIntersection from "@data/useWaterIntersecton"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
-import { useMemo, useEffect } from "react"
+import { useEffect, useMemo } from "react"
+import { mergeRefs } from "react-merge-refs"
+import { SphereGeometry } from "three"
+
 import { ball } from "../materials"
 import { Tuple3 } from "../types/global"
-import { SphereGeometry } from "three"
-import useWaterIntersection from "@data/useWaterIntersecton"
-import { mergeRefs } from "react-merge-refs"
 
 export interface BallProps {
     radius: number
@@ -22,19 +23,19 @@ export default function Ball({
     position: [x, y, z],
     ready = false
 }: BallProps) {
-    let definition = useMemo(() => new Sphere(radius), [radius])
-    let mass = useMemo(() => random.float(.1, .5), [])
-    let [bodyRef, body] = useBody({
+    const definition = useMemo(() => new Sphere(radius), [radius])
+    const mass = useMemo(() => random.float(.1, .5), [])
+    const [bodyRef, body] = useBody({
         mass,
         definition,
         position: [x, y - 10, z],
     })
-    let intersectionRef = useWaterIntersection({
+    const intersectionRef = useWaterIntersection({
         type: "circle",
         size: [radius * 2, radius * 2, radius * 2],
         threshold: radius / 2
     })
-    let ref = mergeRefs([intersectionRef, bodyRef])
+    const ref = mergeRefs([intersectionRef, bodyRef])
 
     useEffect(() => {
         if (ready) {
@@ -63,4 +64,3 @@ export default function Ball({
         />
     )
 }
-

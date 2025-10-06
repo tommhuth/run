@@ -1,19 +1,20 @@
+import dirtModel from "@assets/models/dirt.glb"
+import ExternalModel from "@components/ExternalModel"
 import { useBody } from "@data/cannon"
 import { removePathSection } from "@data/store"
+import useWaterIntersection from "@data/useWaterIntersecton"
+import { ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
-import { useMemo, useState, startTransition, memo } from "react"
-import { Tuple3 } from "../types/global"
-import { BoxGeometry } from "three"
-import useWaterIntersection from "@data/useWaterIntersecton"
+import { memo,startTransition, useMemo, useState } from "react"
 import { mergeRefs } from "react-merge-refs"
-import dirtModel from "@assets/models/dirt.glb"
-import ExternalModel from "@components/ExternalModel"
-import { gray } from "../materials"
-import Ball, { BallProps } from "./Ball"
+import { BoxGeometry } from "three"
 import { damp } from "three/src/math/MathUtils.js"
-import { ndelta } from "@data/utils"
+
+import { gray } from "../materials"
+import { Tuple3 } from "../types/global"
+import Ball, { BallProps } from "./Ball"
 
 const box = new BoxGeometry(1, 1, 1, 1, 1, 1)
 
@@ -30,29 +31,29 @@ function Block({
     rotation: incomingRotation,
     fixed,
 }: BlockProps) {
-    let dirt = useMemo(() => random.boolean(.6), [])
-    let definition = useMemo(() => new Box(new Vec3(width / 2, height / 2, depth / 2)), [])
-    let rotation = useMemo(() => {
+    const dirt = useMemo(() => random.boolean(.6), [])
+    const definition = useMemo(() => new Box(new Vec3(width / 2, height / 2, depth / 2)), [])
+    const rotation = useMemo(() => {
         return typeof incomingRotation === "number" ? incomingRotation : random.float(-.35, .35)
     }, [incomingRotation])
-    let [sectionRef, body] = useBody({
+    const [sectionRef, body] = useBody({
         mass: 0,
         definition,
         position: [x, fixed ? y : y - 10, z],
         rotation: [0, rotation, 0]
     })
-    let intersectionRef = useWaterIntersection({
+    const intersectionRef = useWaterIntersection({
         size: [width, height, depth],
         extension: .35,
         type: "box"
     })
-    let ref = mergeRefs([intersectionRef, sectionRef])
-    let [atPosition, setAtPosition] = useState(false)
-    let balls = useMemo(() => {
+    const ref = mergeRefs([intersectionRef, sectionRef])
+    const [atPosition, setAtPosition] = useState(false)
+    const balls = useMemo(() => {
         return Array.from({ length: fixed ? 0 : random.integer(1, 3) })
             .fill(null)
             .map((i, index, list) => {
-                let radius = [.25, .5, .35, .65, .85][index % list.length]
+                const radius = [.25, .5, .35, .65, .85][index % list.length]
 
                 return {
                     id: random.id(),
@@ -119,14 +120,14 @@ function SplitBlock({
     gap = 4,
     fixed,
 }) {
-    let rotation = useMemo(() => random.float(-.4, .4), [])
+    const rotation = useMemo(() => random.float(-.4, .4), [])
 
     return [-1, 1].map(dir => {
-        let partDepth = (depth - gap) / 2
-        let offsetZ = partDepth / 2 + gap / 2
-        let dx = Math.sin(rotation + Math.PI * 1) * (dir * offsetZ)
-        let dz = Math.cos(rotation + Math.PI * 1) * (dir * offsetZ)
-        let position: Tuple3 = [x + dx, y, z + dz]
+        const partDepth = (depth - gap) / 2
+        const offsetZ = partDepth / 2 + gap / 2
+        const dx = Math.sin(rotation + Math.PI * 1) * (dir * offsetZ)
+        const dz = Math.cos(rotation + Math.PI * 1) * (dir * offsetZ)
+        const position: Tuple3 = [x + dx, y, z + dz]
 
         return (
             <Block
@@ -157,7 +158,7 @@ function PathSection({
     gap
 }: PathSectionProps) {
     useFrame(({ camera }) => {
-        let backwardsBuffer = 2
+        const backwardsBuffer = 2
 
         if (camera.position.z - backwardsBuffer > z + depth / 2) {
             removePathSection(id)

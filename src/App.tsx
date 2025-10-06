@@ -1,21 +1,21 @@
-import { extend } from "@react-three/fiber"
-import extensions from "./extensions"
-import Camera from "./components/Camera"
-import { CannonProvider } from "@data/cannon"
-import Lights from "@components/Lights"
-import Player from "@components/Player"
-import Water from "@components/Water"
-import Path from "@components/Path"
-import DepthTexture from "@components/DepthTexture"
-import { Perf } from "r3f-perf"
 import CloudSystem from "@components/CloudSystem"
-import Config from "@data/Config"
-import SpeedParticles from "@components/SpeedParticles"
-import RockSystem from "@components/RockSystem"
+import DepthTexture from "@components/DepthTexture"
 import Foam from "@components/Foam"
+import Lights from "@components/Lights"
+import Path from "@components/Path"
+import Player from "@components/Player"
+import RockSystem from "@components/RockSystem"
+import SpeedParticles from "@components/SpeedParticles"
+import Water from "@components/Water"
+import { CannonProvider } from "@data/cannon"
+import Config from "@data/Config"
+import { extend } from "@react-three/fiber"
+import { Perf } from "r3f-perf"
+
+import Camera from "./components/Camera"
+import extensions from "./extensions"
 
 extend(extensions)
-
 
 export default function App() {
     return (

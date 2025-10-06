@@ -3,8 +3,8 @@ import { clamp, setMatrixAt } from "@data/utils"
 import random from "@huth/random"
 import { config, SpringValue } from "@react-spring/core"
 import { useFrame } from "@react-three/fiber"
+import { Tuple3 } from "@src/types/global"
 import { useMemo, useRef } from "react"
-import { Tuple3 } from "src/types/global"
 import { InstancedMesh, Vector3 } from "three"
 
 interface Particle {
@@ -14,12 +14,12 @@ interface Particle {
     scale: Tuple3
 }
 
-let speed = new SpringValue(0, { config: config.molasses })
+const speed = new SpringValue(0, { config: config.molasses })
 
 export default function SpeedParticles() {
-    let count = 35
-    let ref = useRef<InstancedMesh>(null)
-    let particles = useMemo(() => {
+    const count = 35
+    const ref = useRef<InstancedMesh>(null)
+    const particles = useMemo(() => {
         return Array.from({ length: count }).fill(null).map(() => {
             return {
                 id: random.id(),
@@ -39,7 +39,7 @@ export default function SpeedParticles() {
     }, [count])
 
     useFrame(({ camera }, delta) => {
-        let { player: { mesh, body }, state } = store.getState()
+        const { player: { mesh, body }, state } = store.getState()
 
         if (!ref.current || !mesh || !body) {
             return
@@ -47,9 +47,9 @@ export default function SpeedParticles() {
 
         speed.start(state === "running" ? body.velocity.z : 0)
 
-        for (let [index, { position, velocity, scale }] of particles.entries()) {
-            let playerScaler = 1 - clamp((camera.position.z - position.z - 0) / 2, 0, 1)
-            let speedScale = clamp(speed.get() / 3, 0, 1) ** 2 * 1.5
+        for (const [index, { position, velocity, scale }] of particles.entries()) {
+            const playerScaler = 1 - clamp((camera.position.z - position.z - 0) / 2, 0, 1)
+            const speedScale = clamp(speed.get() / 3, 0, 1) ** 2 * 1.5
 
             setMatrixAt({
                 instance: ref.current,

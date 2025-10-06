@@ -2,8 +2,8 @@ import { store } from "@data/store"
 import { clamp, setMatrixAt, setMatrixNullAt } from "@data/utils"
 import random from "@huth/random"
 import { useFrame, useThree } from "@react-three/fiber"
+import { Tuple2, Tuple3 } from "@src/types/global"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { Tuple2, Tuple3 } from "src/types/global"
 import { Camera, InstancedMesh, Vector3 } from "three"
 
 const _ndc = new Vector3()
@@ -36,18 +36,18 @@ interface Point {
     duration: number
 }
 
-let _position = new Vector3()
+const _position = new Vector3()
 
 export default function ScorePoint() {
-    let count = 30
-    let ref = useRef<InstancedMesh>(null)
-    let i = useRef(0)
-    let [points, setPoints] = useState<Point[]>([])
-    let { camera } = useThree()
+    const count = 30
+    const ref = useRef<InstancedMesh>(null)
+    const i = useRef(0)
+    const [points, setPoints] = useState<Point[]>([])
+    const { camera } = useThree()
 
     useEffect(() => {
-        let click = () => {
-            let { player: { mesh } } = store.getState()
+        const click = () => {
+            const { player: { mesh } } = store.getState()
 
             if (!mesh) {
                 return
@@ -90,10 +90,10 @@ export default function ScorePoint() {
             return
         }
 
-        let target = screenToWorld([100, window.innerHeight - 100], camera, 2)
+        const target = screenToWorld([100, window.innerHeight - 100], camera, 2)
 
-        for (let [index, { position, scale, duration }] of points.entries()) {
-            let alpha = clamp(i.current / duration, 0, 1)
+        for (const [index, { position, scale, duration }] of points.entries()) {
+            const alpha = clamp(i.current / duration, 0, 1)
 
             if (alpha === 1) {
                 setMatrixNullAt(ref.current, index)

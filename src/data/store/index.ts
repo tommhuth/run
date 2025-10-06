@@ -2,10 +2,11 @@ import Counter from "@data/Counter"
 import random from "@huth/random"
 import { Body } from "cannon-es"
 import { startTransition } from "react"
-import { Tuple2, Tuple3 } from "src/types/global"
 import { DepthTexture, InstancedMesh, Material, Mesh } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
+
+import { Tuple2, Tuple3 } from "../../types/global"
 
 export type InstanceName = "box" | "circle"
 
@@ -43,10 +44,10 @@ interface DeviceMotionEventiOS extends DeviceMotionEvent {
 export const hasRequestMotionPermission = !!(DeviceMotionEvent as unknown as DeviceMotionEventiOS).requestPermission
 
 export async function requestMotionPermission() {
-    let event = DeviceMotionEvent as unknown as DeviceMotionEventiOS
+    const event = DeviceMotionEvent as unknown as DeviceMotionEventiOS
 
     if (event.requestPermission) {
-        let permission = await event.requestPermission()
+        const permission = await event.requestPermission()
 
         setState({
             hasMotionAccess: permission === "granted",
@@ -73,16 +74,16 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
 let counter = 0
 
 export function addPathSection() {
-    let last = store.getState().path[0]
-    let gap = random.boolean(.5)
-    let height = 20
-    let depthRange: Tuple2 = gap ? [11, 15] : [4, 8]
-    let size: Tuple3 = [
+    const last = store.getState().path[0]
+    const gap = random.boolean(.5)
+    const height = 20
+    const depthRange: Tuple2 = gap ? [11, 15] : [4, 8]
+    const size: Tuple3 = [
         random.integer(4, 6),
         height,
         random.integer(...depthRange)
     ]
-    let position: Tuple3 = [
+    const position: Tuple3 = [
         random.integer(-1, 1) + Math.sin(counter * .45) * 2,
         -height / 2 + Math.sin(counter * .4) * 3,
         last.position[2] + last.size[2] / 2 + size[2] / 2

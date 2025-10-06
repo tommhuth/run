@@ -1,14 +1,14 @@
 import { useStore } from "@data/store"
-import { useThree, useFrame } from "@react-three/fiber"
-import { useRef, useEffect } from "react"
-import { CameraHelper, DirectionalLight } from "three"
+import { useFrame,useThree } from "@react-three/fiber"
+import { useEffect,useRef } from "react"
+import { DirectionalLight } from "three"
 
 export default function Lights() {
-    let shadowLightRef = useRef<DirectionalLight>(null)
-    let { scene, viewport } = useThree()
-    let time = useRef(0)
-    let forwardOffset = 10
-    let targetPosition = [10, -20, 6]
+    const shadowLightRef = useRef<DirectionalLight>(null)
+    const { scene, viewport } = useThree()
+    const time = useRef(0)
+    const forwardOffset = 10
+    const targetPosition = [10, -20, 6]
 
     useEffect(() => {
         if (!shadowLightRef.current) {
@@ -21,11 +21,11 @@ export default function Lights() {
 
 
     useFrame((_, delta) => {
-        let { player, state } = useStore.getState()
+        const { player, state } = useStore.getState()
 
         // update camera shadow position 
         if (shadowLightRef.current && time.current >= 750 && player.mesh && state === "running") {
-            let z = player.mesh.position.z + forwardOffset
+            const z = player.mesh.position.z + forwardOffset
 
             shadowLightRef.current.position.z = z
             shadowLightRef.current.target.position.z = z + targetPosition[2]

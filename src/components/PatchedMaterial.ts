@@ -1,5 +1,5 @@
 import { glsl } from "@data/utils"
-import { MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, WebGLProgramParametersWithUniforms } from "three"
+import { MeshBasicMaterial, MeshPhongMaterial, WebGLProgramParametersWithUniforms } from "three"
 
 interface ShaderPart {
     main?: string

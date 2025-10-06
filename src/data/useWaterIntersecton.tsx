@@ -1,11 +1,12 @@
 import { useInstance } from "@components/InstancedMesh"
+import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { Object3D } from "three"
+
 import { store } from "./store"
 import { setMatrixAt } from "./utils"
-import random from "@huth/random"
 
 // thanks chattyman
 function intersectsWaterPlane(planeY: number, object: Object3D, size: Tuple3, threshold = 1, smooth = true) {
@@ -19,6 +20,7 @@ function intersectsWaterPlane(planeY: number, object: Object3D, size: Tuple3, th
     if (distTop > threshold) {
         return 0
     }
+
     // fully above -> both negative
     if (distBottom < -threshold) {
         return 0
@@ -51,21 +53,21 @@ export default function useWaterIntersection({
     size,
     extension: incomingExtension = .25
 }: UseWaterIntersectorParams) {
-    let ref = useRef<Object3D>(null)
-    let [index] = useInstance(type)
-    let extension = useMemo(() => {
+    const ref = useRef<Object3D>(null)
+    const [index] = useInstance(type)
+    const extension = useMemo(() => {
         return incomingExtension * random.float(.85, 1.1)
     }, [incomingExtension])
 
     useFrame(() => {
-        let { instances } = store.getState()
+        const { instances } = store.getState()
 
         if (!ref.current || !instances[type] || index === null) {
             return
         }
 
-        let intersection = intersectsWaterPlane(waterLevel, ref.current, size, threshold)
-        let position: Tuple3 = [
+        const intersection = intersectsWaterPlane(waterLevel, ref.current, size, threshold)
+        const position: Tuple3 = [
             ref.current.position.x,
             waterLevel + .01,
             ref.current.position.z

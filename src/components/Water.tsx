@@ -8,8 +8,8 @@ import { Mesh } from "three"
 export const deepcolor = "darkblue"
 
 export default function Water({ size = 100 }: { size?: number }) {
-    let ref = useRef<Mesh>(null)
-    let { onBeforeCompile } = useShader({
+    const ref = useRef<Mesh>(null)
+    const { onBeforeCompile } = useShader({
         uniforms: {
         },
         shared: glsl`  
@@ -34,7 +34,7 @@ export default function Water({ size = 100 }: { size?: number }) {
     }, [])
 
     useFrame(() => {
-        let { player, state } = store.getState()
+        const { player, state } = store.getState()
 
         if (!ref.current || !player.mesh || state !== "running") {
             return

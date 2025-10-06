@@ -1,17 +1,18 @@
 import { addPathSection, useStore } from "@data/store"
+import { ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react"
+
 import PathSection from "./PathSection"
-import { ndelta } from "@data/utils"
 
 export default function Path() {
-    let path = useStore(i => i.path)
-    let timer = useRef(0)
+    const path = useStore(i => i.path)
+    const timer = useRef(0)
 
     useFrame(({ camera }, delta) => {
-        let forwardSection = path[0]
-        let forwardBuffer = 25
-        let checkInterval = 350
+        const forwardSection = path[0]
+        const forwardBuffer = 25
+        const checkInterval = 350
 
         if (
             forwardSection

@@ -1,10 +1,8 @@
-import { InstanceName, store, setInstance, useStore } from "@data/store"
-import { setMatrixAt, setMatrixNullAt, setColorAt } from "@data/utils"
+import { InstanceName, setInstance, store, useStore } from "@data/store"
+import { setColorAt, setMatrixAt, setMatrixNullAt } from "@data/utils"
+import { Tuple3, Tuple4 } from "@src/types/global"
 import { ReactNode, startTransition, useEffect, useMemo, useState } from "react"
-import { Tuple3, Tuple4 } from "src/types/global"
 import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThree, Material } from "three"
-
-
 
 interface UseInstanceOptions {
     clear?: boolean
@@ -21,8 +19,8 @@ export function useInstance(name: InstanceName, {
     rotation = [0, 0, 0],
     position = [0, 0, 0],
 }: UseInstanceOptions = {}) {
-    let instance = useStore(i => i.instances[name])
-    let [index, setIndex] = useState<null | number>(null)
+    const instance = useStore(i => i.instances[name])
+    const [index, setIndex] = useState<null | number>(null)
 
     useEffect(() => {
         if (instance) {
@@ -84,11 +82,11 @@ export default function InstancedMesh({
     geometry,
     material
 }: InstancedMeshProps) {
-    let colorData = useMemo(() => {
+    const colorData = useMemo(() => {
         return new Float32Array(colors ? count * 3 : 0).fill(0)
     }, [count])
-    let [instance, setInstanceRef] = useState<InstancedMeshThree | null>(null)
-    let attempts = 0
+    const [instance, setInstanceRef] = useState<InstancedMeshThree | null>(null)
+    const attempts = 0
 
     useEffect(() => {
         if (!instance) {

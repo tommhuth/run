@@ -1,11 +1,22 @@
-import { GSSolver, SplitSolver, World, Body as CannonBody, Vec3, Shape, Quaternion as CannonQuaternion, ContactEquation, Quaternion, SAPBroadphase } from "cannon-es"
-import React, { useRef, useEffect, useContext, useMemo, useLayoutEffect, ReactNode } from "react"
 import { invalidate, useFrame, useThree } from "@react-three/fiber"
-import { Mesh, InstancedMesh } from "three"
-import { setMatrixAt, setMatrixNullAt } from "./utils"
+import {
+    Body as CannonBody,
+    ContactEquation, GSSolver,
+    Quaternion as CannonQuaternion,
+    Quaternion,
+    SAPBroadphase,
+    Shape,
+    SplitSolver,
+    Vec3,
+    World
+} from "cannon-es"
 import createCannonDebugger from "cannon-es-debugger"
-import useAnimationFrame from "use-animation-frame"
+import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
+import { InstancedMesh, Mesh } from "three"
+import useAnimationFrame from "use-animation-frame"
+
+import { setMatrixAt, setMatrixNullAt } from "./utils"
 
 export type ShapeDefinition = Shape | [Shape, Vec3?, CannonQuaternion?][]
 
@@ -65,7 +76,7 @@ function useCannonBody({
         })
     }, [mass])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         body.shapes = []
 
         if (Array.isArray(definition)) {
@@ -93,7 +104,6 @@ function useCannonBody({
 
     useEffect(() => {
         body.userData = userData
-        // console.log(world.bodies.length)
     }, [userData, body])
 
     return [body, world] as const
@@ -126,7 +136,7 @@ export function CannonProvider({
             gravity: new Vec3(...gravity),
         })
 
-        let sap = new SAPBroadphase(world)
+        const sap = new SAPBroadphase(world)
 
         sap.axisIndex = 2
 
@@ -196,7 +206,7 @@ export function useInstancedBody({
     position,
     rotation,
     keepAround = false,
-    ready = true,
+    active = true,
     scale = [1, 1, 1],
     instance,
     index,
@@ -206,7 +216,7 @@ export function useInstancedBody({
         mass,
         position,
         rotation,
-        ready,
+        active,
         ...rest,
     })
 
@@ -219,7 +229,7 @@ export function useInstancedBody({
     }, [instance, keepAround, index])
 
     useLayoutEffect(() => {
-        if (instance && typeof index === "number" && ready) {
+        if (instance && typeof index === "number" && active) {
             setMatrixAt({
                 index,
                 instance,
@@ -228,10 +238,10 @@ export function useInstancedBody({
                 scale,
             })
         }
-    }, [index, ready, instance])
+    }, [index, active, instance])
 
     useFrame(() => {
-        if (instance && typeof index === "number" && mass > 0 && ready) {
+        if (instance && typeof index === "number" && mass > 0 && active) {
             setMatrixAt({
                 index,
                 instance,

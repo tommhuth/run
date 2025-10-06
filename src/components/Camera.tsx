@@ -1,19 +1,19 @@
 import { store } from "@data/store"
-import { useFrame, useThree } from "@react-three/fiber"
-import { useLayoutEffect, useMemo, useRef } from "react"
-import { Tuple3 } from "src/types/global"
-import { config, SpringValue } from "@react-spring/core"
 import { map } from "@data/utils"
+import { config, SpringValue } from "@react-spring/core"
+import { useFrame, useThree } from "@react-three/fiber"
+import { Tuple3 } from "@src/types/global"
+import { useLayoutEffect, useMemo, useRef } from "react"
 
 function getOffset() {
     return -(3.5 + map(window.innerWidth, 400, 800, .5, 0))
 }
 
 export default function Camera() {
-    let { camera } = useThree()
-    let offset = getOffset()
-    let cameraTarget = useRef<Tuple3>([0, 3, offset])
-    let dir = useMemo(() => {
+    const { camera } = useThree()
+    const offset = getOffset()
+    const cameraTarget = useRef<Tuple3>([0, 3, offset])
+    const dir = useMemo(() => {
         return {
             x: new SpringValue(0, { config: config.stiff }),
             y: new SpringValue(0, { config: config.molasses }),
@@ -27,8 +27,8 @@ export default function Camera() {
     }, [camera])
 
     useFrame(() => {
-        let { state, path, player: { body } } = store.getState()
-        let currentSection = body && path.find(({ size, position }) => {
+        const { state, path, player: { body } } = store.getState()
+        const currentSection = body && path.find(({ size, position }) => {
             return position[2] - size[2] / 2 < body.position.z
                 && position[2] + size[2] / 2 > body.position.z
         })
@@ -45,9 +45,9 @@ export default function Camera() {
     })
 
     useFrame(() => {
-        let axs = ["x", "y", "z"]
+        const axs = ["x", "y", "z"]
 
-        for (let [key, value] of Object.entries(dir)) {
+        for (const [key, value] of Object.entries(dir)) {
             value.start(cameraTarget.current[axs.indexOf(key)])
             camera.position[key] = value.get()
         }

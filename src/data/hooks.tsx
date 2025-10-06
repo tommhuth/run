@@ -1,7 +1,7 @@
+import { patchShader } from "@components/PatchedMaterial"
+import random from "@huth/random"
 import { useCallback, useEffect, useMemo, useRef } from "react"
 import { IUniform, WebGLProgramParametersWithUniforms, WebGLRenderer } from "three"
-import random from "@huth/random"
-import { patchShader } from "@components/PatchedMaterial"
 
 export const useAnimationFrame = (callback: (delta: number) => void) => {
     // Use useRef for mutable variables that we want to persist
@@ -83,7 +83,7 @@ export function useShader<T extends UniformsRecord>({
     }, [vertex?.head, vertex?.main, fragment?.head, fragment?.main])
 
     return {
-        // aaah why is this cast neccessary ts
+    // aaah why is this cast neccessary ts
         uniforms: uniforms as ReturnUniformsRecord<T>,
         customProgramCacheKey,
         onBeforeCompile
