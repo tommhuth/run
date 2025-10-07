@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber"
 import { useLayoutEffect, useRef } from "react"
 import { Mesh } from "three"
 
-export const deepcolor = "darkblue"
+export const waterDeepColor = "darkblue"
 
 export default function Water({ size = 100 }: { size?: number }) {
     const ref = useRef<Mesh>(null)
@@ -19,7 +19,7 @@ export default function Water({ size = 100 }: { size?: number }) {
         vertex: {
             main: glsl`  
                 worldPos =  (modelMatrix * vec4(position, 1.0)).xyz;
-                pos =   position ;
+                pos = position;
             `
         },
         fragment: {
@@ -30,6 +30,10 @@ export default function Water({ size = 100 }: { size?: number }) {
     })
 
     useLayoutEffect(() => {
+        if (!ref.current) {
+            return
+        }
+
         ref.current.position.z = size * .4
     }, [])
 
@@ -43,8 +47,6 @@ export default function Water({ size = 100 }: { size?: number }) {
         ref.current.position.z = player.mesh.position.z + size * .4
     })
 
-
-
     return (
         <group ref={ref}>
             <mesh
@@ -57,7 +59,7 @@ export default function Water({ size = 100 }: { size?: number }) {
                 <boxGeometry args={[500, 500, 1]} />
                 <meshPhongMaterial
                     onBeforeCompile={onBeforeCompile}
-                    color={deepcolor}
+                    color={waterDeepColor}
                     fog={false}
                     name="waterbackground"
                 />

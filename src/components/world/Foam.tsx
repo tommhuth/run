@@ -3,8 +3,7 @@ import InstancedMesh from "@components/InstancedMesh"
 import { useShader } from "@data/hooks"
 import { glsl } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
-
-import noise from "../shaders/noise.glsl"
+import noise from "@src/shaders/noise.glsl"
 
 export default function Foam() {
     const { onBeforeCompile, uniforms } = useShader({

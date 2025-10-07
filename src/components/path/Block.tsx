@@ -1,19 +1,18 @@
 import dirtModel from "@assets/models/dirt.glb"
 import ExternalModel from "@components/ExternalModel"
 import { useBody } from "@data/cannon"
-import { removePathSection } from "@data/store"
 import useWaterIntersection from "@data/useWaterIntersecton"
 import { ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
+import { gray } from "@src/materials"
+import { Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
-import { memo,startTransition, useMemo, useState } from "react"
+import { startTransition, useMemo, useState } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { BoxGeometry } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
-import { gray } from "../materials"
-import { Tuple3 } from "../types/global"
 import Ball, { BallProps } from "./Ball"
 
 const box = new BoxGeometry(1, 1, 1, 1, 1, 1)
@@ -25,7 +24,7 @@ interface BlockProps {
     rotation?: number
 }
 
-function Block({
+export default function Block({
     size: [width, height, depth],
     position: [x, y, z],
     rotation: incomingRotation,
@@ -63,7 +62,7 @@ function Block({
                         y + height / 2,
                         random.float(z - 2, z + 2)
                     ] as Tuple3
-                } satisfies BallProps & { id: string }
+                } satisfies BallProps
             })
     }, [])
 
@@ -113,78 +112,3 @@ function Block({
         </>
     )
 }
-
-function SplitBlock({
-    position: [x, y, z],
-    size: [width, height, depth],
-    gap = 4,
-    fixed,
-}) {
-    const rotation = useMemo(() => random.float(-.4, .4), [])
-
-    return [-1, 1].map(dir => {
-        const partDepth = (depth - gap) / 2
-        const offsetZ = partDepth / 2 + gap / 2
-        const dx = Math.sin(rotation + Math.PI * 1) * (dir * offsetZ)
-        const dz = Math.cos(rotation + Math.PI * 1) * (dir * offsetZ)
-        const position: Tuple3 = [x + dx, y, z + dz]
-
-        return (
-            <Block
-                key={dir}
-                position={position}
-                size={[width, height, partDepth]}
-                rotation={rotation * (dir === 1 ? .75 : 1)}
-                fixed={fixed}
-            />
-        )
-    })
-}
-
-interface PathSectionProps {
-    id: string
-    size: Tuple3
-    position: Tuple3
-    ready?: boolean
-    fixed?: boolean
-    gap: boolean
-}
-
-function PathSection({
-    fixed = false,
-    id,
-    size: [width, height, depth],
-    position: [x, y, z],
-    gap
-}: PathSectionProps) {
-    useFrame(({ camera }) => {
-        const backwardsBuffer = 2
-
-        if (camera.position.z - backwardsBuffer > z + depth / 2) {
-            removePathSection(id)
-        }
-    })
-
-    return (
-        <>
-            {gap && (
-                <SplitBlock
-                    gap={3}
-                    fixed={fixed}
-                    position={[x, y, z]}
-                    size={[width, height, depth]}
-                />
-            )}
-            {!gap && (
-
-                <Block
-                    fixed={fixed}
-                    position={[x, y, z]}
-                    size={[width, height, depth]}
-                />
-            )}
-        </>
-    )
-}
-
-export default memo(PathSection)

@@ -1,4 +1,5 @@
-import { addPathSection, useStore } from "@data/store"
+import { useStore } from "@data/store"
+import { addPathSection } from "@data/store/actions"
 import { ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react"

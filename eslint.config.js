@@ -89,7 +89,7 @@ export default [
             ],
             "no-console": [
                 "error",
-                { allow: ["error"] }
+                { allow: ["error", "info", "warn"] }
             ],
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": [

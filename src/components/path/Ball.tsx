@@ -2,18 +2,18 @@ import { useBody } from "@data/cannon"
 import useWaterIntersection from "@data/useWaterIntersecton"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
+import { ball } from "@src/materials"
+import { Tuple3 } from "@src/types/global"
 import { Sphere } from "cannon-es"
 import { useEffect, useMemo } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { SphereGeometry } from "three"
 
-import { ball } from "../materials"
-import { Tuple3 } from "../types/global"
-
 export interface BallProps {
     radius: number
     position: Tuple3
     ready?: boolean
+    id: string
 }
 
 const geometry = new SphereGeometry(1, 16, 16)

@@ -1,4 +1,5 @@
-import { InstanceName, setInstance, store, useStore } from "@data/store"
+import { store, useStore } from "@data/store"
+import { InstanceName, setInstance } from "@data/store/actions"
 import { setColorAt, setMatrixAt, setMatrixNullAt } from "@data/utils"
 import { Tuple3, Tuple4 } from "@src/types/global"
 import { ReactNode, startTransition, useEffect, useMemo, useState } from "react"

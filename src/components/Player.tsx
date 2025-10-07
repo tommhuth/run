@@ -1,6 +1,7 @@
 import { useBody } from "@data/cannon"
 import Config from "@data/Config"
-import { requestMotionPermission, setState, store, useStore } from "@data/store"
+import { store, useStore } from "@data/store"
+import { requestMotionPermission, setState } from "@data/store/actions"
 import useWaterIntersection from "@data/useWaterIntersecton"
 import { clamp, ndelta, } from "@data/utils"
 import { Html } from "@react-three/drei"

@@ -3,7 +3,7 @@ import { extend } from "@react-three/fiber"
 import { Color, IUniform, MeshPhongMaterial } from "three"
 
 import { PatchedPhongMaterial } from "./PatchedMaterial"
-import { deepcolor } from "./Water"
+import { waterDeepColor } from "./world/Water"
 
 interface ConcreteMaterialUniforms {
     uTime: IUniform<number>;
@@ -15,7 +15,7 @@ export default class ConcreteMaterial extends PatchedPhongMaterial<ConcreteMater
             value: 0
         },
         uFogColor: {
-            value: new Color(deepcolor)
+            value: new Color(waterDeepColor)
         }
     }
     shader = {

@@ -1,4 +1,4 @@
-import { setState } from "@data/store"
+import { setState } from "@data/store/actions"
 import { useFBO } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"

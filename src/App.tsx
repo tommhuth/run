@@ -1,12 +1,13 @@
-import CloudSystem from "@components/CloudSystem"
-import DepthTexture from "@components/DepthTexture"
-import Foam from "@components/Foam"
+
+import DepthTexturex from "@components/DepthTexture"
 import Lights from "@components/Lights"
-import Path from "@components/Path"
+import Path from "@components/path/Path"
 import Player from "@components/Player"
-import RockSystem from "@components/RockSystem"
-import SpeedParticles from "@components/SpeedParticles"
-import Water from "@components/Water"
+import CloudSystem from "@components/world/CloudSystem"
+import Foam from "@components/world/Foam"
+import RockSystem from "@components/world/RockSystem"
+import SpeedParticles from "@components/world/SpeedParticles"
+import Water from "@components/world/Water"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import { extend } from "@react-three/fiber"
@@ -37,7 +38,7 @@ export default function App() {
             </CannonProvider>
 
             {/* at the very end */}
-            <DepthTexture />
+            <DepthTexturex />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
