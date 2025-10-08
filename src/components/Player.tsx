@@ -71,24 +71,27 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             keys[e.code] = true
 
             if (e.code === "Space") {
-                body.velocity.y = 6.75
+                keys.jump = true
             }
         }
         const keyup = (e: KeyboardEvent) => {
             keys[e.code] = false
         }
         const pointerdown = () => {
-            body.velocity.y = 6.75
+            keys.jump = true
         }
 
         window.addEventListener("keydown", keydown)
         window.addEventListener("keyup", keyup)
-        window.addEventListener("pointerdown", pointerdown, { passive: true })
+        window.addEventListener("touchstart", pointerdown, { passive: true })
+        window.addEventListener("mousedown", pointerdown, { passive: true })
 
         return () => {
             window.removeEventListener("keydown", keydown)
             window.removeEventListener("keyup", keyup)
             window.removeEventListener("pointerdown", pointerdown)
+            window.removeEventListener("touchstart", pointerdown)
+            window.removeEventListener("mousedown", pointerdown)
         }
     }, [body])
 
@@ -160,7 +163,6 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         const playerMesh = player.mesh
         const nd = ndelta(delta)
 
-
         if (state !== "running" || !playerMesh) {
             return
         }
@@ -170,6 +172,11 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         }
 
         body.wakeUp()
+
+        if (keys.jump) {
+            body.velocity.y = 6.75
+            keys.jump = false
+        }
 
         if (keys.KeyA) {
             body.velocity.x += 6 * nd
