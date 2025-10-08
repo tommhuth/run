@@ -2,11 +2,11 @@ import { useStore } from "@data/store"
 import { addPathSection } from "@data/store/actions"
 import { ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
-import { useRef } from "react"
+import { memo, useRef } from "react"
 
 import PathSection from "./PathSection"
 
-export default function Path() {
+function Path() {
     const path = useStore(i => i.path)
     const timer = useRef(0)
 
@@ -31,4 +31,6 @@ export default function Path() {
             <PathSection {...i} key={i.id} />
         )
     })
-} 
+}
+
+export default memo(Path)

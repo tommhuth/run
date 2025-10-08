@@ -3,10 +3,10 @@ import { useShader } from "@data/hooks"
 import { store, useStore } from "@data/store"
 import { glsl, ndelta } from "@data/utils"
 import { useTexture } from "@react-three/drei"
-import { useFrame,useThree } from "@react-three/fiber"
-import { useEffect,useLayoutEffect, useRef } from "react"
+import { useFrame, useThree } from "@react-three/fiber"
+import { memo, useEffect, useLayoutEffect, useRef } from "react"
 import { Tuple3 } from "src/types/global"
-import { BufferGeometry, Material,Mesh, PlaneGeometry, Vector2, Vector3 } from "three"
+import { BufferGeometry, Material, Mesh, PlaneGeometry, Vector2, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
 const geometry = new PlaneGeometry(12, 5, 1, 1)
@@ -21,7 +21,7 @@ export interface CloudProps {
     id: string
 }
 
-export default function Cloud({
+function Cloud({
     speed,
     position,
     damping,
@@ -197,3 +197,5 @@ export default function Cloud({
         </mesh>
     )
 }
+
+export default memo(Cloud)

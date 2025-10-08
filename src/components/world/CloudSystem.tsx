@@ -2,7 +2,7 @@ import { store } from "@data/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
-import { useState } from "react"
+import { startTransition, useState } from "react"
 
 import Cloud, { CloudProps } from "./Cloud"
 
@@ -26,13 +26,15 @@ export default function CloudSystem({ size = 14 }: { size?: number }) {
         })
     })
     const updateCloud = (id: CloudProps["id"], data: Partial<CloudProps>) => {
-        setClouds([
-            ...clouds.filter(i => i.id !== id),
-            {
-                ...clouds.find(i => i.id === id) as CloudProps,
-                ...data
-            }
-        ])
+        startTransition(() => {
+            setClouds([
+                ...clouds.filter(i => i.id !== id),
+                {
+                    ...clouds.find(i => i.id === id) as CloudProps,
+                    ...data
+                }
+            ])
+        })
     }
 
     useFrame(() => {

@@ -1,6 +1,6 @@
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
-import { useMemo } from "react"
+import { memo, useMemo } from "react"
 
 import Block from "./Block"
 
@@ -11,7 +11,7 @@ interface SplitBlockProps {
     fixed: boolean
 }
 
-export default function SplitBlock({
+function SplitBlock({
     position: [x, y, z],
     size: [width, height, depth],
     gap = 4,
@@ -37,3 +37,5 @@ export default function SplitBlock({
         )
     })
 }
+
+export default memo(SplitBlock)

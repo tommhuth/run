@@ -9,7 +9,7 @@ import { useFrame } from "@react-three/fiber"
 import { gray } from "@src/materials"
 import { GLTFModel, Tuple3 } from "@src/types/global"
 import { Cylinder } from "cannon-es"
-import { startTransition, useEffect, useMemo, useState } from "react"
+import { memo, startTransition, useEffect, useMemo, useState } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { damp } from "three/src/math/MathUtils.js"
 
@@ -21,7 +21,7 @@ export interface RockProps {
 
 const baseSize = [2, 16, 2]
 
-export default function Rock({
+function Rock({
     position: [x, y, z],
     scale = 1
 }: RockProps) {
@@ -99,3 +99,5 @@ export default function Rock({
         />
     )
 }
+
+export default memo(Rock)

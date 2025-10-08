@@ -8,7 +8,7 @@ import { useFrame } from "@react-three/fiber"
 import { gray } from "@src/materials"
 import { Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
-import { startTransition, useMemo, useState } from "react"
+import { memo, startTransition, useMemo, useState } from "react"
 import { mergeRefs } from "react-merge-refs"
 import { BoxGeometry } from "three"
 import { damp } from "three/src/math/MathUtils.js"
@@ -24,7 +24,7 @@ interface BlockProps {
     rotation?: number
 }
 
-export default function Block({
+function Block({
     size: [width, height, depth],
     position: [x, y, z],
     rotation: incomingRotation,
@@ -68,9 +68,10 @@ export default function Block({
 
     useFrame((state, delta) => {
         body.position.y = damp(body.position.y, y, 4, ndelta(delta))
+        const currentAtPosition = y - body.position.y < 2.5
 
-        if (!atPosition) {
-            startTransition(() => setAtPosition(y - body.position.y < 2.5))
+        if (!atPosition && currentAtPosition) {
+            startTransition(() => setAtPosition(currentAtPosition))
         }
     })
 
@@ -112,3 +113,5 @@ export default function Block({
         </>
     )
 }
+
+export default memo(Block)

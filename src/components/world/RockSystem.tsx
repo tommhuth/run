@@ -2,7 +2,7 @@ import { store } from "@data/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
-import { useState } from "react"
+import { startTransition, useState } from "react"
 
 import Rock, { RockProps } from "./Rock"
 
@@ -39,18 +39,20 @@ export default function RockSystem({ count = 25 }) {
 
         for (const { position, id } of rocks) {
             if (position[2] < camera.position.z - 2) {
-                setRocks([
-                    ...rocks.filter(i => i.id !== id),
-                    {
-                        ...rocks.find(i => i.id === id) as RockProps,
-                        scale: random.float(...scaleRange),
-                        position: [
-                            forward.position[0] + random.float(...xRange) * random.pick(-1, 1),
-                            random.integer(...yRange) - baseSize[1] / 2 - 4.5,
-                            position[2] + 25
-                        ]
-                    }
-                ])
+                startTransition(() => {
+                    setRocks([
+                        ...rocks.filter(i => i.id !== id),
+                        {
+                            ...rocks.find(i => i.id === id) as RockProps,
+                            scale: random.float(...scaleRange),
+                            position: [
+                                forward.position[0] + random.float(...xRange) * random.pick(-1, 1),
+                                random.integer(...yRange) - baseSize[1] / 2 - 4.5,
+                                position[2] + 25
+                            ]
+                        }
+                    ])
+                })
             }
         }
     })
