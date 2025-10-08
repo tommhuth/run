@@ -55,7 +55,6 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }), [])
     const debugRef = useRef<HTMLDivElement>(null)
     const keys = useMemo<Record<string, boolean>>(() => ({}), [])
-    const hasMotionAccess = useStore(i => i.hasMotionAccess)
     const intersectionRef = useWaterIntersection({
         size: [radius * 2, radius * 2, radius * 2],
         type: "circle",
@@ -94,11 +93,13 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [body])
 
     useEffect(() => {
-        if (hasMotionAccess) {
-            return
-        }
-
         const click = async () => {
+            let { hasMotionAccess } = store.getState()
+
+            if (hasMotionAccess) {
+                return
+            }
+
             try {
                 await requestMotionPermission()
             } catch {
@@ -111,15 +112,13 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         return () => {
             window.removeEventListener("click", click)
         }
-    }, [hasMotionAccess])
+    }, [])
 
     useEffect(() => {
-        if (!hasMotionAccess) {
-            return
-        }
-
         const deviceorientation = (e: DeviceOrientationEvent) => {
-            if (e.alpha === null) {
+            let { hasMotionAccess } = store.getState()
+
+            if (e.alpha === null || !hasMotionAccess) {
                 return
             }
 
@@ -138,7 +137,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         return () => {
             window.removeEventListener("deviceorientation", deviceorientation)
         }
-    }, [hasMotionAccess])
+    }, [])
 
     useEffect(() => {
         const click = () => {
