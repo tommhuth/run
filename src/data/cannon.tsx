@@ -47,8 +47,8 @@ export function useCannonWorld() {
 }
 
 export const DEFAULT_RESTITUTION = .5
-export const DEFAULT_ITERATIONS = 10
-export const DEFAULT_GRAVITY: Tuple3 = [0, -13.8, 0]
+export const DEFAULT_ITERATIONS = 8
+export const DEFAULT_GRAVITY: Tuple3 = [0, -14, 0]
 
 function useCannonBody({
     definition,
@@ -152,10 +152,10 @@ export function CannonProvider({
     // dont use useFrame here since r3f will stop firing those   
     // and we need to constantly watch over any hasActiveBodies
     useAnimationFrame(({ delta }) => {
-        // max 15fps as delta
-        const dt = Math.min(delta, 1 / 15)
+        // max 14fps as delta
+        const dt = Math.min(delta, 1 / 14)
 
-        world.step(dt)
+        world.step(1 / 60, dt, iterations)
 
         if (world.hasActiveBodies) {
             invalidate()
