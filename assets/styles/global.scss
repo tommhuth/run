@@ -27,12 +27,11 @@ body,
 #canvas,
 #ui {
     overflow: hidden;
-    height: auto !important;
+    height: 100vh !important;
     position: fixed;
     left: 0;
     display: block;
     top: 0;
-    bottom: 0;
     width: 100%;
 }
 
