@@ -38,7 +38,6 @@ export function useControls() {
             keys[e.code] = false
         }
         const pointerdown = (e) => {
-            e.preventDefault()
             keys.jump = true
         }
         const ignore = (e) => {
@@ -50,7 +49,6 @@ export function useControls() {
         window.addEventListener("mousedown", pointerdown, { passive: true })
         window.addEventListener("touchstart", pointerdown, { passive: false })
         window.addEventListener("touchcancel", ignore, { passive: false })
-        window.addEventListener("touchend", ignore, { passive: false })
 
         return () => {
             window.removeEventListener("keydown", keydown)
@@ -58,7 +56,6 @@ export function useControls() {
             window.removeEventListener("mousedown", pointerdown)
             window.removeEventListener("touchstart", pointerdown)
             window.removeEventListener("touchcancel", ignore)
-            window.removeEventListener("touchend", ignore)
         }
     }, [])
 
