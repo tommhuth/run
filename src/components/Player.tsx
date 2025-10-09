@@ -10,22 +10,13 @@ import { Sphere, Vec3 } from "cannon-es"
 import { useEffect, useMemo, useRef } from "react"
 import { mergeRefs } from "react-merge-refs"
 
-
-interface Motion {
-    alpha: number
-    beta: number
-    gamma: number
-    spin: number
-    initialSpin: number | null
-}
-
 // this is sick? https://stackoverflow.com/a/42799567 
 // https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Orientation_and_motion_data_explained
 // axis move with device so raw values alone doesn’t map cleanly to Z rotation
 // this fixes that: project beta - gamma onto a plane perpendicular to the forward axis (Z)
-function getRotationZ(e: Motion) {
-    const betaR = e.beta / 180 * Math.PI
-    const gammaR = e.gamma / 180 * Math.PI
+function getRotationZ(beta: number, gamma: number) {
+    const betaR = beta / 180 * Math.PI
+    const gammaR = gamma / 180 * Math.PI
     const rotationZ = Math.atan2(Math.cos(betaR) * Math.sin(gammaR), Math.sin(betaR))
 
     return rotationZ * 180 / Math.PI
@@ -39,6 +30,11 @@ interface PlayerProps {
     debug?: boolean
 }
 
+interface Motion {
+    currentSpin: number
+    initialSpin: number | null
+}
+
 export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     const shape = useMemo(() => new Sphere(radius), [])
     const [meshRef, body] = useBody({
@@ -47,10 +43,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         position: [0, 1, 0],
     })
     const motion = useMemo<Motion>(() => ({
-        alpha: 0,
-        beta: 0,
-        gamma: 0,
-        spin: 0,
+        currentSpin: 0,
         initialSpin: null,
     }), [])
     const debugRef = useRef<HTMLDivElement>(null)
@@ -77,7 +70,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         const keyup = (e: KeyboardEvent) => {
             keys[e.code] = false
         }
-        const pointerdown = (e: MouseEvent | TouchEvent) => {
+        const pointerdown = () => {
             keys.jump = true
         }
 
@@ -96,7 +89,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [body])
 
     useEffect(() => {
-        const click = async (e: MouseEvent) => {
+        const click = async () => {
             let { hasMotionAccess } = store.getState()
 
             if (hasMotionAccess) {
@@ -121,18 +114,12 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         const deviceorientation = (e: DeviceOrientationEvent) => {
             let { hasMotionAccess } = store.getState()
 
-            if (e.alpha === null || !hasMotionAccess) {
+            if (e.beta === null || e.gamma === null || !hasMotionAccess) {
                 return
             }
 
-            motion.alpha = e.alpha || 0
-            motion.beta = e.beta || 0
-            motion.gamma = e.gamma || 0
-
-            if (motion.initialSpin === null) {
-                // get initial orientation, average over x seconds instead?
-                motion.initialSpin = getRotationZ(motion)
-            }
+            motion.currentSpin = getRotationZ(e.beta, e.gamma)
+            motion.initialSpin = motion.initialSpin === null ? motion.currentSpin : motion.initialSpin
         }
 
         window.addEventListener("deviceorientation", deviceorientation)
@@ -143,7 +130,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [])
 
     useEffect(() => {
-        const click = (e: MouseEvent) => {
+        const click = () => {
             const { state } = store.getState()
 
             if (["gameover", "intro"].includes(state)) {
@@ -176,14 +163,12 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         if (keys.jump) {
             body.velocity.y = 6.75
             keys.jump = false
-        }
-
-        if (keys.KeyA) {
+        } else if (keys.KeyA) {
             body.velocity.x += 6 * nd
         } else if (keys.KeyD) {
             body.velocity.x -= 6 * nd
         } else if (motion.initialSpin !== null) {
-            const deltaRotation = motion.initialSpin - getRotationZ(motion)
+            const deltaRotation = motion.initialSpin - motion.currentSpin
             const deadzone = 2
             const fadedist = 2
             const scale = clamp((Math.abs(deltaRotation) - deadzone) / fadedist, 0, 1)
@@ -192,7 +177,6 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
 
             body.velocity.x = clamp(deltaRotation / range, -1, 1) * scale * horizontalSpeed
         }
-
     })
 
     useFrame(() => {
@@ -224,7 +208,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         }
 
         debugRef.current.innerHTML = ` 
-            spin=${motion.spin?.toFixed(3)}<br/> 
+            spin=${motion.currentSpin?.toFixed(3)}<br/> 
             initialSpin=${motion.initialSpin?.toFixed(3)}<br/> 
             velocity.x=${body.velocity.x.toFixed(3)}<br/>
             velocity.z=${body.velocity.z.toFixed(3)}

@@ -183,7 +183,8 @@ export function useBody({ mass, ...rest }: BaseBodyOptions) {
 
     useFrame((state, delta) => {
         if (ref.current) {
-            const alpha = 1 - Math.pow(0.5, delta * 60)
+            // lower means faster
+            const alpha = 1 - Math.pow(0.4, delta * 60)
 
             ref.current.position.lerp(body.position, alpha)
             ref.current.quaternion.slerp(_lerpQuaternion.copy(body.quaternion), alpha)
