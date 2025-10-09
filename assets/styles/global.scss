@@ -20,7 +20,7 @@
 
 html,
 body {
-    height: 100vh;
+    height: calc(env(safe-area-inset-bottom) + 100vh);
     overflow: hidden;
     background-color: var(--background-color);
     position: fixed;

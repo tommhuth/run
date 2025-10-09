@@ -19,7 +19,7 @@
     top: 0;
     position: fixed;
     display: block;
-    height: 100vh !important;
+    height: calc(env(safe-area-inset-bottom) + 100vh) !important;
     right: 0;
     left: 0;
     z-index: 0;

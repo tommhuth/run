@@ -47,7 +47,7 @@ export function useControls() {
         window.addEventListener("keydown", keydown)
         window.addEventListener("keyup", keyup)
         window.addEventListener("mousedown", pointerdown, { passive: true })
-        window.addEventListener("touchstart", pointerdown, { passive: false })
+        window.addEventListener("touchstart", pointerdown, { passive: true })
         window.addEventListener("touchcancel", ignore, { passive: false })
 
         return () => {
