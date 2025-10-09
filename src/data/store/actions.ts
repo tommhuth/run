@@ -38,7 +38,7 @@ export function addPathSection() {
     ]
     const position: Tuple3 = [
         random.integer(-1, 1) + Math.sin(counter * .45) * 2,
-        -height / 2 + Math.sin(counter * .4) * 3,
+        -height / 2 + -.1, // Math.sin(counter * .4) * 3,
         last.position[2] + last.size[2] / 2 + size[2] / 2
     ]
 

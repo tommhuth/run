@@ -13,10 +13,9 @@ export default function ExternalModel({ url, children, name, ...props }: Externa
     const dirt = useLoader(GLTFLoader, url)
 
     return (
-        <mesh {...props}>
+        <mesh {...props} dispose={null}>
             <primitive
                 object={(dirt.nodes[name] as Mesh).geometry}
-                dispose={null}
                 attach="geometry"
             />
             {children}
