@@ -14,17 +14,16 @@
     <style>
         @import "/assets/styles/app.scss";
     </style>
-
-    <script>
-        if (window.navigator.standalone) {
-            document.getElementById("canvas").style.height = "110vh !important"
-        }
-    </script>
 </head>
 
 <body>
     <canvas id="canvas"></canvas>
     <div id="ui"></div>
+    <script>
+        if (window.navigator.standalone) {
+            document.getElementById("canvas").style.height = "110vh !important"
+        }
+    </script>
     <script type="module" src="/src/root.tsx"></script>
 </body>
 
