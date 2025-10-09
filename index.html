@@ -21,7 +21,7 @@
     <div id="ui"></div>
     <script>
         if (window.navigator.standalone) {
-            document.getElementById("canvas").style.height = "110vh !important"
+            document.getElementsByTagName("body")[0].classList.add("ios")
         }
     </script>
     <script type="module" src="/src/root.tsx"></script>
