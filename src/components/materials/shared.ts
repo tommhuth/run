@@ -1,5 +1,6 @@
-import ConcreteMaterial from "@components/ConcreteMaterial"
 import { MeshBasicMaterial, MeshPhongMaterial } from "three"
+
+import ConcreteMaterial from "./ConcreteMaterial"
 
 export const gray = new ConcreteMaterial({
     name: "red",

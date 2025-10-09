@@ -1,9 +1,9 @@
-import { glsl } from "@data/utils"
+import { waterDeepColor } from "@components/world/Water"
 import { extend } from "@react-three/fiber"
 import { Color, IUniform, MeshPhongMaterial } from "three"
 
+import { glsl } from "./helpers"
 import { PatchedPhongMaterial } from "./PatchedMaterial"
-import { waterDeepColor } from "./world/Water"
 
 interface ConcreteMaterialUniforms {
     uTime: IUniform<number>;

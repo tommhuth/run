@@ -1,9 +1,9 @@
-import ConcreteMaterial from "@components/ConcreteMaterial"
+import ConcreteMaterial from "@components/materials/ConcreteMaterial"
 import {
-    AmbientLight,     AxesHelper, BoxGeometry,     Color,
+    AmbientLight, AxesHelper, BoxGeometry, Color,
     CylinderGeometry,
     DirectionalLight, FogExp2,
-    Group,     InstancedMesh,
+    Group, InstancedMesh,
     Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial,
     PlaneGeometry,
     SphereGeometry,

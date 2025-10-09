@@ -1,12 +1,12 @@
 import { useInstance } from "@components/InstancedMesh"
+import { store } from "@data/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { Object3D } from "three"
 
-import { store } from "./store"
-import { setMatrixAt } from "./utils"
+import { setMatrixAt } from "./helpers"
 
 // thanks chattyman
 function intersectsWaterPlane(planeY: number, object: Object3D, size: Tuple3, threshold = 1, smooth = true) {

@@ -1,4 +1,5 @@
-import { invalidate, useFrame, useThree } from "@react-three/fiber"
+import { setMatrixAt,setMatrixNullAt } from "@components/materials/helpers"
+import { useFrame, useThree } from "@react-three/fiber"
 import {
     Body as CannonBody,
     ContactEquation, GSSolver,
@@ -13,9 +14,7 @@ import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { InstancedMesh, Mesh, Quaternion } from "three"
-import useAnimationFrame from "use-animation-frame"
 
-import { setMatrixAt, setMatrixNullAt } from "./utils"
 
 export type ShapeDefinition = Shape | [Shape, Vec3?, CannonQuaternion?][]
 

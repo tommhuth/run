@@ -1,6 +1,6 @@
-import { useShader } from "@data/hooks"
+import { glsl } from "@components/materials/helpers"
+import { useShader } from "@components/materials/useShader"
 import { store } from "@data/store"
-import { glsl } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { useLayoutEffect, useRef } from "react"
 import { Mesh } from "three"

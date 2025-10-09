@@ -2,13 +2,14 @@ import { useBody } from "@data/cannon"
 import Config from "@data/Config"
 import { store } from "@data/store"
 import { requestMotionPermission, setState } from "@data/store/actions"
-import useWaterIntersection from "@data/useWaterIntersecton"
 import { clamp, ndelta, } from "@data/utils"
 import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere, Vec3 } from "cannon-es"
 import { useEffect, useMemo, useRef } from "react"
 import { mergeRefs } from "react-merge-refs"
+
+import useWaterIntersection from "./materials/useWaterIntersecton"
 
 // this is sick? https://stackoverflow.com/a/42799567 
 // https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Orientation_and_motion_data_explained

@@ -1,7 +1,8 @@
-import { patchShader } from "@components/PatchedMaterial"
 import random from "@huth/random"
 import { useCallback, useMemo } from "react"
 import { IUniform, WebGLProgramParametersWithUniforms, WebGLRenderer } from "three"
+
+import { patchShader } from "./PatchedMaterial"
 
 export interface ShaderPart {
     head?: string

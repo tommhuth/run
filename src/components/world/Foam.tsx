@@ -1,7 +1,6 @@
-
 import InstancedMesh from "@components/InstancedMesh"
-import { useShader } from "@data/hooks"
-import { glsl } from "@data/utils"
+import { glsl } from "@components/materials/helpers"
+import { useShader } from "@components/materials/useShader"
 import { useFrame } from "@react-three/fiber"
 import noise from "@src/shaders/noise.glsl"
 

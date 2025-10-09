@@ -1,5 +1,6 @@
+import { setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
 import { store } from "@data/store"
-import { clamp, setMatrixAt, setMatrixNullAt } from "@data/utils"
+import { clamp } from "@data/utils"
 import random from "@huth/random"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple2, Tuple3 } from "@src/types/global"

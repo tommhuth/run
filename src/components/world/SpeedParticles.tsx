@@ -1,5 +1,6 @@
+import { setMatrixAt } from "@components/materials/helpers"
 import { store } from "@data/store"
-import { clamp, setMatrixAt } from "@data/utils"
+import { clamp } from "@data/utils"
 import random from "@huth/random"
 import { config, SpringValue } from "@react-spring/core"
 import { useFrame } from "@react-three/fiber"

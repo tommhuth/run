@@ -1,6 +1,5 @@
-
-import DepthTexturex from "@components/DepthTexture"
 import Lights from "@components/Lights"
+import DepthTexturex from "@components/materials/DepthTexture"
 import Path from "@components/path/Path"
 import Player from "@components/Player"
 import CloudSystem from "@components/world/CloudSystem"
