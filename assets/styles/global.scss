@@ -20,9 +20,9 @@
 
 html {
     background-color: transparent;
+    height: 100vh;
 }
 
-html,
 body,
 #canvas,
 #ui {
@@ -35,7 +35,6 @@ body,
     width: 100%;
 }
 
-.ios,
 .ios body,
 .ios #canvas,
 .ios #ui {
