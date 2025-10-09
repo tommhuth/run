@@ -36,7 +36,8 @@ body,
     width: 100%;
 }
 
-body.ios,
+.ios,
+.ios body,
 .ios #canvas,
 .ios #ui {
     height: 110vh !important;
