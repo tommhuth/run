@@ -18,15 +18,31 @@
     overscroll-behavior: none;
 }
 
-html,
-body {
-    height: calc(env(safe-area-inset-top) + 100vh);
-    overflow: hidden;
+html {
     background-color: var(--background-color);
+}
+
+html,
+body,
+#canvas,
+#ui {
+    overflow: hidden;
+    height: 100vh !important;
     position: fixed;
     left: 0;
+    display: block;
     top: 0;
     width: 100%;
+}
+
+// ios does not capture events from canvas?!
+// use this instead
+#ui {
+    z-index: 2;
+}
+
+#canvas {
+    z-index: 1;
 }
 
 .visually-hidden {

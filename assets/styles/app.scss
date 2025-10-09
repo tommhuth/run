@@ -1,26 +1,3 @@
 @use "global.scss";
 @use "variables.scss";
 @use "typography.scss";
-
-// ios does not capture events from canvas?!
-// use this instead
-#ui {
-    top: 0;
-    position: fixed;
-    display: block;
-    height: 100%;
-    width: 100%;
-    right: 0;
-    left: 0;
-    z-index: 1;
-}
-
-#canvas {
-    top: 0;
-    position: fixed;
-    display: block;
-    height: calc(env(safe-area-inset-top) + 100vh) !important;
-    right: 0;
-    left: 0;
-    z-index: 0;
-}
