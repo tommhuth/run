@@ -3,7 +3,6 @@ import {
     Body as CannonBody,
     ContactEquation, GSSolver,
     Quaternion as CannonQuaternion,
-    Quaternion,
     SAPBroadphase,
     Shape,
     SplitSolver,
@@ -13,7 +12,7 @@ import {
 import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
-import { InstancedMesh, Mesh } from "three"
+import { InstancedMesh, Mesh, Quaternion } from "three"
 import useAnimationFrame from "use-animation-frame"
 
 import { setMatrixAt, setMatrixNullAt } from "./utils"
@@ -70,7 +69,7 @@ function useCannonBody({
             sleepSpeedLimit: .1,
             position: new Vec3(...position),
             velocity: new Vec3(...velocity),
-            quaternion: new Quaternion().setFromEuler(...rotation),
+            quaternion: new CannonQuaternion().setFromEuler(...rotation),
             angularDamping,
             linearDamping,
         })
@@ -151,18 +150,14 @@ export function CannonProvider({
 
     // dont use useFrame here since r3f will stop firing those   
     // and we need to constantly watch over any hasActiveBodies
-    useAnimationFrame(({ delta }) => {
+    useFrame((state, delta) => {
         // max 14fps as delta
         const dt = Math.min(delta, 1 / 14)
 
         world.step(1 / 60, dt, iterations)
 
-        if (world.hasActiveBodies) {
-            invalidate()
-
-            if (cannonDebugger) {
-                cannonDebugger.update()
-            }
+        if (world.hasActiveBodies && cannonDebugger) {
+            cannonDebugger.update()
         }
     })
 
@@ -172,6 +167,8 @@ export function CannonProvider({
         </context.Provider>
     )
 }
+
+const _lerpQuaternion = new Quaternion()
 
 export function useBody({ mass, ...rest }: BaseBodyOptions) {
     const ref = useRef<Mesh>(null)
@@ -184,10 +181,12 @@ export function useBody({ mass, ...rest }: BaseBodyOptions) {
         }
     }, [])
 
-    useFrame(() => {
+    useFrame((state, delta) => {
         if (ref.current) {
-            ref.current.position.copy(body.position)
-            ref.current.quaternion.copy(body.quaternion)
+            const alpha = 1 - Math.pow(0.5, delta * 60)
+
+            ref.current.position.lerp(body.position, alpha)
+            ref.current.quaternion.slerp(_lerpQuaternion.copy(body.quaternion), alpha)
         }
     })
 

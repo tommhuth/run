@@ -11,10 +11,16 @@ import Water from "@components/world/Water"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import { extend } from "@react-three/fiber"
-import { Perf } from "r3f-perf"
+import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
+
+const Perf = lazy(async () => {
+    let { Perf } = await import("r3f-perf")
+
+    return { default: Perf }
+})
 
 extend(extensions)
 

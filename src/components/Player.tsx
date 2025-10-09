@@ -1,6 +1,6 @@
 import { useBody } from "@data/cannon"
 import Config from "@data/Config"
-import { store, useStore } from "@data/store"
+import { store } from "@data/store"
 import { requestMotionPermission, setState } from "@data/store/actions"
 import useWaterIntersection from "@data/useWaterIntersecton"
 import { clamp, ndelta, } from "@data/utils"
@@ -77,7 +77,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
         const keyup = (e: KeyboardEvent) => {
             keys[e.code] = false
         }
-        const pointerdown = () => {
+        const pointerdown = (e: MouseEvent | TouchEvent) => {
             keys.jump = true
         }
 
@@ -96,7 +96,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [body])
 
     useEffect(() => {
-        const click = async () => {
+        const click = async (e: MouseEvent) => {
             let { hasMotionAccess } = store.getState()
 
             if (hasMotionAccess) {
@@ -143,7 +143,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [])
 
     useEffect(() => {
-        const click = () => {
+        const click = (e: MouseEvent) => {
             const { state } = store.getState()
 
             if (["gameover", "intro"].includes(state)) {
@@ -159,7 +159,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     }, [])
 
     useFrame((_, delta) => {
-        const { state, path, player } = store.getState()
+        const { state, player } = store.getState()
         const playerMesh = player.mesh
         const nd = ndelta(delta)
 
@@ -167,11 +167,11 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             return
         }
 
+        body.wakeUp()
+
         if (body.velocity.length() < forwardSpeed) {
             body.applyForce(_forwardSpeed.set(0, 0, forwardSpeed))
         }
-
-        body.wakeUp()
 
         if (keys.jump) {
             body.velocity.y = 6.75
@@ -193,7 +193,17 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             body.velocity.x = clamp(deltaRotation / range, -1, 1) * scale * horizontalSpeed
         }
 
+    })
+
+    useFrame(() => {
+        const { path, player, state } = store.getState()
+        const playerMesh = player.mesh
         const bottomBuffer = 3
+
+        if (state !== "running" || !playerMesh) {
+            return
+        }
+
         const activeSection = path.find(({ size, position }) => {
             return position[2] - size[2] / 2 < playerMesh.position.z
                 && position[2] + size[2] / 2 > playerMesh.position.z
