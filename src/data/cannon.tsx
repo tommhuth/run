@@ -1,4 +1,4 @@
-import { setMatrixAt,setMatrixNullAt } from "@components/materials/helpers"
+import { setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
 import { useFrame, useThree } from "@react-three/fiber"
 import {
     Body as CannonBody,
@@ -147,13 +147,11 @@ export function CannonProvider({
         return debug ? createCannonDebugger(scene, world, { color: "red" }) : null
     }, [world, scene, debug])
 
-    // dont use useFrame here since r3f will stop firing those   
-    // and we need to constantly watch over any hasActiveBodies
     useFrame((state, delta) => {
         // max 14fps as delta
         const dt = Math.min(delta, 1 / 14)
 
-        world.step(1 / 60, dt, iterations)
+        world.step(dt) //1 / 120, dt, iterations * 2) 
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()
