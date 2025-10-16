@@ -37,7 +37,7 @@ export function useControls() {
         const keyup = (e: KeyboardEvent) => {
             keys[e.code] = false
         }
-        const pointerdown = (e) => {
+        const pointerdown = () => {
             keys.jump = true
         }
         const ignore = (e) => {
