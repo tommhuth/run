@@ -26,24 +26,24 @@ extend(extensions)
 export default function App() {
     return (
         <>
-            <fogExp2 attach={"fog"} args={["white", .045]} />
-            <color args={["white"]} attach={"background"} />
-
-            <CloudSystem />
-            <SpeedParticles />
-            <Foam />
-            <Water />
-            <Camera />
-            <Lights />
-
             <CannonProvider debug={Config.DEBUG}>
+                <fogExp2 attach={"fog"} args={["white", .045]} />
+                <color args={["white"]} attach={"background"} />
+
+                <CloudSystem />
+                <SpeedParticles />
+                <Foam />
+                <Water />
+                <Camera />
+                <Lights />
+
                 <Path />
                 <Player />
                 <RockSystem />
+                {/* at the very end */}
+                <DepthTexturex />
             </CannonProvider>
 
-            {/* at the very end */}
-            <DepthTexturex />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
