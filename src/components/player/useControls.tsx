@@ -1,5 +1,6 @@
 import { store } from "@data/store"
 import { requestMotionPermission } from "@data/store/actions"
+import { clamp } from "@data/utils"
 import { useEffect, useMemo } from "react"
 
 interface Motion {
@@ -24,7 +25,7 @@ export function useControls() {
         currentSpin: 0,
         initialSpin: null,
     }), [])
-    const keys = useMemo<Record<string, boolean>>(() => ({}), [])
+    const keys = useMemo<Record<string, boolean | number>>(() => ({}), [])
 
     useEffect(() => {
         const keydown = (e: KeyboardEvent) => {
@@ -34,11 +35,15 @@ export function useControls() {
                 keys.jump = true
             }
         }
+        let t = 0
         const keyup = (e: KeyboardEvent) => {
             keys[e.code] = false
         }
         const pointerdown = () => {
-            keys.jump = true
+            t = Date.now()
+        }
+        const pointerup = () => {
+            keys.jump = clamp((Date.now() - t) / 200, .5, 1)
         }
         const ignore = (e) => {
             e.preventDefault()
@@ -46,16 +51,18 @@ export function useControls() {
 
         window.addEventListener("keydown", keydown)
         window.addEventListener("keyup", keyup)
-        window.addEventListener("mousedown", pointerdown, { passive: true })
-        window.addEventListener("touchstart", pointerdown, { passive: true })
+        window.addEventListener("pointerdown", pointerdown, { passive: true })
+        window.addEventListener("pointerup", pointerup, { passive: true })
         window.addEventListener("touchcancel", ignore, { passive: false })
+        window.addEventListener("touchstart", ignore, { passive: false })
 
         return () => {
             window.removeEventListener("keydown", keydown)
             window.removeEventListener("keyup", keyup)
-            window.removeEventListener("mousedown", pointerdown)
-            window.removeEventListener("touchstart", pointerdown)
+            window.removeEventListener("pointerdown", pointerdown)
+            window.removeEventListener("pointerup", pointerup)
             window.removeEventListener("touchcancel", ignore)
+            window.removeEventListener("touchstart", ignore)
         }
     }, [])
 

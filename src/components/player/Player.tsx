@@ -72,8 +72,8 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             body.applyForce(_forwardSpeed.set(0, 0, forwardSpeed))
         }
 
-        if (keys.jump) {
-            body.velocity.y = 6.75
+        if (typeof keys.jump === "number") {
+            body.velocity.y = 7 * keys.jump
             keys.jump = false
         } else if (keys.KeyA) {
             body.velocity.x += 6 * nd
@@ -84,7 +84,7 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             const deadzone = 2
             const fadedist = 2
             const scale = clamp((Math.abs(deltaRotation) - deadzone) / fadedist, 0, 1)
-            const horizontalSpeed = 10
+            const horizontalSpeed = 16
             const range = 60
 
             body.velocity.x = clamp(deltaRotation / range, -1, 1) * scale * horizontalSpeed
