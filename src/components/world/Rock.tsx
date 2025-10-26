@@ -32,11 +32,6 @@ function Rock({
             damping: random.float(2, 7) * (2 - scale)
         }
     }, [x, y, z])
-    const rockRef = useWaterIntersection({
-        size: [baseSize[0] * scale, baseSize[1] * scale, baseSize[2] * scale],
-        type: "circle",
-        extension: .35 * scale
-    })
     const [active, setActive] = useState(false)
     const definition = useMemo(() => {
         const radius = baseSize[0] / 2 * scale
@@ -49,6 +44,12 @@ function Rock({
         rotation: [0, rotation, 0],
         position: [x, y - 10, z],
         active
+    })
+    const rockRef = useWaterIntersection({
+        size: [baseSize[0] * scale, baseSize[1] * scale, baseSize[2] * scale],
+        type: "circle",
+        extension: .35 * scale,
+        body
     })
     const ref = mergeRefs([bodyRef, rockRef])
 

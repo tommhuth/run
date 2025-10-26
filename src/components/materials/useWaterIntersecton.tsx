@@ -7,6 +7,9 @@ import { Tuple3 } from "src/types/global"
 import { Object3D } from "three"
 
 import { setMatrixAt } from "./helpers"
+import { Body, Vec3 } from "cannon-es"
+import { clamp } from "@data/utils"
+import { useCannonWorld } from "@data/cannon"
 
 // thanks chattyman
 function intersectsWaterPlane(planeY: number, object: Object3D, size: Tuple3, threshold = 1, smooth = true) {
@@ -44,6 +47,7 @@ interface UseWaterIntersectorParams {
     type: "circle" | "box"
     threshold?: number
     extension?: number
+    body?: Body
 }
 
 export default function useWaterIntersection({
@@ -51,7 +55,8 @@ export default function useWaterIntersection({
     threshold = 1,
     type = "circle",
     size,
-    extension: incomingExtension = .25
+    extension: incomingExtension = .25,
+    body
 }: UseWaterIntersectorParams) {
     const ref = useRef<Object3D>(null)
     const [index] = useInstance(type)
@@ -72,6 +77,10 @@ export default function useWaterIntersection({
             waterLevel + .01,
             ref.current.position.z
         ]
+
+        if (ref.current.position.y < waterLevel && body) {
+            body.velocity.y *= .45
+        }
 
         setMatrixAt({
             position,

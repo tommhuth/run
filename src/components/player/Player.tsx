@@ -20,7 +20,7 @@ interface PlayerProps {
     forwardSpeed?: number
 }
 
-export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
+export default function Player({ radius = .2, forwardSpeed = 5 }: PlayerProps) {
     const shape = useMemo(() => new Sphere(radius), [])
     const [meshRef, body] = useBody({
         mass: 2,
@@ -31,7 +31,8 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
     const intersectionRef = useWaterIntersection({
         size: [radius * 2, radius * 2, radius * 2],
         type: "circle",
-        threshold: radius * .5
+        threshold: radius * .5,
+        body,
     })
     const ref = mergeRefs([meshRef, intersectionRef])
     const { motion, keys } = useControls()
@@ -72,8 +73,8 @@ export default function Player({ radius = .2, forwardSpeed = 4 }: PlayerProps) {
             body.applyForce(_forwardSpeed.set(0, 0, forwardSpeed))
         }
 
-        if (typeof keys.jump === "number") {
-            body.velocity.y = 7 * keys.jump
+        if (keys.jump) {
+            body.velocity.y = forwardSpeed * 1.35
             keys.jump = false
         } else if (keys.KeyA) {
             body.velocity.x += 6 * nd

@@ -1,6 +1,5 @@
-import { store } from "@data/store"
+import { store, useStore } from "@data/store"
 import { requestMotionPermission } from "@data/store/actions"
-import { clamp } from "@data/utils"
 import { useEffect, useMemo } from "react"
 
 interface Motion {
@@ -25,9 +24,13 @@ export function useControls() {
         currentSpin: 0,
         initialSpin: null,
     }), [])
-    const keys = useMemo<Record<string, boolean | number>>(() => ({}), [])
+    const keys = useMemo<Record<string, boolean>>(() => ({}), [])
+    const hasMotionAccess = useStore(i => i.hasMotionAccess)
 
     useEffect(() => {
+        const keyup = (e: KeyboardEvent) => {
+            keys[e.code] = false
+        }
         const keydown = (e: KeyboardEvent) => {
             keys[e.code] = true
 
@@ -35,24 +38,16 @@ export function useControls() {
                 keys.jump = true
             }
         }
-        let t = 0
-        const keyup = (e: KeyboardEvent) => {
-            keys[e.code] = false
-        }
         const pointerdown = () => {
-            t = Date.now()
+            keys.jump = true
         }
-        const pointerup = () => {
-            keys.jump = clamp((Date.now() - t) / 200, .5, 1)
-        }
-        const ignore = (e) => {
+        const ignore = (e: TouchEvent) => {
             e.preventDefault()
         }
 
         window.addEventListener("keydown", keydown)
         window.addEventListener("keyup", keyup)
         window.addEventListener("pointerdown", pointerdown, { passive: true })
-        window.addEventListener("pointerup", pointerup, { passive: true })
         window.addEventListener("touchcancel", ignore, { passive: false })
         window.addEventListener("touchstart", ignore, { passive: false })
 
@@ -60,7 +55,6 @@ export function useControls() {
             window.removeEventListener("keydown", keydown)
             window.removeEventListener("keyup", keyup)
             window.removeEventListener("pointerdown", pointerdown)
-            window.removeEventListener("pointerup", pointerup)
             window.removeEventListener("touchcancel", ignore)
             window.removeEventListener("touchstart", ignore)
         }
@@ -86,13 +80,11 @@ export function useControls() {
     }, [])
 
     useEffect(() => {
+        if (hasMotionAccess) {
+            return
+        }
+
         const click = async () => {
-            let { hasMotionAccess } = store.getState()
-
-            if (hasMotionAccess) {
-                return
-            }
-
             try {
                 await requestMotionPermission()
             } catch {
@@ -105,7 +97,7 @@ export function useControls() {
         return () => {
             window.removeEventListener("click", click)
         }
-    }, [])
+    }, [hasMotionAccess])
 
     return { motion, keys }
 }

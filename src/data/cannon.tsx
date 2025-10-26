@@ -183,8 +183,8 @@ export function useBody({ mass, ...rest }: BaseBodyOptions) {
             // lower means faster
             const alpha = 1 - Math.pow(0.4, delta * 60)
 
-            ref.current.position.lerp(body.position, alpha)
-            ref.current.quaternion.slerp(_lerpQuaternion.copy(body.quaternion), alpha)
+            ref.current.position.copy(body.interpolatedPosition)
+            ref.current.quaternion.copy(body.interpolatedQuaternion)
         }
     })
 
