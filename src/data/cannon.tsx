@@ -13,8 +13,7 @@ import {
 import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
-import { InstancedMesh, Mesh, Quaternion } from "three"
-
+import { InstancedMesh, Mesh } from "three"
 
 export type ShapeDefinition = Shape | [Shape, Vec3?, CannonQuaternion?][]
 
@@ -31,7 +30,7 @@ interface BaseBodyOptions<T = unknown> {
     active?: boolean
 }
 
-const context = React.createContext(null as unknown as World)
+const context = React.createContext<World | null>(null)
 
 export type CollisionEvent = { body: Body, target: Body, contact: ContactEquation }
 
@@ -41,7 +40,13 @@ export class Body<T = unknown> extends CannonBody {
 }
 
 export function useCannonWorld() {
-    return useContext(context)
+    let world = useContext(context)
+
+    if (!world) {
+        throw new Error("Missing world context")
+    }
+
+    return world
 }
 
 export const DEFAULT_RESTITUTION = .5
@@ -51,14 +56,15 @@ export const DEFAULT_GRAVITY: Tuple3 = [0, -14, 0]
 function useCannonBody({
     definition,
     mass,
-    position = [0, 0, 0],
+    position: [x, y, z] = [0, 0, 0],
     rotation = [0, 0, 0],
     linearDamping,
     angularDamping,
     velocity = [0, 0, 0],
     userData = {},
-    allowSleep = true,
-    active = true
+    allowSleep = false,
+    active = true,
+    ...rest
 }: BaseBodyOptions) {
     const world = useCannonWorld()
     const body = useMemo(() => {
@@ -66,13 +72,18 @@ function useCannonBody({
             mass,
             allowSleep,
             sleepSpeedLimit: .1,
-            position: new Vec3(...position),
+            position: new Vec3(x, y, z),
             velocity: new Vec3(...velocity),
             quaternion: new CannonQuaternion().setFromEuler(...rotation),
             angularDamping,
             linearDamping,
+            ...rest
         })
-    }, [mass])
+    }, [])
+
+    useLayoutEffect(() => {
+        body.position.set(x, y, z)
+    }, [x, y, z, body])
 
     useLayoutEffect(() => {
         body.shapes = []
@@ -84,9 +95,12 @@ function useCannonBody({
         } else {
             body.addShape(definition)
         }
-
-        body.position.set(...position)
     }, [body, definition])
+
+    useEffect(() => {
+        body.mass = mass
+        body.updateMassProperties()
+    }, [mass, body])
 
     useEffect(() => {
         if (!active) {
@@ -130,7 +144,7 @@ export function CannonProvider({
 
         const world = new World({
             solver,
-            allowSleep: true,
+            allowSleep: false,
             gravity: new Vec3(...gravity),
         })
 
@@ -165,24 +179,19 @@ export function CannonProvider({
     )
 }
 
-const _lerpQuaternion = new Quaternion()
-
-export function useBody({ mass, ...rest }: BaseBodyOptions) {
+export function useBody({ mass, active = true, ...rest }: BaseBodyOptions) {
     const ref = useRef<Mesh>(null)
-    const [body] = useCannonBody({ mass, ...rest })
+    const [body] = useCannonBody({ mass, active, ...rest })
 
     useLayoutEffect(() => {
         if (ref.current) {
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
         }
-    }, [])
+    }, [active])
 
-    useFrame((state, delta) => {
+    useFrame(() => {
         if (ref.current) {
-            // lower means faster
-            const alpha = 1 - Math.pow(0.4, delta * 60)
-
             ref.current.position.copy(body.interpolatedPosition)
             ref.current.quaternion.copy(body.interpolatedQuaternion)
         }

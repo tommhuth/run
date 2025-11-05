@@ -10,7 +10,7 @@ function getConfiguration() {
     return {
         camera: {
             near: .01,
-            far: 150,
+            far: 1000,
             position: [0, 0, 0],
             fov: 70
         },

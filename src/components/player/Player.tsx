@@ -1,124 +1,79 @@
-import useWaterIntersection from "@components/materials/useWaterIntersecton"
-import { useBody } from "@data/cannon"
-import Config from "@data/Config"
-import { store } from "@data/store"
+import Suv from "@components/vehicles/Suv"
 import { setState } from "@data/store/actions"
-import { clamp, ndelta, } from "@data/utils"
-import { Html } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { Sphere, Vec3 } from "cannon-es"
-import { useEffect, useMemo, useRef } from "react"
-import { mergeRefs } from "react-merge-refs"
+import { Tuple3 } from "@src/types/global"
+import { RigidVehicle } from "cannon-es"
+import { useEffect, useMemo, useState } from "react"
 
 import { useControls } from "./useControls"
-import usePlayerAlive from "./usePlayerAlive"
-
-const _forwardSpeed = new Vec3()
+import { Object3D } from "three/webgpu"
 
 interface PlayerProps {
-    radius?: number
-    forwardSpeed?: number
+    position?: Tuple3
+    rotation?: Tuple3
 }
 
-export default function Player({ radius = .2, forwardSpeed = 5 }: PlayerProps) {
-    const shape = useMemo(() => new Sphere(radius), [])
-    const [meshRef, body] = useBody({
-        mass: 2,
-        definition: shape,
-        position: [0, 1, 0],
-    })
-    const debugRef = useRef<HTMLDivElement>(null)
-    const intersectionRef = useWaterIntersection({
-        size: [radius * 2, radius * 2, radius * 2],
-        type: "circle",
-        threshold: radius * .5,
-        body,
-    })
-    const ref = mergeRefs([meshRef, intersectionRef])
-    const { motion, keys } = useControls()
-
-    usePlayerAlive()
+export default function Player({
+    rotation,
+    position,
+}: PlayerProps) {
+    let { keys } = useControls()
+    let [ref, setRef] = useState<RigidVehicle | null>(null)
+    let target = useMemo(() => new Object3D(), [])
 
     useEffect(() => {
-        setState({ player: { mesh: meshRef.current, body } })
-    }, [])
-
-    useEffect(() => {
-        const click = () => {
-            const { state } = store.getState()
-
-            if (["gameover", "intro"].includes(state)) {
-                setState({ state: "running" })
-            }
-        }
-
-        window.addEventListener("click", click, { passive: true })
-
-        return () => {
-            window.removeEventListener("click", click)
-        }
-    }, [])
-
-    useFrame((_, delta) => {
-        const { state } = store.getState()
-        const nd = ndelta(delta)
-
-        if (state !== "running") {
-            return
-        }
-
-        body.wakeUp()
-
-        if (body.velocity.length() < forwardSpeed) {
-            body.applyForce(_forwardSpeed.set(0, 0, forwardSpeed))
-        }
-
-        if (keys.jump) {
-            body.velocity.y = forwardSpeed * 1.35
-            keys.jump = false
-        } else if (keys.KeyA) {
-            body.velocity.x += 6 * nd
-        } else if (keys.KeyD) {
-            body.velocity.x -= 6 * nd
-        } else if (motion.initialSpin !== null) {
-            const deltaRotation = motion.initialSpin - motion.currentSpin
-            const deadzone = 2
-            const fadedist = 2
-            const scale = clamp((Math.abs(deltaRotation) - deadzone) / fadedist, 0, 1)
-            const horizontalSpeed = 16
-            const range = 60
-
-            body.velocity.x = clamp(deltaRotation / range, -1, 1) * scale * horizontalSpeed
-        }
-    })
+        setState({ player: { vehicle: ref, mesh: null } })
+    }, [ref])
 
     useFrame(() => {
-        if (!debugRef.current) {
+        let steer = .25
+        let forc = 100
+
+        if (!ref) {
             return
         }
 
-        debugRef.current.innerHTML = ` 
-            spin=${motion.currentSpin?.toFixed(3)}<br/> 
-            initialSpin=${motion.initialSpin?.toFixed(3)}<br/> 
-            velocity.x=${body.velocity.x.toFixed(3)}<br/>
-            velocity.z=${body.velocity.z.toFixed(3)}
-        `
+        if (keys.w || keys.ArrowUp) {
+            ref.setWheelForce(forc, 2)
+            ref.setWheelForce(forc, 3)
+        } else if (keys.s || keys.ArrowDown) {
+            ref.setWheelForce(-forc, 2)
+            ref.setWheelForce(-forc, 3)
+        } else {
+            ref.setWheelForce(0, 2)
+            ref.setWheelForce(0, 3)
+        }
+
+        if (keys.a) {
+            ref.setSteeringValue(steer, 0)
+            ref.setSteeringValue(steer, 1)
+        } else if (keys.d) {
+            ref.setSteeringValue(-steer, 0)
+            ref.setSteeringValue(-steer, 1)
+        } else {
+            ref.setSteeringValue(0, 0)
+            ref.setSteeringValue(0, 1)
+        }
     })
 
     return (
-        <mesh
-            ref={ref}
-            castShadow
-            receiveShadow
-        >
-            <sphereGeometry args={[radius, 24, 24]} />
-            <meshPhongMaterial dithering color="#0ff" name="player" />
-
-            {Config.DEBUG && (
-                <Html>
-                    <div ref={debugRef} />
-                </Html>
-            )}
-        </mesh>
+        <>
+            <Suv
+                ref={setRef}
+                position={position}
+                rotation={rotation}
+            >
+                <primitive object={target} position={[0, 1, 5]} />
+                <spotLight
+                    intensity={100}
+                    position={[0, 1.5, 1]}
+                    color={"#fff7e5"}
+                    angle={Math.PI * .3}
+                    target={target}
+                    penumbra={.5}
+                    shadow-bias={-0.0002}
+                />
+            </Suv>
+        </>
     )
 }

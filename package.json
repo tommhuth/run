@@ -23,6 +23,7 @@
         "react-dom": "^19.1.1",
         "react-merge-refs": "^3.0.2",
         "three": "^0.180.0",
+        "three-to-cannon": "^5.0.2",
         "use-animation-frame": "^0.2.1",
         "vite": "^7.1.5",
         "vite-plugin-glsl": "^1.5.1",

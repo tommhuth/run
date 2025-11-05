@@ -1,12 +1,5 @@
 import Lights from "@components/Lights"
-import DepthTexturex from "@components/materials/DepthTexture"
-import Path from "@components/path/Path"
 import Player from "@components/player/Player"
-import CloudSystem from "@components/world/CloudSystem"
-import Foam from "@components/world/Foam"
-import RockSystem from "@components/world/RockSystem"
-import SpeedParticles from "@components/world/SpeedParticles"
-import Water from "@components/world/Water"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import { extend } from "@react-three/fiber"
@@ -14,6 +7,8 @@ import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
+import Road, { Floor } from "@components/road/Road"
+import Traffic from "@components/road/Traffic"
 
 const Perf = lazy(async () => {
     let { Perf } = await import("r3f-perf")
@@ -23,27 +18,26 @@ const Perf = lazy(async () => {
 
 extend(extensions)
 
+
 export default function App() {
     return (
         <>
+            <fogExp2
+                args={["black"]}
+                attach={"fog"}
+                density={.015}
+            />
             <CannonProvider debug={Config.DEBUG}>
-                <fogExp2 attach={"fog"} args={["white", .045]} />
-                <color args={["white"]} attach={"background"} />
-
-                <CloudSystem />
-                <SpeedParticles />
-                <Foam />
-                <Water />
                 <Camera />
                 <Lights />
+                <Floor />
+                <Traffic />
+                <Road />
 
-                <Path />
-                <Player />
-                <RockSystem />
-                {/* at the very end */}
-                <DepthTexturex />
+                <Player position={[-1.25, 1, 0]} />
             </CannonProvider>
 
+            <axesHelper scale={10} position={[0, 2, -0]} />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>

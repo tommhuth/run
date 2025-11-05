@@ -1,6 +1,6 @@
 import random from "@huth/random"
-import { Body } from "cannon-es"
-import { DepthTexture, Material, Mesh } from "three"
+import { RigidVehicle } from "cannon-es"
+import { DepthTexture, Group, Material } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
@@ -24,8 +24,8 @@ export interface RunStore {
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
     player: {
-        mesh: Mesh | null
-        body: Body | null
+        mesh: Group | null
+        vehicle: RigidVehicle | null
     }
 }
 
@@ -39,7 +39,7 @@ const store = create(
         instances: {} as RunStore["instances"],
         player: {
             mesh: null,
-            body: null
+            vehicle: null
         },
         path: [
             {

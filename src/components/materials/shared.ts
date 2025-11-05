@@ -1,12 +1,5 @@
 import { MeshBasicMaterial, MeshPhongMaterial } from "three"
 
-import ConcreteMaterial from "./ConcreteMaterial"
-
-export const gray = new ConcreteMaterial({
-    name: "red",
-    shininess: 100,
-    wireframe: false
-})
 export const ball = new MeshPhongMaterial({
     name: "ball",
     emissive: "#fff",
