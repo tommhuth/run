@@ -4,9 +4,9 @@ import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
 import { useEffect, useMemo, useState } from "react"
+import { Object3D } from "three/webgpu"
 
 import { useControls } from "./useControls"
-import { Object3D } from "three/webgpu"
 
 interface PlayerProps {
     position?: Tuple3
@@ -17,7 +17,7 @@ export default function Player({
     rotation,
     position,
 }: PlayerProps) {
-    let { keys } = useControls()
+    let { motion } = useControls()
     let [ref, setRef] = useState<RigidVehicle | null>(null)
     let target = useMemo(() => new Object3D(), [])
 
@@ -26,34 +26,14 @@ export default function Player({
     }, [ref])
 
     useFrame(() => {
-        let steer = .25
-        let forc = 100
-
         if (!ref) {
             return
         }
 
-        if (keys.w || keys.ArrowUp) {
-            ref.setWheelForce(forc, 2)
-            ref.setWheelForce(forc, 3)
-        } else if (keys.s || keys.ArrowDown) {
-            ref.setWheelForce(-forc, 2)
-            ref.setWheelForce(-forc, 3)
-        } else {
-            ref.setWheelForce(0, 2)
-            ref.setWheelForce(0, 3)
-        }
-
-        if (keys.a) {
-            ref.setSteeringValue(steer, 0)
-            ref.setSteeringValue(steer, 1)
-        } else if (keys.d) {
-            ref.setSteeringValue(-steer, 0)
-            ref.setSteeringValue(-steer, 1)
-        } else {
-            ref.setSteeringValue(0, 0)
-            ref.setSteeringValue(0, 1)
-        }
+        ref.setWheelForce(motion.wheelForce, 2)
+        ref.setWheelForce(motion.wheelForce, 3)
+        ref.setSteeringValue(motion.steering, 0)
+        ref.setSteeringValue(motion.steering, 1)
     })
 
     return (

@@ -1,8 +1,13 @@
+import { clamp } from "@data/utils"
+import { useFrame } from "@react-three/fiber"
+import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
 
-
 export function useControls() {
-    let keys = useMemo<Record<string, boolean>>(() => ({}), [])
+    let keys = useMemo<Record<string, boolean | number>>(() => ({}), [])
+    let motion = useMemo(() => {
+        return { steering: 0, wheelForce: 0 }
+    }, [])
 
     useEffect(() => {
         let onkeydown = (e: KeyboardEvent) => {
@@ -21,5 +26,67 @@ export function useControls() {
         }
     }, [keys])
 
-    return { keys }
+    useEffect(() => {
+        let start: Tuple2 = [0, 0]
+        let pointerdown = (e: PointerEvent) => {
+            if (e.pointerType !== "touch") {
+                return
+            }
+
+            start = [e.clientX, e.clientY]
+        }
+        let pointermove = (e: PointerEvent) => {
+            if (e.pointerType !== "touch") {
+                return
+            }
+
+            keys.touchX = clamp((start[0] - e.clientX) / 150, -1, 1)
+            keys.touchY = clamp((start[1] - e.clientY) / 75, -1, 1)
+        }
+        let pointerup = (e: PointerEvent) => {
+            if (e.pointerType !== "touch") {
+                return
+            }
+
+            keys.touchX = false
+            keys.touchY = false
+        }
+
+        window.addEventListener("pointerdown", pointerdown)
+        window.addEventListener("pointermove", pointermove)
+        window.addEventListener("pointerup", pointerup)
+
+        return () => {
+            window.removeEventListener("pointerdown", pointerdown)
+            window.removeEventListener("pointermove", pointermove)
+            window.removeEventListener("pointerup", pointerup)
+        }
+    }, [keys])
+
+    useFrame(() => {
+        let steer = .25
+        let force = 125
+
+        if (typeof keys.touchY === "number") {
+            motion.wheelForce = force * keys.touchY
+        } else if (keys.w || keys.ArrowUp) {
+            motion.wheelForce = force
+        } else if (keys.s || keys.ArrowDown) {
+            motion.wheelForce = -force
+        } else {
+            motion.wheelForce = 0
+        }
+
+        if (typeof keys.touchX === "number") {
+            motion.steering = steer * keys.touchX
+        } else if (keys.a) {
+            motion.steering = steer
+        } else if (keys.d) {
+            motion.steering = -steer
+        } else {
+            motion.steering = 0
+        }
+    })
+
+    return { keys, motion }
 }

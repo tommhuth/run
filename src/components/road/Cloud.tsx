@@ -131,13 +131,13 @@ function Cloud({
                 vec2 uv = gl_FragCoord.xy / resolution.xy;
                 float depthWorld = getWorldZ(uv);  
   
-                float fadeDist = 2.;
-                float minDist = 1.; 
+                float fadeDist = 3.;
+                float minDist = .5; 
                 
                 float dist = (depthWorld - worldPos.z) - minDist;
  
                 gl_FragColor.a *= (fadein(depthWorld, worldPos.z, minDist, fadeDist)) * 1.;  
-                gl_FragColor.a *= clamp((worldPos.z - playerPosition.z - 1.) / 6. , 0., 1.);  
+                gl_FragColor.a *= clamp((worldPos.z - playerPosition.z - 2.) / 6. , 0., 1.);  
 
                 gl_FragColor.a *= smoothAlpha(uv, gl_FragColor.a, 16.); 
  
@@ -159,11 +159,11 @@ function Cloud({
         ref.current.material.opacity = 0
     }, [position])
 
-    useFrame(({ camera }) => {
-        const { player: { mesh } } = store.getState()
+    useFrame(() => {
+        const { player: { vehicle } } = store.getState()
 
-        if (mesh) {
-            uniforms.playerPosition.value.copy(camera.position)
+        if (vehicle) {
+            uniforms.playerPosition.value.copy(vehicle.chassisBody.position)
         }
     })
 
@@ -185,12 +185,12 @@ function Cloud({
             rotation-x={.2}
             scale={scale}
         >
-            <meshBasicMaterial
+            <meshLambertMaterial
                 onBeforeCompile={onBeforeCompile}
                 transparent
                 map={map}
                 name="cloud"
-                color="white"
+                color="#fff"
                 fog={false}
                 depthWrite={false}
                 dispose={null}

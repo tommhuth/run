@@ -1,5 +1,8 @@
 import Lights from "@components/Lights"
+import DepthTexturex from "@components/materials/DepthTexture"
 import Player from "@components/player/Player"
+import Road, { Floor } from "@components/road/Road"
+import Traffic from "@components/road/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import { extend } from "@react-three/fiber"
@@ -7,8 +10,6 @@ import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
-import Road, { Floor } from "@components/road/Road"
-import Traffic from "@components/road/Traffic"
 
 const Perf = lazy(async () => {
     let { Perf } = await import("r3f-perf")
@@ -39,6 +40,8 @@ export default function App() {
 
             <axesHelper scale={10} position={[0, 2, -0]} />
 
+            {/* at the very end */}
+            <DepthTexturex />
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
     )

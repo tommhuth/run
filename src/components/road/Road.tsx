@@ -13,6 +13,7 @@ import { ShapeType, threeToCannon } from "three-to-cannon"
 import Rocks from "./Rocks"
 import StreetLights from "./StreetLights"
 import { Trees } from "./Trees"
+import CloudSystem from "./CloudSystem"
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -52,6 +53,7 @@ export default function Road() {
             <Rocks />
             <Trees />
             <StreetLights />
+            <CloudSystem />
 
             <group
                 dispose={null}

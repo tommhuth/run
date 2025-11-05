@@ -8,8 +8,8 @@ import Cloud, { CloudProps } from "./Cloud"
 
 function getPosition(y = 0, z = 0): Tuple3 {
     return [
-        random.pick(12, 8, 7, 5, 3) * random.pick(1, -1),
-        y + random.float(-2, 5),
+        random.pick(30, 25, 19, 12, 8) * random.pick(1, -1),
+        0,
         z
     ]
 }
@@ -21,7 +21,8 @@ export default function CloudSystem({ size = 14 }: { size?: number }) {
                 id: random.id(),
                 speed: random.float(.025, .3),
                 position: getPosition(0, index * 3),
-                damping: random.float(.25, 1)
+                damping: random.float(.25, 1),
+                scale: random.float(2, 6)
             }
         })
     })
