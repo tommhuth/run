@@ -39,15 +39,15 @@ export default function CloudSystem({ size = 14 }: { size?: number }) {
     }
 
     useFrame(() => {
-        const { state, player: { mesh }, path } = store.getState()
+        const { state, player: { vehicle }, path } = store.getState()
         const forward = path[0]
 
-        if (!mesh || state == "gameover") {
+        if (!vehicle || state == "gameover") {
             return
         }
 
         for (const { position, id } of clouds) {
-            if (position[2] < mesh?.position.z - 1) {
+            if (position[2] < vehicle.chassisBody.position.z - 1) {
                 updateCloud(id, {
                     position: getPosition(forward.position[1] + forward.size[1] / 2, position[2] + size * 3)
                 })

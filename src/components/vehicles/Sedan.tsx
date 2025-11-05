@@ -41,7 +41,7 @@ export const Sedan = forwardRef<RigidVehicle, { position: Tuple3; rotation: Tupl
         center: [0, .7, 0],
         wheels,
         chassis,
-        mass: 4
+        mass: 2
     })
 
     useImperativeHandle(ref, () => {

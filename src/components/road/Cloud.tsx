@@ -7,7 +7,7 @@ import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { memo, useEffect, useLayoutEffect, useRef } from "react"
-import { BufferGeometry, Material, Mesh, PlaneGeometry, Vector2, Vector3 } from "three"
+import { BufferGeometry, Euler, Material, Mesh, PlaneGeometry, Quaternion, Vector2, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
 const geometry = new PlaneGeometry(12, 5, 1, 1)
@@ -131,13 +131,13 @@ function Cloud({
                 vec2 uv = gl_FragCoord.xy / resolution.xy;
                 float depthWorld = getWorldZ(uv);  
   
-                float fadeDist = 3.;
-                float minDist = .5; 
+                float fadeDist = 4.;
+                float minDist = 1.; 
                 
                 float dist = (depthWorld - worldPos.z) - minDist;
  
                 gl_FragColor.a *= (fadein(depthWorld, worldPos.z, minDist, fadeDist)) * 1.;  
-                gl_FragColor.a *= clamp((worldPos.z - playerPosition.z - 2.) / 6. , 0., 1.);  
+                gl_FragColor.a *= clamp((worldPos.z - playerPosition.z - 1.) / 3. , 0., 1.);  
 
                 gl_FragColor.a *= smoothAlpha(uv, gl_FragColor.a, 16.); 
  
@@ -168,12 +168,17 @@ function Cloud({
     })
 
     useFrame((state, delta) => {
-        if (!ref.current) {
+        let { player: { vehicle } } = store.getState()
+
+        if (!ref.current || !vehicle) {
             return
         }
 
+        let e = new Euler().setFromQuaternion(new Quaternion().copy(vehicle.chassisBody.quaternion))
+
         ref.current.material.opacity = damp(ref.current.material.opacity, 1, damping, ndelta(delta))
         ref.current.position.x -= ndelta(delta) * speed
+        ref.current.rotation.y = e.y
     })
 
     return (
