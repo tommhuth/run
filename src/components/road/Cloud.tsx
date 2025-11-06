@@ -5,12 +5,13 @@ import { store, useStore } from "@data/store"
 import { ndelta } from "@data/utils"
 import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
+import easings from "@src/shaders/easings.glsl"
 import { Tuple3 } from "@src/types/global"
 import { memo, useEffect, useLayoutEffect, useRef } from "react"
-import { BufferGeometry, Euler, Material, Mesh, PlaneGeometry, Quaternion, Vector2, Vector3 } from "three"
+import { BufferGeometry, DoubleSide, Euler, Group, Mesh, MeshLambertMaterial, PlaneGeometry, Quaternion, Vector2, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
-const geometry = new PlaneGeometry(12, 5, 1, 1)
+const geometry = new PlaneGeometry(12, 6, 1, 1)
 
 geometry.rotateY(Math.PI * 1)
 
@@ -22,6 +23,9 @@ export interface CloudProps {
     id: string
 }
 
+let _euler = new Euler()
+let _quaternion = new Quaternion()
+
 function Cloud({
     speed,
     position,
@@ -29,7 +33,7 @@ function Cloud({
     scale,
 }: CloudProps) {
     const map = useTexture(cloudImage)
-    const ref = useRef<Mesh<BufferGeometry, Material>>(null)
+    const ref = useRef<Group>(null)
     const { camera, viewport, size } = useThree()
     const depthTexture = useStore(i => i.depthTexture)
     const { onBeforeCompile, uniforms } = useShader({
@@ -46,12 +50,6 @@ function Cloud({
             playerPosition: {
                 value: new Vector3()
             },
-            cameraMatrixWorld: {
-                value: camera.matrixWorld
-            },
-            projectionMatrixInverse: {
-                value: camera.projectionMatrixInverse
-            },
             depthTexture: {
                 value: depthTexture,
             }
@@ -60,87 +58,50 @@ function Cloud({
 			uniform float cameraNear;
 			uniform float cameraFar;
 			uniform vec2 resolution;
-			varying vec3 worldPos;
-			uniform vec3 playerPosition;
-			uniform mat4 cameraMatrixWorld;
-			uniform mat4 projectionMatrixInverse;
+			varying vec3 worldPosition;
+			uniform vec3 playerPosition;   
 			uniform sampler2D depthTexture; 
 
-            // reconstruct linear view-space Z from depth texture
-            float getWorldZ(vec2 uv) {
-                float depth = texture2D(depthTexture, uv).r;
+            ${easings}
 
-                // depth -> NDC z [-1..1]
+            // thanks chattyman https://chatgpt.com/c/690d05ff-3a88-8325-b817-331a0a2e7eee
+            // --- For sampling from depth buffer (nonlinear) ---
+            float linearizeDepth(float depth, float near, float far) {
+                // Convert depth buffer value [0,1] -> NDC [-1,1]
                 float z = depth * 2.0 - 1.0;
-                vec4 clip = vec4(uv * 2.0 - 1.0, z, 1.0);
-
-                // NDC -> view space
-                vec4 view = projectionMatrixInverse * clip;
-                view /= view.w;
-
-                // view -> world space
-                vec4 world = cameraMatrixWorld * view;
-
-                return world.z;
+                // Reconstruct view-space z
+                float viewZ = (2.0 * near * far) / (far + near - z * (far - near));
+                // Convert to linear 0–1 depth (near=0, far=1)
+                return (viewZ - near) / (far - near);
             }
 
-            float easeOutQuad(float x) {
-                return 1. - (1. - x) * (1. - x);
-            }
-
-            float fadein(float depthWorld, float z, float minDist, float fadeDist ) {
-                float dist =   (depthWorld - worldPos.z); // positive if pixel is in front
-                float alpha = clamp((dist - minDist) / fadeDist, 0.0, 1.0);
-
-                return alpha;
-            }
-  
-            float smoothAlpha(vec2 uv, float baseAlpha, float radius) {
-                float texel = 1.0 / resolution.x;
-
-                // Gaussian weights for ±2
-                float w0 = 0.227027;
-                float w1 = 0.316216;
-                float w2 = 0.070270;
-
-                // horizontal blur
-                float hSum = baseAlpha * w0;
-                hSum += fadein(getWorldZ(uv + vec2( 1.0, 0.0) * texel * radius), worldPos.z, 0.5, 0.75) * w1;
-                hSum += fadein(getWorldZ(uv - vec2( 1.0, 0.0) * texel * radius), worldPos.z, 0.5, 0.75) * w1;
-                hSum += fadein(getWorldZ(uv + vec2( 2.0, 0.0) * texel * radius), worldPos.z, 0.5, 0.75) * w2;
-                hSum += fadein(getWorldZ(uv - vec2( 2.0, 0.0) * texel * radius), worldPos.z, 0.5, 0.75) * w2;
-
-                // vertical blur
-                float vSum = hSum * w0;
-                vSum += fadein(getWorldZ(uv + vec2(0.0,  1.0) * texel * radius), worldPos.z, 0.5, 0.75) * w1;
-                vSum += fadein(getWorldZ(uv - vec2(0.0,  1.0) * texel * radius), worldPos.z, 0.5, 0.75) * w1;
-                vSum += fadein(getWorldZ(uv + vec2(0.0,  2.0) * texel * radius), worldPos.z, 0.5, 0.75) * w2;
-                vSum += fadein(getWorldZ(uv - vec2(0.0,  2.0) * texel * radius), worldPos.z, 0.5, 0.75) * w2;
-
-                return baseAlpha;
-            }
- 
+            // --- For world-space position ---
+            float getLinearDepth(vec3 worldPos, mat4 viewMatrix, float near, float far) {
+                // Transform world -> view
+                vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
+                float viewZ = -viewPos.z; // camera looks down -Z
+                // Normalize to same 0–1 range
+                return (viewZ - near) / (far - near);
+            } 
         `,
         vertex: {
             main: glsl`  
-                worldPos =  (modelMatrix * vec4(position, 1.0)).xyz;
+                worldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
             `
         },
         fragment: {
             main: glsl` 
-                vec2 uv = gl_FragCoord.xy / resolution.xy;
-                float depthWorld = getWorldZ(uv);  
+                vec2 uv = gl_FragCoord.xy / resolution.xy; 
+                float sceneDepth = linearizeDepth(texture2D(depthTexture, uv).r, cameraNear, cameraFar);
+                float fragmentDepth = getLinearDepth(worldPosition, viewMatrix, cameraNear, cameraFar);
   
-                float fadeDist = 4.;
-                float minDist = 1.; 
-                
-                float dist = (depthWorld - worldPos.z) - minDist;
- 
-                gl_FragColor.a *= (fadein(depthWorld, worldPos.z, minDist, fadeDist)) * 1.;  
-                gl_FragColor.a *= clamp((worldPos.z - playerPosition.z - 1.) / 3. , 0., 1.);  
+                float extraDist = clamp(length(worldPosition - playerPosition) / 25., 0., 1.) * .075;
+                float fadeDist = .025 + extraDist; // 150 depth
+                float minDist = 0.;   
+                float dist = sceneDepth - fragmentDepth;  
+                float alpha = clamp((dist - minDist) / fadeDist, 0.0, 1.0);
 
-                gl_FragColor.a *= smoothAlpha(uv, gl_FragColor.a, 16.); 
- 
+                gl_FragColor.a *= easeInOutQuad(alpha);  
             `
         }
     })
@@ -152,11 +113,13 @@ function Cloud({
     }, [size, depthTexture])
 
     useLayoutEffect(() => {
-        if (!ref.current) {
+        let mesh = ref.current?.children[0] as Mesh<BufferGeometry, MeshLambertMaterial>
+
+        if (!mesh) {
             return
         }
 
-        ref.current.material.opacity = 0
+        mesh.material.opacity = 0
     }, [position])
 
     useFrame(() => {
@@ -169,38 +132,51 @@ function Cloud({
 
     useFrame((state, delta) => {
         let { player: { vehicle } } = store.getState()
+        let mesh = ref.current?.children[0] as Mesh<BufferGeometry, MeshLambertMaterial>
 
         if (!ref.current || !vehicle) {
             return
         }
 
-        let e = new Euler().setFromQuaternion(new Quaternion().copy(vehicle.chassisBody.quaternion))
+        _euler.setFromQuaternion(_quaternion.copy(vehicle.chassisBody.quaternion))
 
-        ref.current.material.opacity = damp(ref.current.material.opacity, 1, damping, ndelta(delta))
+        mesh.material.opacity = damp(mesh.material.opacity, 1, damping, ndelta(delta))
         ref.current.position.x -= ndelta(delta) * speed
-        ref.current.rotation.y = e.y
+        ref.current.rotation.y = _euler.y
     })
 
     return (
-        <mesh
-            position={position}
-            geometry={geometry}
+        <group
             ref={ref}
             userData={{ ignoreDepthWrite: true }}
-            rotation-x={.2}
+            position={position}
             scale={scale}
         >
-            <meshLambertMaterial
-                onBeforeCompile={onBeforeCompile}
-                transparent
-                map={map}
-                name="cloud"
-                color="#fff"
-                fog={false}
-                depthWrite={false}
-                dispose={null}
-            />
-        </mesh>
+            <mesh geometry={geometry}>
+                <meshBasicMaterial
+                    onBeforeCompile={onBeforeCompile}
+                    transparent
+                    map={map}
+                    name="cloud"
+                    color={"#7ab2e0"}
+                    fog={true}
+                    dispose={null}
+                    depthWrite={false}
+                    side={DoubleSide}
+                />
+            </mesh>
+            <mesh
+                geometry={geometry}
+                visible={false}
+            >
+                <meshBasicMaterial
+                    color="red"
+                    wireframe
+                    depthWrite={false}
+                    dispose={null}
+                />
+            </mesh>
+        </group>
     )
 }
 

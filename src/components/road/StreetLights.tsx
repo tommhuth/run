@@ -1,10 +1,10 @@
-import { ROAD_CENTER_X, ROAD_HEIGHT } from "./Road"
 import { store } from "@data/store"
 import { useTransitionedState } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 
+import { ROAD_CENTER_X, ROAD_HEIGHT } from "./Road"
 import StreetLight from "./StreetLight"
 
 const interval = 25

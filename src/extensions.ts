@@ -5,9 +5,9 @@ import {
     DirectionalLight, FogExp2,
     Group, InstancedMesh,
     Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial,
-    PlaneGeometry, SpotLight,
+    PlaneGeometry,     PointLight,
     SphereGeometry,
-    PointLight,
+    SpotLight,
 } from "three"
 
 export default {

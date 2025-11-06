@@ -4,10 +4,10 @@ import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
-import { ROAD_CENTER_X } from "./Road"
 import { Sedan } from "../vehicles/Sedan"
+import { ROAD_CENTER_X } from "./Road"
 
 interface TrafficElementProps {
     position: Tuple3
@@ -147,7 +147,7 @@ function TrafficElement({
 
     useFrame(() => {
         let { player } = store.getState()
-        let backbuffer = 5
+        let backbuffer = 3
 
         if (!player.vehicle || !vehicle) {
             return

@@ -1,7 +1,7 @@
 import { useStore } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useRef } from "react"
-import { CameraHelper, DirectionalLight } from "three"
+import { DirectionalLight } from "three"
 
 export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)
@@ -20,7 +20,7 @@ export default function Lights() {
     }, [scene])
 
     useFrame((_, delta) => {
-        const { player: { vehicle }, state } = useStore.getState()
+        const { player: { vehicle } } = useStore.getState()
 
         // update camera shadow position 
         if (shadowLightRef.current && time.current >= 750 && vehicle) {

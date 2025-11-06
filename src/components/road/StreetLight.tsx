@@ -6,12 +6,12 @@ import { Box, Vec3 } from "cannon-es"
 
 const box = new Box(new Vec3(.175, 6, .175))
 
-export default function StreetLight(props) {
+export default function StreetLight({ position, scale, rotation }) {
     const { nodes, materials } = useGLTF(model)
     const [ref] = useBody({
         mass: 0,
-        position: props.position,
-        rotation: props.rotation,
+        position,
+        rotation,
         definition: box
     })
 
@@ -19,7 +19,7 @@ export default function StreetLight(props) {
         <group
             ref={ref}
             dispose={null}
-            scale={props.scale}
+            scale={scale}
         >
             <mesh
                 castShadow

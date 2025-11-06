@@ -40,7 +40,7 @@ export function useControls() {
                 return
             }
 
-            keys.touchX = clamp((start[0] - e.clientX) / 150, -1, 1)
+            keys.touchX = clamp((start[0] - e.clientX) / 120, -1, 1)
             keys.touchY = clamp((start[1] - e.clientY) / 75, -1, 1)
         }
         let pointerup = (e: PointerEvent) => {
@@ -64,7 +64,7 @@ export function useControls() {
     }, [keys])
 
     useFrame(() => {
-        let steer = .25
+        let steer = .35
         let force = 125
 
         if (typeof keys.touchY === "number") {

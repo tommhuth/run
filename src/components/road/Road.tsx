@@ -10,10 +10,10 @@ import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 import { ShapeType, threeToCannon } from "three-to-cannon"
 
+import CloudSystem from "./CloudSystem"
 import Rocks from "./Rocks"
 import StreetLights from "./StreetLights"
 import { Trees } from "./Trees"
-import CloudSystem from "./CloudSystem"
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -93,12 +93,23 @@ export default function Road() {
 let floorShape = new Box(new Vec3(5000, .5, 5000))
 
 export function Floor() {
-    const [ref] = useBody({
+    const [ref, body] = useBody({
         mass: 0,
         definition: floorShape,
         position: [0, -.5, 0]
     })
-    let size = 1000
+
+    useFrame(() => {
+        let { player } = store.getState()
+
+        if (!player.vehicle) {
+            return
+        }
+
+        if (player.vehicle.chassisBody.position.z > body.position.z + depth * .5 * .75) {
+            body.position.z += depth * .5
+        }
+    })
 
     return (
         <mesh
@@ -106,7 +117,7 @@ export function Floor() {
             castShadow
             receiveShadow
         >
-            <boxGeometry args={[size, 1, size, 1, 1, 1]} />
+            <boxGeometry args={[depth, 1, depth, 1, 1, 1]} />
             <meshPhongMaterial color="#ccc" name="floor" />
         </mesh>
     )

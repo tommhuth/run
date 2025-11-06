@@ -13,19 +13,45 @@ import { ROAD_CENTER_X } from "./Road"
 
 const interval = 90
 
-function Rock({ position, scaly, rotation, radius, update }) {
-    let [active, setActive] = useTransitionedState(false)
-    let shape = useMemo(() => {
-        return new Sphere(radius)
+function Rock({
+    position,
+    scaly,
+    rotation,
+    radius,
+    update,
+    active = false
+}) {
+    const { nodes } = useGLTF(model)
+    const shape = useMemo(() => {
+        return new Sphere(radius * .85)
     }, [])
-    const [ref] = useBody({
+
+    useBody({
         mass: 0,
         position,
         definition: shape,
+        rotation,
         active,
-        rotation
     })
-    const { nodes } = useGLTF(model)
+
+    useFrame(() => {
+        let { player: { vehicle } } = store.getState()
+
+        if (!vehicle) {
+            return
+        }
+
+        let [, , z] = position
+        let newActive = Math.abs(vehicle.chassisBody.position.z - z) < 15
+
+        if (vehicle.chassisBody.position.z > z + 2) {
+            newActive = false
+        }
+
+        if (active !== newActive) {
+            update({ active: newActive })
+        }
+    })
 
     useFrame(() => {
         let { player } = store.getState()
@@ -34,23 +60,17 @@ function Rock({ position, scaly, rotation, radius, update }) {
             return
         }
 
-        let p = player.vehicle.chassisBody.position.z
         let buffer = radius * 2
         let [, , z] = position
-        let newActive = Math.abs(p - z) < 30
-
-        if (active !== newActive) {
-            setActive(newActive)
-        }
-
 
         if (z < player.vehicle.chassisBody.position.z - buffer) {
             update({
                 position: [
                     random.float(ROAD_CENTER_X + 4, ROAD_CENTER_X + 10) * random.pick(-1, 1),
                     random.float(0, .25),
-                    z + interval
+                    z + interval + random.integer(-5, 5)
                 ],
+                active: false
             })
         }
     })
@@ -58,7 +78,7 @@ function Rock({ position, scaly, rotation, radius, update }) {
     return (
         <group
             dispose={null}
-            ref={ref}
+
             position={position}
             rotation={rotation}
         >
@@ -74,7 +94,7 @@ function Rock({ position, scaly, rotation, radius, update }) {
     )
 }
 
-export default function Rocks({ count = 12 }) {
+export default function Rocks({ count = 8 }) {
     let [rocks, setRocks] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map(() => {
             let radius = random.pick(1, 1.5, 2.5, 4, 1.85, 2, 3, 2.4)
@@ -84,11 +104,12 @@ export default function Rocks({ count = 12 }) {
                 position: [
                     random.integer(ROAD_CENTER_X + 1 + radius * 1.2, ROAD_CENTER_X + 12) * random.pick(-1, 1),
                     random.float(0, .35),
-                    random.integer(-1, interval)
+                    random.integer(-1, interval * .5)
                 ] as Tuple3,
-                rotation: [0, random.float(0, Math.PI * 2), 0],
+                rotation: [random.pick(Math.PI, 0), random.float(0, Math.PI * 2), random.pick(Math.PI, 0)],
                 radius,
-                scaly: random.float(.85, 1.25)
+                scaly: random.float(.85, 1.25),
+                active: false
             }
         })
     })

@@ -1,9 +1,10 @@
 import Suv from "@components/vehicles/Suv"
 import { setState } from "@data/store/actions"
+import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { Object3D } from "three/webgpu"
 
 import { useControls } from "./useControls"
@@ -18,7 +19,7 @@ export default function Player({
     position,
 }: PlayerProps) {
     let { motion } = useControls()
-    let [ref, setRef] = useState<RigidVehicle | null>(null)
+    let [ref, setRef] = useTransitionedState<RigidVehicle | null>(null)
     let target = useMemo(() => new Object3D(), [])
 
     useEffect(() => {

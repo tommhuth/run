@@ -86,6 +86,10 @@ function useCannonBody({
     }, [x, y, z, body])
 
     useLayoutEffect(() => {
+        body.quaternion.setFromEuler(...rotation)
+    }, rotation)
+
+    useLayoutEffect(() => {
         body.shapes = []
 
         if (Array.isArray(definition)) {
@@ -118,7 +122,7 @@ function useCannonBody({
         body.userData = userData
     }, [userData, body])
 
-    return [body, world] as const
+    return [body] as const
 }
 
 interface CannonProviderProps {
@@ -179,19 +183,23 @@ export function CannonProvider({
     )
 }
 
-export function useBody({ mass, active = true, ...rest }: BaseBodyOptions) {
+export function useBody({
+    mass,
+    active = true,
+    ...rest
+}: BaseBodyOptions) {
     const ref = useRef<Mesh>(null)
     const [body] = useCannonBody({ mass, active, ...rest })
 
     useLayoutEffect(() => {
-        if (ref.current) {
+        if (ref.current && active) {
             ref.current.position.copy(body.position)
             ref.current.quaternion.copy(body.quaternion)
         }
     }, [active])
 
     useFrame(() => {
-        if (ref.current) {
+        if (ref.current && active) {
             ref.current.position.copy(body.interpolatedPosition)
             ref.current.quaternion.copy(body.interpolatedQuaternion)
         }

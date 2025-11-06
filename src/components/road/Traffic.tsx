@@ -5,15 +5,15 @@ import { Tuple3 } from "@src/types/global"
 import { ROAD_CENTER_X, ROAD_HEIGHT } from "./Road"
 import TrafficElement from "./TrafficElement"
 
-let gap = [4, 7, 6, 9, 10, 17, 25, 21]
+let gap = [10, 12, 16, 20, 25, 40]
 
 function initTraffic() {
-    let dirs = [-1, 1] as const
+    let directions = [-1, 1] as const
 
-    return dirs.map(direction => {
+    return directions.map(direction => {
         let z = 10 * direction
 
-        return Array.from({ length: 7 }).fill(null).map(() => {
+        return Array.from({ length: 4 }).fill(null).map(() => {
             z += random.pick(...gap)
 
             return {
@@ -24,7 +24,7 @@ function initTraffic() {
                     z
                 ] as Tuple3,
                 guide: [
-                    ROAD_CENTER_X * -direction + random.float(-.85, .85), // ,
+                    ROAD_CENTER_X * -direction + random.float(-.85, .85),
                     0,
                     0
                 ] as Tuple3,
@@ -59,19 +59,15 @@ function Traffic() {
         ])
     }
 
-    return (
-        <>
-            {traffic.map(item => {
-                return (
-                    <TrafficElement
-                        {...item}
-                        key={item.id}
-                        remove={() => remove(item)}
-                    />
-                )
-            })}
-        </>
-    )
+    return traffic.map(item => {
+        return (
+            <TrafficElement
+                {...item}
+                key={item.id}
+                remove={() => remove(item)}
+            />
+        )
+    })
 };
 
 export default Traffic
