@@ -62,7 +62,7 @@ function useCannonBody({
     angularDamping,
     velocity = [0, 0, 0],
     userData = {},
-    allowSleep = false,
+    allowSleep = true,
     active = true,
     ...rest
 }: BaseBodyOptions) {
@@ -71,7 +71,7 @@ function useCannonBody({
         return new Body({
             mass,
             allowSleep,
-            sleepSpeedLimit: .1,
+            sleepSpeedLimit: .01,
             position: new Vec3(x, y, z),
             velocity: new Vec3(...velocity),
             quaternion: new CannonQuaternion().setFromEuler(...rotation),
@@ -131,6 +131,7 @@ interface CannonProviderProps {
     iterations?: number
     debug?: boolean
     children: ReactNode
+    allowSleep?: boolean
 }
 
 export function CannonProvider({
@@ -139,6 +140,7 @@ export function CannonProvider({
     defaultRestitution = DEFAULT_RESTITUTION,
     iterations = DEFAULT_ITERATIONS,
     debug = false,
+    allowSleep = true,
 }: CannonProviderProps) {
     const { scene } = useThree()
     const world = useMemo(() => {
@@ -148,7 +150,7 @@ export function CannonProvider({
 
         const world = new World({
             solver,
-            allowSleep: false,
+            allowSleep,
             gravity: new Vec3(...gravity),
         })
 
