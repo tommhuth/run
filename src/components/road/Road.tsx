@@ -1,4 +1,5 @@
 import model from "@assets/models/road.glb"
+import { floorMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useBody } from "@data/cannon"
 import Config from "@data/Config"
 import { store } from "@data/store"
@@ -26,6 +27,8 @@ const [, height, depth] = [9, .75, 500]
 
 export const ROAD_HEIGHT = height
 export const ROAD_CENTER_X = 1.5
+export const ROAD_EDGE_X = ROAD_CENTER_X + 2.25
+export const ROAD_FORWARD_EDGE = 90
 
 export default function Road() {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
@@ -63,7 +66,7 @@ export default function Road() {
                     castShadow
                     receiveShadow
                     geometry={nodes.Cube.geometry}
-                    material={nodes.Cube.material}
+                    material={floorMaterial}
                     scale={1}
                     position={[0, 0, 0]}
                 />
@@ -116,9 +119,9 @@ export function Floor() {
             ref={ref}
             castShadow
             receiveShadow
+            material={floorMaterial}
         >
             <boxGeometry args={[depth, 1, depth, 1, 1, 1]} />
-            <meshPhongMaterial color="#ccc" name="floor" />
         </mesh>
     )
 }

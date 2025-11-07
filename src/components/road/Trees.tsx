@@ -1,21 +1,16 @@
-import model from "@assets/models/trees.glb"
-import { useBody } from "@data/cannon"
-import { store } from "@data/store"
 import { useTransitionedState } from "@data/utils"
 import random from "@huth/random"
-import { useGLTF } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
-import { Box, Vec3 } from "cannon-es"
 
-import { ROAD_CENTER_X } from "./Road"
+import { ROAD_EDGE_X } from "./Road"
+import Tree from "./Tree"
 
 const interval = 90
 
 export function Trees({ count = 12 }) {
     const [trees, setTrees] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map(() => {
-            const x = random.integer(ROAD_CENTER_X + 4, ROAD_CENTER_X + 12)
+            const x = random.integer(ROAD_EDGE_X + 3, ROAD_EDGE_X + 10)
             const z = random.integer(-5, interval)
             const y = 0
 
@@ -33,8 +28,8 @@ export function Trees({ count = 12 }) {
     return trees.map((i) => {
         return (
             <Tree
-                key={i.id}
                 {...i}
+                key={i.id}
                 update={(data) => {
                     setTrees([
                         ...trees.filter(j => j.id !== i.id),
@@ -48,120 +43,3 @@ export function Trees({ count = 12 }) {
         )
     })
 }
-
-const shape = new Box(new Vec3(.4, 5, .4))
-
-export function Tree({
-    type = 0,
-    update,
-    position,
-    active = false,
-    rotation,
-    scale = 1
-}) {
-    const { nodes, materials } = useGLTF(model)
-
-    useBody({
-        position,
-        active,
-        rotation,
-        mass: 0,
-        definition: shape,
-    })
-
-    useFrame(() => {
-        const { player: { vehicle } } = store.getState()
-
-        if (!vehicle) {
-            return
-        }
-
-        const [, , z] = position
-        let newActive = Math.abs(vehicle.chassisBody.position.z - z) < 15
-
-        if (vehicle.chassisBody.position.z > z + 2) {
-            newActive = false
-        }
-
-        if (active !== newActive) {
-            update({ active: newActive })
-        }
-    })
-
-    useFrame(() => {
-        const { player } = store.getState()
-        const buffer = 8
-        const [, y, z] = position
-
-        if (!player.vehicle) {
-            return
-        }
-
-        if (z < player.vehicle.chassisBody.position.z - buffer) {
-            update({
-                position: [
-                    random.integer(ROAD_CENTER_X + 4, ROAD_CENTER_X + 12) * random.pick(-1, 1),
-                    y,
-                    z + 90 + random.integer(-5, 5)
-                ],
-                scale: random.float(1.25, 2),
-                active: false
-            })
-        }
-    })
-
-    return (
-        <group
-            scale={scale}
-            dispose={null}
-            position={position}
-            rotation={rotation}
-
-        >
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree5g.geometry}
-                material={materials._trees_normal}
-                visible={type === 0}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree4g.geometry}
-                material={materials._trees_normal}
-                visible={type === 1}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree3g.geometry}
-                material={materials._trees_normal}
-                visible={type === 2}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree2g.geometry}
-                material={materials._trees_normal}
-                visible={type === 3}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree6g.geometry}
-                material={materials._trees_normal}
-                visible={type === 4}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree1.geometry}
-                material={materials._trees_normal}
-                visible={type === 5}
-            />
-        </group>
-    )
-}
-
-useGLTF.preload(model)

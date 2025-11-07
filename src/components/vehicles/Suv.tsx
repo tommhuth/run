@@ -1,11 +1,13 @@
 import model from "@assets/models/suv.glb"
+import { carMaterial } from "@components/materials/shared"
 import Config from "@data/Config"
 import { Chassis, useRigidVehicle, Wheel } from "@data/useRigidVehicle"
 import { useGLTF } from "@react-three/drei"
-import { Box, Vec3 } from "cannon-es"
-import { forwardRef, useImperativeHandle } from "react"
-import { Mesh, MeshStandardMaterial } from "three"
-import { GLTF } from "three/examples/jsm/Addons.js"
+import { Tuple3 } from "@src/types/global"
+import { Box, RigidVehicle, Vec3 } from "cannon-es"
+import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "react"
+import { Mesh } from "three"
+import type { GLTF } from "three/examples/jsm/Addons.js"
 
 const width = 1.25
 const height = 1.1
@@ -45,13 +47,16 @@ type GLTFResult = GLTF & {
         ["wheel-front-right"]: Mesh
         ["wheel-back-left"]: Mesh
     }
-    materials: {
-        colormap: MeshStandardMaterial
-    }
 }
 
-const Suv = forwardRef(function Suv({ children, ...props }, ref) {
-    const { nodes, materials } = useGLTF(model) as unknown as GLTFResult
+interface SuvProps {
+    children?: ReactNode
+    position?: Tuple3
+    rotation?: Tuple3
+}
+
+function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) {
+    const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
         center: [0, .85, 0],
@@ -75,7 +80,7 @@ const Suv = forwardRef(function Suv({ children, ...props }, ref) {
                 >
                     <primitive
                         attach="material"
-                        object={materials.colormap}
+                        object={carMaterial}
                         wireframe={Config.DEBUG}
                     />
                 </mesh>
@@ -87,10 +92,11 @@ const Suv = forwardRef(function Suv({ children, ...props }, ref) {
                 >
                     <primitive
                         attach="material"
-                        object={materials.colormap}
+                        object={carMaterial}
                         wireframe={Config.DEBUG}
                     />
                 </mesh>
+
                 {children}
             </group>
             <group ref={wheelsRef}>
@@ -101,7 +107,7 @@ const Suv = forwardRef(function Suv({ children, ...props }, ref) {
                 >
                     <primitive
                         attach="material"
-                        object={materials.colormap}
+                        object={carMaterial}
                         wireframe={Config.DEBUG}
                     />
                 </mesh>
@@ -112,7 +118,7 @@ const Suv = forwardRef(function Suv({ children, ...props }, ref) {
                 >
                     <primitive
                         attach="material"
-                        object={materials.colormap}
+                        object={carMaterial}
                         wireframe={Config.DEBUG}
                     />
                 </mesh>
@@ -123,7 +129,7 @@ const Suv = forwardRef(function Suv({ children, ...props }, ref) {
                 >
                     <primitive
                         attach="material"
-                        object={materials.colormap}
+                        object={carMaterial}
                         wireframe={Config.DEBUG}
                     />
                 </mesh>
@@ -134,13 +140,15 @@ const Suv = forwardRef(function Suv({ children, ...props }, ref) {
                 >
                     <primitive
                         attach="material"
-                        object={materials.colormap}
+                        object={carMaterial}
                         wireframe={Config.DEBUG}
                     />
                 </mesh>
             </group >
         </>
     )
-})
+}
 
-export default Suv
+export default memo(forwardRef(Suv))
+
+useGLTF.preload(model)

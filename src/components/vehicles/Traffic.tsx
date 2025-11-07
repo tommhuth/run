@@ -1,8 +1,8 @@
+import { ROAD_CENTER_X, ROAD_HEIGHT } from "@components/road/Road"
 import { useTransitionedState } from "@data/utils"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 
-import { ROAD_CENTER_X, ROAD_HEIGHT } from "./Road"
 import TrafficElement from "./TrafficElement"
 
 const gap = [10, 12, 16, 20, 25, 40]

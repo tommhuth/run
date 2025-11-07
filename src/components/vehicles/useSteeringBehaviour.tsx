@@ -1,23 +1,11 @@
+import { ROAD_CENTER_X } from "@components/road/Road"
 import { store } from "@data/store"
-import { clamp, map, useTransitionedState } from "@data/utils"
+import { clamp, map } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
 import { useMemo } from "react"
-
-import { Sedan } from "../vehicles/Sedan"
-import { ROAD_CENTER_X } from "./Road"
-
-interface TrafficElementProps {
-    position: Tuple3
-    rotation: Tuple3
-    guide: Tuple3
-    velocity?: number
-    direction: 1 | -1
-    id: string
-    remove: () => void
-}
 
 const MAX_STEER = 0.3
 const MAX_STEER_RATE = 1.2
@@ -35,7 +23,7 @@ interface UseSteeringBehaviourParams {
 
 // chattyman https://chatgpt.com/c/69062faa-a95c-832d-84ca-11456a40f84f
 // https://en.wikipedia.org/wiki/Proportional%E2%80%93integral%E2%80%93derivative_controller
-function useSteeringBehaviour({
+export default function useSteeringBehaviour({
     vehicle,
     target,
     direction,
@@ -64,16 +52,20 @@ function useSteeringBehaviour({
 
     // z
     useFrame(() => {
-        if (!vehicle) {
+        const { player } = store.getState()
+
+        if (!vehicle || !player.vehicle) {
             return
         }
 
         const currentVelocity = vehicle.chassisBody.velocity.length()
+        const playerVelocity = player.vehicle?.chassisBody.velocity.length()
+        const slow = direction === 1 ? clamp(playerVelocity / 20, 0, 1) : 1
         const scaler = map(currentVelocity / targetVelocity, 0, 1, 2.5, 1)
 
         if (currentVelocity < targetVelocity) {
-            vehicle.setWheelForce(wheelForce * scaler, 2)
-            vehicle.setWheelForce(wheelForce * scaler, 3)
+            vehicle.setWheelForce(wheelForce * scaler * slow, 2)
+            vehicle.setWheelForce(wheelForce * scaler * slow, 3)
         } else {
             vehicle.setWheelForce(0, 2)
             vehicle.setWheelForce(0, 3)
@@ -116,55 +108,3 @@ function useSteeringBehaviour({
         data.prevError = error
     })
 }
-
-function TrafficElement({
-    position,
-    rotation,
-    velocity,
-    guide,
-    direction,
-    remove
-}: TrafficElementProps) {
-    const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
-
-    useSteeringBehaviour({
-        vehicle,
-        target: guide,
-        direction,
-        targetVelocity: velocity,
-        wheelForce: 20
-    })
-
-    useFrame(() => {
-        if (!vehicle) {
-            return
-        }
-
-        position[0] = vehicle.chassisBody.position.x
-        position[1] = vehicle.chassisBody.position.y
-        position[2] = vehicle.chassisBody.position.z
-    })
-
-    useFrame(() => {
-        const { player } = store.getState()
-        const backbuffer = 3
-
-        if (!player.vehicle || !vehicle) {
-            return
-        }
-
-        if (vehicle.chassisBody.position.z < player.vehicle?.chassisBody.position.z - backbuffer) {
-            remove()
-        }
-    })
-
-    return (
-        <Sedan
-            ref={setVehicle}
-            position={position}
-            rotation={rotation}
-        />
-    )
-};
-
-export default TrafficElement

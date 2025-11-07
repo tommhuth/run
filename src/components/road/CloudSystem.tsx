@@ -1,14 +1,16 @@
+import CloudMaterial from "@components/materials/CloudMaterial"
 import { store } from "@data/store"
 import { useTransitionedState } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
-import { startTransition } from "react"
+import { MeshBasicMaterial } from "three"
 
 import Cloud, { CloudProps } from "./Cloud"
 
 const xRange = [10, 25, 19, 12, 6, 8]
 
 export default function CloudSystem({ size = 15 }: { size?: number }) {
+    const [material, setMaterial] = useTransitionedState<MeshBasicMaterial | null>(null)
     const [clouds, setClouds] = useTransitionedState<CloudProps[]>(() => {
         return Array.from({ length: size }).fill(null).map((i, index) => {
             return {
@@ -19,21 +21,19 @@ export default function CloudSystem({ size = 15 }: { size?: number }) {
                     0,
                     index * 5,
                 ],
-                damping: random.float(1, 3),
+                damping: random.float(.4, 1),
                 scale: random.float(.75, 2.)
             }
         })
     })
     const updateCloud = (id: CloudProps["id"], data: Partial<CloudProps>) => {
-        startTransition(() => {
-            setClouds([
-                ...clouds.filter(i => i.id !== id),
-                {
-                    ...clouds.find(i => i.id === id) as CloudProps,
-                    ...data
-                }
-            ])
-        })
+        setClouds([
+            ...clouds.filter(i => i.id !== id),
+            {
+                ...clouds.find(i => i.id === id) as CloudProps,
+                ...data
+            }
+        ])
     }
 
     useFrame(() => {
@@ -57,9 +57,20 @@ export default function CloudSystem({ size = 15 }: { size?: number }) {
         }
     })
 
-    return clouds.map(({ id, ...rest }) => {
-        return (
-            <Cloud key={id} id={id} {...rest} />
-        )
-    })
+    return (
+        <>
+            <CloudMaterial ref={setMaterial} />
+
+            {material && clouds.map(({ id, ...rest }) => {
+                return (
+                    <Cloud
+                        material={material}
+                        key={id}
+                        id={id}
+                        {...rest}
+                    />
+                )
+            })}
+        </>
+    )
 }

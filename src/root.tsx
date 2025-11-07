@@ -14,9 +14,9 @@ function getConfiguration() {
             position: [0, 0, 0],
             fov: 70
         },
-        flat: true,
+        flat: false,
         shadows: "variance",
-        dpr: clamp(window.devicePixelRatio * .75, 1, 2),
+        dpr: clamp(window.devicePixelRatio * .65, 1, 2),
         size: {
             width: window.innerWidth,
             height: window.innerHeight,

@@ -1,14 +1,16 @@
 import { useStore } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
+import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
 import { DirectionalLight } from "three"
+
+const forwardOffset = 10
+const targetPosition: Tuple3 = [15, -20, 6]
 
 export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)
     const { scene, viewport } = useThree()
     const time = useRef(0)
-    const forwardOffset = 10
-    const targetPosition = [15, -20, 6]
 
     useEffect(() => {
         if (!shadowLightRef.current) {
@@ -44,7 +46,7 @@ export default function Lights() {
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                intensity={2}
+                intensity={1.25}
                 shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
                 shadow-camera-near={-25} // z
                 shadow-camera-far={35}
@@ -54,9 +56,13 @@ export default function Lights() {
                 shadow-camera-bottom={-30}
                 shadow-radius={2}
                 shadow-blurSamples={8} //8
-                color={"#4275ff"}
+                color={"#0044ff"}
             />
-            <ambientLight intensity={.3} color={"rgba(4, 52, 94, 1)"} />
+            <hemisphereLight
+                color={"red"}
+                groundColor={"blue"}
+                intensity={.15}
+            />
         </>
     )
 }

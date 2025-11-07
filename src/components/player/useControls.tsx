@@ -64,15 +64,15 @@ export function useControls() {
     }, [keys])
 
     useFrame(() => {
-        const steer = .35
-        const force = 125
+        const steer = .2
+        const force = 100
 
         if (typeof keys.touchY === "number") {
-            motion.wheelForce = force * keys.touchY
+            motion.wheelForce = force * keys.touchY * 1.25
         } else if (keys.w || keys.ArrowUp) {
-            motion.wheelForce = force
+            motion.wheelForce = force * 1.25
         } else if (keys.s || keys.ArrowDown) {
-            motion.wheelForce = -force
+            motion.wheelForce = -force * 1.25
         } else {
             motion.wheelForce = 0
         }

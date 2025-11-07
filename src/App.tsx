@@ -2,7 +2,7 @@ import Lights from "@components/Lights"
 import DepthTexturex from "@components/materials/DepthTexture"
 import Player from "@components/player/Player"
 import Road, { Floor } from "@components/road/Road"
-import Traffic from "@components/road/Traffic"
+import Traffic from "@components/vehicles/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import { extend } from "@react-three/fiber"
@@ -19,14 +19,13 @@ const Perf = lazy(async () => {
 
 extend(extensions)
 
-
 export default function App() {
     return (
         <>
             <fogExp2
                 args={["black"]}
                 attach={"fog"}
-                density={.015}
+                density={.0175}
             />
             <CannonProvider debug={Config.DEBUG}>
                 <Camera />
@@ -38,7 +37,11 @@ export default function App() {
                 <Player position={[-1.25, 1, 0]} />
             </CannonProvider>
 
-            <axesHelper scale={10} position={[0, 2, -0]} />
+            <axesHelper
+                visible={false}
+                scale={10}
+                position={[0, 2, -0]}
+            />
 
             {/* at the very end */}
             <DepthTexturex />
