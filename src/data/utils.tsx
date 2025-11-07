@@ -18,8 +18,8 @@ export function ndelta(delta: number) {
 export function useTransitionedState<T>(
     init: T | (() => T)
 ): [T, Dispatch<SetStateAction<T>>] {
-    let [state, setState] = useState<T>(init)
-    let update = useCallback<Dispatch<SetStateAction<T>>>((data: SetStateAction<T>) => {
+    const [state, setState] = useState<T>(init)
+    const update = useCallback<Dispatch<SetStateAction<T>>>((data: SetStateAction<T>) => {
         startTransition(() => setState(data))
     }, [])
 

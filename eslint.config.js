@@ -96,6 +96,10 @@ export default [
                 "error",
                 { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
             ],
+            "prefer-const": ["error", {
+                "destructuring": "all",
+                "ignoreReadBeforeAssign": false
+            }],
             indent: ["error", 4, { SwitchCase: 1 }],
             "eol-last": ["error", "always"],
             quotes: ["error", "double", { avoidEscape: true }],

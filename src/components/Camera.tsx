@@ -2,16 +2,16 @@ import { store } from "@data/store"
 import { useFrame } from "@react-three/fiber"
 import { Euler, Quaternion, Vector3 } from "three"
 
-let _quaternion = new Quaternion()
-let _euler = new Euler()
-let _position = new Vector3()
-let _lookAt = new Vector3()
-let offset = new Vector3(0, 3, -4.5)
-let forward = new Vector3(0, 0, 20)
+const _quaternion = new Quaternion()
+const _euler = new Euler()
+const _position = new Vector3()
+const _lookAt = new Vector3()
+const offset = new Vector3(0, 3, -4.5)
+const forward = new Vector3(0, 0, 20)
 
 export default function Camera() {
     useFrame(({ camera }) => {
-        let { player } = store.getState()
+        const { player } = store.getState()
 
         if (!player.vehicle) {
             return
@@ -21,12 +21,14 @@ export default function Camera() {
         _euler.setFromQuaternion(_quaternion, "YXZ")
         _euler.x = 0
         _euler.z = 0
-        _position.copy(offset).applyEuler(_euler)
+        _position.copy(offset)
+            .applyEuler(_euler)
+            .add(player.vehicle.chassisBody.position)
+        camera.position.lerp(_position, .4)
 
-        camera.position.copy(player.vehicle.chassisBody.position)
-        camera.position.add(_position)
-
-        _lookAt.copy(forward).applyEuler(_euler).add(player.vehicle.chassisBody.position)
+        _lookAt.copy(forward)
+            .applyEuler(_euler)
+            .add(player.vehicle.chassisBody.position)
         camera.lookAt(_lookAt)
     })
 

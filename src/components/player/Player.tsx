@@ -18,9 +18,9 @@ export default function Player({
     rotation,
     position,
 }: PlayerProps) {
-    let { motion } = useControls()
-    let [ref, setRef] = useTransitionedState<RigidVehicle | null>(null)
-    let target = useMemo(() => new Object3D(), [])
+    const { motion } = useControls()
+    const [ref, setRef] = useTransitionedState<RigidVehicle | null>(null)
+    const target = useMemo(() => new Object3D(), [])
 
     useEffect(() => {
         setState({ player: { vehicle: ref, mesh: null } })

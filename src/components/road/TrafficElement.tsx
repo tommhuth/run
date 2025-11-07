@@ -45,7 +45,7 @@ function useSteeringBehaviour({
     kd = .02,
     kv = .2
 }: UseSteeringBehaviourParams) {
-    let data = useMemo(() => ({
+    const data = useMemo(() => ({
         prevError: 0,
         prevSteer: 0,
         adjustAt: random.integer(700, 1400),
@@ -68,8 +68,8 @@ function useSteeringBehaviour({
             return
         }
 
-        let currentVelocity = vehicle.chassisBody.velocity.length()
-        let scaler = map(currentVelocity / targetVelocity, 0, 1, 2.5, 1)
+        const currentVelocity = vehicle.chassisBody.velocity.length()
+        const scaler = map(currentVelocity / targetVelocity, 0, 1, 2.5, 1)
 
         if (currentVelocity < targetVelocity) {
             vehicle.setWheelForce(wheelForce * scaler, 2)
@@ -125,7 +125,7 @@ function TrafficElement({
     direction,
     remove
 }: TrafficElementProps) {
-    let [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
+    const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
 
     useSteeringBehaviour({
         vehicle,
@@ -146,8 +146,8 @@ function TrafficElement({
     })
 
     useFrame(() => {
-        let { player } = store.getState()
-        let backbuffer = 3
+        const { player } = store.getState()
+        const backbuffer = 3
 
         if (!player.vehicle || !vehicle) {
             return

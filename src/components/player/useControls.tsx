@@ -4,16 +4,16 @@ import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
 
 export function useControls() {
-    let keys = useMemo<Record<string, boolean | number>>(() => ({}), [])
-    let motion = useMemo(() => {
+    const keys = useMemo<Record<string, boolean | number>>(() => ({}), [])
+    const motion = useMemo(() => {
         return { steering: 0, wheelForce: 0 }
     }, [])
 
     useEffect(() => {
-        let onkeydown = (e: KeyboardEvent) => {
+        const onkeydown = (e: KeyboardEvent) => {
             keys[e.key] = true
         }
-        let onkeyup = (e: KeyboardEvent) => {
+        const onkeyup = (e: KeyboardEvent) => {
             keys[e.key] = false
         }
 
@@ -28,14 +28,14 @@ export function useControls() {
 
     useEffect(() => {
         let start: Tuple2 = [0, 0]
-        let pointerdown = (e: PointerEvent) => {
+        const pointerdown = (e: PointerEvent) => {
             if (e.pointerType !== "touch") {
                 return
             }
 
             start = [e.clientX, e.clientY]
         }
-        let pointermove = (e: PointerEvent) => {
+        const pointermove = (e: PointerEvent) => {
             if (e.pointerType !== "touch") {
                 return
             }
@@ -43,7 +43,7 @@ export function useControls() {
             keys.touchX = clamp((start[0] - e.clientX) / 120, -1, 1)
             keys.touchY = clamp((start[1] - e.clientY) / 75, -1, 1)
         }
-        let pointerup = (e: PointerEvent) => {
+        const pointerup = (e: PointerEvent) => {
             if (e.pointerType !== "touch") {
                 return
             }
@@ -64,8 +64,8 @@ export function useControls() {
     }, [keys])
 
     useFrame(() => {
-        let steer = .35
-        let force = 125
+        const steer = .35
+        const force = 125
 
         if (typeof keys.touchY === "number") {
             motion.wheelForce = force * keys.touchY

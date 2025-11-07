@@ -40,7 +40,7 @@ export class Body<T = unknown> extends CannonBody {
 }
 
 export function useCannonWorld() {
-    let world = useContext(context)
+    const world = useContext(context)
 
     if (!world) {
         throw new Error("Missing world context")

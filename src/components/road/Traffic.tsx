@@ -5,10 +5,10 @@ import { Tuple3 } from "@src/types/global"
 import { ROAD_CENTER_X, ROAD_HEIGHT } from "./Road"
 import TrafficElement from "./TrafficElement"
 
-let gap = [10, 12, 16, 20, 25, 40]
+const gap = [10, 12, 16, 20, 25, 40]
 
 function initTraffic() {
-    let directions = [-1, 1] as const
+    const directions = [-1, 1] as const
 
     return directions.map(direction => {
         let z = 10 * direction
@@ -40,9 +40,9 @@ function initTraffic() {
 }
 
 function Traffic() {
-    let [traffic, setTraffic] = useTransitionedState(initTraffic)
-    let remove = (item) => {
-        let forward = traffic.filter(i => item.direction === i.direction)
+    const [traffic, setTraffic] = useTransitionedState(initTraffic)
+    const remove = (item) => {
+        const forward = traffic.filter(i => item.direction === i.direction)
             .sort((a, b) => b.position[2] - a.position[2])[0]
 
         setTraffic([

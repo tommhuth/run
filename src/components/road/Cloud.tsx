@@ -23,8 +23,8 @@ export interface CloudProps {
     id: string
 }
 
-let _euler = new Euler()
-let _quaternion = new Quaternion()
+const _euler = new Euler()
+const _quaternion = new Quaternion()
 
 function Cloud({
     speed,
@@ -113,7 +113,7 @@ function Cloud({
     }, [size, depthTexture])
 
     useLayoutEffect(() => {
-        let mesh = ref.current?.children[0] as Mesh<BufferGeometry, MeshLambertMaterial>
+        const mesh = ref.current?.children[0] as Mesh<BufferGeometry, MeshLambertMaterial>
 
         if (!mesh) {
             return
@@ -131,8 +131,8 @@ function Cloud({
     })
 
     useFrame((state, delta) => {
-        let { player: { vehicle } } = store.getState()
-        let mesh = ref.current?.children[0] as Mesh<BufferGeometry, MeshLambertMaterial>
+        const { player: { vehicle } } = store.getState()
+        const mesh = ref.current?.children[0] as Mesh<BufferGeometry, MeshLambertMaterial>
 
         if (!ref.current || !vehicle) {
             return

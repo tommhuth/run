@@ -35,13 +35,13 @@ function Rock({
     })
 
     useFrame(() => {
-        let { player: { vehicle } } = store.getState()
+        const { player: { vehicle } } = store.getState()
 
         if (!vehicle) {
             return
         }
 
-        let [, , z] = position
+        const [, , z] = position
         let newActive = Math.abs(vehicle.chassisBody.position.z - z) < 15
 
         if (vehicle.chassisBody.position.z > z + 2) {
@@ -54,14 +54,14 @@ function Rock({
     })
 
     useFrame(() => {
-        let { player } = store.getState()
+        const { player } = store.getState()
 
         if (!player.vehicle) {
             return
         }
 
-        let buffer = radius * 2
-        let [, , z] = position
+        const buffer = radius * 2
+        const [, , z] = position
 
         if (z < player.vehicle.chassisBody.position.z - buffer) {
             update({
@@ -95,9 +95,9 @@ function Rock({
 }
 
 export default function Rocks({ count = 8 }) {
-    let [rocks, setRocks] = useTransitionedState(() => {
+    const [rocks, setRocks] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map(() => {
-            let radius = random.pick(1, 1.5, 2.5, 4, 1.85, 2, 3, 2.4)
+            const radius = random.pick(1, 1.5, 2.5, 4, 1.85, 2, 3, 2.4)
 
             return {
                 id: random.id(),

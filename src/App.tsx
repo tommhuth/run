@@ -12,7 +12,7 @@ import Camera from "./components/Camera"
 import extensions from "./extensions"
 
 const Perf = lazy(async () => {
-    let { Perf } = await import("r3f-perf")
+    const { Perf } = await import("r3f-perf")
 
     return { default: Perf }
 })

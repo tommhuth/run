@@ -51,8 +51,8 @@ type GLTFResult = GLTF & {
 }
 
 const Suv = forwardRef(function Suv({ children, ...props }, ref) {
-    let { nodes, materials } = useGLTF(model) as unknown as GLTFResult
-    let [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
+    const { nodes, materials } = useGLTF(model) as unknown as GLTFResult
+    const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
         center: [0, .85, 0],
         mass: 7,

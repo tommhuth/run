@@ -13,11 +13,11 @@ import { ROAD_CENTER_X } from "./Road"
 const interval = 90
 
 export function Trees({ count = 12 }) {
-    let [trees, setTrees] = useTransitionedState(() => {
+    const [trees, setTrees] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map(() => {
-            let x = random.integer(ROAD_CENTER_X + 4, ROAD_CENTER_X + 12)
-            let z = random.integer(-5, interval)
-            let y = 0
+            const x = random.integer(ROAD_CENTER_X + 4, ROAD_CENTER_X + 12)
+            const z = random.integer(-5, interval)
+            const y = 0
 
             return {
                 id: random.id(),
@@ -70,13 +70,13 @@ export function Tree({
     })
 
     useFrame(() => {
-        let { player: { vehicle } } = store.getState()
+        const { player: { vehicle } } = store.getState()
 
         if (!vehicle) {
             return
         }
 
-        let [, , z] = position
+        const [, , z] = position
         let newActive = Math.abs(vehicle.chassisBody.position.z - z) < 15
 
         if (vehicle.chassisBody.position.z > z + 2) {
@@ -89,9 +89,9 @@ export function Tree({
     })
 
     useFrame(() => {
-        let { player } = store.getState()
-        let buffer = 8
-        let [, y, z] = position
+        const { player } = store.getState()
+        const buffer = 8
+        const [, y, z] = position
 
         if (!player.vehicle) {
             return

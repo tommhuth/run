@@ -36,7 +36,7 @@ const wheels: Wheel[] = [
 
 export const Sedan = forwardRef<RigidVehicle, { position: Tuple3; rotation: Tuple3 }>((props, ref) => {
     const { nodes, materials } = useGLTF(model)
-    let [chassisRef, wheelsRef, vehicle, backWheelsRef] = useRigidVehicle({
+    const [chassisRef, wheelsRef, vehicle, backWheelsRef] = useRigidVehicle({
         ...props,
         center: [0, .7, 0],
         wheels,

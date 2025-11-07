@@ -29,28 +29,28 @@ export function useRigidVehicle({
     chassis = [],
     wheels
 }: UseRigidVehicleParams) {
-    let chassisRef = useRef<Group>(null)
-    let wheelsRef = useRef<Group>(null)
-    let backWheelsRef = useRef<Group>(null)
-    let centerOfMassAdjust = new Vec3(...center)
-    let world = useCannonWorld()
-    let [vehicle, contactMaterial] = useMemo(() => {
-        let rotation = new Quaternion().setFromEuler(...incomingRotation)
-        let material = new Material("wheelMaterial")
-        let contactMaterial = new ContactMaterial(material, world.defaultMaterial, {
+    const chassisRef = useRef<Group>(null)
+    const wheelsRef = useRef<Group>(null)
+    const backWheelsRef = useRef<Group>(null)
+    const centerOfMassAdjust = new Vec3(...center)
+    const world = useCannonWorld()
+    const [vehicle, contactMaterial] = useMemo(() => {
+        const rotation = new Quaternion().setFromEuler(...incomingRotation)
+        const material = new Material("wheelMaterial")
+        const contactMaterial = new ContactMaterial(material, world.defaultMaterial, {
             friction: 100,
             restitution: .1,
             contactEquationStiffness: 1000
         })
-        let chassisBody = new Body({
+        const chassisBody = new Body({
             mass,
             position: position ? new Vec3(...position) : undefined,
             quaternion: rotation
         })
-        let emptyOffset = new Vec3()
-        let emptyQuaternion = new Quaternion()
+        const emptyOffset = new Vec3()
+        const emptyQuaternion = new Quaternion()
 
-        for (let [shape, offset = emptyOffset, quaternion = emptyQuaternion] of chassis) {
+        for (const [shape, offset = emptyOffset, quaternion = emptyQuaternion] of chassis) {
             chassisBody.addShape(
                 shape,
                 offset.vadd(centerOfMassAdjust),
@@ -58,13 +58,13 @@ export function useRigidVehicle({
             )
         }
 
-        let vehicle = new RigidVehicle({ chassisBody })
-        let direction = new Vec3(0, -1, 0) // down
-        let axis = [-1, -1, 1, 1]
+        const vehicle = new RigidVehicle({ chassisBody })
+        const direction = new Vec3(0, -1, 0) // down
+        const axis = [-1, -1, 1, 1]
 
-        for (let [index, { position, radius }] of wheels.entries()) {
-            let shape = new Sphere(radius)
-            let body = new Body({
+        for (const [index, { position, radius }] of wheels.entries()) {
+            const shape = new Sphere(radius)
+            const body = new Body({
                 shape,
                 mass,
                 material,
@@ -101,9 +101,9 @@ export function useRigidVehicle({
         chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
         chassisRef.current.position.copy(vehicle.chassisBody.position)
 
-        for (let [index, wheel] of vehicle.wheelBodies.entries()) {
-            let wheelMesh = wheelsRef.current?.children[index] as Mesh
-            let backWheelMesh = backWheelsRef.current?.children[index - 2]
+        for (const [index, wheel] of vehicle.wheelBodies.entries()) {
+            const wheelMesh = wheelsRef.current?.children[index] as Mesh
+            const backWheelMesh = backWheelsRef.current?.children[index - 2]
 
             if (wheelMesh) {
                 wheelMesh?.position.copy(wheel.position)

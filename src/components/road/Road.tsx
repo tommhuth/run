@@ -30,7 +30,7 @@ export const ROAD_CENTER_X = 1.5
 export default function Road() {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const shape = useMemo<Shape | undefined>(() => {
-        let h = threeToCannon(nodes.Cube as any, { type: ShapeType.HULL })
+        const h = threeToCannon(nodes.Cube as any, { type: ShapeType.HULL })
 
         return h?.shape
     }, [nodes.Cube])
@@ -41,7 +41,7 @@ export default function Road() {
     })
 
     useFrame(() => {
-        let { player } = store.getState()
+        const { player } = store.getState()
 
         if (player.vehicle && player.vehicle?.chassisBody.position.z > body.position.z) {
             body.position.z += depth * .25
@@ -90,7 +90,7 @@ export default function Road() {
 }
 
 
-let floorShape = new Box(new Vec3(5000, .5, 5000))
+const floorShape = new Box(new Vec3(5000, .5, 5000))
 
 export function Floor() {
     const [ref, body] = useBody({
@@ -100,7 +100,7 @@ export function Floor() {
     })
 
     useFrame(() => {
-        let { player } = store.getState()
+        const { player } = store.getState()
 
         if (!player.vehicle) {
             return

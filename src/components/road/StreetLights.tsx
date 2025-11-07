@@ -11,15 +11,15 @@ const interval = 25
 
 function StreetLightPair({ position: [x, y, z], update, lights }) {
     useFrame(() => {
-        let { player } = store.getState()
-        let buffer = 4
+        const { player } = store.getState()
+        const buffer = 4
 
         if (!player.vehicle) {
             return
         }
 
         if (z < player.vehicle.chassisBody.position.z - buffer) {
-            let z = Math.max(...lights.map(i => i.position[2]))
+            const z = Math.max(...lights.map(i => i.position[2]))
 
             update({
                 position: [x, y, z + interval]
@@ -44,11 +44,11 @@ function StreetLightPair({ position: [x, y, z], update, lights }) {
 }
 
 export default function StreetLights({ count = 4 }) {
-    let [lights, setLights] = useTransitionedState(() => {
+    const [lights, setLights] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map((i, index) => {
-            let x = ROAD_CENTER_X + 2.25
-            let z = index * interval
-            let y = ROAD_HEIGHT - .25
+            const x = ROAD_CENTER_X + 2.25
+            const z = index * interval
+            const y = ROAD_HEIGHT - .25
 
             return {
                 id: random.id(),
