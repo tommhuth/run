@@ -8,7 +8,7 @@ import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
 import { memo, useMemo } from "react"
 
-import { ROAD_CENTER_X, ROAD_FORWARD_EDGE } from "./Road"
+import { ROAD_CENTER_X, ROAD_EDGE_X, ROAD_FORWARD_EDGE } from "./Road"
 
 function Rock({
     position,
@@ -64,7 +64,7 @@ function Rock({
         if (z < player.vehicle.chassisBody.position.z - buffer) {
             update({
                 position: [
-                    random.float(ROAD_CENTER_X + 4, ROAD_CENTER_X + 10) * random.pick(-1, 1),
+                    random.integer(ROAD_EDGE_X + radius, ROAD_EDGE_X + 9) * random.pick(-1, 1),
                     random.float(0, radius * .25),
                     z + ROAD_FORWARD_EDGE + random.integer(-5, 5)
                 ],

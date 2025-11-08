@@ -31,6 +31,8 @@ export default function Player({
             return
         }
 
+        ref.chassisBody.wakeUp()
+        ref.wheelBodies.forEach(i => i.wakeUp())
         ref.setWheelForce(motion.wheelForce, 2)
         ref.setWheelForce(motion.wheelForce, 3)
         ref.setSteeringValue(motion.steering, 0)

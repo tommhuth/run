@@ -6,8 +6,8 @@ import { memo, useLayoutEffect, useRef } from "react"
 import { Euler, Mesh, MeshBasicMaterial, PlaneGeometry, Quaternion } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
-const width = 8
-const height = 4
+const width = 11
+const height = 6
 const geometry = new PlaneGeometry(width, height, 1, 1)
 
 geometry.rotateY(Math.PI * 1)

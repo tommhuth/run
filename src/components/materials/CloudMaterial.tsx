@@ -80,7 +80,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
                 float dist = sceneDepth - fragmentDepth;  
                 float alpha = clamp((dist - minDist) / fadeDist, 0.0, 1.0);
 
-                //gl_FragColor.rgb = mix(vec3(1.), vec3(0., 1., 1.), easeInOutQuad(clamp((vPosition.y) / 3., 0., 1.)));
+                //gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0., 1., 1.), easeInOutQuad(clamp((vPosition.y) / 3., 0., 1.)));
 
                 gl_FragColor.a *= easeInOutQuad(alpha);  
             `
@@ -108,7 +108,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
             map={map}
             ref={ref}
             name="cloud"
-            color={"#369eff"}
+            color={"#004faa"}
             fog={true}
             dispose={null}
             dithering

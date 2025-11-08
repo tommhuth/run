@@ -1,6 +1,6 @@
 import { ROAD_CENTER_X } from "@components/road/Road"
 import { store } from "@data/store"
-import { clamp, map } from "@data/utils"
+import { clamp, map, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
@@ -41,7 +41,7 @@ export default function useSteeringBehaviour({
     }), [])
 
     useFrame((state, delta) => {
-        data.time += delta * 1000
+        data.time += ndelta(delta) * 1000
 
         if (data.time > data.adjustAt) {
             target[0] = ROAD_CENTER_X * -direction + random.float(-1, 1)
@@ -73,14 +73,14 @@ export default function useSteeringBehaviour({
     })
 
     // x
-    useFrame((state, dt) => {
+    useFrame((state, delta) => {
         if (!vehicle) {
             return
         }
 
         const chassis = vehicle.chassisBody
         const error = target[0] - chassis.position.x
-        const errorRate = (error - data.prevError) / dt
+        const errorRate = (error - data.prevError) / ndelta(delta)
 
         // lateral velocity in world X (momentum across the path)  
         // PD + velocity damping (note the sign: subtract lateralVel to oppose motion)
@@ -90,14 +90,14 @@ export default function useSteeringBehaviour({
         steer = clamp(steer, -MAX_STEER, MAX_STEER)
 
         // limit steer rate to avoid sudden jumps
-        const maxDelta = MAX_STEER_RATE * dt
-        const delta = steer - data.prevSteer
+        const maxDelta = MAX_STEER_RATE * ndelta(delta)
+        const steerDelta = steer - data.prevSteer
 
-        if (delta > maxDelta) {
+        if (steerDelta > maxDelta) {
             steer = data.prevSteer + maxDelta
         }
 
-        if (delta < -maxDelta) {
+        if (steerDelta < -maxDelta) {
             steer = data.prevSteer - maxDelta
         }
 

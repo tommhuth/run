@@ -21,7 +21,7 @@ export default function CloudSystem({ size = 15 }: { size?: number }) {
                     0,
                     index * 5,
                 ],
-                damping: random.float(.4, 1),
+                damping: random.float(.5, .9),
                 scale: random.float(.75, 2.)
             }
         })

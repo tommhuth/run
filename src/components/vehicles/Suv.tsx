@@ -71,7 +71,10 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
 
     return (
         <>
-            <group ref={chassisRef}>
+            <group
+                ref={chassisRef}
+                dispose={null}
+            >
                 <mesh
                     castShadow
                     receiveShadow
