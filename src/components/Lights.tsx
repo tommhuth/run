@@ -2,9 +2,9 @@ import { useStore } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
-import { DirectionalLight } from "three"
+import { CameraHelper, DirectionalLight } from "three"
 
-const forwardOffset = 10
+const forwardOffset = 16
 const targetPosition: Tuple3 = [15, -20, 3]
 
 export default function Lights() {
@@ -23,9 +23,10 @@ export default function Lights() {
 
     useFrame((_, delta) => {
         const { player: { vehicle } } = useStore.getState()
+        const updateAt = 350
 
         // update camera shadow position 
-        if (shadowLightRef.current && time.current >= 750 && vehicle) {
+        if (shadowLightRef.current && time.current > updateAt && vehicle) {
             const z = vehicle.chassisBody.position.z + forwardOffset
             const x = vehicle.chassisBody.position.x
 
@@ -50,10 +51,10 @@ export default function Lights() {
                 shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
                 shadow-camera-near={-25} // z
                 shadow-camera-far={35}
-                shadow-camera-left={-45} // x back/forwards
-                shadow-camera-right={45}
+                shadow-camera-left={-25} // x back/forwards
+                shadow-camera-right={50}
                 shadow-camera-top={40} // y
-                shadow-camera-bottom={-30}
+                shadow-camera-bottom={-25}
                 shadow-radius={2}
                 shadow-normalBias={.01}
                 shadow-blurSamples={8} //8

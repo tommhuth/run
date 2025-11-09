@@ -44,8 +44,13 @@ export default function App() {
             />
 
             {/* at the very end */}
-            <DepthTexturex />
+            <S />
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
     )
-} 
+}
+
+
+function S() {
+    return <DepthTexturex />
+}

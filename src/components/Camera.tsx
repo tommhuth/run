@@ -12,6 +12,11 @@ const forward = new Vector3(0, 0, 20)
 export default function Camera() {
     useFrame(({ camera }) => {
         const { player } = store.getState()
+        /*
+        camera.position.set(0, 50, -5)
+        camera.lookAt(0, 0, 30)
+
+        return*/
 
         if (!player.vehicle) {
             return
