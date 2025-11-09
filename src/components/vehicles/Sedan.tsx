@@ -48,10 +48,11 @@ type GLTFResult = GLTF & {
     }
 }
 
-function Sedan(props, ref: ForwardedRef<RigidVehicle>) {
+function Sedan({ position, rotation }, ref: ForwardedRef<RigidVehicle>) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
-    const [chassisRef, wheelsRef, vehicle, backWheelsRef] = useRigidVehicle({
-        ...props,
+    const [chassisRef, , vehicle, backWheelsRef] = useRigidVehicle({
+        rotation,
+        position,
         center: [0, .7, 0],
         wheels,
         chassis,
@@ -63,67 +64,40 @@ function Sedan(props, ref: ForwardedRef<RigidVehicle>) {
     }, [vehicle])
 
     return (
-        <>
-            <group
-                ref={chassisRef}
-                dispose={null}
+        <group
+            ref={chassisRef}
+            dispose={null}
+        >
+            <mesh
+                castShadow
+                receiveShadow
+                geometry={nodes.spoiler.geometry}
+                position={[0, 0.45, -1.044]}
             >
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.spoiler.geometry}
-                    position={[0, 0.45, -1.044]}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.body.geometry}
-                    position={[0, 0.15, -0.025]}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <group ref={backWheelsRef}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes["wheel-back-left"].geometry}
-                        position={[wheels[2].position[0], wheels[2].position[1] + .7, wheels[2].position[2]]}
-                    >
-                        <primitive
-                            attach="material"
-                            object={carMaterial}
-                            wireframe={Config.DEBUG}
-                        />
-                    </mesh>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes["wheel-back-right"].geometry}
-                        position={[wheels[3].position[0], wheels[3].position[1] + .7, wheels[3].position[2]]}
-                    >
-                        <primitive
-                            attach="material"
-                            object={carMaterial}
-                            wireframe={Config.DEBUG}
-                        />
-                    </mesh>
-                </group>
-            </group>
-            <group ref={wheelsRef}>
+                <primitive
+                    attach="material"
+                    object={carMaterial}
+                    wireframe={Config.DEBUG}
+                />
+            </mesh>
+            <mesh
+                castShadow
+                receiveShadow
+                geometry={nodes.body.geometry}
+                position={[0, 0.15, -0.025]}
+            >
+                <primitive
+                    attach="material"
+                    object={carMaterial}
+                    wireframe={Config.DEBUG}
+                />
+            </mesh>
+            <group ref={backWheelsRef}>
                 <mesh
                     castShadow
                     receiveShadow
                     geometry={nodes["wheel-front-left"].geometry}
+                    position={[wheels[0].position[0], wheels[0].position[1] + .7, wheels[0].position[2]]}
                 >
                     <primitive
                         attach="material"
@@ -135,6 +109,31 @@ function Sedan(props, ref: ForwardedRef<RigidVehicle>) {
                     castShadow
                     receiveShadow
                     geometry={nodes["wheel-front-right"].geometry}
+                    position={[wheels[1].position[0], wheels[1].position[1] + .7, wheels[1].position[2]]}
+                >
+                    <primitive
+                        attach="material"
+                        object={carMaterial}
+                        wireframe={Config.DEBUG}
+                    />
+                </mesh>
+                <mesh
+                    castShadow
+                    receiveShadow
+                    geometry={nodes["wheel-back-left"].geometry}
+                    position={[wheels[2].position[0], wheels[2].position[1] + .7, wheels[2].position[2]]}
+                >
+                    <primitive
+                        attach="material"
+                        object={carMaterial}
+                        wireframe={Config.DEBUG}
+                    />
+                </mesh>
+                <mesh
+                    castShadow
+                    receiveShadow
+                    geometry={nodes["wheel-back-right"].geometry}
+                    position={[wheels[3].position[0], wheels[3].position[1] + .7, wheels[3].position[2]]}
                 >
                     <primitive
                         attach="material"
@@ -143,7 +142,7 @@ function Sedan(props, ref: ForwardedRef<RigidVehicle>) {
                     />
                 </mesh>
             </group>
-        </>
+        </group>
     )
 }
 

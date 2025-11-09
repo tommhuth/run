@@ -26,13 +26,11 @@ export default function Player({
         setState({ player: { vehicle: ref, mesh: null } })
     }, [ref])
 
-    useFrame(() => {
+    useFrame((state, delta) => {
         if (!ref) {
             return
         }
 
-        ref.chassisBody.wakeUp()
-        ref.wheelBodies.forEach(i => i.wakeUp())
         ref.setWheelForce(motion.wheelForce, 2)
         ref.setWheelForce(motion.wheelForce, 3)
         ref.setSteeringValue(motion.steering, 0)
@@ -50,11 +48,17 @@ export default function Player({
                 <spotLight
                     intensity={50}
                     position={[0, 1.5, 1]}
-                    color={"#ffd165"}
+                    color={"#ffc641"}
                     angle={Math.PI * .3}
                     target={target}
                     penumbra={.5}
                     shadow-bias={-0.0002}
+                />
+                <pointLight
+                    distance={8}
+                    intensity={1.5}
+                    position={[-2, 1.5, -2]}
+                    color={"#d5faff"}
                 />
             </Suv>
         </>

@@ -45,7 +45,8 @@ export function useRigidVehicle({
         const chassisBody = new Body({
             mass,
             position: position ? new Vec3(...position) : undefined,
-            quaternion: rotation
+            quaternion: rotation,
+            allowSleep: false,
         })
         const emptyOffset = new Vec3()
         const emptyQuaternion = new Quaternion()
@@ -69,6 +70,7 @@ export function useRigidVehicle({
                 mass,
                 material,
                 angularDamping: .99,
+                allowSleep: false,
                 quaternion: rotation,
             })
 
@@ -94,19 +96,19 @@ export function useRigidVehicle({
     }, [vehicle, world])
 
     useFrame(() => {
-        if (!chassisRef.current || !wheelsRef.current) {
+        if (!chassisRef.current) {
             return
         }
 
         chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
-        chassisRef.current.position.copy(vehicle.chassisBody.position)
+        chassisRef.current.position.copy(vehicle.chassisBody.position, .4)
 
         for (const [index, wheel] of vehicle.wheelBodies.entries()) {
             const wheelMesh = wheelsRef.current?.children[index] as Mesh
             const backWheelMesh = backWheelsRef.current?.children[index - 2]
 
             if (wheelMesh) {
-                wheelMesh?.position.copy(wheel.position)
+                wheelMesh?.position.copy(wheel.position, .4)
                 wheelMesh?.quaternion.copy(wheel.quaternion)
             } else if (backWheelMesh) {
                 _quaternion.set(...wheel.quaternion.toArray())

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react"
 import { DirectionalLight } from "three"
 
 const forwardOffset = 10
-const targetPosition: Tuple3 = [15, -20, 15]
+const targetPosition: Tuple3 = [15, -20, 3]
 
 export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)
@@ -57,12 +57,23 @@ export default function Lights() {
                 shadow-radius={2}
                 shadow-normalBias={.01}
                 shadow-blurSamples={8} //8
-                color={"#0044ff"}
+                color={"#3e71ff"}
+            />
+
+            <directionalLight
+                position={[-1, 0, -1]}
+                target-position={targetPosition}
+                intensity={.0}
+                color={"#fff"}
             />
             <hemisphereLight
-                color={"red"}
-                groundColor={"blue"}
-                intensity={.15}
+                color={"blue"}
+                groundColor={"red"}
+                intensity={.2}
+            />
+            <ambientLight
+                intensity={.1}
+                color={"#5daadd"}
             />
         </>
     )
