@@ -112,6 +112,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
             fog={true}
             dispose={null}
             dithering
+            depthWrite={false}
         />
     )
 }
