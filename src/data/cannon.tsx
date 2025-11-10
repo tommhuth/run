@@ -87,7 +87,7 @@ function useCannonBody({
 
     useLayoutEffect(() => {
         body.quaternion.setFromEuler(...rotation)
-    }, rotation)
+    }, [...rotation, body])
 
     useLayoutEffect(() => {
         body.shapes = []
