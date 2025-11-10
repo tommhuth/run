@@ -202,8 +202,8 @@ export function useBody({
 
     useFrame(() => {
         if (ref.current && active) {
-            ref.current.position.copy(body.interpolatedPosition)
-            ref.current.quaternion.copy(body.interpolatedQuaternion)
+            ref.current.position.copy(body.position)
+            ref.current.quaternion.copy(body.quaternion)
         }
     })
 

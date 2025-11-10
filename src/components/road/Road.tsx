@@ -33,14 +33,15 @@ export const ROAD_FORWARD_EDGE = 90
 export default function Road() {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const shape = useMemo<Shape | undefined>(() => {
-        const h = threeToCannon(nodes.Cube as any, { type: ShapeType.HULL })
+        const result = threeToCannon(nodes.Cube as any, { type: ShapeType.HULL })
 
-        return h?.shape
+        return result?.shape
     }, [nodes.Cube])
     const [ref, body] = useBody({
         mass: 0,
         position: [0, height / 2, depth * .25],
-        definition: shape as ShapeDefinition
+        definition: shape as ShapeDefinition,
+        active: true
     })
 
     useFrame(() => {
@@ -67,8 +68,6 @@ export default function Road() {
                     receiveShadow
                     geometry={nodes.Cube.geometry}
                     material={floorMaterial}
-                    scale={1}
-                    position={[0, 0, 0]}
                 />
 
                 {Config.DEBUG && (
@@ -93,13 +92,14 @@ export default function Road() {
 }
 
 
-const floorShape = new Box(new Vec3(5000, .5, 5000))
+const floorShape = new Box(new Vec3(depth, .5, depth))
 
 export function Floor() {
     const [ref, body] = useBody({
         mass: 0,
         definition: floorShape,
-        position: [0, -.5, 0]
+        position: [0, -.5, 0],
+        active: true
     })
 
     useFrame(() => {
@@ -121,7 +121,7 @@ export function Floor() {
             receiveShadow
             material={floorMaterial}
         >
-            <boxGeometry args={[depth, 1, depth, 1, 1, 1]} />
+            <boxGeometry args={[depth, 1, depth * 2, 1, 1, 1]} />
         </mesh>
     )
 }
