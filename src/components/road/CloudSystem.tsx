@@ -8,6 +8,7 @@ import { MeshBasicMaterial } from "three"
 import Cloud, { CloudProps } from "./Cloud"
 
 const xRange = [10, 25, 19, 12, 6, 8]
+const interval = 4
 
 export default function CloudSystem({ size = 15 }: { size?: number }) {
     const [material, setMaterial] = useTransitionedState<MeshBasicMaterial | null>(null)
@@ -19,7 +20,7 @@ export default function CloudSystem({ size = 15 }: { size?: number }) {
                 position: [
                     random.pick(...xRange) * random.pick(1, -1),
                     0,
-                    index * 5,
+                    index * interval + random.float(-2, 2),
                 ],
                 damping: random.float(.5, .9),
                 scale: random.float(.75, 2.)
@@ -50,7 +51,7 @@ export default function CloudSystem({ size = 15 }: { size?: number }) {
                     position: [
                         random.pick(...xRange) * random.pick(1, -1),
                         forward.position[1] + forward.size[1] / 2,
-                        position[2] + size * 3
+                        position[2] + size * interval
                     ]
                 })
             }
