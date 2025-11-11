@@ -58,7 +58,7 @@ function Rock({
             return
         }
 
-        const buffer = radius * 2
+        const buffer = radius * 4
         const [, , z] = position
 
         if (z < player.vehicle.chassisBody.position.z - buffer) {

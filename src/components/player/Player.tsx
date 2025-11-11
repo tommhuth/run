@@ -8,6 +8,7 @@ import { useEffect, useMemo } from "react"
 import { Object3D } from "three/webgpu"
 
 import { useControls } from "./useControls"
+import { ROAD_CENTER_X, ROAD_EDGE_X } from "@components/road/Road"
 
 interface PlayerProps {
     position?: Tuple3
@@ -19,28 +20,42 @@ export default function Player({
     position,
 }: PlayerProps) {
     const { motion } = useControls()
-    const [ref, setRef] = useTransitionedState<RigidVehicle | null>(null)
+    const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
 
     useEffect(() => {
-        setState({ player: { vehicle: ref, mesh: null } })
-    }, [ref])
+        setState({ player: { vehicle: vehicle, mesh: null } })
+    }, [vehicle])
 
     useFrame((state, delta) => {
-        if (!ref) {
+        if (!vehicle) {
             return
         }
 
-        ref.setWheelForce(motion.wheelForce, 2)
-        ref.setWheelForce(motion.wheelForce, 3)
-        ref.setSteeringValue(motion.steering, 0)
-        ref.setSteeringValue(motion.steering, 1)
+        vehicle.setWheelForce(motion.wheelForce, 2)
+        vehicle.setWheelForce(motion.wheelForce, 3)
+        vehicle.setSteeringValue(motion.steering, 0)
+        vehicle.setSteeringValue(motion.steering, 1)
+    })
+
+    useFrame(() => {
+        if (Math.abs(vehicle?.chassisBody.position.x || 0) > 16) {
+            vehicle?.chassisBody.velocity.setZero()
+            vehicle?.chassisBody.torque.setZero()
+            vehicle?.wheelBodies.forEach((e) => {
+                e.torque.setZero()
+                e.velocity.setZero()
+            })
+            vehicle.chassisBody.position.x = ROAD_CENTER_X - 2
+            vehicle.chassisBody.position.y = 4
+
+        }
     })
 
     return (
         <>
             <Suv
-                ref={setRef}
+                ref={setVehicle}
                 position={position}
                 rotation={rotation}
             >

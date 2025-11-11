@@ -47,7 +47,7 @@ export default function Lights() {
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                intensity={1.9}
+                intensity={4}
                 shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
                 shadow-camera-near={-25} // z
                 shadow-camera-far={35}
@@ -58,17 +58,16 @@ export default function Lights() {
                 shadow-radius={2}
                 shadow-normalBias={.01}
                 shadow-blurSamples={8} //8
-                color={"#3e71ff"}
+                color={"#dde6ff"}
             />
-
             <hemisphereLight
-                color={"#c5ebff"}
-                groundColor={"#5d05ff"}
-                intensity={.2}
+                color={"#8eeeff"}
+                groundColor={"#0558ff"}
+                intensity={.9}
             />
             <ambientLight
-                intensity={.0510}
-                color={"#84fffb"}
+                intensity={.1}
+                color={"#159aff"}
             />
         </>
     )

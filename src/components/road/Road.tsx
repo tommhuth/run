@@ -28,7 +28,7 @@ const [, height, depth] = [9, .75, 500]
 export const ROAD_HEIGHT = height
 export const ROAD_CENTER_X = 1.5
 export const ROAD_EDGE_X = ROAD_CENTER_X + 2.25
-export const ROAD_FORWARD_EDGE = 90
+export const ROAD_FORWARD_EDGE = 100
 
 export default function Road() {
     const { nodes } = useGLTF(model) as unknown as GLTFResult

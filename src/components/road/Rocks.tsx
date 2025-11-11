@@ -6,7 +6,7 @@ import { useCallback } from "react"
 import { ROAD_EDGE_X, ROAD_FORWARD_EDGE } from "./Road"
 import Rock from "./Rock"
 
-export default function Rocks({ count = 8 }) {
+export default function Rocks({ count = 16 }) {
     const [rocks, setRocks] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map(() => {
             const radius = random.pick(1, 1.5, 2.5, 4, 1.85, 2, 3, 2.4)

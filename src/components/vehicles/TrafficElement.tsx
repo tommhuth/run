@@ -48,7 +48,7 @@ function TrafficElement({
 
     useFrame(() => {
         const { player } = store.getState()
-        const backbuffer = 3
+        const backbuffer = 6
 
         if (!player.vehicle || !vehicle) {
             return

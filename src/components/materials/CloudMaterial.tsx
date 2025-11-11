@@ -108,7 +108,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
             map={map}
             ref={ref}
             name="cloud"
-            color={"#1772db"}
+            color={"#fff"}
             fog={true}
             dispose={null}
             dithering

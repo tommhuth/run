@@ -23,10 +23,11 @@ export default function App() {
     return (
         <>
             <fogExp2
-                args={["black"]}
+                args={["#fff"]}
                 attach={"fog"}
-                density={.0175}
+                density={.021}
             />
+            <color args={["#fff"]} attach={"background"} />
             <CannonProvider debug={Config.DEBUG}>
                 <Camera />
                 <Lights />

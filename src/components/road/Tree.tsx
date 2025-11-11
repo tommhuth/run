@@ -10,7 +10,7 @@ import { memo } from "react"
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 
-import { ROAD_CENTER_X } from "./Road"
+import { ROAD_CENTER_X, ROAD_FORWARD_EDGE } from "./Road"
 
 const shape = new Box(new Vec3(.25, 5, .25))
 
@@ -64,7 +64,7 @@ function Tree({
 
     useFrame(() => {
         const { player } = store.getState()
-        const buffer = 8
+        const buffer = 14
         const [, y, z] = position
 
         if (!player.vehicle) {
@@ -76,7 +76,7 @@ function Tree({
                 position: [
                     random.integer(ROAD_CENTER_X + 4, ROAD_CENTER_X + 12) * random.pick(-1, 1),
                     y,
-                    z + 90 + random.integer(-5, 5)
+                    z + ROAD_FORWARD_EDGE + random.integer(-5, 5)
                 ],
                 scale: random.float(1.25, 2),
                 active: false

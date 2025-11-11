@@ -7,7 +7,7 @@ import Tree from "./Tree"
 
 const interval = 90
 
-export function Trees({ count = 12 }) {
+export function Trees({ count = 18 }) {
     const [trees, setTrees] = useTransitionedState(() => {
         return Array.from({ length: count }).fill(null).map(() => {
             const x = random.integer(ROAD_EDGE_X + 3, ROAD_EDGE_X + 10)
