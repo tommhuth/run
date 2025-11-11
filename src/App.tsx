@@ -10,6 +10,7 @@ import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
+import SpeedParticles from "@components/road/SpeedParticles"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -34,8 +35,9 @@ export default function App() {
                 <Floor />
                 <Traffic />
                 <Road />
+                <SpeedParticles />
 
-                <Player position={[-1.25, 1, 0]} />
+                <Player />
             </CannonProvider>
 
             <axesHelper

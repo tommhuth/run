@@ -1,4 +1,6 @@
+import { Quaternion as CannonQuaternion } from "cannon-es"
 import { Dispatch, SetStateAction, startTransition, useCallback, useState } from "react"
+import { Euler, Quaternion } from "three"
 import { clamp as threeClamp, mapLinear } from "three/src/math/MathUtils.js"
 
 export function map(x: number, a1: number, a2: number, b1: number, b2: number) {
@@ -24,4 +26,11 @@ export function useTransitionedState<T>(
     }, [])
 
     return [state, update]
+}
+
+const _euler = new Euler()
+const _quaternion = new Quaternion()
+
+export function extractRotation(quat: CannonQuaternion) {
+    return _euler.setFromQuaternion(_quaternion.copy(quat))
 }
