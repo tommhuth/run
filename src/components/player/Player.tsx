@@ -45,7 +45,7 @@ export default function Player({
         const rotation = Math.abs(extractRotation(vehicle.chassisBody.quaternion).y)
         const offside = Math.abs(vehicle.chassisBody.position.x)
 
-        if (offside > 13 || rotation > Math.PI * .5 * .65) {
+        if (offside > 14 || rotation > Math.PI * .5 * .65) {
             setPosition([-1, 2, vehicle.chassisBody.position.z])
         }
     })
