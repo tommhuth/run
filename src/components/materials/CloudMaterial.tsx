@@ -82,6 +82,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
 
                 //gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0., 1., 1.), easeInOutQuad(clamp((vPosition.y) / 3., 0., 1.)));
 
+                gl_FragColor.rgb = vec3(1.);
                 gl_FragColor.a *= easeInOutQuad(alpha);  
             `
         }

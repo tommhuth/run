@@ -10,7 +10,7 @@ import Cloud, { CloudProps } from "./Cloud"
 const xRange = [10, 25, 19, 12, 6, 8]
 const interval = 4
 
-export default function CloudSystem({ size = 15 }: { size?: number }) {
+export default function CloudSystem({ size = 20 }: { size?: number }) {
     const [material, setMaterial] = useTransitionedState<MeshBasicMaterial | null>(null)
     const [clouds, setClouds] = useTransitionedState<CloudProps[]>(() => {
         return Array.from({ length: size }).fill(null).map((i, index) => {
