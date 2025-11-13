@@ -31,7 +31,8 @@ function Tree({
     position,
     active = false,
     rotation,
-    scale = 1
+    scale = 1,
+    id
 }) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
 
@@ -58,7 +59,7 @@ function Tree({
         }
 
         if (active !== newActive) {
-            update({ active: newActive })
+            update({ active: newActive }, id)
         }
     })
 
@@ -80,7 +81,7 @@ function Tree({
                 ],
                 scale: random.float(1.25, 2),
                 active: false
-            })
+            }, id)
         }
     })
 

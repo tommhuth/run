@@ -4,6 +4,7 @@ import { Tuple3 } from "@src/types/global"
 
 import { ROAD_EDGE_X } from "./Road"
 import Tree from "./Tree"
+import { useCallback } from "react"
 
 const interval = 90
 
@@ -24,21 +25,22 @@ export function Trees({ count = 18 }) {
             }
         })
     })
+    const update = useCallback((data, id) => {
+        setTrees(trees => [
+            ...trees.filter(j => j.id !== id),
+            {
+                ...trees.find(j => j.id === id),
+                ...data
+            }
+        ])
+    }, [])
 
     return trees.map((i) => {
         return (
             <Tree
                 {...i}
                 key={i.id}
-                update={(data) => {
-                    setTrees([
-                        ...trees.filter(j => j.id !== i.id),
-                        {
-                            ...trees.find(j => j.id === i.id),
-                            ...data
-                        }
-                    ])
-                }}
+                update={update}
             />
         )
     })

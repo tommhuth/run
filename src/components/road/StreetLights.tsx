@@ -4,6 +4,7 @@ import { Tuple3 } from "@src/types/global"
 
 import { ROAD_EDGE_X, ROAD_HEIGHT } from "./Road"
 import StreetLightPair from "./StreetLightPair"
+import { useCallback } from "react"
 
 export const LIGHT_INTERVAL = 25
 
@@ -20,7 +21,7 @@ export default function StreetLights({ count = 4 }) {
             }
         })
     })
-    const update = (data, id) => {
+    const update = useCallback((data, id) => {
         setLights([
             ...lights.filter(j => j.id !== id),
             {
@@ -28,7 +29,7 @@ export default function StreetLights({ count = 4 }) {
                 ...data
             }
         ])
-    }
+    }, [])
 
     return lights.map((i) => {
         return (
