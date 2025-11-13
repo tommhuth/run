@@ -1,10 +1,10 @@
 import { useTransitionedState } from "@data/utils"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
+import { useCallback } from "react"
 
 import { ROAD_EDGE_X, ROAD_HEIGHT } from "./Road"
 import StreetLightPair from "./StreetLightPair"
-import { useCallback } from "react"
 
 export const LIGHT_INTERVAL = 25
 
@@ -22,7 +22,7 @@ export default function StreetLights({ count = 4 }) {
         })
     })
     const update = useCallback((data, id) => {
-        setLights([
+        setLights(lights => [
             ...lights.filter(j => j.id !== id),
             {
                 ...lights.find(j => j.id === id),
