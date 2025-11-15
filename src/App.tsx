@@ -1,7 +1,8 @@
 import Lights from "@components/Lights"
 import DepthTexturex from "@components/materials/DepthTexture"
 import Player from "@components/player/Player"
-import Road, { Floor } from "@components/road/Road"
+import Road, { Floor, FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/Road"
+import Sky from "@components/road/Sky"
 import Traffic from "@components/vehicles/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
@@ -10,7 +11,6 @@ import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
-import SpeedParticles from "@components/road/SpeedParticles"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -23,10 +23,11 @@ extend(extensions)
 export default function App() {
     return (
         <>
-            <fogExp2
+            <fog
                 args={["#fff"]}
                 attach={"fog"}
-                density={.021}
+                far={ROAD_FORWARD_EDGE}
+                near={ROAD_FORWARD_EDGE - FOG_DISTANCE}
             />
             <color args={["#fff"]} attach={"background"} />
             <CannonProvider debug={Config.DEBUG}>
@@ -35,9 +36,9 @@ export default function App() {
                 <Floor />
                 <Traffic />
                 <Road />
-                <SpeedParticles />
 
                 <Player />
+                <Sky />
             </CannonProvider>
 
             <axesHelper

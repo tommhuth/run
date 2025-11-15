@@ -1,3 +1,4 @@
+import { ROAD_GAME_OVER_X_EDGE } from "@components/road/Road"
 import Suv from "@components/vehicles/Suv"
 import { setState } from "@data/store/actions"
 import { extractRotation, useTransitionedState } from "@data/utils"
@@ -13,6 +14,8 @@ interface PlayerProps {
     position?: Tuple3
     rotation?: Tuple3
 }
+
+const MAX_ROTATION = Math.PI * .5 * .75
 
 export default function Player({
     rotation,
@@ -45,7 +48,7 @@ export default function Player({
         const rotation = Math.abs(extractRotation(vehicle.chassisBody.quaternion).y)
         const offside = Math.abs(vehicle.chassisBody.position.x)
 
-        if (offside > 14 || rotation > Math.PI * .5 * .65) {
+        if (offside > ROAD_GAME_OVER_X_EDGE || rotation > MAX_ROTATION) {
             setPosition([-1, 2, vehicle.chassisBody.position.z])
         }
     })

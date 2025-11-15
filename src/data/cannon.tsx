@@ -50,7 +50,7 @@ export function useCannonWorld() {
 }
 
 export const DEFAULT_RESTITUTION = .5
-export const DEFAULT_ITERATIONS = 12
+export const DEFAULT_ITERATIONS = 16
 export const DEFAULT_GRAVITY: Tuple3 = [0, -14, 0]
 
 function useCannonBody({

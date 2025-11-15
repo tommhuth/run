@@ -1,28 +1,43 @@
-import random from "@huth/random"
+import { initializeRocks } from "@components/road/Rock"
+import { initializeTrees } from "@components/road/Tree"
+import { PlacementGrid } from "@data/PlacementGrid"
 import { RigidVehicle } from "cannon-es"
 import { DepthTexture, Group, Material } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { hasRequestMotionPermission, Instance, InstanceName, MaterialName } from "./actions"
+import { Instance, InstanceName, MaterialName } from "./actions"
 
-export interface PathSection {
+interface RoadObject {
     id: string
-    size: Tuple3
+    active: boolean
     position: Tuple3
-    fixed?: boolean
-    gap: boolean
+    rotation: Tuple3
+}
+
+export interface StreetLightObject extends RoadObject {
+    type: "light"
+}
+
+export interface TreeObject extends RoadObject {
+    type: "tree"
+    treeType: number
+    scale: number
+}
+
+export interface RockObject extends RoadObject {
+    type: "rock"
+    radius: number
+    scale: Tuple3
 }
 
 export interface RunStore {
     state: "intro" | "gameover" | "running"
-    hasMotionAccess: boolean
-    motionAccessDenied: boolean
-    path: PathSection[]
     instances: Record<InstanceName, Instance>
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
+    objects: (StreetLightObject | RockObject | TreeObject)[]
     player: {
         mesh: Group | null
         vehicle: RigidVehicle | null
@@ -32,23 +47,17 @@ export interface RunStore {
 const store = create(
     subscribeWithSelector<RunStore>(() => ({
         state: "intro",
-        hasMotionAccess: hasRequestMotionPermission ? false : true,
         depthTexture: null,
-        motionAccessDenied: false,
         materials: {} as RunStore["materials"],
         instances: {} as RunStore["instances"],
         player: {
             mesh: null,
             vehicle: null
         },
-        path: [
-            {
-                id: random.id(),
-                size: [5, 20, 5],
-                position: [0, -10.1, 0],
-                fixed: true,
-                gap: false
-            }
+        grid: new PlacementGrid(1),
+        objects: [
+            ...initializeRocks(),
+            ...initializeTrees(),
         ]
     }))
 )

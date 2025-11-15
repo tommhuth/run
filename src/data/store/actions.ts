@@ -1,10 +1,9 @@
 import Counter from "@data/Counter"
 import random from "@huth/random"
-import { Tuple2, Tuple3 } from "@src/types/global"
 import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
 
-import { RunStore, store } from "."
+import { RockObject, RunStore, store, StreetLightObject, TreeObject } from "."
 
 export function setState(data: Partial<RunStore>) {
     startTransition(() => {
@@ -23,65 +22,32 @@ export function setMaterial(name: MaterialName, material: Material) {
     })
 }
 
+type RoadData = Omit<TreeObject, "id"> | Omit<RockObject, "id"> | Omit<StreetLightObject, "id">
 
-let counter = 0
-
-export function addPathSection() {
-    const last = store.getState().path[0]
-    const gap = random.boolean(.5)
-    const height = 20
-    const depthRange: Tuple2 = gap ? [11, 15] : [4, 8]
-    const size: Tuple3 = [
-        random.integer(4, 6),
-        height,
-        random.integer(...depthRange)
-    ]
-    const position: Tuple3 = [
-        random.integer(-1, 1) + Math.sin(counter * .45) * 2,
-        -height / 2 + Math.sin(counter * .4) * 3,
-        last.position[2] + last.size[2] / 2 + size[2] / 2
-    ]
-
-    counter++
+export function addRoadObject(data: RoadData) {
     setState({
-        path: [
+        objects: [
             {
                 id: random.id(),
-                size,
-                gap,
-                position
+                ...data
             },
-            ...store.getState().path,
+            ...store.getState().objects,
         ]
     })
 }
 
-export function removePathSection(id: string) {
+export function updateRoadObject<T>(id: string, data: T) {
     setState({
-        path: store.getState().path.filter(i => i.id !== id)
+        objects: [
+            {
+                ...store.getState().objects.find(i => i.id === id)!,
+                ...data
+            },
+            ...store.getState().objects.filter(i => i.id !== id),
+        ]
     })
 }
 
-interface DeviceMotionEventiOS extends DeviceMotionEvent {
-    requestPermission?: () => Promise<"granted" | "denied">;
-}
-
-export const hasRequestMotionPermission = !!(DeviceMotionEvent as unknown as DeviceMotionEventiOS).requestPermission
-
-export async function requestMotionPermission() {
-    const event = DeviceMotionEvent as unknown as DeviceMotionEventiOS
-
-    if (event.requestPermission) {
-        const permission = await event.requestPermission()
-
-        setState({
-            hasMotionAccess: permission === "granted",
-            motionAccessDenied: permission === "denied"
-        })
-
-        return permission
-    }
-}
 
 export type InstanceName = "box" | "circle"
 

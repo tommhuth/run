@@ -2,7 +2,7 @@ import { useStore } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
-import { CameraHelper, DirectionalLight } from "three"
+import { DirectionalLight } from "three"
 
 const forwardOffset = 16
 const targetPosition: Tuple3 = [15, -20, 3]
@@ -58,7 +58,7 @@ export default function Lights() {
                 shadow-radius={2}
                 shadow-normalBias={.01}
                 shadow-blurSamples={8} //8
-                color={"#dde6ff"}
+                color={"#ddf5ff"}
             />
             <hemisphereLight
                 color={"#8eeeff"}
@@ -67,7 +67,7 @@ export default function Lights() {
             />
             <ambientLight
                 intensity={.1}
-                color={"#159aff"}
+                color={"#8fceff"}
             />
         </>
     )

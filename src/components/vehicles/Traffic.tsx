@@ -13,7 +13,7 @@ function initTraffic() {
     return directions.map(direction => {
         let z = 10 * direction
 
-        return Array.from({ length: 4 }).fill(null).map(() => {
+        return Array.from({ length: 5 }).fill(null).map(() => {
             z += random.pick(...gap)
 
             return {

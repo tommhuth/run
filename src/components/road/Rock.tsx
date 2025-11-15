@@ -1,24 +1,50 @@
 import model from "@assets/models/rock.glb"
 import { rockMaterial } from "@components/materials/shared"
 import { useBody } from "@data/cannon"
-import { store } from "@data/store"
+import { grid } from "@data/PlacementGrid"
+import { RockObject, store } from "@data/store"
+import { updateRoadObject } from "@data/store/actions"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
 import { memo, useMemo } from "react"
 
-import { ROAD_CENTER_X, ROAD_EDGE_X, ROAD_FORWARD_EDGE } from "./Road"
+import { ROAD_EDGE_X, ROAD_FORWARD_EDGE } from "./Road"
+
+export function initializeRocks() {
+    return Array.from({ length: 18 }).fill(null).map(() => {
+        const radius = random.pick(1, 1.5, 2.5, 4, 1.85, 2, 3, 2.4)
+        const [x, z] = grid.getRandomPosition([0, 10], [-1, ROAD_FORWARD_EDGE])
+
+        return {
+            id: random.id(),
+            position: [
+                (x + ROAD_EDGE_X + radius) * random.pick(-1, 1),
+                random.float(0, .35),
+                z
+            ],
+            rotation: [
+                random.pick(Math.PI, 0),
+                random.float(0, Math.PI * 2),
+                random.pick(Math.PI, 0)
+            ],
+            radius,
+            scale: [0, random.float(.85, 1.15), 0],
+            active: false,
+            type: "rock"
+        } satisfies RockObject
+    })
+}
 
 function Rock({
     position,
-    scaly,
+    scale,
     rotation,
     radius,
-    update,
     active = false,
     id,
-}) {
+}: RockObject) {
     const { nodes } = useGLTF(model)
     const shape = useMemo(() => {
         return new Sphere(radius * .85)
@@ -47,7 +73,7 @@ function Rock({
         }
 
         if (active !== newActive) {
-            update({ active: newActive }, id)
+            updateRoadObject(id, { active: newActive },)
         }
     })
 
@@ -59,17 +85,24 @@ function Rock({
         }
 
         const buffer = radius * 4
-        const [, , z] = position
+        const [, , currentZ] = position
 
-        if (z < player.vehicle.chassisBody.position.z - buffer) {
-            update({
+        if (currentZ < player.vehicle.chassisBody.position.z - buffer) {
+            const playerZ = player.vehicle?.chassisBody.position.z
+            const baseZ = playerZ + ROAD_FORWARD_EDGE
+            const [x, z] = grid.getRandomPosition(
+                [0, 10],
+                [baseZ + radius, baseZ + radius + 4]
+            )
+
+            updateRoadObject(id, {
                 position: [
-                    random.integer(ROAD_EDGE_X + radius, ROAD_EDGE_X + 9) * random.pick(-1, 1),
+                    (x + ROAD_EDGE_X + radius) * random.pick(-1, 1),
                     random.float(0, radius * .25),
-                    z + ROAD_FORWARD_EDGE + random.integer(-5, 5)
+                    z
                 ],
                 active: false
-            }, id)
+            })
         }
     })
 
@@ -79,7 +112,7 @@ function Rock({
             receiveShadow
             geometry={nodes.rock.geometry}
             scale={radius * 2}
-            scale-y={radius * 2 * scaly}
+            scale-y={radius * 2 * scale[1]}
             material={rockMaterial}
             dispose={null}
             position={position}

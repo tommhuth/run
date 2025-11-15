@@ -38,7 +38,7 @@ export function useRigidVehicle({
         const rotation = new Quaternion().setFromEuler(...incomingRotation)
         const material = new Material("wheelMaterial")
         const contactMaterial = new ContactMaterial(material, world.defaultMaterial, {
-            friction: 100,
+            friction: .85,
             restitution: .1,
             contactEquationStiffness: 1000
         })
@@ -101,14 +101,14 @@ export function useRigidVehicle({
         }
 
         chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
-        chassisRef.current.position.copy(vehicle.chassisBody.position, .4)
+        chassisRef.current.position.copy(vehicle.chassisBody.position)
 
         for (const [index, wheel] of vehicle.wheelBodies.entries()) {
             const wheelMesh = wheelsRef.current?.children[index] as Mesh
             const backWheelMesh = backWheelsRef.current?.children[index - 2]
 
             if (wheelMesh) {
-                wheelMesh?.position.copy(wheel.position, .4)
+                wheelMesh?.position.copy(wheel.position)
                 wheelMesh?.quaternion.copy(wheel.quaternion)
             } else if (backWheelMesh) {
                 _quaternion.set(...wheel.quaternion.toArray())

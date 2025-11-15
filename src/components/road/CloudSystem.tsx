@@ -38,6 +38,8 @@ export default function CloudSystem({ size = 20 }: { size?: number }) {
     }
 
     useFrame(() => {
+        return
+
         const { state, player: { vehicle }, path } = store.getState()
         const forward = path[0]
 

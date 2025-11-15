@@ -2,7 +2,7 @@ import model from "@assets/models/road.glb"
 import { floorMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useBody } from "@data/cannon"
 import Config from "@data/Config"
-import { store } from "@data/store"
+import { store, useStore } from "@data/store"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Box, Shape, Vec3 } from "cannon-es"
@@ -12,9 +12,9 @@ import { GLTF } from "three/examples/jsm/Addons.js"
 import { ShapeType, threeToCannon } from "three-to-cannon"
 
 import CloudSystem from "./CloudSystem"
-import Rocks from "./Rocks"
+import RockObject from "./Rock"
 import StreetLights from "./StreetLights"
-import { Trees } from "./Trees"
+import TreeObject from "./Tree"
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -28,7 +28,24 @@ const [, height, depth] = [9, .75, 500]
 export const ROAD_HEIGHT = height
 export const ROAD_CENTER_X = 1.5
 export const ROAD_EDGE_X = ROAD_CENTER_X + 2.25
-export const ROAD_FORWARD_EDGE = 100
+export const ROAD_FORWARD_EDGE = 75
+export const ROAD_GAME_OVER_X_EDGE = 16
+export const FOG_DISTANCE = 60
+
+function Objects() {
+    const objects = useStore(i => i.objects)
+
+    return objects.map(i => {
+        switch (i.type) {
+            case "rock":
+                return <RockObject {...i} key={i.id} />
+            case "tree":
+                return <TreeObject {...i} key={i.id} />
+            default:
+                return null
+        }
+    })
+}
 
 export default function Road() {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
@@ -54,10 +71,9 @@ export default function Road() {
 
     return (
         <>
-            <Rocks />
-            <Trees />
-            <StreetLights />
             <CloudSystem />
+            <Objects />
+            <StreetLights />
 
             <group
                 dispose={null}
@@ -91,6 +107,19 @@ export default function Road() {
     )
 }
 
+/*
+
+            <Trees />
+            <StreetLights />
+            {Array.from({ length: 10 }).map((i, index) => {
+                return (
+                    <Fragment key={index}>
+                        <Grass position={[20, 0, index * 13]} side={"left"} />
+                        <Grass position={[-20, 0, index * 13]} side={"right"} />
+                    </Fragment>
+                )
+            })}
+            */
 
 const floorShape = new Box(new Vec3(depth, .5, depth))
 

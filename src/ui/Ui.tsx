@@ -1,7 +1,18 @@
 import { store } from "@data/store"
+import { useRef } from "react"
+import useAnimationFrame from "use-animation-frame"
 
 export default function Ui() {
-    const motionAccessDenied = store(i => i.motionAccessDenied)
+    const player = store(i => i.player)
+    const ref = useRef<HTMLDivElement>(null)
+
+    useAnimationFrame(() => {
+        if (!ref.current) {
+            return
+        }
+
+        ref.current.innerText = Math.floor(player.vehicle?.chassisBody.position.z || 0) + " m"
+    })
 
     return (
         <>
@@ -11,28 +22,9 @@ export default function Ui() {
                     left: "2em",
                     bottom: "3em",
                 }}
+                ref={ref}
             >
-                Run
-                <Debug />
             </div>
-
-            <p
-                style={{
-                    display: motionAccessDenied ? "block" : "none",
-                    position: "absolute",
-                    bottom: "1em",
-                    padding: ".75em 1em",
-                    background: "black",
-                    color: "white",
-                    left: "50%",
-                    translate: "-50% 0",
-                    maxWidth: "75%",
-                    width: "100%",
-                    zIndex: 100,
-                }}
-            >
-                You need to allow motion access, reload and try again
-            </p>
         </>
     )
 }
