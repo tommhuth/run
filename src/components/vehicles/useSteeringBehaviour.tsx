@@ -12,7 +12,7 @@ const MAX_STEER_RATE = 1.2
 
 interface UseSteeringBehaviourParams {
     vehicle: RigidVehicle | null
-    target: Tuple3
+    guide: Tuple3
     direction: number
     targetVelocity?: number
     wheelForce?: number
@@ -21,11 +21,13 @@ interface UseSteeringBehaviourParams {
     kv?: number // gain on lateral velocity (important to counter inertia)
 }
 
+const adjustInterval = [1400, 4000] as const
+
 // chattyman https://chatgpt.com/c/69062faa-a95c-832d-84ca-11456a40f84f
 // https://en.wikipedia.org/wiki/Proportional%E2%80%93integral%E2%80%93derivative_controller
 export default function useSteeringBehaviour({
     vehicle,
-    target,
+    guide,
     direction,
     targetVelocity = 6,
     wheelForce = 20,
@@ -36,7 +38,7 @@ export default function useSteeringBehaviour({
     const data = useMemo(() => ({
         prevError: 0,
         prevSteer: 0,
-        adjustAt: random.integer(700, 1400),
+        adjustAt: random.integer(...adjustInterval),
         time: 0,
     }), [])
 
@@ -44,9 +46,9 @@ export default function useSteeringBehaviour({
         data.time += ndelta(delta) * 1000
 
         if (data.time > data.adjustAt) {
-            target[0] = ROAD_CENTER_X * -direction + random.float(-1, 1)
+            guide[0] = ROAD_CENTER_X * -direction + random.float(-1, 1)
             data.time = 0
-            data.adjustAt = random.integer(1100, 3000)
+            data.adjustAt = random.integer(...adjustInterval)
         }
     })
 
@@ -79,7 +81,7 @@ export default function useSteeringBehaviour({
         }
 
         const chassis = vehicle.chassisBody
-        const error = target[0] - chassis.position.x
+        const error = guide[0] - chassis.position.x
         const errorRate = (error - data.prevError) / ndelta(delta)
 
         // lateral velocity in world X (momentum across the path)  

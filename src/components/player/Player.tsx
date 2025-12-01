@@ -1,5 +1,6 @@
 import { ROAD_GAME_OVER_X_EDGE } from "@components/road/Road"
 import Suv from "@components/vehicles/Suv"
+import { store } from "@data/store"
 import { setState } from "@data/store/actions"
 import { extractRotation, useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
@@ -49,7 +50,11 @@ export default function Player({
         const offside = Math.abs(vehicle.chassisBody.position.x)
 
         if (offside > ROAD_GAME_OVER_X_EDGE || rotation > MAX_ROTATION) {
-            setPosition([-1, 2, vehicle.chassisBody.position.z])
+            const forwards = store.getState().traffic
+                .filter(i => i.direction === 1)
+                .map(i => i.position[2])
+
+            setPosition([-2, 2, Math.min(...forwards) - 6])
         }
     })
 

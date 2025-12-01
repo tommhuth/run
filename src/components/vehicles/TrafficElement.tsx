@@ -1,36 +1,26 @@
 import Sedan from "@components/vehicles/Sedan"
-import { store } from "@data/store"
+import { store, TrafficElement } from "@data/store"
+import { removeTrafficElement } from "@data/store/actions"
 import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
-import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
+import { memo } from "react"
 
 import useSteeringBehaviour from "./useSteeringBehaviour"
 
-interface TrafficElementProps {
-    position: Tuple3
-    rotation: Tuple3
-    guide: Tuple3
-    velocity?: number
-    direction: 1 | -1
-    id: string
-    remove: () => void
-}
-
-
-function TrafficElement({
+export default memo(({
+    id,
     position,
     rotation,
     velocity,
     guide,
-    direction,
-    remove
-}: TrafficElementProps) {
+    direction
+}: TrafficElement) => {
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
 
     useSteeringBehaviour({
         vehicle,
-        target: guide,
+        guide,
         direction,
         targetVelocity: velocity,
         wheelForce: 20
@@ -55,7 +45,7 @@ function TrafficElement({
         }
 
         if (vehicle.chassisBody.position.z < player.vehicle?.chassisBody.position.z - backbuffer) {
-            remove()
+            removeTrafficElement(id)
         }
     })
 
@@ -66,6 +56,4 @@ function TrafficElement({
             rotation={rotation}
         />
     )
-};
-
-export default TrafficElement
+})

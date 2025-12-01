@@ -27,7 +27,7 @@ type GLTFResult = GLTF & {
     }
 }
 
-const offset = .5
+const offset = 1.5
 
 export function initializeTrees() {
     return Array.from({ length: 12 }).fill(null).map(() => {

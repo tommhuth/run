@@ -6,6 +6,7 @@ import { useFrame } from "@react-three/fiber"
 import { MeshBasicMaterial } from "three"
 
 import Cloud, { CloudProps } from "./Cloud"
+import { ROAD_FORWARD_EDGE } from "./Road"
 
 const xRange = [10, 25, 19, 12, 6, 8]
 const interval = 4
@@ -38,10 +39,7 @@ export default function CloudSystem({ size = 20 }: { size?: number }) {
     }
 
     useFrame(() => {
-        return
-
-        const { state, player: { vehicle }, path } = store.getState()
-        const forward = path[0]
+        const { state, player: { vehicle } } = store.getState()
 
         if (!vehicle || state == "gameover") {
             return
@@ -52,7 +50,7 @@ export default function CloudSystem({ size = 20 }: { size?: number }) {
                 updateCloud(id, {
                     position: [
                         random.pick(...xRange) * random.pick(1, -1),
-                        forward.position[1] + forward.size[1] / 2,
+                        position[1] + ROAD_FORWARD_EDGE,
                         position[2] + size * interval
                     ]
                 })

@@ -7,7 +7,7 @@ import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { Instance, InstanceName, MaterialName } from "./actions"
+import { initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
 
 interface RoadObject {
     id: string
@@ -32,12 +32,23 @@ export interface RockObject extends RoadObject {
     scale: Tuple3
 }
 
+export interface TrafficElement {
+    id: string
+    type: "sedan"
+    position: Tuple3
+    rotation: Tuple3
+    guide: Tuple3
+    velocity?: number
+    direction: 1 | -1
+}
+
 export interface RunStore {
     state: "intro" | "gameover" | "running"
     instances: Record<InstanceName, Instance>
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
     objects: (StreetLightObject | RockObject | TreeObject)[]
+    traffic: TrafficElement[]
     player: {
         mesh: Group | null
         vehicle: RigidVehicle | null
@@ -54,6 +65,7 @@ const store = create(
             mesh: null,
             vehicle: null
         },
+        traffic: initializeTraffic(),
         grid: new PlacementGrid(1),
         objects: [
             ...initializeRocks(),
