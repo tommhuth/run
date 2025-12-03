@@ -13,6 +13,7 @@ import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 
 import { ROAD_EDGE_X, ROAD_FORWARD_EDGE } from "./Road"
+import { Tuple2 } from "@src/types/global"
 
 const shape = new Box(new Vec3(.25, 5, .25))
 
@@ -31,12 +32,14 @@ const offset = 1.5
 
 export function initializeTrees() {
     return Array.from({ length: 12 }).fill(null).map(() => {
-        const [x, z] = grid.getRandomPosition([2, 5], [-1, ROAD_FORWARD_EDGE])
+        const side = random.pick(-1, 1)
+        const range: Tuple2 = side === 1 ? [2, 5] : [-5, -2]
+        const [x, z] = grid.getRandomPosition(range, [-1, ROAD_FORWARD_EDGE])
 
         return {
             id: random.id(),
             position: [
-                (x + ROAD_EDGE_X + offset) * random.pick(-1, 1),
+                x + (ROAD_EDGE_X + offset) * side,
                 random.float(-1, 0),
                 z
             ],

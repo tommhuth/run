@@ -68,9 +68,9 @@ export default function Player({
             >
                 <primitive object={target} position={[0, 1, 5]} />
                 <spotLight
-                    intensity={80}
+                    intensity={120}
                     position={[0, 1.5, 1]}
-                    color={"#f1ffd4"}
+                    color={"#ffc079"}
                     angle={Math.PI * .3}
                     target={target}
                     penumbra={.5}

@@ -28,7 +28,7 @@ export default function Sky(props) {
         },
         fragment: {
             main: glsl`   
-                gl_FragColor.rgb = mix(vec3(1.), gl_FragColor.rgb, easeInOutQuad((vPosition.y + 50.) /  60.));
+                //gl_FragColor.rgb = mix(vec3(0., 0.1, 1.0), gl_FragColor.rgb, easeInOutQuad(clamp((vPosition.y + 50.) /  60., 0., 1.)));
                  
             `
         }
@@ -52,8 +52,9 @@ export default function Sky(props) {
             <boxGeometry args={[1000, 100, 1]} />
             <meshBasicMaterial
                 onBeforeCompile={onBeforeCompile}
-                color={"#c1e5f8"}
+                color={"#fff"}
                 fog={false}
+                toneMapped={false}
             />
         </mesh>
     )
