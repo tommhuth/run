@@ -39,7 +39,7 @@ body,
 .ios body,
 .ios #canvas,
 .ios #ui {
-    height: 100vh !important;
+    height: 100% !important;
 }
 
 // ios does not capture events from canvas?!
