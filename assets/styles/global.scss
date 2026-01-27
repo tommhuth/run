@@ -20,14 +20,12 @@
 
 html {
     background-color: transparent;
-    height: 100%;
 }
 
 body,
 #canvas,
 #ui {
     overflow: hidden;
-    height: 100% !important;
     position: fixed;
     left: 0;
     display: block;
@@ -35,11 +33,15 @@ body,
     width: 100%;
 }
 
-.ios,
-.ios body,
-.ios #canvas,
-.ios #ui {
-    height: 100% !important;
+html,
+body,
+#canvas,
+#ui {
+    height: 100%;
+
+    &.standalone {
+        height: 100vh;
+    }
 }
 
 // ios does not capture events from canvas?!

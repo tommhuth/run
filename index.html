@@ -21,7 +21,7 @@
     <div id="ui"></div>
     <script>
         if (window.navigator.standalone) {
-            document.getElementsByTagName("html")[0].classList.add("ios")
+            document.documentElement.classList.add("standalone")
         }
     </script>
     <script type="module" src="/src/root.tsx"></script>
