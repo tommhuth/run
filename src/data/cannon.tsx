@@ -168,15 +168,15 @@ export function CannonProvider({
     }, [world, scene, debug])
 
     useFrame((state, delta) => {
-        // max 14fps as delta
-        const dt = Math.min(delta, 1 / 30)
+        // max 24fps as delta
+        const dt = Math.min(delta, 1 / 24)
 
         world.step(dt)
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()
         }
-    })
+    }, -1)
 
     return (
         <context.Provider value={world}>

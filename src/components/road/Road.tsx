@@ -107,10 +107,7 @@ export default function Road() {
     )
 }
 
-/*
-
-            <Trees />
-            <StreetLights />
+/* 
             {Array.from({ length: 10 }).map((i, index) => {
                 return (
                     <Fragment key={index}>

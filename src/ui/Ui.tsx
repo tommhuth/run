@@ -11,19 +11,13 @@ export default function Ui() {
             return
         }
 
-        ref.current.innerText = Math.floor(player.vehicle?.chassisBody.position.z || 0) + " m"
+        ref.current.innerText = Math.max(Math.floor(player.vehicle?.chassisBody.position.z || 0), 0).toString()
     })
 
     return (
         <>
-            <div
-                style={{
-                    position: "absolute",
-                    left: "2em",
-                    bottom: "3em",
-                }}
-                ref={ref}
-            >
+            <div className="distance">
+                <span ref={ref} /><span>m</span>
             </div>
         </>
     )

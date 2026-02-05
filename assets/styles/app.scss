@@ -1,3 +1,36 @@
 @use "global.scss";
 @use "variables.scss";
 @use "typography.scss";
+
+
+body::after {
+    content: "";
+    display: block;
+    left: 0;
+    right: 0;
+    top: 0;
+    position: fixed;
+    height: 35%;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    background-image: linear-gradient(rgba(#2e6283, .2) 40%, transparent);
+}
+
+.distance {
+    position: fixed;
+    left: .25em;
+    bottom: -.325em;
+    font-weight: 900;
+    font-size: clamp(3em, 19vw, 16em);
+    letter-spacing: -.085em;
+    text-shadow: 0 0 1em #0072bd;
+    color: #fff;
+    pointer-events: none;
+
+    span:last-child {
+        font-size: .5em;
+        letter-spacing: 0;
+        margin-left: .25em;
+    }
+}
