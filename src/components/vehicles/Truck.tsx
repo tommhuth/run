@@ -1,4 +1,4 @@
-import model from "@assets/models/suv.glb"
+import model from "@assets/models/truck.glb"
 import { carMaterial } from "@components/materials/shared"
 import Config from "@data/Config"
 import { Chassis, useRigidVehicle, Wheel } from "@data/useRigidVehicle"
@@ -21,19 +21,19 @@ const wheelX = .4
 const radius = .3
 const wheels: Wheel[] = [
     {
-        position: [wheelX, wheelY, .75],
+        position: [wheelX, wheelY, .86],
         radius
     },
     {
-        position: [-wheelX, wheelY, .75],
+        position: [-wheelX, wheelY, .86],
         radius
     },
     {
-        position: [wheelX, wheelY, -.55],
+        position: [wheelX, wheelY, -.76],
         radius
     },
     {
-        position: [-wheelX, wheelY, -.55],
+        position: [-wheelX, wheelY, -.76],
         radius
     }
 ]
@@ -49,18 +49,18 @@ type GLTFResult = GLTF & {
     }
 }
 
-interface SuvProps {
+interface TruckProps {
     children?: ReactNode
     position?: Tuple3
     rotation?: Tuple3
 }
 
-function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) {
+function Truck({ children, ...props }: TruckProps, ref: ForwardedRef<RigidVehicle>) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
         center: [0, .85, 0],
-        mass: 8,
+        mass: 7,
         wheels,
         chassis
     })
@@ -79,19 +79,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                     castShadow
                     receiveShadow
                     geometry={nodes.body.geometry}
-                    position={[0, 0.2, 0]}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-back"].geometry}
-                    position={[0, 0.5, -1.05]}
+                    position={[0, 0.2, -.025]}
                 >
                     <primitive
                         attach="material"
@@ -152,6 +140,6 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
     )
 }
 
-export default memo(forwardRef(Suv))
+export default memo(forwardRef(Truck))
 
 useGLTF.preload(model)

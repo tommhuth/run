@@ -1,12 +1,20 @@
-import Sedan from "@components/vehicles/Sedan"
+import SedanSports from "@components/vehicles/SedanSports"
+import Cycler from "@data/Cycler"
 import { store, TrafficElement } from "@data/store"
 import { removeTrafficElement } from "@data/store/actions"
 import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { RigidVehicle } from "cannon-es"
-import { memo } from "react"
+import { memo, Suspense, useMemo } from "react"
 
+import Delivery from "./Delivery"
+import HatchbackSports from "./HatchbackSports"
+import Truck from "./Truck"
+import TruckFlat from "./TruckFlat"
 import useSteeringBehaviour from "./useSteeringBehaviour"
+import Van from "./Van"
+
+const cycler = new Cycler([Delivery, HatchbackSports, SedanSports, Truck, TruckFlat, Van], .2)
 
 export default memo(({
     id,
@@ -17,6 +25,7 @@ export default memo(({
     direction
 }: TrafficElement) => {
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
+    const Component = useMemo(() => cycler.next(), [])
 
     useSteeringBehaviour({
         vehicle,
@@ -50,10 +59,12 @@ export default memo(({
     })
 
     return (
-        <Sedan
-            ref={setVehicle}
-            position={position}
-            rotation={rotation}
-        />
+        <Suspense fallback={null}>
+            <Component
+                ref={setVehicle}
+                position={position}
+                rotation={rotation}
+            />
+        </Suspense>
     )
 })

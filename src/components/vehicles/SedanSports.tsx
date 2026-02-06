@@ -3,8 +3,9 @@ import { carMaterial } from "@components/materials/shared"
 import Config from "@data/Config"
 import { Chassis, useRigidVehicle, Wheel } from "@data/useRigidVehicle"
 import { useGLTF } from "@react-three/drei"
+import { Tuple3 } from "@src/types/global"
 import { Box, RigidVehicle, Vec3 } from "cannon-es"
-import { ForwardedRef, forwardRef, memo, useImperativeHandle } from "react"
+import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "react"
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 
@@ -48,7 +49,13 @@ type GLTFResult = GLTF & {
     }
 }
 
-function Sedan({ position, rotation }, ref: ForwardedRef<RigidVehicle>) {
+interface SedanSportsProps {
+    children?: ReactNode
+    position?: Tuple3
+    rotation?: Tuple3
+}
+
+function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef<RigidVehicle>) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, , vehicle, backWheelsRef] = useRigidVehicle({
         rotation,
@@ -56,7 +63,7 @@ function Sedan({ position, rotation }, ref: ForwardedRef<RigidVehicle>) {
         center: [0, .7, 0],
         wheels,
         chassis,
-        mass: 2
+        mass: 7
     })
 
     useImperativeHandle(ref, () => {
@@ -146,6 +153,6 @@ function Sedan({ position, rotation }, ref: ForwardedRef<RigidVehicle>) {
     )
 }
 
-export default memo(forwardRef(Sedan))
+export default memo(forwardRef(SedanSports))
 
 useGLTF.preload(model)

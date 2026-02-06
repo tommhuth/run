@@ -1,4 +1,4 @@
-import model from "@assets/models/suv.glb"
+import model from "@assets/models/delivery.glb"
 import { carMaterial } from "@components/materials/shared"
 import Config from "@data/Config"
 import { Chassis, useRigidVehicle, Wheel } from "@data/useRigidVehicle"
@@ -21,19 +21,19 @@ const wheelX = .4
 const radius = .3
 const wheels: Wheel[] = [
     {
-        position: [wheelX, wheelY, .75],
+        position: [wheelX, wheelY, 1.01],
         radius
     },
     {
-        position: [-wheelX, wheelY, .75],
+        position: [-wheelX, wheelY, 1.01],
         radius
     },
     {
-        position: [wheelX, wheelY, -.55],
+        position: [wheelX, wheelY, -.61],
         radius
     },
     {
-        position: [-wheelX, wheelY, -.55],
+        position: [-wheelX, wheelY, -.61],
         radius
     }
 ]
@@ -41,6 +41,7 @@ const wheels: Wheel[] = [
 type GLTFResult = GLTF & {
     nodes: {
         body: Mesh
+        door: Mesh
         ["wheel-back"]: Mesh
         ["wheel-back-right"]: Mesh
         ["wheel-front-left"]: Mesh
@@ -49,18 +50,18 @@ type GLTFResult = GLTF & {
     }
 }
 
-interface SuvProps {
+interface DeliveryProps {
     children?: ReactNode
     position?: Tuple3
     rotation?: Tuple3
 }
 
-function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) {
+function Delivery({ children, ...props }: DeliveryProps, ref: ForwardedRef<RigidVehicle>) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
         center: [0, .85, 0],
-        mass: 8,
+        mass: 7,
         wheels,
         chassis
     })
@@ -79,7 +80,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                     castShadow
                     receiveShadow
                     geometry={nodes.body.geometry}
-                    position={[0, 0.2, 0]}
+                    position={[0, 0.2, -0.025]}
                 >
                     <primitive
                         attach="material"
@@ -90,15 +91,10 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                 <mesh
                     castShadow
                     receiveShadow
-                    geometry={nodes["wheel-back"].geometry}
-                    position={[0, 0.5, -1.05]}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
+                    geometry={nodes.door.geometry}
+                    material={nodes.door.material}
+                    position={[0, 1.5, -1.475]}
+                />
 
                 {children}
             </group>
@@ -152,6 +148,6 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
     )
 }
 
-export default memo(forwardRef(Suv))
+export default memo(forwardRef(Delivery))
 
 useGLTF.preload(model)

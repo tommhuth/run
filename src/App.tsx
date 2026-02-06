@@ -4,8 +4,10 @@ import Player from "@components/player/Player"
 import Road, { Floor, FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/Road"
 import Sky from "@components/road/Sky"
 import Traffic from "@components/vehicles/Traffic"
+import Truck from "@components/vehicles/Truck"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
+import { useStore } from "@data/store"
 import { extend } from "@react-three/fiber"
 import { lazy } from "react"
 
@@ -21,6 +23,8 @@ const Perf = lazy(async () => {
 extend(extensions)
 
 export default function App() {
+    const { showColliders } = useStore(i => i.debug)
+
     return (
         <>
             <fog
@@ -30,7 +34,8 @@ export default function App() {
                 near={ROAD_FORWARD_EDGE - FOG_DISTANCE}
             />
             <color args={["#fff"]} attach={"background"} />
-            <CannonProvider debug={Config.DEBUG}>
+
+            <CannonProvider debug={showColliders}>
                 <Camera />
                 <Lights />
                 <Floor />
@@ -39,6 +44,8 @@ export default function App() {
 
                 <Player />
                 <Sky />
+
+                {/*<Truck rotation={[0, Math.PI * .5, 0]} position={[0, 2, 3]} />*/}
             </CannonProvider>
 
             <axesHelper
@@ -48,13 +55,9 @@ export default function App() {
             />
 
             {/* at the very end */}
-            <S />
+            <DepthTexturex />
+
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
     )
-}
-
-
-function S() {
-    return <DepthTexturex />
-}
+} 

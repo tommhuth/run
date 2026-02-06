@@ -10,6 +10,7 @@ import { useEffect, useMemo } from "react"
 import { Object3D } from "three/webgpu"
 
 import { useControls } from "./useControls"
+import Van from "@components/vehicles/Van"
 
 interface PlayerProps {
     position?: Tuple3

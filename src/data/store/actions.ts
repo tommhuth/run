@@ -24,6 +24,15 @@ export function setMaterial(name: MaterialName, material: Material) {
     })
 }
 
+export function setDebugData(name: keyof RunStore["debug"], value: boolean) {
+    store.setState({
+        debug: {
+            ...store.getState().debug,
+            [name]: value,
+        }
+    })
+}
+
 type RoadData = Omit<TreeObject, "id"> | Omit<RockObject, "id"> | Omit<StreetLightObject, "id">
 
 export function addRoadObject(data: RoadData) {

@@ -49,6 +49,10 @@ export interface RunStore {
     materials: Record<MaterialName, Material>
     objects: (StreetLightObject | RockObject | TreeObject)[]
     traffic: TrafficElement[]
+    debug: {
+        showColliders: boolean
+        godMode: boolean
+    }
     player: {
         mesh: Group | null
         vehicle: RigidVehicle | null
@@ -64,6 +68,10 @@ const store = create(
         player: {
             mesh: null,
             vehicle: null
+        },
+        debug: {
+            showColliders: false,
+            godMode: false,
         },
         traffic: initializeTraffic(),
         grid: new PlacementGrid(1),
