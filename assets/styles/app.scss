@@ -19,18 +19,20 @@ body::after {
 
 .distance {
     position: fixed;
-    left: .25em;
-    bottom: -.325em;
+    left: 1em;
+    bottom: 1em;
+    /*
     font-weight: 900;
-    font-size: clamp(3em, 19vw, 16em);
-    letter-spacing: -.085em;
-    text-shadow: 0 0 1em #0072bd;
+    //font-size: clamp(3em, 19vw, 16em);
+    //letter-spacing: -.085em;
+    //text-shadow: 0 0 1em #0072bd;
     color: #fff;
     pointer-events: none;
 
     span:last-child {
-        font-size: .5em;
-        letter-spacing: 0;
+       // font-size: .5em;
+        //letter-spacing: 0;
         margin-left: .25em;
     }
+        */
 }
