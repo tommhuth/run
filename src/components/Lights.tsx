@@ -47,16 +47,15 @@ export default function Lights() {
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
+                shadow-mapSize={[768 * viewport.dpr, 768 * viewport.dpr]}
                 shadow-camera-near={-25} // z
                 shadow-camera-far={35}
                 shadow-camera-left={-25} // x back/forwards
                 shadow-camera-right={50}
                 shadow-camera-top={40} // y
                 shadow-camera-bottom={-25}
-                shadow-radius={2}
-                shadow-normalBias={.01}
-                shadow-blurSamples={8} //8
+                shadow-radius={2.5}
+                shadow-bias={-.001}
                 intensity={8}
                 color={"#bee6ff"}
             />

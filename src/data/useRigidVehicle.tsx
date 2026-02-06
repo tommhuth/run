@@ -100,18 +100,18 @@ export function useRigidVehicle({
             return
         }
 
-        chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
-        chassisRef.current.position.copy(vehicle.chassisBody.position)
+        chassisRef.current.quaternion.copy(vehicle.chassisBody.interpolatedQuaternion)
+        chassisRef.current.position.copy(vehicle.chassisBody.interpolatedPosition)
 
         for (const [index, wheel] of vehicle.wheelBodies.entries()) {
             const wheelMesh = wheelsRef.current?.children[index] as Mesh
             const backWheelMesh = backWheelsRef.current?.children[index - 2]
 
             if (wheelMesh) {
-                wheelMesh?.position.copy(wheel.position)
-                wheelMesh?.quaternion.copy(wheel.quaternion)
+                wheelMesh?.quaternion.copy(wheel.interpolatedQuaternion)
+                wheelMesh?.position.copy(wheel.interpolatedPosition)
             } else if (backWheelMesh) {
-                _quaternion.set(...wheel.quaternion.toArray())
+                _quaternion.set(...wheel.interpolatedQuaternion.toArray())
                 _euler.setFromQuaternion(_quaternion, "XYZ")
 
                 backWheelMesh.rotation.x = _euler.x

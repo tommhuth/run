@@ -171,7 +171,7 @@ export function CannonProvider({
         // max 24fps as delta
         const dt = Math.min(delta, 1 / 24)
 
-        world.step(dt)
+        world.step(1 / 60, dt, 10)
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()
@@ -195,15 +195,15 @@ export function useBody({
 
     useLayoutEffect(() => {
         if (ref.current && active) {
-            ref.current.position.copy(body.position)
-            ref.current.quaternion.copy(body.quaternion)
+            ref.current.position.copy(body.interpolatedPosition)
+            ref.current.quaternion.copy(body.interpolatedQuaternion)
         }
     }, [active])
 
     useFrame(() => {
         if (ref.current && active) {
-            ref.current.position.copy(body.position)
-            ref.current.quaternion.copy(body.quaternion)
+            ref.current.position.copy(body.interpolatedPosition)
+            ref.current.quaternion.copy(body.interpolatedQuaternion)
         }
     })
 
