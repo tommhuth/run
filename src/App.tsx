@@ -43,7 +43,6 @@ export default function App() {
                 <Road />
 
                 <Player />
-                <Sky />
 
                 {/*<Truck rotation={[0, Math.PI * .5, 0]} position={[0, 2, 3]} />*/}
             </CannonProvider>
