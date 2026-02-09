@@ -156,12 +156,14 @@ export function CannonProvider({
         sap.axisIndex = 2
 
         world.broadphase = sap
-        // potentitally crazy
         world.defaultContactMaterial.restitution = defaultRestitution
+        // potentitally crazy
+        /*
         world.defaultContactMaterial.frictionEquationStiffness = 5e5
         world.defaultContactMaterial.frictionEquationRelaxation = 3
         world.defaultContactMaterial.contactEquationStiffness = 1e5
         world.defaultContactMaterial.contactEquationRelaxation = 3
+        */
 
         return world
     }, [iterations, ...gravity])

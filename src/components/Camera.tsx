@@ -38,7 +38,7 @@ export default function Camera() {
         _euler.y += Math.PI
 
         camera.position.lerp(_position, .4)
-        camera.quaternion.slerp(new Quaternion().setFromEuler(_euler), .4)
+        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), .4)
 
         _lookAt.copy(forward)
             .applyEuler(_euler)
