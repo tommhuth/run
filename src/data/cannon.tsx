@@ -50,7 +50,7 @@ export function useCannonWorld() {
 }
 
 export const DEFAULT_RESTITUTION = .5
-export const DEFAULT_ITERATIONS = 16
+export const DEFAULT_ITERATIONS = 6
 export const DEFAULT_GRAVITY: Tuple3 = [0, -14, 0]
 
 function useCannonBody({
@@ -173,7 +173,7 @@ export function CannonProvider({
         // max 24fps as delta
         const dt = Math.min(delta, 1 / 30)
 
-        world.step(1 / 60, dt)
+        world.step(1 / 60, dt, 2)
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()

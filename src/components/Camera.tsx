@@ -29,12 +29,21 @@ export default function Camera() {
         _position.copy(offset)
             .applyEuler(_euler)
             .add(player.vehicle.chassisBody.position)
+
+        _euler.setFromQuaternion(_quaternion, "YXZ")
+
+        _euler.x *= -.2
+        _euler.x += -.15
+        _euler.z *= -.2
+        _euler.y += Math.PI
+
         camera.position.lerp(_position, .4)
+        camera.quaternion.slerp(new Quaternion().setFromEuler(_euler), .4)
 
         _lookAt.copy(forward)
             .applyEuler(_euler)
             .add(player.vehicle.chassisBody.position)
-        camera.lookAt(_lookAt)
+        //camera.lookAt(_lookAt)
     })
 
     return null
