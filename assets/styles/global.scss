@@ -38,9 +38,15 @@ body,
 #canvas,
 #ui {
     height: 100%;
+}
 
+html {
     &.standalone {
         height: 100vh;
+
+        body {
+            height: 100vh;
+        }
     }
 }
 
