@@ -1,5 +1,5 @@
 import { clamp } from "@data/utils"
-import { createRoot, RenderProps } from "@react-three/fiber"
+import { createRoot, events, RenderProps } from "@react-three/fiber"
 import { lazy, ReactNode } from "react"
 import { createRoot as createUiRoot } from "react-dom/client"
 import { registerSW } from "virtual:pwa-register"
@@ -10,12 +10,13 @@ function getConfiguration() {
     return {
         camera: {
             near: .01,
-            far: 200,
+            far: 100,
             position: [0, 0, 0],
             fov: 70
         },
         flat: false,
         shadows: "variance",
+        events: events,
         dpr: clamp(window.devicePixelRatio * .65, 1, 2),
         size: {
             width: window.innerWidth,

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react"
 import { DirectionalLight } from "three"
 
 const forwardOffset = 16
-const targetPosition: Tuple3 = [15, -20, 3]
+const targetPosition: Tuple3 = [15, -15, 3]
 
 export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)

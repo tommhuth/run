@@ -1,6 +1,4 @@
-import { initializeRocks } from "@components/road/Rock"
-import { initializeTrees } from "@components/road/Tree"
-import { PlacementGrid } from "@data/PlacementGrid"
+import random from "@huth/random"
 import { RigidVehicle } from "cannon-es"
 import { DepthTexture, Group, Material } from "three"
 import { create } from "zustand"
@@ -11,7 +9,6 @@ import { initializeTraffic, Instance, InstanceName, MaterialName } from "./actio
 
 interface RoadObject {
     id: string
-    active: boolean
     position: Tuple3
     rotation: Tuple3
 }
@@ -21,13 +18,11 @@ export interface StreetLightObject extends RoadObject {
 }
 
 export interface TreeObject extends RoadObject {
-    type: "tree"
     treeType: number
     scale: number
 }
 
 export interface RockObject extends RoadObject {
-    type: "rock"
     radius: number
     scale: Tuple3
 }
@@ -42,13 +37,20 @@ export interface TrafficElement {
     direction: 1 | -1
 }
 
+interface RoadPart {
+    id: string
+    type: string
+    position: Tuple3
+    depth: number
+}
+
 export interface RunStore {
     state: "intro" | "gameover" | "running"
     instances: Record<InstanceName, Instance>
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
-    objects: (StreetLightObject | RockObject | TreeObject)[]
     traffic: TrafficElement[]
+    road: RoadPart[]
     debug: {
         showColliders: boolean
         godMode: boolean
@@ -69,16 +71,19 @@ const store = create(
             mesh: null,
             vehicle: null
         },
+        road: [
+            {
+                id: random.id(),
+                position: [0, 0, -5],
+                depth: 20,
+                type: "plain"
+            }
+        ],
         debug: {
             showColliders: false,
             godMode: false,
         },
         traffic: initializeTraffic(),
-        grid: new PlacementGrid(1),
-        objects: [
-            ...initializeRocks(),
-            ...initializeTrees(),
-        ]
     }))
 )
 

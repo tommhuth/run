@@ -5,7 +5,7 @@ import { Tuple3 } from "@src/types/global"
 import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
 
-import { RockObject, RunStore, store, StreetLightObject, TrafficElement, TreeObject } from "."
+import { RunStore, store, TrafficElement } from "."
 
 export function setState(data: Partial<RunStore>) {
     startTransition(() => {
@@ -33,6 +33,29 @@ export function setDebugData(name: keyof RunStore["debug"], value: boolean) {
     })
 }
 
+
+export function extendRoad(forwardPart: any) {
+    const road = store.getState().road
+
+    setState({
+        road: [
+            ...road,
+            {
+                id: random.id(),
+                type: "plain",
+                depth: 20,
+                position: [
+                    0,
+                    0,
+                    forwardPart.position[2] + forwardPart.depth
+                ]
+            }
+        ]
+    })
+}
+
+/*
+
 type RoadData = Omit<TreeObject, "id"> | Omit<RockObject, "id"> | Omit<StreetLightObject, "id">
 
 export function addRoadObject(data: RoadData) {
@@ -58,6 +81,7 @@ export function updateRoadObject<T>(id: string, data: T) {
         ]
     })
 }
+    */
 
 export type InstanceName = "box" | "circle"
 
@@ -86,7 +110,7 @@ export function initializeTraffic() {
     return [-1, 1].map(direction => {
         let z = 10 * direction
 
-        return Array.from({ length: 5 }).fill(null).map(() => {
+        return Array.from({ length: 4 }).fill(null).map(() => {
             z += random.pick(...tarfficGap)
 
             return {

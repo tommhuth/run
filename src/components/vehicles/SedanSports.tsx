@@ -1,13 +1,14 @@
 import model from "@assets/models/sedan-sports.glb"
 import { carMaterial } from "@components/materials/shared"
 import Config from "@data/Config"
-import { Chassis, useRigidVehicle, Wheel } from "@data/useRigidVehicle"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
 import { Box, RigidVehicle, Vec3 } from "cannon-es"
 import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "react"
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
+
+import { Chassis, useRigidVehicle, Wheel } from "./useRigidVehicle"
 
 const width = 1.3
 const height = .95

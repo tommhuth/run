@@ -36,12 +36,15 @@ export function useRigidVehicle({
     const world = useCannonWorld()
     const [vehicle, contactMaterial] = useMemo(() => {
         const rotation = new Quaternion().setFromEuler(...incomingRotation)
+        /*
         const material = new Material("wheelMaterial")
         const contactMaterial = new ContactMaterial(material, world.defaultMaterial, {
             friction: .85,
             restitution: .1,
             contactEquationStiffness: 1000
         })
+        */
+        let contactMaterial = null
         const chassisBody = new Body({
             mass,
             position: position ? new Vec3(...position) : undefined,
@@ -68,7 +71,7 @@ export function useRigidVehicle({
             const body = new Body({
                 shape,
                 mass,
-                material,
+                //smaterial,
                 angularDamping: .99,
                 allowSleep: false,
                 quaternion: rotation,
@@ -87,11 +90,11 @@ export function useRigidVehicle({
 
     useEffect(() => {
         vehicle.addToWorld(world)
-        world.addContactMaterial(contactMaterial)
+        //world.addContactMaterial(contactMaterial)
 
         return () => {
             vehicle.removeFromWorld(world)
-            world.removeContactMaterial(contactMaterial)
+            //world.removeContactMaterial(contactMaterial)
         }
     }, [vehicle, world])
 

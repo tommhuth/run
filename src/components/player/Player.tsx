@@ -5,12 +5,11 @@ import { setState } from "@data/store/actions"
 import { extractRotation, useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
-import { RigidVehicle } from "cannon-es"
+import { Body, RigidVehicle, Sphere, Vec3 } from "cannon-es"
 import { useEffect, useMemo } from "react"
 import { Object3D } from "three/webgpu"
 
 import { useControls } from "./useControls"
-import Van from "@components/vehicles/Van"
 
 interface PlayerProps {
     position?: Tuple3
@@ -28,7 +27,7 @@ export default function Player({
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 1, 0])
 
     useEffect(() => {
-        setState({ player: { vehicle: vehicle, mesh: null } })
+        return setState({ player: { vehicle: vehicle, mesh: null } })
     }, [vehicle])
 
     useFrame(() => {

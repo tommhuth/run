@@ -71,7 +71,7 @@ function useCannonBody({
         return new Body({
             mass,
             allowSleep,
-            sleepSpeedLimit: .01,
+            sleepSpeedLimit: .1,
             position: new Vec3(x, y, z),
             velocity: new Vec3(...velocity),
             quaternion: new CannonQuaternion().setFromEuler(...rotation),
@@ -100,11 +100,6 @@ function useCannonBody({
             body.addShape(definition)
         }
     }, [body, definition])
-
-    useEffect(() => {
-        body.mass = mass
-        body.updateMassProperties()
-    }, [mass, body])
 
     useEffect(() => {
         if (!active) {
@@ -152,6 +147,8 @@ export function CannonProvider({
             solver,
             allowSleep,
             gravity: new Vec3(...gravity),
+            quatNormalizeFast: true,
+            quatNormalizeSkip: 0,
         })
 
         const sap = new SAPBroadphase(world)
@@ -159,7 +156,12 @@ export function CannonProvider({
         sap.axisIndex = 2
 
         world.broadphase = sap
+        // potentitally crazy
         world.defaultContactMaterial.restitution = defaultRestitution
+        world.defaultContactMaterial.frictionEquationStiffness = 5e5
+        world.defaultContactMaterial.frictionEquationRelaxation = 3
+        world.defaultContactMaterial.contactEquationStiffness = 1e5
+        world.defaultContactMaterial.contactEquationRelaxation = 3
 
         return world
     }, [iterations, ...gravity])
@@ -169,9 +171,9 @@ export function CannonProvider({
 
     useFrame((state, delta) => {
         // max 24fps as delta
-        const dt = Math.min(delta, 1 / 24)
+        const dt = Math.min(delta, 1 / 30)
 
-        world.step(1 / 60, dt, 10)
+        world.step(1 / 60, dt)
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()

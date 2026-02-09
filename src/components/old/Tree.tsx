@@ -4,15 +4,15 @@ import { useBody } from "@data/cannon"
 import { grid } from "@data/PlacementGrid"
 import { store, TreeObject } from "@data/store"
 import { updateRoadObject } from "@data/store/actions"
-import { useTransitionedState } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { Tuple3, Tuple4 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
-import { ComponentPropsWithoutRef, memo, useState } from "react"
+import { memo } from "react"
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
+
+import { ROAD_EDGE_X, ROAD_FORWARD_EDGE } from "./Road"
 
 const shape = new Box(new Vec3(.25, 5, .25))
 
@@ -27,21 +27,42 @@ type GLTFResult = GLTF & {
     }
 }
 
-interface TreeProps {
-    treeType?: number
-    position: Tuple3
-    rotation?: Tuple3
-    scale?: number
+const offset = 1.5
+
+export function initializeTrees() {
+    return Array.from({ length: 12 }).fill(null).map(() => {
+        const side = random.pick(-1, 1)
+        const [x, z] = grid.getRandomPosition([2, 5], [-1, ROAD_FORWARD_EDGE])
+
+        return {
+            id: random.id(),
+            position: [
+                (x + ROAD_EDGE_X + offset) * side,
+                random.float(-1, 0),
+                z
+            ],
+            treeType: random.pick(0, 1, 2, 3, 4, 5),
+            scale: random.float(1.25, 2),
+            active: false,
+            rotation: [
+                random.float(-.25, .25),
+                random.float(0, Math.PI * 2),
+                random.float(-.25, .1) * random.pick(-1, 1)
+            ],
+            type: "tree"
+        } satisfies TreeObject
+    })
 }
 
 function Tree({
     treeType = 0,
     position,
+    active = false,
     rotation,
     scale = 1,
-}: TreeProps) {
+    id
+}: TreeObject) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
-    const [active, setActive] = useTransitionedState(false)
 
     useBody({
         position,
@@ -59,15 +80,43 @@ function Tree({
         }
 
         const [, , z] = position
-        const dist = 10
-        let currentActive = Math.abs(vehicle.chassisBody.position.z - z) < dist
+        let newActive = Math.abs(vehicle.chassisBody.position.z - z) < 15
 
         if (vehicle.chassisBody.position.z > z + 2) {
-            currentActive = false
+            newActive = false
         }
 
-        if (active !== currentActive) {
-            setActive(currentActive)
+        if (active !== newActive) {
+            updateRoadObject(id, { active: newActive },)
+        }
+    })
+
+    useFrame(() => {
+        const { player } = store.getState()
+        const buffer = 14
+        const currentZ = position[2]
+
+        if (!player.vehicle) {
+            return
+        }
+
+        if (currentZ < player.vehicle.chassisBody.position.z - buffer) {
+            const playerZ = player.vehicle?.chassisBody.position.z
+            const baseZ = playerZ + ROAD_FORWARD_EDGE
+            const [x, z] = grid.getRandomPosition(
+                [0, 10],
+                [baseZ, baseZ + 3]
+            )
+
+            updateRoadObject(id, {
+                position: [
+                    (x + ROAD_EDGE_X + offset) * random.pick(-1, 1),
+                    random.float(-1, 0),
+                    z
+                ],
+                scale: random.float(1.25, 2),
+                active: false
+            })
         }
     })
 
