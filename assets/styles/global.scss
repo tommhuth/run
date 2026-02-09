@@ -44,7 +44,8 @@ html {
     &.standalone {
         height: 100vh;
 
-        body {
+        body,
+        #canvas {
             height: 100vh;
         }
     }
