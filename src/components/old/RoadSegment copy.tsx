@@ -37,7 +37,6 @@ export default function RoadSegment({ position }) {
         mass: 0,
         position: [position[0], height / 2, position[2]],
         definition: shape as ShapeDefinition,
-        active: true
     })
 
     return (

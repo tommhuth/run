@@ -5,7 +5,7 @@ import { Tuple3 } from "@src/types/global"
 import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
 
-import { RunStore, store, TrafficElement } from "."
+import { RoadPart, RunStore, store, TrafficElement } from "."
 
 export function setState(data: Partial<RunStore>) {
     startTransition(() => {
@@ -33,55 +33,69 @@ export function setDebugData(name: keyof RunStore["debug"], value: boolean) {
     })
 }
 
+export function getRandomRoadExtension() {
+    return random.pick(
+        generateForestPart,
+        generateForestPart,
+        generateForestPart,
+        generateForestPart,
+        generateForestPart,
+        generateRocksPart,
+        generateBridgePart
+    )
+}
 
-export function extendRoad(forwardPart: any) {
+export function generateForestPart(forwardPart: RoadPart): RoadPart {
+    return {
+        type: "forest",
+        id: random.id(),
+        depth: 20,
+        position: [
+            0,
+            0,
+            forwardPart.position[2] + forwardPart.depth
+        ]
+    }
+}
+
+export function generateRocksPart(forwardPart: { position: Tuple3; depth: number }): RoadPart {
+    return {
+        type: "rocks",
+        id: random.id(),
+        depth: 20,
+        position: [
+            0,
+            0,
+            forwardPart.position[2] + forwardPart.depth
+        ]
+    }
+}
+
+export function generateBridgePart(forwardPart: { position: Tuple3; depth: number }): RoadPart {
+    return {
+        type: "bridge",
+        id: random.id(),
+        depth: 20,
+        position: [
+            0,
+            0,
+            forwardPart.position[2] + forwardPart.depth
+        ]
+    }
+}
+
+export function extendRoad(forwardPart: RoadPart) {
     const road = store.getState().road
+    const generator = getRandomRoadExtension()
 
     setState({
         road: [
             ...road,
-            {
-                id: random.id(),
-                type: "plain",
-                depth: 20,
-                position: [
-                    0,
-                    0,
-                    forwardPart.position[2] + forwardPart.depth
-                ]
-            }
+            generator(forwardPart),
         ]
     })
 }
 
-/*
-
-type RoadData = Omit<TreeObject, "id"> | Omit<RockObject, "id"> | Omit<StreetLightObject, "id">
-
-export function addRoadObject(data: RoadData) {
-    setState({
-        objects: [
-            {
-                id: random.id(),
-                ...data
-            },
-            ...store.getState().objects,
-        ]
-    })
-}
-
-export function updateRoadObject<T>(id: string, data: T) {
-    setState({
-        objects: [
-            {
-                ...store.getState().objects.find(i => i.id === id)!,
-                ...data
-            },
-            ...store.getState().objects.filter(i => i.id !== id),
-        ]
-    })
-}
-    */
 
 export type InstanceName = "box" | "circle"
 
@@ -109,8 +123,9 @@ const tarfficGap = [10, 12, 16, 20, 25, 40]
 export function initializeTraffic() {
     return [-1, 1].map(direction => {
         let z = 10 * direction
+        const count = 4
 
-        return Array.from({ length: 4 }).fill(null).map(() => {
+        return Array.from({ length: count }).fill(null).map(() => {
             z += random.pick(...tarfficGap)
 
             return {

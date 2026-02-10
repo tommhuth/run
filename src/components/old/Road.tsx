@@ -57,7 +57,6 @@ export default function Road({ position }) {
         mass: 0,
         position: [position[0], height / 2, position[2]],
         definition: shape as ShapeDefinition,
-        active: true
     })
 
     return (
@@ -108,7 +107,6 @@ export function Floor() {
         mass: 0,
         definition: floorShape,
         position: [0, -.5, 0],
-        active: true
     })
 
     useFrame(() => {

@@ -1,11 +1,10 @@
-import random from "@huth/random"
 import { RigidVehicle } from "cannon-es"
 import { DepthTexture, Group, Material } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
+import { generateForestPart, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
 
 interface RoadObject {
     id: string
@@ -37,9 +36,9 @@ export interface TrafficElement {
     direction: 1 | -1
 }
 
-interface RoadPart {
+export interface RoadPart {
     id: string
-    type: string
+    type: "forest" | "rocks" | "bridge"
     position: Tuple3
     depth: number
 }
@@ -72,12 +71,7 @@ const store = create(
             vehicle: null
         },
         road: [
-            {
-                id: random.id(),
-                position: [0, 0, -5],
-                depth: 20,
-                type: "plain"
-            }
+            generateForestPart({ position: [0, 0, -10], depth: 0 }),
         ],
         debug: {
             showColliders: false,

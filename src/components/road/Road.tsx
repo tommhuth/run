@@ -3,7 +3,9 @@ import { extendRoad, setState } from "@data/store/actions"
 import { useFrame } from "@react-three/fiber"
 import { useRef } from "react"
 
-import PlainPart from "./parts/Plain"
+import BridgePart from "./parts/Bridge"
+import ForestPart from "./parts/Forest"
+import RocksPart from "./parts/Rocks"
 
 const [, height] = [9, .75, 500]
 
@@ -14,7 +16,6 @@ export const ROAD_FORWARD_EDGE = 50
 export const ROAD_GAME_OVER_X_EDGE = 16
 export const FOG_DISTANCE = 40
 
-
 export default function Road() {
     const parts = useStore(i => i.road)
     const i = useRef(0)
@@ -24,7 +25,7 @@ export default function Road() {
         const forwardPart = road.at(-1)
         const forwardBuffer = ROAD_FORWARD_EDGE
         const backwardPart = road.at(0)
-        const backwardBuffer = 5
+        const backwardBuffer = 10
 
         i.current++
 
@@ -43,8 +44,12 @@ export default function Road() {
 
     return parts.map(i => {
         switch (i.type) {
-            case "plain":
-                return <PlainPart {...i} key={i.id} />
+            case "bridge":
+                return <BridgePart {...i} key={i.id} />
+            case "forest":
+                return <ForestPart {...i} key={i.id} />
+            case "rocks":
+                return <RocksPart {...i} key={i.id} />
         }
     })
 }

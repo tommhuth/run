@@ -1,7 +1,7 @@
 import { useCannonWorld } from "@data/cannon"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
-import { Body, ContactMaterial, Material, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
+import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
 import { useEffect, useMemo, useRef } from "react"
 import { Euler, Group, Mesh, Quaternion as TQuaternion } from "three"
 
@@ -44,7 +44,7 @@ export function useRigidVehicle({
             contactEquationStiffness: 1000
         })
         */
-        let contactMaterial = null
+        const contactMaterial = null
         const chassisBody = new Body({
             mass,
             position: position ? new Vec3(...position) : undefined,

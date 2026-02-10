@@ -176,6 +176,7 @@ export function CannonProvider({
         const dt = Math.min(delta, 1 / 30)
 
         world.step(dt)
+        console.log(world.bodies.length)
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()
