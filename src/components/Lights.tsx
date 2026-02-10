@@ -47,11 +47,11 @@ export default function Lights() {
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                shadow-mapSize={[768 * viewport.dpr, 768 * viewport.dpr]}
-                shadow-camera-near={-25} // z
+                shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
+                shadow-camera-near={-20} //   top left side
                 shadow-camera-far={35}
-                shadow-camera-left={-25} // x back/forwards
-                shadow-camera-right={50}
+                shadow-camera-left={-20} // x back/forwards
+                shadow-camera-right={27} // forward
                 shadow-camera-top={40} // y
                 shadow-camera-bottom={-25}
                 shadow-radius={2.5}
