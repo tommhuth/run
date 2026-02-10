@@ -61,7 +61,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
         center: [0, .85, 0],
-        mass: 8,
+        mass: 9,
         wheels,
         chassis
     })
