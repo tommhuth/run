@@ -45,7 +45,12 @@ export function getRandomRoadExtension() {
     )
 }
 
-export function generateForestPart(forwardPart: RoadPart): RoadPart {
+interface PreviousPart {
+    position: Tuple3
+    depth: number
+}
+
+export function generateForestPart(previous: PreviousPart): RoadPart {
     return {
         type: "forest",
         id: random.id(),
@@ -53,12 +58,12 @@ export function generateForestPart(forwardPart: RoadPart): RoadPart {
         position: [
             0,
             0,
-            forwardPart.position[2] + forwardPart.depth
+            previous.position[2] + previous.depth
         ]
     }
 }
 
-export function generateRocksPart(forwardPart: { position: Tuple3; depth: number }): RoadPart {
+export function generateRocksPart(previous: PreviousPart): RoadPart {
     return {
         type: "rocks",
         id: random.id(),
@@ -66,12 +71,12 @@ export function generateRocksPart(forwardPart: { position: Tuple3; depth: number
         position: [
             0,
             0,
-            forwardPart.position[2] + forwardPart.depth
+            previous.position[2] + previous.depth
         ]
     }
 }
 
-export function generateBridgePart(forwardPart: { position: Tuple3; depth: number }): RoadPart {
+export function generateBridgePart(previous: PreviousPart): RoadPart {
     return {
         type: "bridge",
         id: random.id(),
@@ -79,19 +84,19 @@ export function generateBridgePart(forwardPart: { position: Tuple3; depth: numbe
         position: [
             0,
             0,
-            forwardPart.position[2] + forwardPart.depth
+            previous.position[2] + previous.depth
         ]
     }
 }
 
-export function extendRoad(forwardPart: RoadPart) {
+export function extendRoad(previous: PreviousPart) {
     const road = store.getState().road
     const generator = getRandomRoadExtension()
 
     setState({
         road: [
             ...road,
-            generator(forwardPart),
+            generator(previous),
         ]
     })
 }
