@@ -34,11 +34,11 @@ export default function Camera() {
 
         _euler.x *= -.2
         _euler.x += -.15
-        _euler.z *= -.2
+        _euler.z *= .1
         _euler.y += Math.PI
 
-        camera.position.lerp(_position, .4)
-        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), .4)
+        camera.position.lerp(_position, .3)
+        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), .35)
 
         _lookAt.copy(forward)
             .applyEuler(_euler)

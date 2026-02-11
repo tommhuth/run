@@ -51,7 +51,7 @@ export default function ForestPart({ position, depth }) {
 
                 rocks.push({
                     position: [
-                        position[0] + random.float(0, 2) * side,
+                        position[0] + random.float(0, 2) * side + radius * -side * .2,
                         position[1],
                         position[2] + random.float(-1, 1)
                     ],

@@ -7,13 +7,13 @@ import { useRef } from "react"
 import { Mesh } from "three"
 
 import { ROAD_FORWARD_EDGE } from "./Road"
-import { ROAD_HEIGHT, ROAD_WIDTH } from "./RoadSegment"
+import { ROAD_BASE_WIDTH, ROAD_HEIGHT, ROAD_WIDTH } from "./RoadSegment"
 
 const size = 100
 const floorDefinition: ShapeDefinition = [
     [new Plane(), new Vec3(), new Quaternion().setFromEuler(-Math.PI * .5, 0, 0)]
 ]
-const roadPlaceholder = new Box(new Vec3(ROAD_WIDTH / 2, ROAD_HEIGHT / 2, 50))
+const roadPlaceholder = new Box(new Vec3(ROAD_BASE_WIDTH / 2, ROAD_HEIGHT / 2, 50))
 
 export default function Ground() {
     const groundRef = useRef<Mesh>(null)

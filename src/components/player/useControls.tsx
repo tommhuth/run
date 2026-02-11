@@ -1,12 +1,19 @@
+import { store } from "@data/store"
 import { clamp } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
+import { lerp } from "three/src/math/MathUtils.js"
 
 export function useControls() {
     const keys = useMemo<Record<string, boolean | number>>(() => ({}), [])
     const motion = useMemo(() => {
-        return { steering: 0, wheelForce: 0 }
+        return {
+            steering: 0,
+            wheelForce: 0,
+            currentSteering: 0,
+            currentWheelForce: 0,
+        }
     }, [])
 
     useEffect(() => {
@@ -65,14 +72,14 @@ export function useControls() {
 
     useFrame(() => {
         const steer = .2
-        const force = 125
+        const force = 175
 
         if (typeof keys.touchY === "number") {
-            motion.wheelForce = force * keys.touchY * 1.25
+            motion.wheelForce = force * keys.touchY
         } else if (keys.w || keys.ArrowUp) {
-            motion.wheelForce = force * 1.25
+            motion.wheelForce = force
         } else if (keys.s || keys.ArrowDown) {
-            motion.wheelForce = -force * 1.25
+            motion.wheelForce = -force
         } else {
             motion.wheelForce = 0
         }
@@ -86,6 +93,14 @@ export function useControls() {
         } else {
             motion.steering = 0
         }
+
+        motion.currentSteering = lerp(motion.currentSteering, motion.steering, .35)
+        motion.currentWheelForce = lerp(motion.currentWheelForce, motion.wheelForce, .65)
+
+        const velocity = store.getState().player.vehicle?.chassisBody.velocity.length() || 0
+        const speedPenality = clamp((velocity - 5) / 5, 0, 1)
+
+        motion.currentSteering *= (1 - speedPenality) * .25 + .75
     })
 
     return { keys, motion }

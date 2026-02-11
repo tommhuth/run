@@ -24,7 +24,7 @@ export default function Player({
     const { motion } = useControls()
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
-    const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 1, 0])
+    const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
 
     useEffect(() => {
         return setState({ player: { vehicle: vehicle, mesh: null } })
@@ -35,10 +35,10 @@ export default function Player({
             return
         }
 
-        vehicle.setWheelForce(motion.wheelForce, 2)
-        vehicle.setWheelForce(motion.wheelForce, 3)
-        vehicle.setSteeringValue(motion.steering, 0)
-        vehicle.setSteeringValue(motion.steering, 1)
+        vehicle.setWheelForce(motion.currentWheelForce, 2)
+        vehicle.setWheelForce(motion.currentWheelForce, 3)
+        vehicle.setSteeringValue(motion.currentSteering, 0)
+        vehicle.setSteeringValue(motion.currentSteering, 1)
     })
 
     useFrame(() => {

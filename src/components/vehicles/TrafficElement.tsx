@@ -9,14 +9,10 @@ import { memo, Suspense, useMemo } from "react"
 
 import Delivery from "./Delivery"
 import GarbageTruck from "./GarbageTruck"
-import HatchbackSports from "./HatchbackSports"
-import SuvLuxury from "./SuvLuxury"
-import Truck from "./Truck"
-import TruckFlat from "./TruckFlat"
+import Suv from "./Suv"
 import useSteeringBehaviour from "./useSteeringBehaviour"
-import Van from "./Van"
 
-const cycler = new Cycler([Delivery, SuvLuxury, GarbageTruck, HatchbackSports, SedanSports, Truck, TruckFlat, Van], .2)
+const cycler = new Cycler([Delivery, GarbageTruck, SedanSports, Suv], .2)
 
 export default memo(({
     id,

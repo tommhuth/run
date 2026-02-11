@@ -8,17 +8,11 @@ import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 
-import { Chassis, useRigidVehicle, Wheel } from "./useRigidVehicle"
+import { Chassis, useRigidVehicle, Wheel, wheelKey } from "./useRigidVehicle"
 
-const width = 1.3
-const height = .95
-const depth = 2.4
-const chassis: Chassis = [
-    [new Box(new Vec3(width / 2, height / 2, depth / 2))],
-]
-const wheelY = -.4
 const wheelX = .4
 const radius = .3
+const wheelY = .3
 const wheels: Wheel[] = [
     {
         position: [wheelX, wheelY, .66],
@@ -36,6 +30,13 @@ const wheels: Wheel[] = [
         position: [-wheelX, wheelY, -.66],
         radius
     }
+]
+
+const width = 1.2
+const height = .8
+const depth = 2.4
+const chassis: Chassis = [
+    [new Box(new Vec3(width / 2, height / 2, depth / 2)), new Vec3(0, wheelY + height / 2, 0)],
 ]
 
 type GLTFResult = GLTF & {
@@ -58,10 +59,9 @@ interface SedanSportsProps {
 
 function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef<RigidVehicle>) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
-    const [chassisRef, , vehicle, backWheelsRef] = useRigidVehicle({
+    const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         rotation,
         position,
-        center: [0, .7, 0],
         wheels,
         chassis,
         mass: 7
@@ -72,40 +72,20 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
     }, [vehicle])
 
     return (
-        <group
-            ref={chassisRef}
-            dispose={null}
-        >
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.spoiler.geometry}
-                position={[0, .65, -1.044]}
+        <>
+            <group
+                ref={chassisRef}
+                dispose={null}
             >
-                <primitive
-                    attach="material"
-                    object={carMaterial}
-                    wireframe={Config.DEBUG}
-                />
-            </mesh>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.body.geometry}
-                position={[0, 0.15, -0.025]}
-            >
-                <primitive
-                    attach="material"
-                    object={carMaterial}
-                    wireframe={Config.DEBUG}
-                />
-            </mesh>
-            <group ref={backWheelsRef}>
+                <mesh visible={Config.DEBUG}>
+                    <sphereGeometry args={[.125]} />
+                    <meshBasicMaterial color="red" />
+                </mesh>
                 <mesh
                     castShadow
                     receiveShadow
-                    geometry={nodes["wheel-front-left"].geometry}
-                    position={[wheels[0].position[0], wheels[0].position[1] + .7, wheels[0].position[2]]}
+                    geometry={nodes.spoiler.geometry}
+                    position={[0, .45, -1.044]}
                 >
                     <primitive
                         attach="material"
@@ -116,32 +96,8 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
                 <mesh
                     castShadow
                     receiveShadow
-                    geometry={nodes["wheel-front-right"].geometry}
-                    position={[wheels[1].position[0], wheels[1].position[1] + .7, wheels[1].position[2]]}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-back-left"].geometry}
-                    position={[wheels[2].position[0], wheels[2].position[1] + .7, wheels[2].position[2]]}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-back-right"].geometry}
-                    position={[wheels[3].position[0], wheels[3].position[1] + .7, wheels[3].position[2]]}
+                    geometry={nodes.body.geometry}
+                    position={[0, .15, -0.025]}
                 >
                     <primitive
                         attach="material"
@@ -150,7 +106,26 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
                     />
                 </mesh>
             </group>
-        </group>
+            <group ref={wheelsRef}>
+                {Array.from({ length: 4 }).map((i, index) => {
+                    return (
+                        <mesh
+                            castShadow
+                            key={index}
+                            receiveShadow
+                            geometry={nodes[wheelKey[index]].geometry}
+                            position={wheels[index].position}
+                        >
+                            <primitive
+                                attach="material"
+                                object={carMaterial}
+                                wireframe={Config.DEBUG}
+                            />
+                        </mesh>
+                    )
+                })}
+            </group>
+        </>
     )
 }
 

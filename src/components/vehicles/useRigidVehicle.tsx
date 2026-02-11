@@ -3,8 +3,7 @@ import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
 import { useEffect, useMemo, useRef } from "react"
-import { Euler, Group, Mesh, Quaternion as TQuaternion } from "three"
-
+import { Group, Mesh } from "three"
 
 export type Chassis = [Shape, Vec3?, Quaternion?][]
 export type Wheel = { radius: number; position: Tuple3 }
@@ -15,46 +14,44 @@ interface UseRigidVehicleParams {
     wheels: Wheel[]
     position?: Tuple3
     rotation?: Tuple3
-    center?: Tuple3
+    verticalStabilityAdjust?: number
+    horizontalStabilityAdjust?: number
 }
 
-const _quaternion = new TQuaternion()
-const _euler = new Euler()
+const _emptyOffset = new Vec3()
+const _wheelOffset = new Vec3()
+const _chassisOffset = new Vec3()
+const _emptyQuaternion = new Quaternion()
+
+const direction = new Vec3(0, -1, 0)
+
+export const wheelKey = ["wheel-front-left", "wheel-front-right", "wheel-back-left", "wheel-back-right"]
 
 export function useRigidVehicle({
     position = [0, 0, 0],
     rotation: incomingRotation = [0, 0, 0],
-    center = [0, -5, 0],
+    horizontalStabilityAdjust = .05, // wheel push out
+    verticalStabilityAdjust = .05, // center of mass adjust 
     mass,
-    chassis = [],
+    chassis,
     wheels
 }: UseRigidVehicleParams) {
     const chassisRef = useRef<Group>(null)
     const wheelsRef = useRef<Group>(null)
     const backWheelsRef = useRef<Group>(null)
-    const centerOfMassAdjust = new Vec3(...center)
     const world = useCannonWorld()
-    const [vehicle, contactMaterial] = useMemo(() => {
+    const [vehicle] = useMemo(() => {
         const rotation = new Quaternion().setFromEuler(...incomingRotation)
-        /*
-        const material = new Material("wheelMaterial")
-        const contactMaterial = new ContactMaterial(material, world.defaultMaterial, {
-            friction: .85,
-            restitution: .1,
-            contactEquationStiffness: 1000
-        })
-        */
         const contactMaterial = null
+        const centerOfMassAdjust = new Vec3(0, verticalStabilityAdjust, 0)
         const chassisBody = new Body({
             mass,
             position: position ? new Vec3(...position) : undefined,
             quaternion: rotation,
             allowSleep: false,
         })
-        const emptyOffset = new Vec3()
-        const emptyQuaternion = new Quaternion()
 
-        for (const [shape, offset = emptyOffset, quaternion = emptyQuaternion] of chassis) {
+        for (const [shape, offset = _emptyOffset, quaternion = _emptyQuaternion] of chassis) {
             chassisBody.addShape(
                 shape,
                 offset.vadd(centerOfMassAdjust),
@@ -63,15 +60,13 @@ export function useRigidVehicle({
         }
 
         const vehicle = new RigidVehicle({ chassisBody })
-        const direction = new Vec3(0, -1, 0) // down
-        const axis = [-1, -1, 1, 1]
+        // const axis = [-1, -1, 1, 1]
 
-        for (const [index, { position, radius }] of wheels.entries()) {
+        for (const [, { position, radius }] of wheels.entries()) {
             const shape = new Sphere(radius)
             const body = new Body({
                 shape,
                 mass,
-                //smaterial,
                 angularDamping: .99,
                 allowSleep: false,
                 quaternion: rotation,
@@ -79,8 +74,12 @@ export function useRigidVehicle({
 
             vehicle.addWheel({
                 body,
-                position: new Vec3(...position).vadd(centerOfMassAdjust),
-                axis: new Vec3(axis[index], 0, 0),
+                position: new Vec3(
+                    position[0] + horizontalStabilityAdjust * Math.sign(position[0]),
+                    position[1] + verticalStabilityAdjust,
+                    position[2]
+                ),
+                axis: new Vec3(1, 0, 0),
                 direction
             })
         }
@@ -90,11 +89,9 @@ export function useRigidVehicle({
 
     useEffect(() => {
         vehicle.addToWorld(world)
-        //world.addContactMaterial(contactMaterial)
 
         return () => {
             vehicle.removeFromWorld(world)
-            //world.removeContactMaterial(contactMaterial)
         }
     }, [vehicle, world])
 
@@ -106,18 +103,20 @@ export function useRigidVehicle({
         chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
         chassisRef.current.position.copy(vehicle.chassisBody.position)
 
+        vehicle.chassisBody.quaternion.vmult(_chassisOffset.set(0, -verticalStabilityAdjust, 0), _chassisOffset)
+        chassisRef.current.position.sub(_chassisOffset)
+
         for (const [index, wheel] of vehicle.wheelBodies.entries()) {
             const wheelMesh = wheelsRef.current?.children[index] as Mesh
-            const backWheelMesh = backWheelsRef.current?.children[index - 2]
 
             if (wheelMesh) {
-                wheelMesh?.quaternion.copy(wheel.quaternion)
-                wheelMesh?.position.copy(wheel.position)
-            } else if (backWheelMesh) {
-                _quaternion.copy(wheel.quaternion)
-                _euler.setFromQuaternion(_quaternion, "XYZ")
+                wheelMesh.quaternion.copy(wheel.quaternion)
+                wheelMesh.position.copy(wheel.position)
 
-                backWheelMesh.rotation.x = _euler.x
+                const side = (index + 1) % 2 === 0 ? 1 : -1
+
+                wheel.quaternion.vmult(_wheelOffset.set(horizontalStabilityAdjust * side, 0, 0), _wheelOffset)
+                wheelMesh.position.add(_wheelOffset)
             }
         }
     })
