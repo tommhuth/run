@@ -19,7 +19,7 @@ export default function ForestPart({ position, depth }) {
         const rocks: RockObject[] = []
 
         for (const side of [-1, 1]) {
-            const treeCount = random.pick(0, 2, 3, 8)
+            const treeCount = random.pick(3, 5, 6, 8)
             const grid = side === -1 ? leftGrid : rightGrid
             const positions = grid.getRandomPositions()
 

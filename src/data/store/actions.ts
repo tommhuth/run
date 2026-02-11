@@ -40,6 +40,7 @@ export function getRandomRoadExtension() {
         generateForestPart,
         generateForestPart,
         generateForestPart,
+        generateForestPart,
         generateRocksPart,
         generateBridgePart
     )
