@@ -8,16 +8,9 @@ import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "
 import { Mesh } from "three"
 import type { GLTF } from "three/examples/jsm/Addons.js"
 
-import { Chassis, useRigidVehicle, Wheel } from "./useRigidVehicle"
+import { Chassis, useRigidVehicle, Wheel, wheelKey } from "./useRigidVehicle"
 
-const width = 1.25
-const height = 1.1
-const depth = 2.55
-const chassis: Chassis = [
-    [new Box(new Vec3(width / 2, height / 2, 1.65 / 2)), new Vec3(0, 0, -.3)],
-    [new Box(new Vec3(width / 2, .5 / 2, depth / 2)), new Vec3(0, -.2, 0)],
-]
-const wheelY = -.5
+const wheelY = .3
 const wheelX = .4
 const wheelZ = .76
 const radius = .3
@@ -38,6 +31,13 @@ const wheels: Wheel[] = [
         position: [-wheelX, wheelY, -wheelZ],
         radius
     }
+]
+
+const width = 1.4
+const height = 1.1
+const depth = 2.65
+const chassis: Chassis = [
+    [new Box(new Vec3(width / 2, height / 2, depth / 2)), new Vec3(0, height / 2 + wheelY, 0)],
 ]
 
 type GLTFResult = GLTF & {
@@ -61,7 +61,6 @@ function Van({ children, ...props }: VanProps, ref: ForwardedRef<RigidVehicle>) 
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
-        center: [0, .85, 0],
         mass: 7,
         wheels,
         chassis
@@ -93,50 +92,23 @@ function Van({ children, ...props }: VanProps, ref: ForwardedRef<RigidVehicle>) 
                 {children}
             </group>
             <group ref={wheelsRef}>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-front-left"].geometry}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-front-right"].geometry}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-back-left"].geometry}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes["wheel-back-right"].geometry}
-                >
-                    <primitive
-                        attach="material"
-                        object={carMaterial}
-                        wireframe={Config.DEBUG}
-                    />
-                </mesh>
+                {Array.from({ length: 4 }).map((i, index) => {
+                    return (
+                        <mesh
+                            key={index}
+                            castShadow
+                            receiveShadow
+                            geometry={nodes[wheelKey[index]].geometry}
+                            position={wheels[index].position}
+                        >
+                            <primitive
+                                attach="material"
+                                object={carMaterial}
+                                wireframe={Config.DEBUG}
+                            />
+                        </mesh>
+                    )
+                })}
             </group>
         </>
     )

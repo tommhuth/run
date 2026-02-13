@@ -4,7 +4,7 @@ import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { generateForestPart, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
+import { generateForestPart, generatePickupPoint, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
 
 interface RoadObject {
     id: string
@@ -38,7 +38,7 @@ export interface TrafficElement {
 
 export interface RoadPart {
     id: string
-    type: "forest" | "rocks" | "bridge"
+    type: "forest" | "rocks" | "bridge" | "pickupPoint"
     position: Tuple3
     depth: number
 }
@@ -71,8 +71,9 @@ const store = create(
             vehicle: null
         },
         road: [
-            generateForestPart({ position: [0, 0, -10], depth: 0 }),
-            generateForestPart({ position: [0, 0, -10], depth: 20 }),
+            // generateForestPart({ position: [0, 0, -10], depth: 0 }),
+            generatePickupPoint({ position: [0, 0, -5], depth: 0 }),
+            // generateForestPart({ position: [0, 0, -10], depth: 20 }),
         ],
         debug: {
             showColliders: false,

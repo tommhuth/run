@@ -76,7 +76,7 @@ export default class PlaceGrid {
     }
 
     public getRandomPositions() {
-        const result = this.getPositions() // avoid mutating original (remove if mutation is fine)
+        const result = this.getPositions()
 
         for (let i = result.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));

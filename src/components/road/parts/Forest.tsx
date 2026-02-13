@@ -1,4 +1,3 @@
-
 import PlaceGrid from "@data/PlaceGrid"
 import { RockObject, TreeObject } from "@data/store"
 import random from "@huth/random"

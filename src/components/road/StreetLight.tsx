@@ -8,7 +8,7 @@ import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
 
-const box = new Box(new Vec3(.175, 6, .175))
+const box = new Box(new Vec3(.05, 6, .05))
 
 export default function StreetLight({ position, scale, rotation }) {
     const { nodes } = useGLTF(model)

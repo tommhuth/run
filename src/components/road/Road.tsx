@@ -5,6 +5,7 @@ import { useRef } from "react"
 
 import BridgePart from "./parts/Bridge"
 import ForestPart from "./parts/Forest"
+import PickupPointPart from "./parts/PickupPoint"
 import RocksPart from "./parts/Rocks"
 
 const [, height] = [9, .75, 500]
@@ -12,7 +13,7 @@ const [, height] = [9, .75, 500]
 export const ROAD_HEIGHT = height
 export const ROAD_CENTER_X = 1.5
 export const ROAD_EDGE_X = ROAD_CENTER_X + 2.25
-export const ROAD_FORWARD_EDGE = 50
+export const ROAD_FORWARD_EDGE = 55
 export const ROAD_GAME_OVER_X_EDGE = 16
 export const FOG_DISTANCE = 40
 
@@ -46,6 +47,8 @@ export default function Road() {
         switch (i.type) {
             case "bridge":
                 return <BridgePart {...i} key={i.id} />
+            case "pickupPoint":
+                return <PickupPointPart {...i} key={i.id} />
             case "forest":
                 return <ForestPart {...i} key={i.id} />
             case "rocks":

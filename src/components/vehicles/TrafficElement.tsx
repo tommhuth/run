@@ -11,8 +11,9 @@ import Delivery from "./Delivery"
 import GarbageTruck from "./GarbageTruck"
 import Suv from "./Suv"
 import useSteeringBehaviour from "./useSteeringBehaviour"
+import Van from "./Van"
 
-const cycler = new Cycler([Delivery, GarbageTruck, SedanSports, Suv], .2)
+const cycler = new Cycler([Van, Delivery, GarbageTruck, SedanSports, Suv], .1)
 
 export default memo(({
     id,

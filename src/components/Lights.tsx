@@ -56,7 +56,7 @@ export default function Lights() {
                 shadow-camera-bottom={-25}
                 shadow-radius={2.5}
                 shadow-bias={-.001}
-                intensity={8}
+                intensity={7}
                 color={"#bee6ff"}
             />
             <hemisphereLight

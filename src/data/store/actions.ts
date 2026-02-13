@@ -38,11 +38,15 @@ export function getRandomRoadExtension() {
         generateForestPart,
         generateForestPart,
         generateForestPart,
+        generatePickupPoint,
         generateForestPart,
         generateForestPart,
         generateForestPart,
         generateRocksPart,
-        generateBridgePart
+        generateBridgePart,
+        generatePickupPoint,
+        generateForestPart,
+        generateForestPart,
     )
 }
 
@@ -90,6 +94,19 @@ export function generateBridgePart(previous: PreviousPart): RoadPart {
     }
 }
 
+export function generatePickupPoint(previous: PreviousPart): RoadPart {
+    return {
+        type: "pickupPoint",
+        id: random.id(),
+        depth: 20,
+        position: [
+            0,
+            0,
+            previous.position[2] + previous.depth
+        ]
+    }
+}
+
 export function extendRoad(previous: PreviousPart) {
     const road = store.getState().road
     const generator = getRandomRoadExtension()
@@ -97,7 +114,7 @@ export function extendRoad(previous: PreviousPart) {
     setState({
         road: [
             ...road,
-            generator(previous),
+            generator(previous)
         ]
     })
 }
@@ -124,7 +141,7 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
     })
 }
 
-const tarfficGap = [10, 12, 16, 20, 25, 40]
+const tarfficGap = [12, 16, 30, 25, 40]
 
 export function initializeTraffic() {
     return [-1, 1].map(direction => {

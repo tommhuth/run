@@ -11,7 +11,7 @@ import { memo } from "react"
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 
-const shape = new Box(new Vec3(.25, 5, .25))
+const shape = new Box(new Vec3(.1, 5, .1))
 
 type GLTFResult = GLTF & {
     nodes: {
