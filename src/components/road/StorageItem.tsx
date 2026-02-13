@@ -32,25 +32,16 @@ export default function StorageItem({
     })
 
     return (
-        <group
+        <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes[name].geometry}
+            material={storageMaterial}
             ref={ref}
-            {...props}
             dispose={null}
             scale={scale}
-        >
-            {names.map(i => {
-                return (
-                    <mesh
-                        key={i}
-                        visible={i === name}
-                        castShadow
-                        receiveShadow
-                        geometry={nodes[i].geometry}
-                        material={storageMaterial}
-                    />
-                )
-            })}
-        </group>
+            {...props}
+        />
     )
 }
 

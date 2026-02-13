@@ -6,6 +6,7 @@ import { clamp } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
+import { Tuple3 } from "@src/types/global"
 import { useMemo, useRef } from "react"
 import { Euler, InstancedMesh, MathUtils, Quaternion, Vector3 } from "three"
 
@@ -165,13 +166,21 @@ const _playerPosition = new Vector3()
 const _playerVelocity = new Vector3()
 const _euler = new Euler()
 
+interface LeafFieldProps {
+    position: Tuple3
+    depth?: number
+    width?: number
+    interval?: number
+    randomness?: number
+}
+
 export default function LeafField({
     position,
     depth = 14,
     width = 6,
     interval = .9,
     randomness = .75
-}) {
+}: LeafFieldProps) {
     const leaves = useMemo(() => {
         let index = 0
 
@@ -179,7 +188,7 @@ export default function LeafField({
             return Array.from({ length: Math.ceil(depth / interval) }).map((i, z) => {
                 const restQuaternion = new Quaternion().setFromEuler(
                     _euler.set(
-                        random.float(.1, .5) * random.pick(-1, 1),
+                        random.float(-.5, .5),
                         random.float(0, Math.PI * 2),
                         0,
                     )

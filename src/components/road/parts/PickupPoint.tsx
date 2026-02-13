@@ -11,27 +11,27 @@ import StreetLight from "../StreetLight"
 useGLTF.preload(model)
 
 export default function PickupPointPart({ position, depth }) {
-    const side = useMemo(() => 1 || random.pick(-1, 1), [])
+    const side = useMemo(() => random.pick(-1, 1), [])
 
     return (
         <>
             <StorageItem
-                position={[7.5 * side, 1, 9 + position[2]]}
+                position={[7.5 * side, 1.1, 9 + position[2]]}
                 name="box"
                 rotation={[0, 1, 0]}
             />
             <StorageItem
-                position={[9 * side, 2, 9 + position[2]]}
+                position={[9 * side, 2.2, 9 + position[2]]}
                 name="box-open"
                 rotation={[0, .6, 0]}
             />
             <StorageItem
-                position={[9 * side, 1, 9 + position[2]]}
+                position={[9 * side, 1.1, 9 + position[2]]}
                 name="box-large"
                 rotation={[0, -.1, 0]}
             />
 
-            <LeafField position={[-10, 0, position[2] + depth / 2]} />
+            <LeafField position={[-11, 0, position[2] + depth / 2]} />
             <LeafField position={[12, 0, position[2] + depth / 2]} />
 
 
