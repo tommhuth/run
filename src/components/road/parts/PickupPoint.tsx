@@ -1,7 +1,7 @@
 import model from "@assets/models/leaf.glb"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
-import { Fragment, useEffect, useMemo } from "react"
+import { Fragment, Suspense, useEffect, useMemo } from "react"
 
 import LeafField from "../LeafField"
 import RoadSegment from "../RoadSegment"
@@ -37,9 +37,6 @@ export default function PickupPointPart({ position, depth }) {
                 rotation={[0, -.1, 0]}
             />
 
-            <LeafField position={[-11, 0, position[2] + depth / 2]} />
-            <LeafField position={[12, 0, position[2] + depth / 2]} />
-
 
             {Array.from({ length: 2 }).map((i, index) => {
                 const x = 3.75
@@ -72,3 +69,16 @@ export default function PickupPointPart({ position, depth }) {
         </>
     )
 }
+
+
+
+/*
+
+
+
+            <Suspense fallback={null}>
+
+                <LeafField position={[-11, 0, position[2] + depth / 2]} />
+                <LeafField position={[12, 0, position[2] + depth / 2]} />
+            </Suspense>
+            */
