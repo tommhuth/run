@@ -30,8 +30,8 @@ export const wheelKey = ["wheel-front-left", "wheel-front-right", "wheel-back-le
 export function useRigidVehicle({
     position = [0, 0, 0],
     rotation: incomingRotation = [0, 0, 0],
-    horizontalStabilityAdjust = .05, // wheel push out
-    verticalStabilityAdjust = .05, // center of mass adjust 
+    horizontalStabilityAdjust = .025, // wheel push out
+    verticalStabilityAdjust = 0, // center of mass adjust 
     mass,
     chassis,
     wheels
@@ -66,7 +66,7 @@ export function useRigidVehicle({
             const shape = new Sphere(radius)
             const body = new Body({
                 shape,
-                mass,
+                mass: mass * .5,
                 angularDamping: .99,
                 allowSleep: false,
                 quaternion: rotation,

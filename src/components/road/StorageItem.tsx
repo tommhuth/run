@@ -26,7 +26,7 @@ export default function StorageItem({
     const definition = useMemo(() => new Box(new Vec3(width / 2 * scale, height / 2 * scale, depth / 2 * scale)), [])
     const [ref] = useBody({
         definition,
-        mass: .25,
+        mass: .15,
         position,
         rotation
     })

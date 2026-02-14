@@ -1,9 +1,9 @@
 import model from "@assets/models/road.glb"
 import { floorMaterial } from "@components/materials/shared"
-import { useBody } from "@data/cannon"
+import { ShapeDefinition, useBody } from "@data/cannon"
 import Config from "@data/Config"
 import { useGLTF } from "@react-three/drei"
-import { Shape } from "cannon-es"
+import { Shape, Vec3 } from "cannon-es"
 import { useMemo } from "react"
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
@@ -11,7 +11,8 @@ import { ShapeType, threeToCannon } from "three-to-cannon"
 
 type GLTFResult = GLTF & {
     nodes: {
-        Cube: Mesh
+        main: Mesh
+        lower: Mesh
     }
     materials: {}
 }
@@ -28,7 +29,7 @@ export const ROAD_FORWARD_EDGE = 75
 export const ROAD_GAME_OVER_X_EDGE = 16
 export const FOG_DISTANCE = 60
 
-let sharedShape: Shape
+let sharedShape: ShapeDefinition
 
 export default function RoadSegment({ position }) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
@@ -37,10 +38,13 @@ export default function RoadSegment({ position }) {
             return sharedShape
         }
 
-        sharedShape = threeToCannon(nodes.Cube as any, { type: ShapeType.HULL })?.shape as Shape
+        sharedShape = [
+            [threeToCannon(nodes.main as any, { type: ShapeType.HULL })?.shape as Shape],
+            [threeToCannon(nodes.lower as any, { type: ShapeType.HULL })?.shape as Shape, new Vec3(0, 0.285 / 2 - height / 2, 0)],
+        ]
 
         return sharedShape
-    }, [nodes.Cube])
+    }, [nodes])
 
     useBody({
         mass: 0,
@@ -53,7 +57,7 @@ export default function RoadSegment({ position }) {
             <mesh
                 castShadow
                 receiveShadow
-                geometry={nodes.Cube.geometry}
+                geometry={nodes.main.geometry}
                 material={floorMaterial}
                 position={[position[0], height / 2, position[2]]}
             />
