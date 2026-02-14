@@ -38,13 +38,10 @@ export function getRandomRoadExtension() {
         generateForestPart,
         generateForestPart,
         generateForestPart,
-        generatePickupPoint,
-        generateForestPart,
         generateForestPart,
         generateForestPart,
         generateRocksPart,
         generateBridgePart,
-        generatePickupPoint,
         generateForestPart,
         generateForestPart,
     )
@@ -107,9 +104,16 @@ export function generatePickupPoint(previous: PreviousPart): RoadPart {
     }
 }
 
+let i = 0
+
 export function extendRoad(previous: PreviousPart) {
     const road = store.getState().road
-    const generator = getRandomRoadExtension()
+    let generator = getRandomRoadExtension()
+
+    if (i === 0) {
+        generator = generatePickupPoint
+        i = 10
+    }
 
     setState({
         road: [
