@@ -1,6 +1,6 @@
 import model from "@assets/models/suv.glb"
 import { carMaterial } from "@components/materials/shared"
-import { Chassis, Wheel, useRigidVehicle, wheelKey } from "@components/vehicles/useRigidVehicle"
+import { Chassis, useRigidVehicle, Wheel, wheelKey } from "@components/road/traffic/useRigidVehicle"
 import Config from "@data/Config"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
@@ -63,7 +63,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
-        mass: 8,
+        mass: 13,
         wheels,
         chassis
     })
@@ -135,53 +135,3 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
 export default memo(forwardRef(Suv))
 
 useGLTF.preload(model)
-
-
-/*
-
-
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes["wheel-front-left"].geometry}
-                    >
-                        <primitive
-                            attach="material"
-                            object={carMaterial}
-                            wireframe={Config.DEBUG}
-                        />
-                    </mesh>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes["wheel-front-right"].geometry}
-                    >
-                        <primitive
-                            attach="material"
-                            object={carMaterial}
-                            wireframe={Config.DEBUG}
-                        />
-                    </mesh>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes["wheel-back-left"].geometry}
-                    >
-                        <primitive
-                            attach="material"
-                            object={carMaterial}
-                            wireframe={Config.DEBUG}
-                        />
-                    </mesh>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes["wheel-back-right"].geometry}
-                    >
-                        <primitive
-                            attach="material"
-                            object={carMaterial}
-                            wireframe={Config.DEBUG}
-                        />
-                    </mesh>
-                    */

@@ -6,12 +6,12 @@ import { useFrame } from "@react-three/fiber"
 import { MeshBasicMaterial } from "three"
 
 import Cloud, { CloudProps } from "./Cloud"
-import { ROAD_FORWARD_EDGE } from "./Road"
+import { ROAD_FORWARD_EDGE } from "./const"
 
 const xRange = [10, 25, 19, 12, 6, 8]
 const interval = 4
 
-export default function CloudSystem({ size = 20 }: { size?: number }) {
+export default function CloudSystem({ size = 10 }: { size?: number }) {
     const [material, setMaterial] = useTransitionedState<MeshBasicMaterial | null>(null)
     const [clouds, setClouds] = useTransitionedState<CloudProps[]>(() => {
         return Array.from({ length: size }).fill(null).map((i, index) => {
@@ -46,7 +46,7 @@ export default function CloudSystem({ size = 20 }: { size?: number }) {
         }
 
         for (const { position, id } of clouds) {
-            if (position[2] < vehicle.chassisBody.position.z - 4) {
+            if (position[2] < vehicle.chassisBody.position.z - 6) {
                 updateCloud(id, {
                     position: [
                         random.pick(...xRange) * random.pick(1, -1),

@@ -1,4 +1,5 @@
-import { ROAD_GAME_OVER_X_EDGE } from "@components/road/Road"
+import { ROAD_GAME_OVER_X_EDGE } from "@components/road/const"
+import Config from "@data/Config"
 import { store } from "@data/store"
 import { setState } from "@data/store/actions"
 import { extractRotation, useTransitionedState } from "@data/utils"
@@ -42,7 +43,9 @@ export default function Player({
     })
 
     useFrame(() => {
-        if (!vehicle) {
+        return
+
+        if (!vehicle || Config.DEBUG) {
             return
         }
 

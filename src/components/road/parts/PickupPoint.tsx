@@ -1,7 +1,7 @@
 import model from "@assets/models/leaf.glb"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
-import { Fragment, useMemo } from "react"
+import { Fragment, useEffect, useMemo } from "react"
 
 import LeafField from "../LeafField"
 import RoadSegment from "../RoadSegment"
@@ -13,6 +13,12 @@ useGLTF.preload(model)
 export default function PickupPointPart({ position, depth }) {
     const side = useMemo(() => random.pick(-1, 1), [])
 
+    useEffect(() => {
+        console.log("ssss")
+
+        return () => console.log("gone")
+    }, [])
+
     return (
         <>
             <StorageItem
@@ -21,7 +27,7 @@ export default function PickupPointPart({ position, depth }) {
                 rotation={[0, 1, 0]}
             />
             <StorageItem
-                position={[9 * side, 2.2, 9 + position[2]]}
+                position={[9 * side, 2., 9 + position[2]]}
                 name="box-open"
                 rotation={[0, .6, 0]}
             />

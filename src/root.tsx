@@ -1,3 +1,5 @@
+
+import { ROAD_FORWARD_EDGE } from "@components/road/const"
 import { clamp } from "@data/utils"
 import { createRoot, events, RenderProps } from "@react-three/fiber"
 import { lazy, ReactNode } from "react"
@@ -10,7 +12,7 @@ function getConfiguration() {
     return {
         camera: {
             near: .01,
-            far: 100,
+            far: ROAD_FORWARD_EDGE,
             position: [0, 0, 0],
             fov: 70
         },

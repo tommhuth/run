@@ -8,8 +8,6 @@ import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
 import { memo, useMemo } from "react"
 
-
-
 function Rock({
     position,
     scale,

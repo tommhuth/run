@@ -1,4 +1,3 @@
-import SedanSports from "@components/vehicles/SedanSports"
 import Cycler from "@data/Cycler"
 import { store, TrafficElement } from "@data/store"
 import { removeTrafficElement } from "@data/store/actions"
@@ -9,6 +8,7 @@ import { memo, Suspense, useMemo } from "react"
 
 import Delivery from "./Delivery"
 import GarbageTruck from "./GarbageTruck"
+import SedanSports from "./SedanSports"
 import useSteeringBehaviour from "./useSteeringBehaviour"
 import Van from "./Van"
 

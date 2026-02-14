@@ -11,7 +11,7 @@ import { Box, Vec3 } from "cannon-es"
 import { useMemo } from "react"
 import { Fragment } from "react/jsx-runtime"
 
-import { ROAD_BASE_WIDTH, ROAD_DEPTH, ROAD_HEIGHT } from "../RoadSegment"
+import { ROAD_BASE_WIDTH, ROAD_DEPTH, ROAD_HEIGHT } from "../const"
 import Rock from "../Rock"
 import StreetLight from "../StreetLight"
 

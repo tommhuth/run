@@ -8,7 +8,7 @@ import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useMemo, useRef } from "react"
-import { Euler, InstancedMesh, MathUtils, Quaternion, Vector3 } from "three"
+import { Euler, InstancedMesh, Quaternion, Vector3 } from "three"
 
 useGLTF.preload(model)
 
@@ -29,12 +29,11 @@ const tmpVec2 = new Vector3()
 const tmpVec3 = new Vector3()
 const tmpQuat = new Quaternion()
 
-const MAX_BEND = Math.PI * 0.5 * .75
-const WIND_STRENGTH = 0.15
-const WIND_FREQ = 1.5
 
 // thanks chatgpt
 // https://chatgpt.com/c/698dfd6c-8bf0-8332-b9b7-cdebab78fd8c
+// bends leaf with anchorpoint center bottom of mesh, to rotate away from
+// player position
 function updateLeaf(
     leaf: Leaf,
     playerPos: Vector3,
@@ -42,101 +41,79 @@ function updateLeaf(
     dt: number,
     time: number
 ) {
+    const MAX_BEND = Math.PI * 0.375
+    const WIND_STRENGTH = 0.15
+    const WIND_FREQ = 1.5
     const pushRadius = 1.75
+    const pushRadiusSq = pushRadius * pushRadius
     const pushStrength = .35
 
-    const leafPos = tmpVec.copy(leaf.position)
-    const toLeaf = tmpVec2.subVectors(leafPos, playerPos)
-    const dist = toLeaf.length()
+    // ----- player push -----
+    const toLeaf = tmpVec.subVectors(leaf.position, playerPos)
+    const distSq = toLeaf.lengthSq()
 
-    if (dist < pushRadius && playerVel.lengthSq() > 0.0001) {
+    if (distSq < pushRadiusSq) {
 
-        const outward = toLeaf.normalize()
+        const invDist = 1 / Math.sqrt(distSq + 1e-6)
+        const outward = toLeaf.multiplyScalar(invDist)
 
-        // Only if moving toward leaf
-        const velDir = tmpVec3.copy(playerVel).normalize()
-        const toward = velDir.dot(outward)
+        // radial velocity toward leaf
+        const radialVel = playerVel.dot(outward)
 
-        if (toward > 0) {
+        if (radialVel > 0) {
 
-            const speed = playerVel.length()
-
-            // Stem direction (local Y axis in world space)
-            const stemDir = tmpVec
+            // stem dir (cached per leaf ideally)
+            const stemDir = tmpVec2
                 .set(0, 1, 0)
                 .applyQuaternion(leaf.restQuaternion)
-                .normalize()
 
-            // Project outward direction onto bend plane
-            const projected = tmpVec2
-                .copy(outward)
-                .projectOnPlane(stemDir)
-                .normalize()
+            // remove vertical component -> bend plane
+            const proj = tmpVec3.copy(outward)
 
-            // Torque axis = stem × projected force
-            const torqueAxis = tmpVec3
-                .crossVectors(stemDir, projected)
-                .normalize()
+            proj.addScaledVector(stemDir, -proj.dot(stemDir))
+
+            const torqueAxis = stemDir.cross(proj)
+
+            const falloff = 1 - Math.sqrt(distSq) / pushRadius
 
             leaf.angularVelocity.addScaledVector(
                 torqueAxis,
-                pushStrength *
-                speed *
-                toward *
-                (1 - dist / pushRadius)
+                pushStrength * radialVel * falloff
             )
         }
     }
 
-    // --- wind ---
+    // ----- wind -----
     const t = time * WIND_FREQ + leaf.position.x * 0.7
 
     tmpVec.set(Math.sin(t), 0, Math.cos(t * 0.9))
     leaf.angularVelocity.addScaledVector(tmpVec, WIND_STRENGTH * dt)
 
-    // --- spring ---
-    tmpQuat
-        .copy(leaf.restQuaternion)
-        .invert()
-        .multiply(leaf.quaternion)
-
+    // ----- spring -----
+    tmpQuat.copy(leaf.restQuaternion).invert().multiply(leaf.quaternion)
     tmpVec.set(tmpQuat.x, tmpQuat.y, tmpQuat.z)
+    leaf.angularVelocity.addScaledVector(tmpVec, -leaf.stiffness * dt)
+    leaf.angularVelocity.multiplyScalar(Math.exp(-leaf.damping * dt))
 
-    leaf.angularVelocity.addScaledVector(
-        tmpVec,
-        -leaf.stiffness * dt
-    )
-
-    leaf.angularVelocity.multiplyScalar(
-        Math.exp(-leaf.damping * dt)
-    )
-
-    // --- integrate ---
-    tmpQuat
-        .set(
-            leaf.angularVelocity.x * dt,
-            leaf.angularVelocity.y * dt,
-            leaf.angularVelocity.z * dt,
-            1
-        )
-        .normalize()
+    // ----- integrate -----
+    tmpQuat.set(
+        leaf.angularVelocity.x * dt,
+        leaf.angularVelocity.y * dt,
+        leaf.angularVelocity.z * dt,
+        1
+    ).normalize()
 
     leaf.quaternion.multiply(tmpQuat)
 
-    // --- clamp ---
-    tmpQuat
-        .copy(leaf.restQuaternion)
-        .invert()
-        .multiply(leaf.quaternion)
+    // ----- clamp (fast early out) -----
+    tmpQuat.copy(leaf.restQuaternion).invert().multiply(leaf.quaternion)
 
-    const angle = 2 * Math.acos(
-        MathUtils.clamp(tmpQuat.w, -1, 1)
-    )
+    if (tmpQuat.w < Math.cos(MAX_BEND * 0.5)) {
 
-    if (angle > MAX_BEND) {
         const axisLen = Math.sqrt(1 - tmpQuat.w * tmpQuat.w)
 
-        if (axisLen > 0.0001) {
+        if (axisLen > 1e-4) {
+
             tmpVec.set(
                 tmpQuat.x / axisLen,
                 tmpQuat.y / axisLen,
@@ -144,11 +121,7 @@ function updateLeaf(
             )
 
             tmpQuat.setFromAxisAngle(tmpVec, MAX_BEND)
-
-            leaf.quaternion
-                .copy(leaf.restQuaternion)
-                .multiply(tmpQuat)
-
+            leaf.quaternion.copy(leaf.restQuaternion).multiply(tmpQuat)
             leaf.angularVelocity.multiplyScalar(0.3)
         }
     }
@@ -178,7 +151,7 @@ export default function LeafField({
     position,
     depth = 14,
     width = 6,
-    interval = 1.25,
+    interval = 1.5, //1.25,
     randomness = .75
 }: LeafFieldProps) {
     const leaves = useMemo(() => {
@@ -208,9 +181,9 @@ export default function LeafField({
                     damping: random.float(1, 4),
                     angularVelocity: new Vector3(),
                     position: new Vector3(
-                        x * interval + random.float(-randomness, randomness) + position[0] - width / 2 + offset,
+                        x * interval + random.float(-randomness, randomness) - width / 2 + offset + position[0],
                         0,
-                        z * interval + random.float(-randomness, randomness) + position[2] - depth / 2,
+                        z * interval + random.float(-randomness, randomness) - depth / 2 + position[2],
                     )
                 } satisfies Leaf
             })
@@ -233,9 +206,11 @@ export default function LeafField({
         const time = clock.getElapsedTime()
 
         for (const leaf of leaves) {
-            const updateThreshold = 10
+            const updateThreshold = 7
+            const z = Math.abs(_playerPosition.z - leaf.position.z) < updateThreshold
+            const x = Math.abs(_playerPosition.x - leaf.position.x) < updateThreshold
 
-            if (Math.abs(_playerPosition.z - leaf.position.z) < updateThreshold) {
+            if (z && x) {
                 updateLeaf(leaf, _playerPosition, _playerVelocity, delta, time)
             }
 

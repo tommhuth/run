@@ -2,7 +2,7 @@ import { useStore } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
-import { DirectionalLight } from "three"
+import { CameraHelper, DirectionalLight } from "three"
 
 const forwardOffset = 16
 const targetPosition: Tuple3 = [15, -15, 3]
@@ -30,10 +30,10 @@ export default function Lights() {
             const z = vehicle.chassisBody.position.z + forwardOffset
             const x = vehicle.chassisBody.position.x
 
-            shadowLightRef.current.position.z = z
-            shadowLightRef.current.target.position.z = z + targetPosition[2]
-            shadowLightRef.current.position.x = x
-            shadowLightRef.current.target.position.x = x + targetPosition[0]
+            shadowLightRef.current.position.z = Math.round(z)
+            shadowLightRef.current.target.position.z = Math.round(z + targetPosition[2])
+            shadowLightRef.current.position.x = Math.round(x)
+            shadowLightRef.current.target.position.x = Math.round(x + targetPosition[0])
             time.current = 0
         } else {
             time.current += delta * 1000
@@ -47,13 +47,13 @@ export default function Lights() {
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                shadow-mapSize={[512 * viewport.dpr, 512 * viewport.dpr]}
+                shadow-mapSize={[768 * viewport.dpr, 768 * viewport.dpr]}
                 shadow-camera-near={-20} //   top left side
-                shadow-camera-far={35}
+                shadow-camera-far={55}
                 shadow-camera-left={-20} // x back/forwards
-                shadow-camera-right={27} // forward
-                shadow-camera-top={40} // y
-                shadow-camera-bottom={-25}
+                shadow-camera-right={35} // forward
+                shadow-camera-top={45} // y
+                shadow-camera-bottom={-30}
                 shadow-radius={2.5}
                 shadow-bias={-.001}
                 intensity={7}

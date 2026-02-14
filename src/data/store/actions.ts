@@ -1,4 +1,4 @@
-import { ROAD_CENTER_X, ROAD_HEIGHT } from "@components/road/Road"
+import { ROAD_CENTER_X, ROAD_HEIGHT } from "@components/road/const"
 import Counter from "@data/Counter"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
@@ -113,6 +113,8 @@ export function extendRoad(previous: PreviousPart) {
     if (i === 0) {
         generator = generatePickupPoint
         i = 10
+    } else {
+        i--
     }
 
     setState({
@@ -159,7 +161,7 @@ export function initializeTraffic() {
                 id: random.id(),
                 position: [
                     random.float(ROAD_CENTER_X * .9, ROAD_CENTER_X * 1.1) * -direction,
-                    ROAD_HEIGHT + .5 + random.float(.25, .5),
+                    ROAD_HEIGHT + 1,
                     z
                 ] as Tuple3,
                 guide: [

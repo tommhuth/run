@@ -1,9 +1,11 @@
 import Lights from "@components/Lights"
 import DepthTexturex from "@components/materials/DepthTexture"
 import Player from "@components/player/Player"
+import CloudSystem from "@components/road/CloudSystem"
+import { FOG_DISTANCE,ROAD_FORWARD_EDGE } from "@components/road/const"
 import Ground from "@components/road/Ground"
-import Road, { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/Road"
-import Traffic from "@components/vehicles/Traffic"
+import Road from "@components/road/Road"
+import Traffic from "@components/road/traffic/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import PlaceGrid from "@data/PlaceGrid"
@@ -43,6 +45,7 @@ export default function App() {
                 <Ground />
                 <Road />
                 <Traffic />
+                <CloudSystem />
             </CannonProvider>
 
             {/* at the very end */}

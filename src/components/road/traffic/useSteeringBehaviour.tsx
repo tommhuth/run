@@ -1,4 +1,4 @@
-import { ROAD_CENTER_X } from "@components/road/Road"
+
 import { store } from "@data/store"
 import { clamp, map, ndelta } from "@data/utils"
 import random from "@huth/random"
@@ -6,6 +6,8 @@ import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
 import { useMemo } from "react"
+
+import { ROAD_CENTER_X } from "../const"
 
 const MAX_STEER = 0.3
 const MAX_STEER_RATE = 1.2

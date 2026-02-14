@@ -6,10 +6,9 @@ import { Box, Plane, Quaternion, Vec3 } from "cannon-es"
 import { useRef } from "react"
 import { Mesh } from "three"
 
-import { ROAD_FORWARD_EDGE } from "./Road"
-import { ROAD_BASE_WIDTH, ROAD_HEIGHT, ROAD_WIDTH } from "./RoadSegment"
+import { ROAD_BASE_WIDTH, ROAD_FORWARD_EDGE, ROAD_HEIGHT } from "./const"
 
-const size = 100
+const size = 200
 const floorDefinition: ShapeDefinition = [
     [new Plane(), new Vec3(), new Quaternion().setFromEuler(-Math.PI * .5, 0, 0)]
 ]
