@@ -1,5 +1,6 @@
 import model from "@assets/models/suv.glb"
 import { carMaterial } from "@components/materials/shared"
+import { Chassis, Wheel, useRigidVehicle, wheelKey } from "@components/vehicles/useRigidVehicle"
 import Config from "@data/Config"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
@@ -8,7 +9,6 @@ import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "
 import { Mesh } from "three"
 import type { GLTF } from "three/examples/jsm/Addons.js"
 
-import { Chassis, useRigidVehicle, Wheel, wheelKey } from "./useRigidVehicle"
 
 
 const wheelX = .4
@@ -63,7 +63,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
     const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [chassisRef, wheelsRef, vehicle] = useRigidVehicle({
         ...props,
-        mass: 9,
+        mass: 8,
         wheels,
         chassis
     })

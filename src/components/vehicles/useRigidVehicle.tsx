@@ -66,7 +66,8 @@ export function useRigidVehicle({
             const shape = new Sphere(radius)
             const body = new Body({
                 shape,
-                mass: mass * .5,
+                mass,
+                linearDamping: .9,
                 angularDamping: .99,
                 allowSleep: false,
                 quaternion: rotation,

@@ -1,5 +1,4 @@
 import { ROAD_GAME_OVER_X_EDGE } from "@components/road/Road"
-import Suv from "@components/vehicles/Suv"
 import { store } from "@data/store"
 import { setState } from "@data/store/actions"
 import { extractRotation, useTransitionedState } from "@data/utils"
@@ -9,6 +8,7 @@ import { RigidVehicle } from "cannon-es"
 import { useEffect, useMemo } from "react"
 import { Object3D } from "three/webgpu"
 
+import Suv from "./Suv"
 import { useControls } from "./useControls"
 
 interface PlayerProps {

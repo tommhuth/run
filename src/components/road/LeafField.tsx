@@ -178,14 +178,14 @@ export default function LeafField({
     position,
     depth = 14,
     width = 6,
-    interval = 1,
+    interval = 1.25,
     randomness = .75
 }: LeafFieldProps) {
     const leaves = useMemo(() => {
         let index = 0
 
-        return Array.from({ length: Math.ceil(width / interval) }).map((i, x) => {
-            return Array.from({ length: Math.ceil(depth / interval) }).map((i, z) => {
+        return Array.from({ length: Math.ceil(width / interval) }).map((i, x, xlist) => {
+            return Array.from({ length: Math.ceil(depth / interval) }).map((i, z, zlist) => {
                 const restQuaternion = new Quaternion().setFromEuler(
                     _euler.set(
                         random.float(-.5, .5),
@@ -194,9 +194,9 @@ export default function LeafField({
                     )
                 )
                 const horizontalDirection = Math.sign(position[0])
-                const offset = -horizontalDirection * Math.cos((z / (depth - 1)) * Math.PI * 2) * 1
+                const offset = -horizontalDirection * Math.cos((z / (zlist.length - 1)) * Math.PI * 2) * 1
                 const easer = horizontalDirection === 1 ? easeInQuad : easeOutQuad
-                const scaler = easer(x / (width - 1))
+                const scaler = easer(x / (xlist.length - 1))
 
                 return {
                     id: random.id(),
@@ -221,6 +221,7 @@ export default function LeafField({
 
     useFrame(({ clock }, delta) => {
         const player = useStore.getState().player.vehicle
+
 
         if (!player || !instanceRef.current) {
             return
