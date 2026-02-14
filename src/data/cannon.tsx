@@ -147,7 +147,7 @@ export function CannonProvider({
             solver,
             allowSleep,
             gravity: new Vec3(...gravity),
-            quatNormalizeFast: true,
+            quatNormalizeFast: false,
             quatNormalizeSkip: 0,
         })
 
