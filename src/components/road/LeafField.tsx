@@ -178,7 +178,7 @@ export default function LeafField({
     position,
     depth = 14,
     width = 6,
-    interval = .9,
+    interval = 1,
     randomness = .75
 }: LeafFieldProps) {
     const leaves = useMemo(() => {
