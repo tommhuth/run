@@ -39,7 +39,7 @@ export function useRigidVehicle({
     const chassisRef = useRef<Group>(null)
     const wheelsRef = useRef<Group>(null)
     const backWheelsRef = useRef<Group>(null)
-    const world = useCannonWorld()
+    const { world, materials } = useCannonWorld()
     const [vehicle] = useMemo(() => {
         const rotation = new Quaternion().setFromEuler(...incomingRotation)
         const contactMaterial = null
@@ -67,6 +67,7 @@ export function useRigidVehicle({
             const body = new Body({
                 shape,
                 mass: mass * .65,
+                material: materials.wheel,
                 angularDamping: .99,
                 allowSleep: false,
                 quaternion: rotation,

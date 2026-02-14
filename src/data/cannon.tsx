@@ -8,7 +8,9 @@ import {
     Shape,
     SplitSolver,
     Vec3,
-    World
+    World,
+    Material,
+    ContactMaterial
 } from "cannon-es"
 import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
@@ -46,12 +48,31 @@ export function useCannonWorld() {
         throw new Error("Missing world context")
     }
 
-    return world
+    const materials = useMemo(() => {
+        return {
+            wheel: new Material()
+        }
+    }, [])
+    const contactMaterials = useMemo(() => {
+        return {
+            wheelGround: new ContactMaterial(materials.wheel, world.defaultMaterial, {
+                friction: 0.3,
+                restitution: 0,
+                contactEquationStiffness: 1000,
+            })
+        }
+    }, [])
+
+    useEffect(() => {
+        Object.entries(contactMaterials).map(i => world.addContactMaterial(i[1]))
+    }, [])
+
+    return { world, materials, contactMaterials }
 }
 
 export const DEFAULT_RESTITUTION = .25
 export const DEFAULT_ITERATIONS = 6
-export const DEFAULT_GRAVITY: Tuple3 = [0, -9, 0]
+export const DEFAULT_GRAVITY: Tuple3 = [0, -9.8, 0]
 
 function useCannonBody({
     definition,
@@ -66,7 +87,7 @@ function useCannonBody({
     active = true,
     ...rest
 }: BaseBodyOptions) {
-    const world = useCannonWorld()
+    const { world } = useCannonWorld()
     const body = useMemo(() => {
         return new Body({
             mass,

@@ -9,7 +9,7 @@ export const floorMaterial = new MeshPhongMaterial({
 })
 
 export const leafMaterial = new MeshPhongMaterial({
-    name: "floor",
+    name: "leaf",
     color: "#bcc7d3",
     dithering: true,
     side: DoubleSide
