@@ -1,9 +1,8 @@
-
 import PlaceGrid from "@data/PlaceGrid"
 import { RockObject } from "@data/store"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { Fragment } from "react/jsx-runtime"
 
 import RoadSegment from "../RoadSegment"
@@ -47,7 +46,7 @@ export default function RocksPart({ position, depth }) {
     }, [])
 
     return (
-        <>
+        <Suspense fallback={null}>
             {rocks.map(i => {
                 return (
                     <Rock
@@ -85,6 +84,6 @@ export default function RocksPart({ position, depth }) {
                     position[2] + depth / 2,
                 ]}
             />
-        </>
+        </Suspense>
     )
 }

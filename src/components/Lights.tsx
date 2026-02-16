@@ -2,7 +2,7 @@ import { useStore } from "@data/store"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
-import { CameraHelper, DirectionalLight } from "three"
+import { DirectionalLight } from "three"
 
 const forwardOffset = 16
 const targetPosition: Tuple3 = [15, -15, 3]

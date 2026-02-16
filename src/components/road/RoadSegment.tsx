@@ -49,6 +49,7 @@ export default function RoadSegment({ position }) {
                 castShadow
                 receiveShadow
                 geometry={nodes.main.geometry}
+                dispose={null}
                 material={floorMaterial}
                 position={[position[0], ROAD_HEIGHT / 2, position[2]]}
             />

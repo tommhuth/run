@@ -1,7 +1,7 @@
 import { useStore } from "@data/store"
 import { extendRoad, setState } from "@data/store/actions"
 import { useFrame } from "@react-three/fiber"
-import { useRef } from "react"
+import { Suspense, useRef } from "react"
 
 import { ROAD_FORWARD_EDGE } from "./const"
 import BridgePart from "./parts/Bridge"
@@ -36,16 +36,20 @@ export default function Road() {
         }
     })
 
-    return parts.map(i => {
-        switch (i.type) {
-            case "bridge":
-                return <BridgePart {...i} key={i.id} />
-            case "pickupPoint":
-                return <PickupPointPart {...i} key={i.id} />
-            case "forest":
-                return <ForestPart {...i} key={i.id} />
-            case "rocks":
-                return <RocksPart {...i} key={i.id} />
-        }
-    })
+    return (
+        <>
+            {parts.map(i => {
+                switch (i.type) {
+                    case "bridge":
+                        return <BridgePart {...i} key={i.id} />
+                    case "pickupPoint":
+                        return <PickupPointPart {...i} key={i.id} />
+                    case "forest":
+                        return <ForestPart {...i} key={i.id} />
+                    case "rocks":
+                        return <RocksPart {...i} key={i.id} />
+                }
+            })}
+        </>
+    )
 }

@@ -2,15 +2,16 @@ import { setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
 import { useFrame, useThree } from "@react-three/fiber"
 import {
     Body as CannonBody,
-    ContactEquation, GSSolver,
+    ContactEquation,
+    ContactMaterial,
+    GSSolver,
+    Material,
     Quaternion as CannonQuaternion,
     SAPBroadphase,
     Shape,
     SplitSolver,
     Vec3,
-    World,
-    Material,
-    ContactMaterial
+    World
 } from "cannon-es"
 import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
@@ -194,7 +195,7 @@ export function CannonProvider({
 
     useFrame((state, delta) => {
         // max 30fps as delta
-        const dt = Math.min(delta, 1 / 30)
+        const dt = Math.min(delta, 1 / 5)
 
         world.fixedStep(dt)
 

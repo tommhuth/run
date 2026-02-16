@@ -91,7 +91,10 @@ function Van({ children, ...props }: VanProps, ref: ForwardedRef<RigidVehicle>) 
 
                 {children}
             </group>
-            <group ref={wheelsRef}>
+            <group
+                dispose={null}
+                ref={wheelsRef}
+            >
                 {Array.from({ length: 4 }).map((i, index) => {
                     return (
                         <mesh

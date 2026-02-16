@@ -98,7 +98,10 @@ function Delivery({ children, ...props }: DeliveryProps, ref: ForwardedRef<Rigid
 
                 {children}
             </group>
-            <group ref={wheelsRef}>
+            <group
+                dispose={null}
+                ref={wheelsRef}
+            >
                 {Array.from({ length: 4 }).map((i, index) => {
                     return (
                         <mesh

@@ -61,6 +61,7 @@ function Cloud({
             position-x={position[0]}
             position-z={position[2]}
             scale={scale}
+            dispose={null}
             geometry={geometry}
             material={material}
         />

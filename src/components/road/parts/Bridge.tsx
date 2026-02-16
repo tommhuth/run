@@ -8,7 +8,7 @@ import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { Fragment } from "react/jsx-runtime"
 
 import { ROAD_BASE_WIDTH, ROAD_DEPTH, ROAD_HEIGHT } from "../const"
@@ -71,8 +71,7 @@ export default function BridgePart({ position, depth }) {
     })
 
     return (
-        <>
-
+        <Suspense fallback={null}>
             {rocks.map(i => {
                 return (
                     <Rock
@@ -128,6 +127,6 @@ export default function BridgePart({ position, depth }) {
             >
                 <boxGeometry args={[ROAD_BASE_WIDTH, ROAD_HEIGHT, ROAD_DEPTH]} />
             </mesh>
-        </>
+        </Suspense>
     )
 }

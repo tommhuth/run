@@ -92,7 +92,10 @@ function HatchbackSports({ children, ...props }: HatchbackSportsProps, ref: Forw
 
                 {children}
             </group>
-            <group ref={wheelsRef}>
+            <group
+                dispose={null}
+                ref={wheelsRef}
+            >
                 <mesh
                     castShadow
                     receiveShadow

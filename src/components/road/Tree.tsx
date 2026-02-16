@@ -69,55 +69,16 @@ function Tree({
     })
 
     return (
-        <group
+        <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes["tree" + (treeType + 1)].geometry}
+            material={treeMaterial}
             scale={scale}
             dispose={null}
             position={position}
             rotation={rotation}
-        >
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree5.geometry}
-                material={treeMaterial}
-                visible={treeType === 0}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree4.geometry}
-                material={treeMaterial}
-                visible={treeType === 1}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree3.geometry}
-                material={treeMaterial}
-                visible={treeType === 2}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree2.geometry}
-                material={treeMaterial}
-                visible={treeType === 3}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree6.geometry}
-                material={treeMaterial}
-                visible={treeType === 4}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.tree1.geometry}
-                material={treeMaterial}
-                visible={treeType === 5}
-            />
-        </group>
+        />
     )
 }
 

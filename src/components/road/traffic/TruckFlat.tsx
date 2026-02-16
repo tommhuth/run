@@ -91,7 +91,10 @@ function TruckFlat({ children, ...props }: TruckFlatProps, ref: ForwardedRef<Rig
 
                 {children}
             </group>
-            <group ref={wheelsRef}>
+            <group
+                dispose={null}
+                ref={wheelsRef}
+            >
                 <mesh
                     castShadow
                     receiveShadow

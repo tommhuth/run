@@ -90,7 +90,10 @@ function SuvLuxury({ children, ...props }: SuvLuxuryProps, ref: ForwardedRef<Rig
 
                 {children}
             </group>
-            <group ref={wheelsRef}>
+            <group
+                dispose={null}
+                ref={wheelsRef}
+            >
                 <mesh
                     castShadow
                     receiveShadow
