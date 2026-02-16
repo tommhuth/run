@@ -147,7 +147,7 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
     })
 }
 
-const tarfficGap = [12, 16, 30, 25, 40]
+const tarfficGap = [14, 28, 35, 25, 40]
 
 export function initializeTraffic() {
     return [-1, 1].map(direction => {
