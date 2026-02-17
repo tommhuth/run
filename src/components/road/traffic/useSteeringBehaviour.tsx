@@ -31,8 +31,8 @@ export default function useSteeringBehaviour({
     vehicle,
     guide,
     direction,
-    targetVelocity = 18,
-    wheelForce = 130,
+    targetVelocity = 6,
+    wheelForce = 40,
     kp = .1,
     kd = .02,
     kv = .2

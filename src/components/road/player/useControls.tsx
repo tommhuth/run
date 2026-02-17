@@ -72,7 +72,7 @@ export function useControls() {
 
     useFrame(() => {
         const steer = .25
-        const force = 175 * 1.1 //.6
+        const force = 85
 
         if (typeof keys.touchY === "number") {
             motion.wheelForce = force * keys.touchY

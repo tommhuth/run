@@ -1,6 +1,6 @@
 import Lights from "@components/Lights"
 import DepthTexturex from "@components/materials/DepthTexture"
-import Player from "@components/player/Player"
+import Player from "@components/road/player/Player"
 import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
 import Ground from "@components/road/Ground"

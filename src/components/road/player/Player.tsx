@@ -1,8 +1,5 @@
-import { ROAD_GAME_OVER_X_EDGE } from "@components/road/const"
-import Config from "@data/Config"
-import { store } from "@data/store"
 import { setState } from "@data/store/actions"
-import { extractRotation, useTransitionedState } from "@data/utils"
+import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
@@ -11,13 +8,12 @@ import { Object3D } from "three/webgpu"
 
 import Suv from "./Suv"
 import { useControls } from "./useControls"
+import usePlayerAlive from "./usePlayerAlive"
 
 interface PlayerProps {
     position?: Tuple3
     rotation?: Tuple3
 }
-
-const MAX_ROTATION = Math.PI * .5 * .75
 
 export default function Player({
     rotation,
@@ -26,6 +22,8 @@ export default function Player({
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
+
+    usePlayerAlive(setPosition)
 
     useEffect(() => {
         return setState({ player: { vehicle: vehicle, mesh: null } })
@@ -40,25 +38,6 @@ export default function Player({
         vehicle.setWheelForce(motion.currentWheelForce, 3)
         vehicle.setSteeringValue(motion.currentSteering, 0)
         vehicle.setSteeringValue(motion.currentSteering, 1)
-    })
-
-    useFrame(() => {
-        return
-
-        if (!vehicle || Config.DEBUG) {
-            return
-        }
-
-        const rotation = Math.abs(extractRotation(vehicle.chassisBody.quaternion).y)
-        const offside = Math.abs(vehicle.chassisBody.position.x)
-
-        if (offside > ROAD_GAME_OVER_X_EDGE || rotation > MAX_ROTATION) {
-            const forwards = store.getState().traffic
-                .filter(i => i.direction === 1)
-                .map(i => i.position[2])
-
-            setPosition([-2, 2, Math.min(...forwards) - 6])
-        }
     })
 
     return (

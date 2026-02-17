@@ -71,7 +71,7 @@ export function useCannonWorld() {
     return { world, materials, contactMaterials }
 }
 
-export const DEFAULT_RESTITUTION = .25
+export const DEFAULT_RESTITUTION = .1
 export const DEFAULT_ITERATIONS = 6
 export const DEFAULT_GRAVITY: Tuple3 = [0, -9.8, 0]
 

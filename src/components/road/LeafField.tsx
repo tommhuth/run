@@ -36,20 +36,20 @@ const tmpQuat = new Quaternion()
 // player position
 function updateLeaf(
     leaf: Leaf,
-    playerPos: Vector3,
-    playerVel: Vector3,
+    playerPosition: Vector3,
+    playerVelocity: Vector3,
     dt: number,
     time: number
 ) {
     const MAX_BEND = Math.PI * 0.375
-    const WIND_STRENGTH = 0.15
-    const WIND_FREQ = 1.5
+    const WIND_STRENGTH = 0.4
+    const WIND_FREQ = 1.1
     const pushRadius = 1.75
     const pushRadiusSq = pushRadius * pushRadius
     const pushStrength = .35
 
     // ----- player push -----
-    const toLeaf = tmpVec.subVectors(leaf.position, playerPos)
+    const toLeaf = tmpVec.subVectors(leaf.position, playerPosition)
     const distSq = toLeaf.lengthSq()
 
     if (distSq < pushRadiusSq) {
@@ -58,7 +58,7 @@ function updateLeaf(
         const outward = toLeaf.multiplyScalar(invDist)
 
         // radial velocity toward leaf
-        const radialVel = playerVel.dot(outward)
+        const radialVel = playerVelocity.dot(outward)
 
         if (radialVel > 0) {
 
@@ -151,7 +151,7 @@ export default function LeafField({
     position,
     depth = 14,
     width = 6,
-    interval = 1.5, //1.25,
+    interval = 1.25,
     randomness = .75
 }: LeafFieldProps) {
     const leaves = useMemo(() => {
@@ -195,7 +195,6 @@ export default function LeafField({
     useFrame(({ clock }, delta) => {
         const player = useStore.getState().player.vehicle
 
-
         if (!player || !instanceRef.current) {
             return
         }
@@ -206,11 +205,10 @@ export default function LeafField({
         const time = clock.getElapsedTime()
 
         for (const leaf of leaves) {
-            const updateThreshold = 7
-            const z = Math.abs(_playerPosition.z - leaf.position.z) < updateThreshold
-            const x = Math.abs(_playerPosition.x - leaf.position.x) < updateThreshold
+            const updateThreshold = 15
+            const isClose = Math.abs(_playerPosition.z - leaf.position.z) < updateThreshold
 
-            if (z && x) {
+            if (isClose) {
                 updateLeaf(leaf, _playerPosition, _playerVelocity, delta, time)
             }
 

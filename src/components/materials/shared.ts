@@ -1,6 +1,6 @@
 import carMap from "@assets/textures/car.png"
 import storageMap from "@assets/textures/storage.png"
-import { DoubleSide, MeshPhongMaterial, SRGBColorSpace, TextureLoader } from "three"
+import { DoubleSide, MeshBasicMaterial, MeshPhongMaterial, SRGBColorSpace, TextureLoader } from "three"
 
 export const floorMaterial = new MeshPhongMaterial({
     name: "floor",
@@ -31,6 +31,12 @@ export const streetLightMaterial = new MeshPhongMaterial({
     color: "#fff",
     name: "streetlight",
     dithering: true
+})
+
+export const whiteMaterial = new MeshBasicMaterial({
+    color: "#fff",
+    name: "white",
+    toneMapped: false
 })
 
 const carTexture = new TextureLoader().load(carMap)

@@ -18,7 +18,7 @@ export default function RocksPart({ position, depth }) {
         for (const side of [-1, 1]) {
             const grid = side === -1 ? leftGrid : rightGrid
             const positions = grid.getRandomPositions()
-            const rockCount = random.pick(1, 2, 5, 7)
+            const rockCount = random.pick(1, 2, 5)
 
             for (let i = 0; i < rockCount; i++) {
                 const position = positions.pop() as Tuple3

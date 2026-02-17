@@ -2,8 +2,8 @@ import { useCannonWorld } from "@data/cannon"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react"
-import { Group, Mesh } from "three"
+import { RefObject, useEffect, useLayoutEffect, useMemo, useRef } from "react"
+import { Group, Mesh, Object3D } from "three"
 
 export type Chassis = [Shape, Vec3?, Quaternion?][]
 export type Wheel = { radius: number; position: Tuple3 }
@@ -27,6 +27,49 @@ const direction = new Vec3(0, -1, 0)
 
 export const wheelKey = ["wheel-front-left", "wheel-front-right", "wheel-back-left", "wheel-back-right"]
 
+function syncVehicle(
+    vehicle: RigidVehicle,
+    verticalStabilityAdjust: number,
+    horizontalStabilityAdjust: number,
+    chassisRef: RefObject<Object3D | null>,
+    wheelsRef: RefObject<Object3D | null>,
+    mode: "lerp" | "copy"
+) {
+    if (!chassisRef.current) {
+        return
+    }
+
+    chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
+
+    if (mode === "lerp") {
+        chassisRef.current.position.lerp(vehicle.chassisBody.position, .4)
+    } else {
+        chassisRef.current.position.copy(vehicle.chassisBody.position)
+    }
+
+    vehicle.chassisBody.quaternion.vmult(_chassisOffset.set(0, -verticalStabilityAdjust, 0), _chassisOffset)
+    chassisRef.current.position.sub(_chassisOffset)
+
+    for (const [index, wheel] of vehicle.wheelBodies.entries()) {
+        const wheelMesh = wheelsRef.current?.children[index] as Mesh
+
+        if (wheelMesh) {
+            wheelMesh.quaternion.copy(wheel.quaternion)
+
+            if (mode === "lerp") {
+                wheelMesh.position.lerp(wheel.position, .4)
+            } else {
+                wheelMesh.position.copy(wheel.position)
+            }
+
+            const side = (index + 1) % 2 === 0 ? 1 : -1
+
+            wheel.quaternion.vmult(_wheelOffset.set(horizontalStabilityAdjust * side, 0, 0), _wheelOffset)
+            wheelMesh.position.add(_wheelOffset)
+        }
+    }
+}
+
 export function useRigidVehicle({
     position = [0, 0, 0],
     rotation: incomingRotation = [0, 0, 0],
@@ -42,7 +85,6 @@ export function useRigidVehicle({
     const { world, materials } = useCannonWorld()
     const [vehicle] = useMemo(() => {
         const rotation = new Quaternion().setFromEuler(...incomingRotation)
-        const contactMaterial = null
         const centerOfMassAdjust = new Vec3(0, verticalStabilityAdjust, 0)
         const chassisBody = new Body({
             mass,
@@ -60,7 +102,6 @@ export function useRigidVehicle({
         }
 
         const vehicle = new RigidVehicle({ chassisBody })
-        // const axis = [-1, -1, 1, 1]
 
         for (const [, { position, radius }] of wheels.entries()) {
             const shape = new Sphere(radius)
@@ -68,7 +109,7 @@ export function useRigidVehicle({
                 shape,
                 mass: mass * .65,
                 material: materials.wheel,
-                angularDamping: .99,
+                angularDamping: .9,
                 allowSleep: false,
                 quaternion: rotation,
             })
@@ -85,25 +126,8 @@ export function useRigidVehicle({
             })
         }
 
-        return [vehicle, contactMaterial]
+        return [vehicle]
     }, [world])
-
-    useLayoutEffect(() => {
-        chassisRef.current?.position.copy(vehicle.chassisBody.position)
-
-        for (const [index, wheel] of vehicle.wheelBodies.entries()) {
-            const wheelMesh = wheelsRef.current?.children[index] as Mesh
-
-            if (wheelMesh) {
-                wheelMesh.position.copy(wheel.position)
-
-                const side = (index + 1) % 2 === 0 ? 1 : -1
-
-                wheel.quaternion.vmult(_wheelOffset.set(horizontalStabilityAdjust * side, 0, 0), _wheelOffset)
-                wheelMesh.position.add(_wheelOffset)
-            }
-        }
-    }, [])
 
     useEffect(() => {
         vehicle.addToWorld(world)
@@ -113,30 +137,12 @@ export function useRigidVehicle({
         }
     }, [vehicle, world])
 
+    useLayoutEffect(() => {
+        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, "copy")
+    }, [])
+
     useFrame(() => {
-        if (!chassisRef.current) {
-            return
-        }
-
-        chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
-        chassisRef.current.position.lerp(vehicle.chassisBody.position, .4)
-
-        vehicle.chassisBody.quaternion.vmult(_chassisOffset.set(0, -verticalStabilityAdjust, 0), _chassisOffset)
-        chassisRef.current.position.sub(_chassisOffset)
-
-        for (const [index, wheel] of vehicle.wheelBodies.entries()) {
-            const wheelMesh = wheelsRef.current?.children[index] as Mesh
-
-            if (wheelMesh) {
-                wheelMesh.quaternion.copy(wheel.quaternion)
-                wheelMesh.position.lerp(wheel.position, .4)
-
-                const side = (index + 1) % 2 === 0 ? 1 : -1
-
-                wheel.quaternion.vmult(_wheelOffset.set(horizontalStabilityAdjust * side, 0, 0), _wheelOffset)
-                wheelMesh.position.add(_wheelOffset)
-            }
-        }
+        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, "lerp")
     })
 
     return [chassisRef, wheelsRef, vehicle, backWheelsRef] as const

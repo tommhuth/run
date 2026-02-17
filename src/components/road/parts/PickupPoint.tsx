@@ -3,6 +3,7 @@ import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { Fragment, Suspense, useMemo } from "react"
 
+import LeafField from "../LeafField"
 import RoadSegment from "../RoadSegment"
 import StorageItem from "../StorageItem"
 import StreetLight from "../StreetLight"
@@ -29,6 +30,9 @@ export default function PickupPointPart({ position, depth }) {
                 name="box-large"
                 rotation={[0, -.1, 0]}
             />
+
+            <LeafField position={[10, 0, depth / 2 + position[2]]} />
+            <LeafField position={[-11, 0, depth / 2 + position[2]]} />
 
 
             {Array.from({ length: 2 }).map((i, index) => {

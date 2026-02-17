@@ -1,19 +1,20 @@
 
 import model from "@assets/models/light-curved.glb"
-import { streetLightMaterial } from "@components/materials/shared"
+import { streetLightMaterial, whiteMaterial } from "@components/materials/shared"
 import { useBody } from "@data/cannon"
 import { store } from "@data/store"
 import { useTransitionedState } from "@data/utils"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
+import { SphereGeometry } from "three"
 
 const box = new Box(new Vec3(.05, 6, .05))
+const sphere = new SphereGeometry(.025, 8, 8)
 
 export default function StreetLight({ position, scale, rotation }) {
     const { nodes } = useGLTF(model)
     const [active, setActive] = useTransitionedState(false)
-
 
     useBody({
         mass: 0,
@@ -22,7 +23,6 @@ export default function StreetLight({ position, scale, rotation }) {
         active,
         definition: box,
     })
-
 
     useFrame(() => {
         const { player: { vehicle } } = store.getState()
@@ -54,6 +54,13 @@ export default function StreetLight({ position, scale, rotation }) {
             receiveShadow
             geometry={nodes["light-curved"].geometry}
             material={streetLightMaterial}
-        />
+        >
+            <mesh
+                geometry={sphere}
+                material={whiteMaterial}
+                position={[0, .65, -.15]}
+                scale={[.75, .75, 1.85]}
+            />
+        </mesh>
     )
 } 
