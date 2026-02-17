@@ -102,7 +102,7 @@ export function useRigidVehicle({
         }
 
         chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
-        chassisRef.current.position.copy(vehicle.chassisBody.position)
+        chassisRef.current.position.lerp(vehicle.chassisBody.position, .4)
 
         vehicle.chassisBody.quaternion.vmult(_chassisOffset.set(0, -verticalStabilityAdjust, 0), _chassisOffset)
         chassisRef.current.position.sub(_chassisOffset)
@@ -112,7 +112,7 @@ export function useRigidVehicle({
 
             if (wheelMesh) {
                 wheelMesh.quaternion.copy(wheel.quaternion)
-                wheelMesh.position.copy(wheel.position)
+                wheelMesh.position.lerp(wheel.position, .4)
 
                 const side = (index + 1) % 2 === 0 ? 1 : -1
 
