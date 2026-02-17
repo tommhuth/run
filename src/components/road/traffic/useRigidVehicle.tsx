@@ -2,7 +2,7 @@ import { useCannonWorld } from "@data/cannon"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Group, Mesh } from "three"
 
 export type Chassis = [Shape, Vec3?, Quaternion?][]
@@ -87,6 +87,23 @@ export function useRigidVehicle({
 
         return [vehicle, contactMaterial]
     }, [world])
+
+    useLayoutEffect(() => {
+        chassisRef.current?.position.copy(vehicle.chassisBody.position)
+
+        for (const [index, wheel] of vehicle.wheelBodies.entries()) {
+            const wheelMesh = wheelsRef.current?.children[index] as Mesh
+
+            if (wheelMesh) {
+                wheelMesh.position.copy(wheel.position)
+
+                const side = (index + 1) % 2 === 0 ? 1 : -1
+
+                wheel.quaternion.vmult(_wheelOffset.set(horizontalStabilityAdjust * side, 0, 0), _wheelOffset)
+                wheelMesh.position.add(_wheelOffset)
+            }
+        }
+    }, [])
 
     useEffect(() => {
         vehicle.addToWorld(world)
