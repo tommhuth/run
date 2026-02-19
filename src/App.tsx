@@ -64,8 +64,6 @@ export default function App() {
 */
 
 export function GridDebug({ g, scale = .95 }: { g: PlaceGrid; scale: number }) {
-
-
     return (
         <>
             <mesh position={g.origin}>
