@@ -2,6 +2,8 @@
 @use "variables.scss";
 @use "typography.scss";
 
+// ios is very sensitive to the styling applied to
+// html, body to achieve true 100vh in standalone mode
 body,
 #canvas {
     overflow: hidden;
