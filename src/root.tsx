@@ -3,16 +3,9 @@ import { clamp } from "@data/utils"
 import { createRoot, events, RenderProps } from "@react-three/fiber"
 import { lazy, ReactNode } from "react"
 import { createRoot as createUiRoot } from "react-dom/client"
-import { Viewportify } from "viewportify"
 import { registerSW } from "virtual:pwa-register"
 
 import Ui from "./ui/Ui"
-
-new Viewportify({
-    setCSSVariables: true,
-    iosVhFix: true
-})
-
 
 function getConfiguration() {
     return {

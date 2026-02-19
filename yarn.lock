@@ -5929,11 +5929,6 @@ v8-compile-cache@^2.0.3:
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.4.0.tgz#cdada8bec61e15865f05d097c5f4fd30e94dc128"
   integrity sha512-ocyWc3bAHBB/guyqJQVI5o4BZkPhznPYUG2ea80Gond/BgNWpap8TOmLSeeQG7bnh2KMISxskdADG59j7zruhw==
 
-viewportify@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/viewportify/-/viewportify-1.0.0.tgz#78cc3d0490f972fec87cf33f113b569f9990a237"
-  integrity sha512-gq+pjWfTCJCRtFjPzP4GfqbuyiO1OJwLH45XB402nQMc4z9ULBAUwlvJGlO35RCYTqZC9S0EZqKylazndh1bYg==
-
 vite-plugin-glsl@^1.5.5:
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/vite-plugin-glsl/-/vite-plugin-glsl-1.5.5.tgz#6316d733c96ecf98f3d05f8a0188bbb5d5d3e31f"
