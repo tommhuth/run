@@ -22,47 +22,6 @@ html {
     background-color: transparent;
 }
 
-body,
-#canvas {
-    overflow: hidden;
-    position: fixed;
-    left: 0;
-    display: block;
-    top: 0;
-    width: 100%;
-}
-
-html,
-body,
-#canvas {
-    height: 100%;
-}
-
-html {
-    &.standalone {
-        height: 100vh !important;
-
-        body,
-        #canvas {
-            height: 100vh !important;
-        }
-    }
-}
-
-body {
-    background-color: red;
-}
-
-#ui {
-    z-index: 2;
-    position: relative;
-    display: block;
-}
-
-#canvas {
-    z-index: 1;
-}
-
 .visually-hidden {
     position: absolute;
     overflow: hidden;

@@ -2,6 +2,42 @@
 @use "variables.scss";
 @use "typography.scss";
 
+body,
+#canvas {
+    overflow: hidden;
+    position: fixed;
+    left: 0;
+    display: block;
+    top: 0;
+    width: 100%;
+}
+
+html,
+body,
+#canvas {
+    height: 100%;
+}
+
+#canvas {
+    z-index: 1;
+}
+
+html {
+    &.standalone {
+        height: 100vh !important;
+
+        body,
+        #canvas {
+            height: 100vh !important;
+        }
+    }
+}
+
+#ui {
+    z-index: 2;
+    position: relative;
+    display: block;
+}
 
 body::after {
     content: "";
