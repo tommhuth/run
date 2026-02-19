@@ -35,6 +35,7 @@ html {
     z-index: 2;
     position: relative;
     display: block;
+    pointer-events: none;
 }
 
 body::after {
