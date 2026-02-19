@@ -46,7 +46,7 @@ html {
 
         body,
         #canvas {
-            height: var(--vp-height, 100vh) important;
+            height: var(--vp-height, 100vh) !important;
         }
     }
 }
