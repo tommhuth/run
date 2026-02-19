@@ -23,8 +23,7 @@ html {
 }
 
 body,
-#canvas,
-#ui {
+#canvas {
     overflow: hidden;
     position: fixed;
     left: 0;
@@ -35,8 +34,7 @@ body,
 
 html,
 body,
-#canvas,
-#ui {
+#canvas {
     height: 100%;
 }
 
@@ -55,10 +53,9 @@ body {
     background-color: red;
 }
 
-// ios does not capture events from canvas?!
-// use this instead
 #ui {
     z-index: 2;
+    position: relative;
     display: block;
 }
 
