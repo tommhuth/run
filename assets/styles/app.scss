@@ -10,11 +10,6 @@ body,
     display: block;
     top: 0;
     width: 100%;
-}
-
-html,
-body,
-#canvas {
     height: 100%;
 }
 
@@ -23,6 +18,8 @@ body,
 }
 
 html {
+    height: 100%;
+
     &.standalone {
         height: 100vh !important;
 
