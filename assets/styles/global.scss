@@ -51,6 +51,10 @@ html {
     }
 }
 
+body {
+    background-color: red;
+}
+
 // ios does not capture events from canvas?!
 // use this instead
 #ui {
