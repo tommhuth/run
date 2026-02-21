@@ -43,24 +43,21 @@ export default function App() {
                 <Player />
 
                 <Ground />
-                <Road />
                 <Traffic />
-                <CloudSystem />
+                <Road />
             </CannonProvider>
 
             {/* at the very end */}
             <DepthTexturex />
+            <CloudSystem />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>
     )
 }
-/*
 
-                <Suv position={[-2, 4, 7]} rotation={[0, Math.PI * .6, 0]} />
-                <SedanSports position={[-2, 4, 13]} rotation={[0, Math.PI * .6, 0]} />
-                <Delivery position={[-2, 4, 16]} rotation={[0, Math.PI * .6, 0]} />
-                <GarbageTruck position={[-2, 4, 2]} rotation={[0, Math.PI * .6, 0]} />
+/*
+    <Suv position={[-2, 4, 7]} rotation={[0, Math.PI * .6, 0]} /> 
 */
 
 export function GridDebug({ g, scale = .95 }: { g: PlaceGrid; scale: number }) {

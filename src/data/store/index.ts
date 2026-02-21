@@ -72,8 +72,7 @@ const store = create(
         },
         road: [
             generateForestPart({ position: [0, 0, -10], depth: 0 }),
-            //generatePickupPoint({ position: [0, 0, -5], depth: 0 }),
-            generateForestPart({ position: [0, 0, -10], depth: 20 }),
+            generateForestPart({ position: [0, 0, -10], depth: 20 })
         ],
         debug: {
             showColliders: false,

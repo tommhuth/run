@@ -31,7 +31,7 @@ export default function PickupPointPart({ position, depth }) {
                 rotation={[0, -.1, 0]}
             />
 
-            <LeafField position={[10, 0, depth / 2 + position[2]]} />
+            <LeafField position={[13, 0, depth / 2 + position[2]]} />
             <LeafField position={[-11, 0, depth / 2 + position[2]]} />
 
 
