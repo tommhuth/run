@@ -1,5 +1,7 @@
+import random from "@huth/random"
+import { RenderCallback, useFrame } from "@react-three/fiber"
 import { Quaternion as CannonQuaternion } from "cannon-es"
-import { Dispatch, SetStateAction, startTransition, useCallback, useState } from "react"
+import { Dispatch, SetStateAction, startTransition, useCallback, useRef, useState } from "react"
 import { Euler, Quaternion } from "three"
 import { clamp as threeClamp, mapLinear } from "three/src/math/MathUtils.js"
 
@@ -15,6 +17,19 @@ export function ndelta(delta: number) {
     const nDelta = clamp(delta, 0, 1 / 30)
 
     return nDelta
+}
+
+export function useLowerPriorityFrame(cb: RenderCallback, frameInterval: number) {
+    const frame = useRef(random.integer(0, frameInterval * 10))
+
+    useFrame((...params) => {
+        if (frame.current % frameInterval === 0) {
+            cb(...params)
+            frame.current = 0
+        } else {
+            frame.current++
+        }
+    })
 }
 
 export function useTransitionedState<T>(

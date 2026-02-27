@@ -1,7 +1,6 @@
 import { useStore } from "@data/store"
 import { extendRoad, setState } from "@data/store/actions"
-import { useFrame } from "@react-three/fiber"
-import { Suspense, useRef } from "react"
+import { useLowerPriorityFrame } from "@data/utils"
 
 import { ROAD_FORWARD_EDGE } from "./const"
 import BridgePart from "./parts/Bridge"
@@ -12,18 +11,15 @@ import RocksPart from "./parts/Rocks"
 
 export default function Road() {
     const parts = useStore(i => i.road)
-    const i = useRef(0)
 
-    useFrame(() => {
+    useLowerPriorityFrame(() => {
         const { road, player: { vehicle } } = useStore.getState()
         const forwardPart = road.at(-1)
         const forwardBuffer = ROAD_FORWARD_EDGE
         const backwardPart = road.at(0)
         const backwardBuffer = 10
 
-        i.current++
-
-        if (!vehicle || !forwardPart || !backwardPart || i.current % 10 !== 0) {
+        if (!vehicle || !forwardPart || !backwardPart) {
             return
         }
 
@@ -34,7 +30,7 @@ export default function Road() {
         } else if (player.position.z + forwardBuffer > forwardPart.position[2] + forwardPart.depth) {
             extendRoad(forwardPart)
         }
-    })
+    }, 10)
 
     return (
         <>

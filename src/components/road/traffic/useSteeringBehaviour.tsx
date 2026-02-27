@@ -1,5 +1,5 @@
 import { store, useStore } from "@data/store"
-import { clamp, map, ndelta } from "@data/utils"
+import { clamp, map, ndelta, useLowerPriorityFrame } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
@@ -61,7 +61,7 @@ export default function useSteeringBehaviour({
     })
 
     // stop calc
-    useFrame(() => {
+    useLowerPriorityFrame(() => {
         if (!client || !vehicle) {
             return
         }
@@ -72,14 +72,18 @@ export default function useSteeringBehaviour({
         const near = grid.findNear(vehiclePosition.toArray(), [size, 5, size])
         let speeding = 1
 
-        for (const client of near) {
+        for (const clientNear of near) {
+            if (client === clientNear) {
+                continue
+            }
+
             const inFronThreshold = .9
             const directionSimilarity = _tempVec1.copy(vehiclePosition)
-                .vsub(client.data.vehicle.chassisBody.position)
+                .vsub(clientNear.data.vehicle.chassisBody.position)
                 .unit()
                 .dot(_tempVec3.set(0, 0, -direction))
             const distanceThreshold = 5
-            const distance = clamp(vehiclePosition.distanceTo(_tempVec2.copy(client.data.vehicle.chassisBody.position)) / distanceThreshold, 0, 1)
+            const distance = clamp(vehiclePosition.distanceTo(_tempVec2.copy(clientNear.data.vehicle.chassisBody.position)) / distanceThreshold, 0, 1)
 
             if (directionSimilarity > inFronThreshold) {
                 speeding = Math.min(distance, speeding)
@@ -87,7 +91,7 @@ export default function useSteeringBehaviour({
         }
 
         data.speeding = speeding
-    })
+    }, 5)
 
     // z
     useFrame(() => {
