@@ -78,7 +78,7 @@ export function useRigidVehicle({
     mass,
     chassis,
     wheels
-}: UseRigidVehicleParams) {
+}: UseRigidVehicleParams, deps: any[] = []) {
     const chassisRef = useRef<Group>(null)
     const wheelsRef = useRef<Group>(null)
     const backWheelsRef = useRef<Group>(null)
@@ -127,7 +127,7 @@ export function useRigidVehicle({
         }
 
         return [vehicle]
-    }, [world])
+    }, [world, ...deps])
 
     useEffect(() => {
         vehicle.addToWorld(world)

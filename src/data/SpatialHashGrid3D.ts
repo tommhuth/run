@@ -1,3 +1,4 @@
+import { RigidVehicle } from "cannon-es"
 import { Tuple3 } from "src/types/global"
 
 export interface Client {
@@ -9,8 +10,9 @@ export interface Client {
 }
 
 export interface ClientData {
-    id: string
-    type: string
+    type: "traffic" | "player"
+    vehicle: RigidVehicle
+    direction?: number
 }
 
 export class SpatialHashGrid3D {

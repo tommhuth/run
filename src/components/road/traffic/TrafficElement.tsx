@@ -29,7 +29,7 @@ export default memo(({
         vehicle,
         guide,
         direction,
-        targetVelocity: velocity,
+        maxVelocity: velocity,
         wheelForce: 20
     })
 

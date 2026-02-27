@@ -5,6 +5,7 @@ import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
 import { generateForestPart, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
+import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
 
 interface RoadObject {
     id: string
@@ -50,6 +51,7 @@ export interface RunStore {
     materials: Record<MaterialName, Material>
     traffic: TrafficElement[]
     road: RoadPart[]
+    grid: SpatialHashGrid3D
     debug: {
         showColliders: boolean
         godMode: boolean
@@ -63,22 +65,23 @@ export interface RunStore {
 const store = create(
     subscribeWithSelector<RunStore>(() => ({
         state: "intro",
-        depthTexture: null,
-        materials: {} as RunStore["materials"],
-        instances: {} as RunStore["instances"],
         player: {
             mesh: null,
             vehicle: null
         },
+        grid: new SpatialHashGrid3D([4, 4, 4]),
+        traffic: initializeTraffic(),
         road: [
             generateForestPart({ position: [0, 0, -10], depth: 0 }),
             generateForestPart({ position: [0, 0, -10], depth: 20 })
         ],
+        depthTexture: null,
+        materials: {} as RunStore["materials"],
+        instances: {} as RunStore["instances"],
         debug: {
             showColliders: false,
             godMode: false,
         },
-        traffic: initializeTraffic(),
     }))
 )
 

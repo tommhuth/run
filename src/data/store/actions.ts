@@ -164,6 +164,7 @@ export function initializeTraffic() {
                     ROAD_HEIGHT + 1,
                     z
                 ] as Tuple3,
+                velocity: 6,
                 guide: [
                     ROAD_CENTER_X * -direction + random.float(-.85, .85),
                     0,

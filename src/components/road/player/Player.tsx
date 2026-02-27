@@ -6,6 +6,7 @@ import { RigidVehicle } from "cannon-es"
 import { useEffect, useMemo } from "react"
 import { Object3D } from "three/webgpu"
 
+import useTrafficClient from "../traffic/useTrafficClient"
 import Suv from "./Suv"
 import { useControls } from "./useControls"
 import usePlayerAlive from "./usePlayerAlive"
@@ -23,6 +24,7 @@ export default function Player({
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
 
+    useTrafficClient({ vehicle, type: "player", direction: 1 })
     usePlayerAlive(setPosition)
 
     useEffect(() => {
@@ -34,10 +36,13 @@ export default function Player({
             return
         }
 
-        vehicle.setWheelForce(motion.currentWheelForce, 2)
-        vehicle.setWheelForce(motion.currentWheelForce, 3)
-        vehicle.setSteeringValue(motion.currentSteering, 0)
-        vehicle.setSteeringValue(motion.currentSteering, 1)
+        for (const wheel of [2, 3]) {
+            vehicle.setWheelForce(motion.currentWheelForce, wheel)
+        }
+
+        for (const wheel of [0, 1]) {
+            vehicle.setSteeringValue(motion.currentSteering, wheel)
+        }
     })
 
     return (
