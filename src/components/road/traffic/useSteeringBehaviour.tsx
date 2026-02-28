@@ -34,15 +34,30 @@ export default function useSteeringBehaviour({
     direction,
     maxVelocity = 6,
     wheelForce = 75,
-    kp = .1,
+    kp = .05,
     kv = .2
 }: UseSteeringBehaviourParams) {
+    const client = useTrafficClient({ vehicle, type: "traffic", direction })
     const data = useMemo(() => ({
         adjustAt: random.integer(...adjustInterval),
         speeding: 1,
+        playerStopTime: 0,
         time: 0,
     }), [])
-    const client = useTrafficClient({ vehicle, type: "traffic", direction })
+
+    useFrame((state, delta) => {
+        const { player } = store.getState()
+
+        if (!player.vehicle) {
+            return
+        }
+
+        if (player.vehicle.chassisBody.velocity.length() < .5) {
+            data.playerStopTime += delta * 1000
+        } else {
+            data.playerStopTime = 0
+        }
+    })
 
     // x
     useFrame(() => {
@@ -102,13 +117,18 @@ export default function useSteeringBehaviour({
         }
 
         const currentVelocity = vehicle.chassisBody.velocity.length()
+        const playerStopThreshold = 1_600
         let currentWheelForce = 0 // default no speeding
 
-        if (data.speeding < 1) {
-            // obstacle detected, we should slow down
+        if (data.speeding < 1 || (data.playerStopTime > playerStopThreshold && direction === 1)) {
+            // obstacle detected, or player stopped, we should slow down
             const stopForce = clamp(vehicle.chassisBody.velocity.length() / (maxVelocity * .2), 0, 1)
+            // limit to direction relevant movement only
+            const directionScale = _tempVec1.copy(vehicle.chassisBody.velocity)
+                .unit()
+                .dot(_tempVec2.set(0, 0, direction))
 
-            currentWheelForce = -wheelForce * stopForce
+            currentWheelForce = -wheelForce * stopForce * clamp(directionScale, 0, 1)
         } else if (currentVelocity < maxVelocity) {
             // normal forward movement
             const scaler = map(currentVelocity / maxVelocity, 0, 1, 2.5, 1)
@@ -125,7 +145,7 @@ export default function useSteeringBehaviour({
         data.time += ndelta(delta) * 1000
 
         if (data.time > data.adjustAt) {
-            guide[0] = ROAD_CENTER_X * -direction + random.float(-1, 1)
+            guide[0] = ROAD_CENTER_X * -direction + random.pick(.25, .65, 1) * random.pick(-1, 1)
             data.time = 0
             data.adjustAt = random.integer(...adjustInterval)
         }
