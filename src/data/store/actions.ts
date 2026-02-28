@@ -150,12 +150,12 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
 const tarfficGap = [14, 28, 35, 25, 40]
 
 export function initializeTraffic() {
-    return [-1, 1].map(direction => {
+    return [1, -1].map(direction => {
         let z = 10 * direction
         const count = 4
 
-        return Array.from({ length: count }).fill(null).map(() => {
-            z += random.pick(...tarfficGap)
+        return Array.from({ length: count }).fill(null).map((i, index) => {
+            z += tarfficGap[index % (tarfficGap.length - 1)]
 
             return {
                 id: random.id(),
