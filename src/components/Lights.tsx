@@ -17,7 +17,7 @@ export default function Lights() {
             return
         }
 
-        //scene.add(new CameraHelper(shadowLightRef.current.shadow.camera))
+        // scene.add(new CameraHelper(shadowLightRef.current.shadow.camera))
         scene.add(shadowLightRef.current.target)
     }, [scene])
 
@@ -48,12 +48,12 @@ export default function Lights() {
                 castShadow
                 ref={shadowLightRef}
                 shadow-mapSize={[768 * viewport.dpr, 768 * viewport.dpr]}
-                shadow-camera-near={-20} //   top left side
-                shadow-camera-far={55}
-                shadow-camera-left={-20} // x back/forwards
-                shadow-camera-right={35} // forward
-                shadow-camera-top={45} // y
-                shadow-camera-bottom={-30}
+                shadow-camera-near={-25} // top right side
+                shadow-camera-far={55} // bottom left
+                shadow-camera-left={-20} //forwards z
+                shadow-camera-right={45} // backwards z
+                shadow-camera-top={40} // top left
+                shadow-camera-bottom={-30} // bottom right
                 shadow-radius={2.5}
                 shadow-bias={-.001}
                 intensity={7}
