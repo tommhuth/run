@@ -1,11 +1,11 @@
+import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
 import { RigidVehicle } from "cannon-es"
-import { DepthTexture, Group, Material } from "three"
+import { DepthTexture, Group, Material, Vector3 } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { generateForestPart, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
-import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
+import { generateForestPart, initializeClouds, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
 
 interface RoadObject {
     id: string
@@ -44,6 +44,15 @@ export interface RoadPart {
     depth: number
 }
 
+export interface Cloud {
+    speed: number
+    position: Tuple3
+    scale?: number
+    id: string
+    damping: number
+    fixed: boolean
+}
+
 export interface RunStore {
     state: "intro" | "gameover" | "running"
     instances: Record<InstanceName, Instance>
@@ -52,6 +61,7 @@ export interface RunStore {
     traffic: TrafficElement[]
     road: RoadPart[]
     grid: SpatialHashGrid3D
+    clouds: Cloud[]
     debug: {
         showColliders: boolean
         godMode: boolean
@@ -59,6 +69,7 @@ export interface RunStore {
     player: {
         mesh: Group | null
         vehicle: RigidVehicle | null
+        steering: Vector3
     }
 }
 
@@ -67,10 +78,12 @@ const store = create(
         state: "intro",
         player: {
             mesh: null,
-            vehicle: null
+            vehicle: null,
+            steering: new Vector3()
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
+        clouds: initializeClouds(),
         road: [
             generateForestPart({ position: [0, 0, -10], depth: 0 }),
             generateForestPart({ position: [0, 0, -10], depth: 20 })

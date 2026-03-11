@@ -1,74 +1,24 @@
 import CloudMaterial from "@components/materials/CloudMaterial"
-import { store } from "@data/store"
+import { useStore } from "@data/store"
 import { useTransitionedState } from "@data/utils"
-import random from "@huth/random"
-import { useFrame } from "@react-three/fiber"
 import { MeshBasicMaterial } from "three"
 
-import Cloud, { CloudProps } from "./Cloud"
-import { ROAD_FORWARD_EDGE } from "./const"
+import Cloud from "./Cloud"
 
-const xRange = [10, 25, 19, 12, 6, 8]
-const interval = 4
-
-export default function CloudSystem({ size = 10 }: { size?: number }) {
+export default function CloudSystem() {
     const [material, setMaterial] = useTransitionedState<MeshBasicMaterial | null>(null)
-    const [clouds, setClouds] = useTransitionedState<CloudProps[]>(() => {
-        return Array.from({ length: size }).fill(null).map((i, index) => {
-            return {
-                id: random.id(),
-                speed: random.float(.025, .3),
-                position: [
-                    random.pick(...xRange) * random.pick(1, -1),
-                    0,
-                    index * interval + random.float(-2, 2),
-                ],
-                damping: random.float(.5, .9),
-                scale: random.float(.75, 2.)
-            }
-        })
-    })
-    const updateCloud = (id: CloudProps["id"], data: Partial<CloudProps>) => {
-        setClouds([
-            ...clouds.filter(i => i.id !== id),
-            {
-                ...clouds.find(i => i.id === id) as CloudProps,
-                ...data
-            }
-        ])
-    }
-
-    useFrame(() => {
-        const { state, player: { vehicle } } = store.getState()
-
-        if (!vehicle || state == "gameover") {
-            return
-        }
-
-        for (const { position, id } of clouds) {
-            if (position[2] < vehicle.chassisBody.position.z - 6) {
-                updateCloud(id, {
-                    position: [
-                        random.pick(...xRange) * random.pick(1, -1),
-                        position[1] + ROAD_FORWARD_EDGE,
-                        position[2] + size * interval
-                    ]
-                })
-            }
-        }
-    })
+    const clouds = useStore(i => i.clouds)
 
     return (
         <>
             <CloudMaterial ref={setMaterial} />
 
-            {material && clouds.map(({ id, ...rest }) => {
+            {material && clouds.map((cloud) => {
                 return (
                     <Cloud
                         material={material}
-                        key={id}
-                        id={id}
-                        {...rest}
+                        key={cloud.id}
+                        {...cloud}
                     />
                 )
             })}

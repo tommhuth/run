@@ -1,5 +1,5 @@
 import Lights from "@components/Lights"
-import DepthTexturex from "@components/materials/DepthTexture"
+import DepthTexture from "@components/materials/DepthTexture"
 import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
 import Ground from "@components/road/Ground"
@@ -10,7 +10,7 @@ import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import PlaceGrid from "@data/PlaceGrid"
 import { useStore } from "@data/store"
-import { extend } from "@react-three/fiber"
+import { extend, useFrame } from "@react-three/fiber"
 import { lazy } from "react"
 
 import Camera from "./components/Camera"
@@ -26,6 +26,10 @@ extend(extensions)
 
 export default function App() {
     const { showColliders } = useStore(i => i.debug)
+
+    useFrame(({ gl, scene, camera }) => {
+        gl.render(scene, camera)
+    })
 
     return (
         <>
@@ -45,11 +49,11 @@ export default function App() {
                 <Ground />
                 <Traffic />
                 <Road />
+                <CloudSystem />
             </CannonProvider>
 
             {/* at the very end */}
-            <DepthTexturex />
-            <CloudSystem />
+            <DepthTexture />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
         </>

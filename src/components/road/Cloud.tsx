@@ -1,7 +1,7 @@
-import { store } from "@data/store"
-import { ndelta } from "@data/utils"
+import { Cloud, store } from "@data/store"
+import { repositionCloud } from "@data/store/actions"
+import { ndelta, useLowerPriorityFrame } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
-import { Tuple3 } from "@src/types/global"
 import { memo, useLayoutEffect, useRef } from "react"
 import { Euler, Mesh, MeshBasicMaterial, PlaneGeometry, Quaternion } from "three"
 import { damp } from "three/src/math/MathUtils.js"
@@ -12,25 +12,26 @@ const geometry = new PlaneGeometry(width, height, 1, 1)
 
 geometry.rotateY(Math.PI * 1)
 
-export interface CloudProps {
-    speed: number
-    position: Tuple3
-    scale?: number
-    id: string
-    damping: number
-}
-
 const _euler = new Euler()
 const _quaternion = new Quaternion()
 
-function Cloud({
+function CloudComponent({
     speed,
     position,
     scale = 1,
     damping,
+    id,
     material
-}: CloudProps & { material: MeshBasicMaterial }) {
+}: Cloud & { material: MeshBasicMaterial }) {
     const ref = useRef<Mesh>(null)
+
+    useLayoutEffect(() => {
+        if (!ref.current) {
+            return
+        }
+
+        ref.current.position.y = -height / 2 * scale
+    }, [position])
 
     useFrame((state, delta) => {
         const { player: { vehicle } } = store.getState()
@@ -46,13 +47,17 @@ function Cloud({
         ref.current.position.x -= ndelta(delta) * speed
     })
 
-    useLayoutEffect(() => {
-        if (!ref.current) {
+    useLowerPriorityFrame(() => {
+        const { state, player: { vehicle } } = store.getState()
+
+        if (!vehicle || state == "gameover") {
             return
         }
 
-        ref.current.position.y = -height / 2 * scale
-    }, [position])
+        if (position[2] < vehicle.chassisBody.position.z - 6) {
+            repositionCloud(id)
+        }
+    }, 10)
 
     return (
         <mesh
@@ -68,4 +73,4 @@ function Cloud({
     )
 }
 
-export default memo(Cloud)
+export default memo(CloudComponent)

@@ -1,12 +1,13 @@
 import { setState } from "@data/store/actions"
 import { useFBO } from "@react-three/drei"
-import { useFrame, useThree } from "@react-three/fiber"
+import { advance, invalidate, useFrame, useThree } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
+import useAnimationFrame from "use-animation-frame"
 
 const size = 512
 
-export default function DepthTexturex() {
+export default function DepthTexture() {
     const { viewport } = useThree()
     const [width, height] = useMemo<Tuple2>(() => [
         Math.ceil(size * viewport.dpr),
@@ -33,7 +34,7 @@ export default function DepthTexturex() {
                 i.visible = true
             }
         })
-    })
+    }, -1)
 
     useEffect(() => {
         setState({ depthTexture: fbo.depthTexture })

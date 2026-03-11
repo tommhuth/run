@@ -10,6 +10,7 @@ import useTrafficClient from "../traffic/useTrafficClient"
 import Suv from "./Suv"
 import { useControls } from "./useControls"
 import usePlayerAlive from "./usePlayerAlive"
+import { store, useStore } from "@data/store"
 
 interface PlayerProps {
     position?: Tuple3
@@ -20,6 +21,7 @@ export default function Player({
     rotation,
 }: PlayerProps) {
     const { motion } = useControls()
+    const steering = useStore(i => i.player.steering)
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
@@ -28,13 +30,22 @@ export default function Player({
     usePlayerAlive(setPosition)
 
     useEffect(() => {
-        return setState({ player: { vehicle: vehicle, mesh: null } })
+        return setState({
+            player: {
+                ...store.getState().player,
+                vehicle: vehicle,
+                mesh: null
+            }
+        })
     }, [vehicle])
 
     useFrame(() => {
         if (!vehicle) {
             return
         }
+
+        steering.z = motion.currentWheelForce
+        steering.y = motion.currentSteering
 
         for (const wheel of [2, 3]) {
             vehicle.setWheelForce(motion.currentWheelForce, wheel)
@@ -46,23 +57,21 @@ export default function Player({
     })
 
     return (
-        <>
-            <Suv
-                ref={setVehicle}
-                position={position}
-                rotation={rotation}
-                key={position[2]}
-            >
-                <primitive object={target} position={[0, 1, 5]} />
-                <spotLight
-                    intensity={120}
-                    position={[0, 1.5, 1]}
-                    color={"#ffc079"}
-                    angle={Math.PI * .3}
-                    target={target}
-                    penumbra={.5}
-                />
-            </Suv>
-        </>
+        <Suv
+            ref={setVehicle}
+            position={position}
+            rotation={rotation}
+            key={position[2]}
+        >
+            <primitive object={target} position={[0, 1, 5]} />
+            <spotLight
+                intensity={120}
+                position={[0, 1.5, 1]}
+                color={"#ffc079"}
+                angle={Math.PI * .3}
+                target={target}
+                penumbra={.5}
+            />
+        </Suv>
     )
 }

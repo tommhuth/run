@@ -1,32 +1,45 @@
 import { store } from "@data/store"
+import { clamp } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Euler, Quaternion, Vector3 } from "three"
+import { damp } from "three/src/math/MathUtils.js"
 
 const _quaternion = new Quaternion()
 const _euler = new Euler()
 const _position = new Vector3()
-const _lookAt = new Vector3()
+const _lean = new Vector3()
 const offset = new Vector3(0, 3, -4.5)
-const forward = new Vector3(0, 0, 20)
 
 export default function Camera() {
-    useFrame(({ camera }) => {
+    useFrame(({ camera }, delta) => {
         const { player } = store.getState()
         /*
         camera.position.set(0, 50, -5)
         camera.lookAt(0, 0, 30)
 
-        return*/
+        return
+        */
 
         if (!player.vehicle) {
             return
         }
+
+        const leanAmount = 1
+        const leanLambda = 1
+
+        _lean.x = damp(
+            _lean.x,
+            clamp(player.vehicle.chassisBody.angularVelocity.y / 1, -1, 1) * leanAmount,
+            leanLambda,
+            delta
+        )
 
         _quaternion.copy(player.vehicle.chassisBody.quaternion)
         _euler.setFromQuaternion(_quaternion, "YXZ")
         _euler.x = 0
         _euler.z = 0
         _position.copy(offset)
+            .add(_lean)
             .applyEuler(_euler)
             .add(player.vehicle.chassisBody.position)
 
@@ -38,12 +51,7 @@ export default function Camera() {
         _euler.y += Math.PI
 
         camera.position.lerp(_position, .3)
-        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), .35)
-
-        _lookAt.copy(forward)
-            .applyEuler(_euler)
-            .add(player.vehicle.chassisBody.position)
-        //camera.lookAt(_lookAt)
+        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), .65)
     })
 
     return null

@@ -97,7 +97,7 @@ export default function useSteeringBehaviour({
                 .vsub(clientNear.data.vehicle.chassisBody.position)
                 .unit()
                 .dot(_tempVec3.set(0, 0, -direction))
-            const distanceThreshold = 5
+            const distanceThreshold = 7
             const distance = clamp(vehiclePosition.distanceTo(_tempVec2.copy(clientNear.data.vehicle.chassisBody.position)) / distanceThreshold, 0, 1)
 
             if (directionSimilarity > inFronThreshold) {

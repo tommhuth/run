@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
 import { RefObject, useEffect, useLayoutEffect, useMemo, useRef } from "react"
-import { Group, Mesh, Object3D } from "three"
+import { Group, Mesh, Object3D, Quaternion as ThreeQuaternion } from "three"
 
 export type Chassis = [Shape, Vec3?, Quaternion?][]
 export type Wheel = { radius: number; position: Tuple3 }
@@ -22,6 +22,7 @@ const _emptyOffset = new Vec3()
 const _wheelOffset = new Vec3()
 const _chassisOffset = new Vec3()
 const _emptyQuaternion = new Quaternion()
+const _quaternion = new ThreeQuaternion()
 
 const direction = new Vec3(0, -1, 0)
 
@@ -39,7 +40,7 @@ function syncVehicle(
         return
     }
 
-    chassisRef.current.quaternion.copy(vehicle.chassisBody.quaternion)
+    chassisRef.current.quaternion.slerp(_quaternion.copy(vehicle.chassisBody.quaternion), .75)
 
     if (mode === "lerp") {
         chassisRef.current.position.lerp(vehicle.chassisBody.position, .4)
@@ -54,7 +55,7 @@ function syncVehicle(
         const wheelMesh = wheelsRef.current?.children[index] as Mesh
 
         if (wheelMesh) {
-            wheelMesh.quaternion.copy(wheel.quaternion)
+            wheelMesh.quaternion.slerp(_quaternion.copy(wheel.quaternion), .75)
 
             if (mode === "lerp") {
                 wheelMesh.position.lerp(wheel.position, .4)
