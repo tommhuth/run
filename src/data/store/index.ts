@@ -83,6 +83,7 @@ export interface RunStore {
         pickupDeadline: number
         score: number
         potentialScore: number
+        time: number
     }
 }
 
@@ -97,7 +98,8 @@ const store = create(
             pickupCounter: 4,
             pickupDeadline: Infinity,
             potentialScore: 0,
-            score: 0
+            score: 0,
+            time: 0
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),

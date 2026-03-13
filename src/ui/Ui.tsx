@@ -8,15 +8,25 @@ export default function Ui() {
     const player = store(i => i.player)
     const messages = store(i => i.messages)
     const timeRef = useRef<HTMLOutputElement>(null)
+    const progressRef = useRef<HTMLDivElement>(null)
 
     useAnimationFrame(() => {
-        if (!timeRef.current) {
+        if (!timeRef.current || !progressRef.current) {
             return
         }
 
         const time = Math.floor((player.pickupDeadline - Date.now()) / 100) * 100 / 1000
+        const size = (player.pickupDeadline - Date.now()) / player.time
 
         timeRef.current.value = (time < 0 ? "−" : "") + Math.abs(time).toLocaleString("en") + "s"
+
+        if (size < 0) {
+            progressRef.current.style.animation = "blink 1s infinite"
+            progressRef.current.style.scale = "1 1"
+        } else {
+            progressRef.current.style.animation = ""
+            progressRef.current.style.scale = `${size > 0 ? size : 1} 1`
+        }
     })
 
     return (
@@ -25,6 +35,12 @@ export default function Ui() {
                 <output ref={timeRef} hidden={player.pickupDeadline === Infinity} />
                 <output hidden={!player.score}>{player.score.toLocaleString("en")}</output>
             </div>
+
+            <div
+                hidden={player.pickupDeadline === Infinity}
+                ref={progressRef}
+                className="progress"
+            />
 
             <ul className="messages">
                 {messages.map(i => {

@@ -31,7 +31,7 @@ export default function PickupPointPart({ position, depth, id }) {
         }
 
         if (player.vehicle.chassisBody.position.z > (depth / 2 + position[2]) + 6) {
-            const penalty = 5000
+            const penalty = 10_000
 
             createMessage({
                 text: "You missed your destination!",
@@ -84,7 +84,8 @@ export default function PickupPointPart({ position, depth, id }) {
                     ...player,
                     score,
                     potentialScore: targetPartsDistance,
-                    pickupDeadline: Date.now() + targetPartsDistance * secondsPerPart * 1_000
+                    pickupDeadline: Date.now() + targetPartsDistance * secondsPerPart * 1_000,
+                    time: targetPartsDistance * secondsPerPart * 1_000,
                 }
             })
             setPickedUp(true)
