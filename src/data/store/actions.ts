@@ -5,7 +5,7 @@ import { Tuple3 } from "@src/types/global"
 import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
 
-import { RoadPart, RunStore, store, TrafficElement } from "."
+import { Message, RoadPart, RunStore, store, TrafficElement } from "."
 
 export function setState(data: Partial<RunStore>) {
     startTransition(() => {
@@ -104,20 +104,24 @@ export function generatePickupPoint(previous: PreviousPart): RoadPart {
     }
 }
 
-let i = 0
-
 export function extendRoad(previous: PreviousPart) {
-    const road = store.getState().road
+    const { road, player } = store.getState()
     let generator = getRandomRoadExtension()
+    let pickupCounter = player.pickupCounter
 
-    if (i === 0) {
+    if (pickupCounter === player.pickupInterval) {
         generator = generatePickupPoint
-        i = 10
+        pickupCounter = 0
     } else {
-        i--
+        pickupCounter++
     }
 
     setState({
+        player: {
+            ...player,
+            pickupCounter,
+            pickupInterval: pickupCounter === 0 ? random.integer(2, 5) : player.pickupInterval
+        },
         road: [
             ...road,
             generator(previous)
@@ -273,6 +277,26 @@ export function repositionCloud(id: string) {
                     item.position[1] + ROAD_FORWARD_EDGE,
                     item.position[2] + cloudConfig.edgeFogCount * cloudConfig.interval
                 ]
+            }
+        ]
+    })
+}
+
+export function createMessage(props: Partial<Message>, duration = 4000) {
+    const id = random.id()
+
+    setTimeout(() => {
+        setState({
+            messages: store.getState().messages.filter(i => i.id !== id)
+        })
+    }, duration)
+
+    setState({
+        messages: [
+            ...store.getState().messages,
+            {
+                ...props,
+                id
             }
         ]
     })

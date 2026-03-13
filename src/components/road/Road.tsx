@@ -17,7 +17,7 @@ export default function Road() {
         const forwardPart = road.at(-1)
         const forwardBuffer = ROAD_FORWARD_EDGE
         const backwardPart = road.at(0)
-        const backwardBuffer = 10
+        const backwardBuffer = 25
 
         if (!vehicle || !forwardPart || !backwardPart) {
             return

@@ -57,5 +57,52 @@ body::after {
 .distance {
     position: fixed;
     left: 1em;
+    right: 1em;
     bottom: 1em;
+    font-size: 2em;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.messages {
+    position: absolute;
+    top: 2em;
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    place-items: center;
+    place-content: center;
+
+    li {
+        display: flex;
+        width: max-content;
+
+        div {
+            background-color: black;
+            color: white;
+            padding: .75rem 1.5rem;
+            border-radius: .5em;
+            position: relative;
+            z-index: 1;
+            margin-right: -.5em;
+        }
+
+        strong {
+            font-weight: bold;
+            background-color: blue;
+            color: white;
+            border-radius: .5em;
+            padding: .75rem 1.5rem;
+
+            &:empty {
+                display: none;
+            }
+        }
+    }
 }

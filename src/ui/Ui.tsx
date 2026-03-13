@@ -6,22 +6,38 @@ import useAnimationFrame from "use-animation-frame"
 
 export default function Ui() {
     const player = store(i => i.player)
-    const ref = useRef<HTMLDivElement>(null)
+    const messages = store(i => i.messages)
+    const timeRef = useRef<HTMLOutputElement>(null)
 
     useAnimationFrame(() => {
-        if (!ref.current) {
+        if (!timeRef.current) {
             return
         }
 
-        ref.current.innerText = Math.max(Math.floor(player.vehicle?.chassisBody.position.z || 0), 0).toString()
+        const time = Math.floor((player.pickupDeadline - Date.now()) / 100) * 100 / 1000
+
+        timeRef.current.value = (time < 0 ? "−" : "") + Math.abs(time).toLocaleString("en") + "s"
     })
 
     return (
         <>
             <div className="distance">
-                <span ref={ref} /><span>m</span>
+                <output ref={timeRef} hidden={player.pickupDeadline === Infinity} />
+                <output hidden={!player.score}>{player.score.toLocaleString("en")}</output>
             </div>
 
+            <ul className="messages">
+                {messages.map(i => {
+                    return (
+                        <li key={i.id}>
+                            <div>{i.text}</div>
+                            <strong hidden={!i.score}>
+                                {((i.score || 0) < 0 ? "−" : "+")}{Math.abs(i.score || 0).toLocaleString("en")}
+                            </strong>
+                        </li>
+                    )
+                })}
+            </ul>
             {Config.DEBUG && <Debug />}
         </>
     )
@@ -30,6 +46,8 @@ export default function Ui() {
 function Debug() {
     const state = store(i => i.state)
     const { godMode, showColliders } = store(i => i.debug)
+    const player = store(i => i.player)
+    const road = store(i => i.road)
 
     return (
         <div
@@ -44,7 +62,13 @@ function Debug() {
             }}
         >
             <div>{state.toUpperCase()}</div>
-
+            <div>pickupCounter: {player.pickupCounter}</div>
+            <div>pickupInterval: {player.pickupInterval}</div>
+            <div>
+                <ul style={{ fontSize: ".85em" }}>
+                    {road.map((i, index) => <div key={i.id}>{index + 1} {i.type}</div>)}
+                </ul>
+            </div>
             <label>
                 <input
                     type="checkbox"

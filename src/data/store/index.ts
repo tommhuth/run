@@ -53,6 +53,13 @@ export interface Cloud {
     fixed: boolean
 }
 
+export interface Message {
+    id: string
+    text: string
+    score?: number
+    color: string
+}
+
 export interface RunStore {
     state: "intro" | "gameover" | "running"
     instances: Record<InstanceName, Instance>
@@ -62,6 +69,7 @@ export interface RunStore {
     road: RoadPart[]
     grid: SpatialHashGrid3D
     clouds: Cloud[]
+    messages: Message[]
     debug: {
         showColliders: boolean
         godMode: boolean
@@ -70,6 +78,11 @@ export interface RunStore {
         mesh: Group | null
         vehicle: RigidVehicle | null
         steering: Vector3
+        pickupCounter: number
+        pickupInterval: number
+        pickupDeadline: number
+        score: number
+        potentialScore: number
     }
 }
 
@@ -79,7 +92,12 @@ const store = create(
         player: {
             mesh: null,
             vehicle: null,
-            steering: new Vector3()
+            steering: new Vector3(),
+            pickupInterval: 4,
+            pickupCounter: 4,
+            pickupDeadline: Infinity,
+            potentialScore: 0,
+            score: 0
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
@@ -91,11 +109,12 @@ const store = create(
         depthTexture: null,
         materials: {} as RunStore["materials"],
         instances: {} as RunStore["instances"],
+        messages: [],
         debug: {
             showColliders: false,
             godMode: false,
         },
-    }))
+    } satisfies RunStore))
 )
 
 const useStore = store
