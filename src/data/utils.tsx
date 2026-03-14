@@ -19,6 +19,10 @@ export function ndelta(delta: number) {
     return nDelta
 }
 
+export function dampFactor(k: number, delta: number) {
+    return 1 - Math.exp(-k * delta)
+}
+
 export function useLowerPriorityFrame(cb: RenderCallback, frameInterval: number) {
     const frame = useRef(random.integer(0, frameInterval * 10))
 

@@ -1,5 +1,5 @@
 import { store } from "@data/store"
-import { clamp } from "@data/utils"
+import { clamp, dampFactor } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Euler, Quaternion, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
@@ -50,8 +50,8 @@ export default function Camera() {
         _euler.z *= .1
         _euler.y += Math.PI
 
-        camera.position.lerp(_position, .3)
-        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), .65)
+        camera.position.lerp(_position, dampFactor(25, delta))
+        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), dampFactor(26, delta))
     })
 
     return null

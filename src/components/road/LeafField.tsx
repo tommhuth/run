@@ -2,7 +2,7 @@ import model from "@assets/models/leaf.glb"
 import { setMatrixAt } from "@components/materials/helpers"
 import { leafMaterial } from "@components/materials/shared"
 import { useStore } from "@data/store"
-import { clamp, ndelta } from "@data/utils"
+import { clamp, dampFactor, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
@@ -58,11 +58,11 @@ function rotate(leaf: Leaf, target: Vector3, dt: number, time: number) {
 
     const maxDist = 2.5
     // 3. distance-based blend
-    const t = clamp(1 - dist / maxDist, 0, 1)
+    const t = clamp(1 - dist / maxDist, 0, 1) * 10 + 4
 
     // 4. blend vertical → horizontal into targetDir
     tmpVec3.copy(up)
-        .lerp(tmpVec2, t)
+        .lerp(tmpVec2, dampFactor(t, dt))
         .normalize()
 
     // 

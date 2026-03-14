@@ -1,4 +1,5 @@
 import { useCannonWorld } from "@data/cannon"
+import { dampFactor } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
@@ -34,16 +35,20 @@ function syncVehicle(
     horizontalStabilityAdjust: number,
     chassisRef: RefObject<Object3D | null>,
     wheelsRef: RefObject<Object3D | null>,
-    mode: "lerp" | "copy"
+    delta: number,
+    mode: "lerp" | "copy",
 ) {
     if (!chassisRef.current) {
         return
     }
 
-    chassisRef.current.quaternion.slerp(_quaternion.copy(vehicle.chassisBody.quaternion), .75)
+    let qk = 18
+    let vk = 16
+
+    chassisRef.current.quaternion.slerp(_quaternion.copy(vehicle.chassisBody.quaternion), dampFactor(qk, delta))
 
     if (mode === "lerp") {
-        chassisRef.current.position.lerp(vehicle.chassisBody.position, .4)
+        chassisRef.current.position.lerp(vehicle.chassisBody.position, dampFactor(vk, delta))
     } else {
         chassisRef.current.position.copy(vehicle.chassisBody.position)
     }
@@ -55,10 +60,10 @@ function syncVehicle(
         const wheelMesh = wheelsRef.current?.children[index] as Mesh
 
         if (wheelMesh) {
-            wheelMesh.quaternion.slerp(_quaternion.copy(wheel.quaternion), .75)
+            wheelMesh.quaternion.slerp(_quaternion.copy(wheel.quaternion), dampFactor(qk, delta))
 
             if (mode === "lerp") {
-                wheelMesh.position.lerp(wheel.position, .4)
+                wheelMesh.position.lerp(wheel.position, dampFactor(vk, delta))
             } else {
                 wheelMesh.position.copy(wheel.position)
             }
@@ -139,11 +144,11 @@ export function useRigidVehicle({
     }, [vehicle, world])
 
     useLayoutEffect(() => {
-        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, "copy")
+        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, 1, "copy")
     }, [])
 
-    useFrame(() => {
-        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, "lerp")
+    useFrame((state, delta) => {
+        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, delta, "lerp")
     })
 
     return [chassisRef, wheelsRef, vehicle, backWheelsRef] as const
