@@ -72,8 +72,10 @@ body::after {
     width: calc(100% - 4em);
     bottom: 2em;
     height: 3px;
-    background-color: rgb(122, 133, 158);
+    background-color: #000;
     transform-origin: left center;
+    border-radius: 1em;
+    opacity: .35;
 }
 
 .messages {
