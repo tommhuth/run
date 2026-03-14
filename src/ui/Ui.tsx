@@ -1,7 +1,7 @@
 import Config from "@data/Config"
 import { store } from "@data/store"
 import { setDebugData } from "@data/store/actions"
-import { useRef } from "react"
+import { CSSProperties, useRef } from "react"
 import useAnimationFrame from "use-animation-frame"
 
 export default function Ui() {
@@ -21,7 +21,7 @@ export default function Ui() {
         timeRef.current.value = (time < 0 ? "−" : "") + Math.abs(time).toLocaleString("en") + "s"
 
         if (size < 0) {
-            progressRef.current.style.animation = "blink 1s infinite"
+            progressRef.current.style.animation = "blink .85s infinite"
             progressRef.current.style.scale = "1 1"
         } else {
             progressRef.current.style.animation = ""
@@ -45,7 +45,12 @@ export default function Ui() {
             <ul className="messages">
                 {messages.map(i => {
                     return (
-                        <li key={i.id}>
+                        <li
+                            key={i.id}
+                            style={{
+                                "--color": i.score < 0 ? "#ff0084" : undefined
+                            } as CSSProperties}
+                        >
                             <div>{i.text}</div>
                             <strong hidden={!i.score}>
                                 {((i.score || 0) < 0 ? "−" : "+")}{Math.abs(i.score || 0).toLocaleString("en")}

@@ -80,40 +80,70 @@ body::after {
     position: absolute;
     top: 2em;
     left: 50%;
+    width: calc(100% - 2em);
     translate: -50% 0;
     display: flex;
     flex-direction: column;
     gap: .5em;
-    font-size: 1.25rem;
-    white-space: nowrap;
     place-items: center;
-    place-content: center;
+    font-size: 1.25rem;
+
+    @media (max-width: 800px) {
+        font-size: 1rem;
+    }
 
     li {
         display: flex;
         width: max-content;
+        flex-wrap: wrap;
+        max-width: 100%;
+        animation: messagein .35s both;
+
+        @media (max-width: 800px) {
+            flex-direction: column-reverse;
+            place-items: center;
+        }
 
         div {
             background-color: black;
             color: white;
-            padding: .75rem 1.5rem;
+            padding: .75rem 1.25rem;
             border-radius: .5em;
             position: relative;
             z-index: 1;
             margin-right: -.5em;
+
+            @media (max-width: 800px) {
+                margin-right: 0;
+                margin-top: -.25em;
+                z-index: -1;
+            }
         }
 
         strong {
             font-weight: bold;
-            background-color: blue;
+            background-color: var(--color, blue);
             color: white;
             border-radius: .5em;
+            max-width: max-content;
             padding: .75rem 1.5rem;
 
             &:empty {
                 display: none;
             }
         }
+    }
+}
+
+@keyframes messagein {
+    from {
+        opacity: 0;
+        translate: 0 1em;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
     }
 }
 
