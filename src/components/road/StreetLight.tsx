@@ -12,7 +12,11 @@ import { SphereGeometry } from "three"
 const box = new Box(new Vec3(.05, 6, .05))
 const sphere = new SphereGeometry(.025, 8, 8)
 
-export default function StreetLight({ position, scale, rotation }) {
+export default function StreetLight({
+    position,
+    scale = 6.5,
+    rotation
+}) {
     const { nodes } = useGLTF(model)
     const [active, setActive] = useTransitionedState(false)
 

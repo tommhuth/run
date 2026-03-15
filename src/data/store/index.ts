@@ -106,7 +106,6 @@ const store = create(
         clouds: initializeClouds(),
         road: [
             generateForestPart({ position: [0, 0, -10], depth: 0 }),
-            generateForestPart({ position: [0, 0, -10], depth: 20 })
         ],
         depthTexture: null,
         materials: {} as RunStore["materials"],

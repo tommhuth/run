@@ -31,7 +31,7 @@ const _euler = new Euler()
 interface SetMatrixAtParams {
     instance: InstancedMesh
     index: number
-    position?: Tuple3
+    position?: Tuple3 | Vector3
     rotation?: Tuple3 | Tuple4
     scale?: Tuple3 | number
 }
@@ -44,7 +44,7 @@ export function setMatrixAt({
     scale = [1, 1, 1],
 }: SetMatrixAtParams) {
     instance.setMatrixAt(index, _matrix.compose(
-        _position.set(...position),
+        Array.isArray(position) ? _position.set(...position) : position,
         rotation.length === 3 ? _quaternion.setFromEuler(_euler.set(...rotation, "XYZ")) : _quaternion.set(...rotation),
         Array.isArray(scale) ? _scale.set(...scale) : _scale.set(scale, scale, scale),
     ))

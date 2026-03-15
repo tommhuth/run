@@ -143,10 +143,10 @@ interface LeafFieldProps {
 
 export default function LeafField({
     position,
-    depth = 10,
-    width = 8,
-    interval = 1.4,
-    randomness = .5
+    depth = 15,
+    width = 10,
+    interval = 2,
+    randomness = 2
 }: LeafFieldProps) {
     const leaves = useMemo(() => {
         let index = 0

@@ -13,7 +13,7 @@ export function setState(data: Partial<RunStore>) {
     })
 }
 
-export type MaterialName = "cloud"
+export type MaterialName = "beam"
 
 export function setMaterial(name: MaterialName, material: Material) {
     store.setState({
@@ -120,7 +120,7 @@ export function extendRoad(previous: PreviousPart) {
         player: {
             ...player,
             pickupCounter,
-            pickupInterval: pickupCounter === 0 ? random.integer(2, 5) : player.pickupInterval
+            pickupInterval: pickupCounter === 0 ? random.integer(2, 6) : player.pickupInterval
         },
         road: [
             ...road,

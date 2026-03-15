@@ -65,12 +65,10 @@ export default function RocksPart({ position, depth }) {
                     <Fragment key={index}>
                         <StreetLight
                             position={[x, y, z]}
-                            scale={7}
                             rotation={[0, Math.PI * .5, 0]}
                         />
                         <StreetLight
                             position={[-x, y, z]}
-                            scale={7}
                             rotation={[0, -Math.PI * .5, 0]}
                         />
                     </Fragment>

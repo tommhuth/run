@@ -1,0 +1,50 @@
+import { store } from "@data/store"
+import { MaterialName, setMaterial } from "@data/store/actions"
+import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallback, useMemo } from "react"
+import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
+
+import BeamMaterial from "./BeamMaterial"
+
+function MaterialLoader() {
+    const materials = useMemo(() => {
+        return {
+            beam: <BeamMaterial />
+        } satisfies Record<MaterialName, ReactNode>
+    }, [])
+
+    return Object.entries(materials).map(([name, material]) => {
+        return (
+            <MaterialHandler
+                name={name as MaterialName}
+                key={name}
+            >
+                {material}
+            </MaterialHandler>
+        )
+    })
+}
+
+const geometry = new BoxGeometry()
+
+function MaterialHandler({ children, name }: { children: React.ReactNode; name: MaterialName }) {
+    const handleRef = useCallback((mesh: Mesh<BufferGeometry, Material>) => {
+        const existing = store.getState().materials[name]
+
+        if (mesh && existing !== mesh.material) {
+            startTransition(() => setMaterial(name, mesh.material))
+        }
+    }, [name])
+
+    return (
+        <mesh
+            geometry={geometry}
+            ref={handleRef}
+            dispose={null}
+            frustumCulled={false}
+        >
+            {cloneElement(children as ReactElement, { name })}
+        </mesh>
+    )
+}
+
+export default memo(MaterialLoader)

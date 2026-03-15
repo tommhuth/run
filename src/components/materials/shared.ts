@@ -8,10 +8,13 @@ export const floorMaterial = new MeshPhongMaterial({
     dithering: true
 })
 
-export const orange = new MeshBasicMaterial({
-    name: "target",
-    color: "#ff9100",
+export const beam = new MeshPhongMaterial({
+    name: "beam",
+    color: "#ffd296",
     fog: true,
+    toneMapped: false,
+    emissive: "#ffd296",
+    emissiveIntensity: .85,
     dithering: true
 })
 

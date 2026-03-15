@@ -15,6 +15,7 @@ import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
+import MaterialLoader from "@components/materials/MaterialLoader"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -52,6 +53,7 @@ export default function App() {
                 <CloudSystem />
             </CannonProvider>
 
+            <MaterialLoader />
             {/* at the very end */}
             <DepthTexture />
 
