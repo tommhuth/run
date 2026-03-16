@@ -1,6 +1,6 @@
 import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
 import { RigidVehicle } from "cannon-es"
-import { DepthTexture, Group, Material, Vector3 } from "three"
+import { DepthTexture, Group, Material, PointLight, Vector3 } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
@@ -74,6 +74,9 @@ export interface RunStore {
         showColliders: boolean
         godMode: boolean
     }
+    shared: {
+        pointLight: null | PointLight
+    }
     player: {
         mesh: Group | null
         vehicle: RigidVehicle | null
@@ -110,6 +113,9 @@ const store = create(
         depthTexture: null,
         materials: {} as RunStore["materials"],
         instances: {} as RunStore["instances"],
+        shared: {
+            pointLight: null
+        },
         messages: [],
         debug: {
             showColliders: false,

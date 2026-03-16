@@ -16,6 +16,7 @@ import { lazy } from "react"
 import Camera from "./components/Camera"
 import extensions from "./extensions"
 import MaterialLoader from "@components/materials/MaterialLoader"
+import { setSharedObject } from "@data/store/actions"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -41,6 +42,7 @@ export default function App() {
                 near={ROAD_FORWARD_EDGE - FOG_DISTANCE}
             />
             <color args={["#fff"]} attach={"background"} />
+            <pointLight name="pointLight" ref={setSharedObject} />
 
             <CannonProvider debug={showColliders}>
                 <Camera />

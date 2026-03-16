@@ -6,7 +6,7 @@ import { clamp, dampFactor, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef, useState } from "react"
-import { CatmullRomCurve3, CylinderGeometry, InstancedMesh, Mesh, PointLight, SphereGeometry, Vector3 } from "three"
+import { CatmullRomCurve3, CylinderGeometry, InstancedMesh, Mesh, SphereGeometry, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
 import { ROAD_FORWARD_EDGE } from "./const"
@@ -22,7 +22,7 @@ const cylinderGeometry = new CylinderGeometry(.5, .5, height)
 const pointGeometry = new SphereGeometry(1, 4, 2)
 
 export default function PickupTarget({
-    position,
+    position: [x, y, z],
     size = 6,
     particleCount = 200,
     pickupId,
@@ -34,7 +34,6 @@ export default function PickupTarget({
 
         return Array.from({ length: particleCount }).map((i, index) => {
             return {
-                id: random.id(),
                 index,
                 speed: random.float(2, 20),
                 size: random.float(.1, .2),
@@ -46,37 +45,36 @@ export default function PickupTarget({
                     random.float(-offset, offset)
                 ),
                 position: new Vector3(
-                    position[0] + biased(size / 2),
-                    position[1] + random.float(0, height),
-                    position[2] + biased(size / 2),
+                    x + biased(size / 2),
+                    y + random.float(0, height),
+                    z + biased(size / 2),
                 )
             }
         })
     }, [])
     const instanceRef = useRef<InstancedMesh>(null)
     const beamRef = useRef<Mesh>(null)
-    const lightRef = useRef<PointLight>(null)
     const curve = useMemo(() => {
         const points = [
-            new Vector3(...position),
-            new Vector3(position[0], position[1] + 10, position[2]),
-            new Vector3(0, position[1] + 3, position[2] + 10),
-            new Vector3(0, 3, position[2] + ROAD_FORWARD_EDGE * 1.25),
+            new Vector3(x, y, z),
+            new Vector3(x, y + 10, z),
+            new Vector3(0, y + 3, z + 10),
+            new Vector3(0, 3, z + ROAD_FORWARD_EDGE * 1.25),
         ]
 
         return new CatmullRomCurve3(points, false, "catmullrom", 1)
     }, [])
-    const [idle, setIdle] = useState(true)
+    const [mode, setMode] = useState<"idle" | "complete" | "missed">("idle")
 
     useFrame(() => {
         const { player, road } = useStore.getState()
         let score = player.score
 
-        if (!player.vehicle || !idle) {
+        if (!player.vehicle || mode !== "idle") {
             return
         }
 
-        if (player.vehicle.chassisBody.position.z > (size / 2 + position[2]) + 6) {
+        if (player.vehicle.chassisBody.position.z > (size / 2 + z) + 6) {
             const penalty = 10_000
 
             createMessage({
@@ -91,10 +89,10 @@ export default function PickupTarget({
                     score: score - penalty
                 }
             })
-            setIdle(true)
+            setMode("missed")
         } else if (
-            Math.abs(player.vehicle.chassisBody.position.x - position[0]) < pickupThreshold
-            && Math.abs(player.vehicle.chassisBody.position.z - position[2]) < pickupThreshold
+            Math.abs(player.vehicle.chassisBody.position.x - x) < pickupThreshold
+            && Math.abs(player.vehicle.chassisBody.position.z - z) < pickupThreshold
         ) {
             const nextActivePickupIndex = road.findIndex(i => i.id !== pickupId && i.type === "pickupPoint")
             const currentIndex = road.findIndex(i => i.id === pickupId)
@@ -134,28 +132,49 @@ export default function PickupTarget({
                     time: targetPartsDistance * secondsPerPart * 1_000,
                 }
             })
-            setIdle(false)
+            setMode("complete")
         }
     })
 
-    useFrame((state, delta) => {
-        if (!beamRef.current || !lightRef.current) {
+    useFrame(({ clock }, delta) => {
+        if (!beamRef.current) {
             return
         }
 
-        if (idle) {
-            beamRef.current.scale.x = .5 + Math.abs(Math.cos(state.clock.getElapsedTime() * 2)) * (idle ? 1 : 0)
-            beamRef.current.scale.z = .5 + Math.abs(Math.cos(state.clock.getElapsedTime() * 2)) * (idle ? 1 : 0)
-            lightRef.current.position.y = 3.5 + Math.cos(state.clock.getElapsedTime() * 4) * 1 * (idle ? 1 : 0)
+        if (mode === "idle") {
+            beamRef.current.scale.x = .5 + Math.abs(Math.cos(clock.getElapsedTime() * 2))
+            beamRef.current.scale.z = .5 + Math.abs(Math.cos(clock.getElapsedTime() * 2))
         } else {
             beamRef.current.scale.x = damp(beamRef.current.scale.x, 0, 12, delta)
             beamRef.current.scale.z = damp(beamRef.current.scale.x, 0, 12, delta)
-
-            lightRef.current.position.lerp(curve.getPointAt(points[0].time), dampFactor(points[0].speed, delta))
         }
     })
 
-    useFrame((state, delta) => {
+    useFrame(({ clock }, delta) => {
+        const { shared: { pointLight }, player } = useStore.getState()
+
+        if (!pointLight || !player.vehicle || player.vehicle.chassisBody.position.z < z - 50) {
+            return
+        }
+
+        pointLight.color.set("#ffbb00")
+        pointLight.distance = 8
+        pointLight.intensity = damp(pointLight.intensity, mode === "idle" ? 250 : 0, 3, delta)
+
+        if (mode === "idle") {
+            pointLight.position.set(
+                x,
+                3.5 + Math.cos(clock.getElapsedTime() * 4),
+                z,
+            )
+        } else if (mode === "complete") {
+            const targetPoint = points[0]
+
+            pointLight.position.lerp(curve.getPointAt(targetPoint.time), dampFactor(targetPoint.speed, delta))
+        }
+    })
+
+    useFrame((_, delta) => {
         if (!instanceRef.current) {
             return
         }
@@ -163,13 +182,13 @@ export default function PickupTarget({
         for (const point of points) {
             const scale = (1 - point.position.y / height) * (point.dead ? 0 : 1)
 
-            if (idle) {
+            if (mode === "idle") {
                 point.position.y += point.speed * ndelta(delta)
 
                 if (point.position.y > height) {
                     point.position.y = 0
-                    point.position.x = position[0] + biased(size / 2)
-                    point.position.z = position[2] + biased(size / 2)
+                    point.position.x = x + biased(size / 2)
+                    point.position.z = z + biased(size / 2)
                 }
             } else {
                 const target = curve.getPointAt(clamp(point.time), _target)
@@ -198,27 +217,15 @@ export default function PickupTarget({
                 args={[pointGeometry, beam, particleCount]}
                 ref={instanceRef}
                 frustumCulled={false}
+                visible={mode !== "missed"}
             />
 
             <mesh
-                position={[
-                    position[0],
-                    position[1] + height / 2,
-                    position[2],
-                ]}
+                position={[x, y + height / 2, z]}
                 geometry={cylinderGeometry}
                 ref={beamRef}
                 userData={{ ignoreDepthWrite: true }}
                 material={materials.beam}
-            />
-
-            <pointLight
-                position-x={position[0]}
-                position-z={position[2]}
-                distance={8}
-                intensity={350}
-                ref={lightRef}
-                color={"#ffbb00"}
             />
         </>
     )

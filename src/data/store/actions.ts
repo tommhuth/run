@@ -6,6 +6,7 @@ import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
 
 import { Message, RoadPart, RunStore, store, TrafficElement } from "."
+import { Object3D } from "three/webgpu"
 
 export function setState(data: Partial<RunStore>) {
     startTransition(() => {
@@ -299,5 +300,14 @@ export function createMessage(props: Partial<Message>, duration = 4000) {
                 id
             }
         ]
+    })
+}
+
+export function setSharedObject(object: Object3D) {
+    setState({
+        shared: {
+            ...store.getState().shared,
+            [object.name]: object
+        }
     })
 }
