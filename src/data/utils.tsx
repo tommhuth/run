@@ -20,7 +20,7 @@ export function ndelta(delta: number) {
 }
 
 export function dampFactor(k: number, delta: number) {
-    return 1 - Math.exp(-k * delta)
+    return 1 - Math.exp(-k * ndelta(delta))
 }
 
 export function useLowerPriorityFrame(cb: RenderCallback, frameInterval: number) {

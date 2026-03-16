@@ -50,8 +50,8 @@ export default function Camera() {
         _euler.z *= .1
         _euler.y += Math.PI
 
-        camera.position.lerp(_position, dampFactor(25, delta))
-        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), dampFactor(26, delta))
+        camera.position.lerp(_position, dampFactor(20, delta))
+        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), dampFactor(34, delta))
     })
 
     return null

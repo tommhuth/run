@@ -42,8 +42,8 @@ function syncVehicle(
         return
     }
 
-    let qk = 18
-    let vk = 16
+    const qk = 21
+    const vk = 19
 
     chassisRef.current.quaternion.slerp(_quaternion.copy(vehicle.chassisBody.quaternion), dampFactor(qk, delta))
 
