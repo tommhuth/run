@@ -1,5 +1,5 @@
 import { store } from "@data/store"
-import { clamp, dampFactor } from "@data/utils"
+import { clamp, dampFactor, map } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Euler, Quaternion, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
@@ -13,6 +13,7 @@ const offset = new Vector3(0, 3, -4.5)
 export default function Camera() {
     useFrame(({ camera }, delta) => {
         const { player } = store.getState()
+        const responsiveOffset = map(window.innerWidth, 400, 900, 1., 0)
         /*
         camera.position.set(0, 50, -5)
         camera.lookAt(0, 0, 30)
@@ -39,6 +40,7 @@ export default function Camera() {
         _euler.x = 0
         _euler.z = 0
         _position.copy(offset)
+            .setComponent(2, offset.z - responsiveOffset)
             .add(_lean)
             .applyEuler(_euler)
             .add(player.vehicle.chassisBody.position)
