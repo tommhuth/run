@@ -53,7 +53,7 @@ export default function useSteeringBehaviour({
         }
 
         if (player.vehicle.chassisBody.velocity.length() < .5) {
-            data.playerStopTime += delta * 1000
+            data.playerStopTime += ndelta(delta) * 1000
         } else {
             data.playerStopTime = 0
         }
@@ -98,7 +98,7 @@ export default function useSteeringBehaviour({
                 .unit()
                 .dot(_tempVec3.set(0, 0, -direction))
             const distanceThreshold = 7
-            const distance = clamp(vehiclePosition.distanceTo(_tempVec2.copy(clientNear.data.vehicle.chassisBody.position)) / distanceThreshold, 0, 1)
+            const distance = clamp(vehiclePosition.distanceTo(_tempVec2.copy(clientNear.data.vehicle.chassisBody.position)) / distanceThreshold)
 
             if (directionSimilarity > inFronThreshold) {
                 speeding = Math.min(distance, speeding)
@@ -122,13 +122,13 @@ export default function useSteeringBehaviour({
 
         if (data.speeding < 1 || (data.playerStopTime > playerStopThreshold && direction === 1)) {
             // obstacle detected, or player stopped, we should slow down
-            const stopForce = clamp(vehicle.chassisBody.velocity.length() / (maxVelocity * .2), 0, 1)
+            const stopForce = clamp(vehicle.chassisBody.velocity.length() / (maxVelocity * .2))
             // limit to direction relevant movement only
             const directionScale = _tempVec1.copy(vehicle.chassisBody.velocity)
                 .unit()
                 .dot(_tempVec2.set(0, 0, direction))
 
-            currentWheelForce = -wheelForce * stopForce * clamp(directionScale, 0, 1)
+            currentWheelForce = -wheelForce * stopForce * clamp(directionScale)
         } else if (currentVelocity < maxVelocity) {
             // normal forward movement
             const scaler = map(currentVelocity / maxVelocity, 0, 1, 2.5, 1)

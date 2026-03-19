@@ -1,5 +1,5 @@
 import { store } from "@data/store"
-import { clamp, dampFactor, map } from "@data/utils"
+import { clamp, dampFactor, map, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Euler, Quaternion, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
@@ -32,7 +32,7 @@ export default function Camera() {
             _lean.x,
             clamp(player.vehicle.chassisBody.angularVelocity.y / 1, -1, 1) * leanAmount,
             leanLambda,
-            delta
+            ndelta(delta)
         )
 
         _quaternion.copy(player.vehicle.chassisBody.quaternion)
@@ -52,8 +52,8 @@ export default function Camera() {
         _euler.z *= .1
         _euler.y += Math.PI
 
-        camera.position.lerp(_position, dampFactor(20, delta))
-        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), dampFactor(34, delta))
+        camera.position.lerp(_position, dampFactor(20, ndelta(delta)))
+        camera.quaternion.slerp(_quaternion.setFromEuler(_euler), dampFactor(34, ndelta(delta)))
     })
 
     return null

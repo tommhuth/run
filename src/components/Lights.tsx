@@ -1,4 +1,5 @@
 import { useStore } from "@data/store"
+import { ndelta } from "@data/utils"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
@@ -36,7 +37,7 @@ export default function Lights() {
             shadowLightRef.current.target.position.x = Math.round(x + targetPosition[0])
             time.current = 0
         } else {
-            time.current += delta * 1000
+            time.current += ndelta(delta) * 1000
         }
     })
 

@@ -145,8 +145,8 @@ export default function PickupTarget({
             beamRef.current.scale.x = .5 + Math.abs(Math.cos(clock.getElapsedTime() * 2))
             beamRef.current.scale.z = .5 + Math.abs(Math.cos(clock.getElapsedTime() * 2))
         } else {
-            beamRef.current.scale.x = damp(beamRef.current.scale.x, 0, 12, delta)
-            beamRef.current.scale.z = damp(beamRef.current.scale.x, 0, 12, delta)
+            beamRef.current.scale.x = damp(beamRef.current.scale.x, 0, 12, ndelta(delta))
+            beamRef.current.scale.z = damp(beamRef.current.scale.x, 0, 12, ndelta(delta))
         }
     })
 
@@ -159,7 +159,7 @@ export default function PickupTarget({
 
         pointLight.color.set("#ffbb00")
         pointLight.distance = 8
-        pointLight.intensity = damp(pointLight.intensity, mode === "idle" ? 250 : 0, 3, delta)
+        pointLight.intensity = damp(pointLight.intensity, mode === "idle" ? 250 : 0, 3, ndelta(delta))
 
         if (mode === "idle") {
             pointLight.position.set(
@@ -170,7 +170,7 @@ export default function PickupTarget({
         } else if (mode === "complete") {
             const targetPoint = points[0]
 
-            pointLight.position.lerp(curve.getPointAt(targetPoint.time), dampFactor(targetPoint.speed, delta))
+            pointLight.position.lerp(curve.getPointAt(targetPoint.time), dampFactor(targetPoint.speed, ndelta(delta)))
         }
     })
 
@@ -194,8 +194,8 @@ export default function PickupTarget({
                 const target = curve.getPointAt(clamp(point.time), _target)
 
                 target.add(point.offset)
-                point.position.lerp(target, dampFactor(4, delta))
-                point.time = clamp(point.time + delta * point.speed * .135)
+                point.position.lerp(target, dampFactor(4, ndelta(delta)))
+                point.time = clamp(point.time + ndelta(delta) * point.speed * .135)
 
                 if (point.time > .99) {
                     point.dead = true

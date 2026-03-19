@@ -1,5 +1,5 @@
 import { useCannonWorld } from "@data/cannon"
-import { dampFactor } from "@data/utils"
+import { dampFactor, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Body, Quaternion, RigidVehicle, Shape, Sphere, Vec3 } from "cannon-es"
@@ -148,7 +148,7 @@ export function useRigidVehicle({
     }, [])
 
     useFrame((state, delta) => {
-        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, delta, "lerp")
+        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, ndelta(delta), "lerp")
     })
 
     return [chassisRef, wheelsRef, vehicle, backWheelsRef] as const
