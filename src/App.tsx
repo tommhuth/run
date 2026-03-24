@@ -68,7 +68,7 @@ export default function App() {
     <Suv position={[-2, 4, 7]} rotation={[0, Math.PI * .6, 0]} /> 
 */
 
-export function GridDebug({ g, scale = .95 }: { g: PlaceGrid; scale: number }) {
+export function GridDebug({ g, scale = .95 }: { g: PlaceGrid; scale?: number }) {
     return (
         <>
             <mesh position={g.origin}>

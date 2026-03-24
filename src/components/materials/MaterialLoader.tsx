@@ -4,11 +4,13 @@ import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallba
 import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
 
 import BeamMaterial from "./BeamMaterial"
+import DotMaterial from "./DotMaterial"
 
 function MaterialLoader() {
     const materials = useMemo(() => {
         return {
-            beam: <BeamMaterial />
+            beam: <BeamMaterial />,
+            dot: <DotMaterial />,
         } satisfies Record<MaterialName, ReactNode>
     }, [])
 

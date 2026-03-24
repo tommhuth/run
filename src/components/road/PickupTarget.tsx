@@ -1,5 +1,5 @@
 import { setMatrixAt } from "@components/materials/helpers"
-import { beam } from "@components/materials/shared"
+import { beam, redMaterial } from "@components/materials/shared"
 import { useStore } from "@data/store"
 import { createMessage, setState } from "@data/store/actions"
 import { clamp, dampFactor, ndelta } from "@data/utils"
@@ -18,7 +18,7 @@ function biased(size: number, bias = 6) {
 const _target = new Vector3()
 const height = 15
 
-const cylinderGeometry = new CylinderGeometry(.5, .5, height)
+const cylinderGeometry = new CylinderGeometry(.5, .5, 1)
 const pointGeometry = new SphereGeometry(1, 4, 2)
 
 export default function PickupTarget({
@@ -54,6 +54,7 @@ export default function PickupTarget({
     }, [])
     const instanceRef = useRef<InstancedMesh>(null)
     const beamRef = useRef<Mesh>(null)
+    const dotRef = useRef<Mesh>(null)
     const curve = useMemo(() => {
         const points = [
             new Vector3(x, y, z),
@@ -153,13 +154,18 @@ export default function PickupTarget({
     useFrame(({ clock }, delta) => {
         const { shared: { pointLight }, player } = useStore.getState()
 
-        if (!pointLight || !player.vehicle || player.vehicle.chassisBody.position.z < z - 50) {
+        if (!dotRef.current || !pointLight || !player.vehicle || player.vehicle.chassisBody.position.z < z - 50) {
             return
         }
 
         pointLight.color.set("#ffbb00")
         pointLight.distance = 8
         pointLight.intensity = damp(pointLight.intensity, mode === "idle" ? 250 : 0, 3, ndelta(delta))
+
+        const dotScale = damp(dotRef.current.scale.x, mode === "idle" ? 7 : 0, 6, ndelta(delta))
+
+        dotRef.current.scale.x = dotScale
+        dotRef.current.scale.z = dotScale
 
         if (mode === "idle") {
             pointLight.position.set(
@@ -221,11 +227,20 @@ export default function PickupTarget({
             />
 
             <mesh
+                position={[x, .15, z]}
+                geometry={cylinderGeometry}
+                ref={dotRef}
+                userData={{ ignoreDepthWrite: true }}
+                material={materials.dot}
+                scale-y={.01}
+            />
+            <mesh
                 position={[x, y + height / 2, z]}
                 geometry={cylinderGeometry}
                 ref={beamRef}
                 userData={{ ignoreDepthWrite: true }}
                 material={materials.beam}
+                scale={[1, height, 1]}
             />
         </>
     )

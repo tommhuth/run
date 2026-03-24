@@ -4,9 +4,9 @@ import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
+import { Object3D } from "three/webgpu"
 
 import { Message, RoadPart, RunStore, store, TrafficElement } from "."
-import { Object3D } from "three/webgpu"
 
 export function setState(data: Partial<RunStore>) {
     startTransition(() => {
@@ -14,7 +14,7 @@ export function setState(data: Partial<RunStore>) {
     })
 }
 
-export type MaterialName = "beam"
+export type MaterialName = "beam" | "dot"
 
 export function setMaterial(name: MaterialName, material: Material) {
     store.setState({
