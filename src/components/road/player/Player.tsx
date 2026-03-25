@@ -1,3 +1,4 @@
+import { store, useStore } from "@data/store"
 import { setState } from "@data/store/actions"
 import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
@@ -10,7 +11,6 @@ import useTrafficClient from "../traffic/useTrafficClient"
 import Suv from "./Suv"
 import { useControls } from "./useControls"
 import usePlayerAlive from "./usePlayerAlive"
-import { store, useStore } from "@data/store"
 
 interface PlayerProps {
     position?: Tuple3

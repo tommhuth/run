@@ -1,7 +1,6 @@
 import Config from "@data/Config"
 import { useStore } from "@data/store"
-import { extractRotation } from "@data/utils"
-import { useFrame } from "@react-three/fiber"
+import { extractRotation, useLowerPriorityFrame } from "@data/utils"
 import { Tuple3 } from "@src/types/global"
 import { Dispatch, SetStateAction } from "react"
 
@@ -10,9 +9,9 @@ import { ROAD_GAME_OVER_X_EDGE } from "../const"
 const MAX_ROTATION = Math.PI * .5 * .85
 
 export default function usePlayerAlive(setPosition: Dispatch<SetStateAction<Tuple3>>) {
-    useFrame(() => {
+    useLowerPriorityFrame(() => {
         const { player: { vehicle }, traffic } = useStore.getState()
-        const disabled = true
+        const disabled = false
 
         if (!vehicle || Config.DEBUG || disabled) {
             return
@@ -27,5 +26,5 @@ export default function usePlayerAlive(setPosition: Dispatch<SetStateAction<Tupl
 
             setPosition([-2, 2, Math.min(...forwards) - 6])
         }
-    })
+    }, 10)
 }
