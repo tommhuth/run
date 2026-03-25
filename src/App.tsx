@@ -17,6 +17,7 @@ import Camera from "./components/Camera"
 import extensions from "./extensions"
 import MaterialLoader from "@components/materials/MaterialLoader"
 import { setSharedObject } from "@data/store/actions"
+import GrassSystem from "@components/road/GrassSystem"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -48,6 +49,7 @@ export default function App() {
                 <Camera />
                 <Lights />
                 <Player />
+                <GrassSystem />
 
                 <Ground />
                 <Traffic />

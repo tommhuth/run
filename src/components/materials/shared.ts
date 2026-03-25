@@ -8,6 +8,15 @@ export const floorMaterial = new MeshPhongMaterial({
     dithering: true
 })
 
+
+export const grassMaterial = new MeshPhongMaterial({
+    name: "floor",
+    color: "#bcc7d3",
+    emissive: "#d3dae2",
+    emissiveIntensity: .1,
+    dithering: true
+})
+
 export const beam = new MeshPhongMaterial({
     name: "beam",
     color: "#ffd296",

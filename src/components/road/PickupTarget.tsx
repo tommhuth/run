@@ -26,7 +26,7 @@ export default function PickupTarget({
     size = 6,
     particleCount = 200,
     pickupId,
-    pickupThreshold = 6,
+    pickupThreshold = 3.5,
 }) {
     const materials = useStore(i => i.materials)
     const points = useMemo(() => {
