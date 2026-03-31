@@ -80,7 +80,7 @@ function GarbageTruck({ children, ...props }: GarbageTruckProps, ref: ForwardedR
                     castShadow
                     receiveShadow
                     geometry={nodes.arm.geometry}
-                    material={nodes.arm.material}
+                    material={carMaterial}
                     position={[0, 0.48, 0.325]}
                 />
                 <mesh

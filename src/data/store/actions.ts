@@ -131,7 +131,7 @@ export function extendRoad(previous: PreviousPart) {
 }
 
 
-export type InstanceName = "box" | "circle"
+export type InstanceName = "box" | "circle" | "rock" | "streetLight" | "tree1" | "tree2" | "tree3" | "tree4" | "tree5" | "tree6"
 
 export interface Instance {
     mesh: InstancedMesh;

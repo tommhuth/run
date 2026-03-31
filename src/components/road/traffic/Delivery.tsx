@@ -92,7 +92,7 @@ function Delivery({ children, ...props }: DeliveryProps, ref: ForwardedRef<Rigid
                     castShadow
                     receiveShadow
                     geometry={nodes.door.geometry}
-                    material={nodes.door.material}
+                    material={carMaterial}
                     position={[0, 1.65, -1.475]}
                 />
 

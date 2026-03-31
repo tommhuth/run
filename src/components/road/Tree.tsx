@@ -1,9 +1,8 @@
-import model from "@assets/models/trees.glb"
-import { treeMaterial } from "@components/materials/shared"
+import { useInstance } from "@components/InstancedMesh"
 import { useBody } from "@data/cannon"
 import { store } from "@data/store"
+import { InstanceName } from "@data/store/actions"
 import { useTransitionedState } from "@data/utils"
-import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
@@ -37,8 +36,14 @@ function Tree({
     rotation,
     scale = 1,
 }: TreeProps) {
-    const { nodes } = useGLTF(model) as unknown as GLTFResult
     const [active, setActive] = useTransitionedState(false)
+    const name = `tree${treeType + 1}` as InstanceName
+
+    useInstance(name, {
+        position,
+        rotation,
+        scale
+    })
 
     useBody({
         position,
@@ -68,20 +73,8 @@ function Tree({
         }
     })
 
-    return (
-        <mesh
-            castShadow
-            receiveShadow
-            geometry={nodes["tree" + (treeType + 1)].geometry}
-            material={treeMaterial}
-            scale={scale}
-            dispose={null}
-            position={position}
-            rotation={rotation}
-        />
-    )
+    return null
 }
 
 export default memo(Tree)
 
-useGLTF.preload(model)

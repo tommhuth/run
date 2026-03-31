@@ -53,6 +53,7 @@ export default function DotMaterial() {
             onBeforeCompile={onBeforeCompile}
             color="#ffaa00"
             toneMapped={false}
+            name="dot"
         />
     )
 }

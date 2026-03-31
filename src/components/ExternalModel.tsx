@@ -9,13 +9,25 @@ interface ExternalModelProps extends ComponentPropsWithoutRef<"mesh"> {
     children?: ReactNode
 }
 
+export function useExternalModel(url: string): Record<string, Mesh>
+export function useExternalModel(url: string, name: string): Mesh
+export function useExternalModel(url: string, name?: string) {
+    const { nodes } = useLoader(GLTFLoader, url)
+
+    if (!name) {
+        return nodes as Record<string, Mesh>
+    }
+
+    return nodes[name] as Mesh
+}
+
 export default function ExternalModel({ url, children, name, ...props }: ExternalModelProps) {
-    const dirt = useLoader(GLTFLoader, url)
+    const { geometry } = useExternalModel(url, name)
 
     return (
         <mesh {...props} dispose={null}>
             <primitive
-                object={(dirt.nodes[name] as Mesh).geometry}
+                object={geometry}
                 attach="geometry"
             />
             {children}

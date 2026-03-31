@@ -4,13 +4,12 @@ import { DoubleSide, MeshBasicMaterial, MeshPhongMaterial, SRGBColorSpace, Textu
 
 export const floorMaterial = new MeshPhongMaterial({
     name: "floor",
-    color: "#bcc7d3",
+    color: "#d9e1e9",
     dithering: true
 })
 
-
 export const grassMaterial = new MeshPhongMaterial({
-    name: "floor",
+    name: "grass",
     color: "#bcc7d3",
     emissive: "#d3dae2",
     emissiveIntensity: .1,
@@ -47,7 +46,7 @@ export const treeMaterial = new MeshPhongMaterial({
 })
 
 export const streetLightMaterial = new MeshPhongMaterial({
-    color: "#fff",
+    color: "#86a7cf",
     name: "streetlight",
     dithering: true
 })

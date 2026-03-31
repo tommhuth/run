@@ -1,12 +1,11 @@
-import model from "@assets/models/rock.glb"
-import { rockMaterial } from "@components/materials/shared"
+import { useInstance } from "@components/InstancedMesh"
+import { setMatrixAt } from "@components/materials/helpers"
 import { useBody } from "@data/cannon"
 import { RockObject, store } from "@data/store"
 import { useTransitionedState } from "@data/utils"
-import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
-import { memo, useMemo } from "react"
+import { memo, useEffect, useMemo } from "react"
 
 function Rock({
     position,
@@ -14,11 +13,17 @@ function Rock({
     rotation,
     radius,
 }: RockObject) {
-    const { nodes } = useGLTF(model)
     const [active, setActive] = useTransitionedState(false)
     const shape = useMemo(() => {
         return new Sphere(radius * .85)
     }, [])
+
+    useInstance("rock", {
+        clear: false,
+        position,
+        scale: [radius * 2, radius * 2 * scale[1], radius * 2],
+        rotation
+    })
 
     useBody({
         mass: 0,
@@ -47,20 +52,7 @@ function Rock({
         }
     })
 
-
-    return (
-        <mesh
-            castShadow
-            receiveShadow
-            geometry={nodes.rock.geometry}
-            scale={radius * 2}
-            scale-y={radius * 2 * scale[1]}
-            material={rockMaterial}
-            dispose={null}
-            position={position}
-            rotation={rotation}
-        />
-    )
+    return null
 }
 
 export default memo(Rock)

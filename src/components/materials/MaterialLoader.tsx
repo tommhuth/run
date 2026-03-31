@@ -44,7 +44,7 @@ function MaterialHandler({ children, name }: { children: React.ReactNode; name: 
             dispose={null}
             frustumCulled={false}
         >
-            {cloneElement(children as ReactElement, { name })}
+            {cloneElement(children as ReactElement)}
         </mesh>
     )
 }

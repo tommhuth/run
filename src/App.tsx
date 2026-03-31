@@ -18,6 +18,7 @@ import extensions from "./extensions"
 import MaterialLoader from "@components/materials/MaterialLoader"
 import { setSharedObject } from "@data/store/actions"
 import GrassSystem from "@components/road/GrassSystem"
+import { Instances } from "@components/Instances"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -54,7 +55,7 @@ export default function App() {
                 <Ground />
                 <Traffic />
                 <Road />
-                <CloudSystem />
+                <Instances />
             </CannonProvider>
 
             <MaterialLoader />

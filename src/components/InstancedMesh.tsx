@@ -1,15 +1,16 @@
 import { store, useStore } from "@data/store"
 import { InstanceName, setInstance } from "@data/store/actions"
+import { useTransitionedState } from "@data/utils"
 import { Tuple3, Tuple4 } from "@src/types/global"
-import { ReactNode, startTransition, useEffect, useMemo, useState } from "react"
+import { ReactNode, useEffect, useMemo, useState } from "react"
 import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThree, Material } from "three"
 
-import { setColorAt,setMatrixAt, setMatrixNullAt } from "./materials/helpers"
+import { setColorAt, setMatrixAt, setMatrixNullAt } from "./materials/helpers"
 
 interface UseInstanceOptions {
     clear?: boolean
     color?: ColorRepresentation
-    scale?: number
+    scale?: number | Tuple3
     rotation?: Tuple3 | Tuple4
     position?: Tuple3
 }
@@ -22,11 +23,11 @@ export function useInstance(name: InstanceName, {
     position = [0, 0, 0],
 }: UseInstanceOptions = {}) {
     const instance = useStore(i => i.instances[name])
-    const [index, setIndex] = useState<null | number>(null)
+    const [index, setIndex] = useTransitionedState<null | number>(null)
 
     useEffect(() => {
         if (instance) {
-            startTransition(() => setIndex(instance.index.next()))
+            setIndex(instance.index.next())
         }
     }, [instance])
 
@@ -40,7 +41,7 @@ export function useInstance(name: InstanceName, {
                 rotation,
             })
         }
-    }, [index, ...rotation, ...position, scale, instance])
+    }, [index, ...rotation, ...position, ...(Array.isArray(scale) ? scale : [scale]), instance])
 
     useEffect(() => {
         if (typeof index === "number" && instance && clear) {

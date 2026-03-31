@@ -9,7 +9,6 @@ export default function BeamMaterial() {
             uTime: { value: 0 }
         },
         shared: glsl`
-        
                 uniform float uTime;
                 varying vec3 vPosition;
         `,
@@ -46,6 +45,7 @@ export default function BeamMaterial() {
             color={"#ffdd53"}
             toneMapped={false}
             opacity={.45}
+            name="beam"
         />
     )
 }
