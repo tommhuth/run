@@ -18,13 +18,13 @@ export default function Lights() {
             return
         }
 
-        // scene.add(new CameraHelper(shadowLightRef.current.shadow.camera))
+        //scene.add(new CameraHelper(shadowLightRef.current.shadow.camera))
         scene.add(shadowLightRef.current.target)
     }, [scene])
 
     useFrame((_, delta) => {
         const { player: { vehicle } } = useStore.getState()
-        const updateAt = 350
+        const updateAt = 250
 
         // update camera shadow position 
         if (shadowLightRef.current && time.current > updateAt && vehicle) {
@@ -46,13 +46,13 @@ export default function Lights() {
             <directionalLight
                 position={[0, 0, 0]}
                 target-position={targetPosition}
-                castShadow
+                //castShadow
                 ref={shadowLightRef}
                 shadow-mapSize={[768 * viewport.dpr, 768 * viewport.dpr]}
                 shadow-camera-near={-25} // top right side
                 shadow-camera-far={55} // bottom left
-                shadow-camera-left={-20} //forwards z
-                shadow-camera-right={45} // backwards z
+                shadow-camera-left={-35} //backwards z
+                shadow-camera-right={45} // forwards z
                 shadow-camera-top={40} // top left
                 shadow-camera-bottom={-30} // bottom right
                 shadow-radius={2.5}
