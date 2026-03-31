@@ -34,7 +34,7 @@ export const leafMaterial = new MeshPhongMaterial({
 })
 
 export const rockMaterial = new MeshPhongMaterial({
-    color: "#bcc7d3",
+    color: "#8c9fb4",
     name: "rock",
     dithering: true
 })
