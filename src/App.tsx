@@ -1,7 +1,10 @@
+import { Instances } from "@components/Instances"
 import Lights from "@components/Lights"
 import DepthTexture from "@components/materials/DepthTexture"
+import MaterialLoader from "@components/materials/MaterialLoader"
 import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
+import GrassSystem from "@components/road/GrassSystem"
 import Ground from "@components/road/Ground"
 import Player from "@components/road/player/Player"
 import Road from "@components/road/Road"
@@ -10,15 +13,12 @@ import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import PlaceGrid from "@data/PlaceGrid"
 import { useStore } from "@data/store"
+import { setSharedObject } from "@data/store/actions"
 import { extend, useFrame } from "@react-three/fiber"
 import { lazy } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
-import MaterialLoader from "@components/materials/MaterialLoader"
-import { setSharedObject } from "@data/store/actions"
-import GrassSystem from "@components/road/GrassSystem"
-import { Instances } from "@components/Instances"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -51,6 +51,7 @@ export default function App() {
                 <Lights />
                 <Player />
                 <GrassSystem />
+                <CloudSystem />
 
                 <Ground />
                 <Traffic />

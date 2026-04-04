@@ -5,7 +5,7 @@ import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { generateForestPart, initializeClouds, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
+import { generateForestPart, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
 
 interface RoadObject {
     id: string
@@ -44,15 +44,6 @@ export interface RoadPart {
     depth: number
 }
 
-export interface Cloud {
-    speed: number
-    position: Tuple3
-    scale?: number
-    id: string
-    damping: number
-    fixed: boolean
-}
-
 export interface Message {
     id: string
     text: string
@@ -68,7 +59,6 @@ export interface RunStore {
     traffic: TrafficElement[]
     road: RoadPart[]
     grid: SpatialHashGrid3D
-    clouds: Cloud[]
     messages: Message[]
     debug: {
         showColliders: boolean
@@ -106,7 +96,6 @@ const store = create(
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
-        clouds: initializeClouds(),
         road: [
             generateForestPart({ position: [0, 0, -10], depth: 0 }),
         ],

@@ -2,7 +2,7 @@ import { Client } from "@data/SpatialHashGrid3D"
 import { useStore } from "@data/store"
 import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 export default function useTrafficClient({
     vehicle,

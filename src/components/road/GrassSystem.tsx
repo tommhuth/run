@@ -1,6 +1,6 @@
 import model from "@assets/models/grass3.glb"
 import { setMatrixAt } from "@components/materials/helpers"
-import { floorMaterial, grassMaterial } from "@components/materials/shared"
+import { grassMaterial } from "@components/materials/shared"
 import { store } from "@data/store"
 import { useLowerPriorityFrame } from "@data/utils"
 import random from "@huth/random"

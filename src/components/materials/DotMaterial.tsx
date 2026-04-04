@@ -1,9 +1,9 @@
+import { ndelta } from "@data/utils"
+import { useFrame } from "@react-three/fiber"
 import easings from "@src/shaders/easings.glsl"
 
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
-import { useFrame } from "@react-three/fiber"
-import { ndelta } from "@data/utils"
 
 export default function DotMaterial() {
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({

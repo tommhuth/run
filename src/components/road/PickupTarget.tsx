@@ -1,5 +1,5 @@
 import { setMatrixAt } from "@components/materials/helpers"
-import { beam, redMaterial } from "@components/materials/shared"
+import { beam } from "@components/materials/shared"
 import { useStore } from "@data/store"
 import { createMessage, setState } from "@data/store/actions"
 import { clamp, dampFactor, ndelta } from "@data/utils"

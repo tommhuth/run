@@ -35,8 +35,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
 			uniform float cameraNear;
 			uniform float cameraFar;
 			uniform vec2 resolution;
-			varying vec3 vWorldPosition;
-			varying vec3 vPosition;
+			varying vec3 vWorldPosition; 
 			uniform vec3 playerPosition;   
 			uniform sampler2D depthTexture; 
 
@@ -64,8 +63,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
         `,
         vertex: {
             main: glsl`  
-                vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
-                vPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+                vWorldPosition = (instanceMatrix * vec4(position, 1.0)).xyz; 
             `
         },
         fragment: {
@@ -79,9 +77,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
                 float minDist = 0.;   
                 float dist = sceneDepth - fragmentDepth;  
                 float alpha = clamp((dist - minDist) / fadeDist, 0.0, 1.0);
-
-                //gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0., 1., 1.), easeInOutQuad(clamp((vPosition.y) / 3., 0., 1.)));
-
+ 
                 gl_FragColor.rgb = vec3(1.);
                 gl_FragColor.a *= easeInOutQuad(alpha) * .9;  
             `
@@ -109,7 +105,6 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
             map={map}
             ref={ref}
             name="cloud"
-            color={"#fff"}
             fog={true}
             dispose={null}
             dithering

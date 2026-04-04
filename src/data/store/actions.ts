@@ -1,4 +1,4 @@
-import { ROAD_CENTER_X, ROAD_FORWARD_EDGE, ROAD_HEIGHT } from "@components/road/const"
+import { ROAD_CENTER_X, ROAD_HEIGHT } from "@components/road/const"
 import Counter from "@data/Counter"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
@@ -215,75 +215,7 @@ export function removeTrafficElement(id: string) {
     })
 }
 
-const cloudConfig = {
-    edgeFogCount: 10,
-    spreadCount: 5,
-    interval: 4,
-    range: [10, 25, 19, 12, 6, 8],
-}
-
-export function initializeClouds() {
-    return [
-        ...Array.from({ length: cloudConfig.edgeFogCount }).map((i, index) => {
-            return [-1, 1].map(direction => {
-                const scale = random.float(1.75, 3)
-
-                return {
-                    id: random.id(),
-                    speed: 0,
-                    fixed: true,
-                    position: [
-                        10 * scale * direction,
-                        0,
-                        index * (ROAD_FORWARD_EDGE / cloudConfig.edgeFogCount) + random.integer(-3, 3),
-                    ] as Tuple3,
-                    damping: random.float(.5, .9),
-                    scale
-                }
-            })
-        }),
-        ...Array.from({ length: cloudConfig.spreadCount }).fill(null).map((i, index) => {
-            return {
-                id: random.id(),
-                speed: random.float(.025, .3),
-                fixed: false,
-                position: [
-                    random.pick(...cloudConfig.range) * random.pick(1, -1),
-                    0,
-                    index * cloudConfig.interval + random.float(-2, 2),
-                ] as Tuple3,
-                damping: random.float(.5, .9),
-                scale: random.float(.75, 2.)
-            }
-        })
-    ].flat(1)
-}
-
-export function repositionCloud(id: string) {
-    const { clouds } = store.getState()
-    const item = clouds.find(i => i.id === id)
-
-    if (!item) {
-        return
-    }
-
-    setState({
-        clouds: [
-            ...clouds.filter(i => id !== i.id),
-            {
-                ...item,
-                id: random.id(),
-                position: [
-                    item.fixed ? item.position[0] : random.pick(...cloudConfig.range) * random.pick(1, -1),
-                    item.position[1] + ROAD_FORWARD_EDGE,
-                    item.position[2] + cloudConfig.edgeFogCount * cloudConfig.interval
-                ]
-            }
-        ]
-    })
-}
-
-export function createMessage(props: Partial<Message>, duration = 4000) {
+export function createMessage(props: Partial<Omit<Message, "message">> & { message: string }, duration = 4000) {
     const id = random.id()
 
     setTimeout(() => {

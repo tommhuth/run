@@ -1,11 +1,10 @@
 import { useInstance } from "@components/InstancedMesh"
-import { setMatrixAt } from "@components/materials/helpers"
 import { useBody } from "@data/cannon"
 import { RockObject, store } from "@data/store"
 import { useTransitionedState } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Sphere } from "cannon-es"
-import { memo, useEffect, useMemo } from "react"
+import { memo, useMemo } from "react"
 
 function Rock({
     position,

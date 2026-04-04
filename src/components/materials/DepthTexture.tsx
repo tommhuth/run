@@ -1,9 +1,8 @@
 import { setState } from "@data/store/actions"
 import { useFBO } from "@react-three/drei"
-import { advance, invalidate, useFrame, useThree } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
-import useAnimationFrame from "use-animation-frame"
 
 const size = 512
 
