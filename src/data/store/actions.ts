@@ -215,7 +215,7 @@ export function removeTrafficElement(id: string) {
     })
 }
 
-export function createMessage(props: Partial<Omit<Message, "message">> & { message: string }, duration = 4000) {
+export function createMessage(data: Partial<Omit<Message, "text">> & { text: string }, duration = 4000) {
     const id = random.id()
 
     setTimeout(() => {
@@ -228,7 +228,7 @@ export function createMessage(props: Partial<Omit<Message, "message">> & { messa
         messages: [
             ...store.getState().messages,
             {
-                ...props,
+                ...data,
                 id
             }
         ]

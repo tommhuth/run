@@ -5,7 +5,7 @@ import { store } from "@data/store"
 import { useLowerPriorityFrame } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
-import { Tuple3 } from "@src/types/global"
+import { GLTFModel, Tuple3 } from "@src/types/global"
 import { useMemo, useRef } from "react"
 import { InstancedMesh } from "three"
 
@@ -19,7 +19,7 @@ interface Grass {
 }
 
 export default function GrassSystem({ count = 250 }) {
-    const { nodes } = useGLTF(model)
+    const { nodes } = useGLTF(model) as unknown as GLTFModel<["grass"]>
     const instanceRef = useRef<InstancedMesh>(null)
     const items = useMemo(() => {
         return Array.from({ length: count }).map((i, index) => {

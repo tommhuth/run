@@ -6,7 +6,7 @@ import { clamp, dampFactor, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { Tuple3 } from "@src/types/global"
+import { GLTFModel, Tuple3 } from "@src/types/global"
 import { useMemo, useRef } from "react"
 import { Euler, InstancedMesh, Quaternion, Vector3 } from "three"
 
@@ -184,7 +184,7 @@ export default function LeafField({
             })
         }).flat(1)
     }, [])
-    const { nodes } = useGLTF(model)
+    const { nodes } = useGLTF(model) as unknown as GLTFModel<["leaf1"]>
     const instanceRef = useRef<InstancedMesh>(null)
 
     useFrame(({ clock }, delta) => {

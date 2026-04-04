@@ -12,7 +12,6 @@ import useTrafficClient from "./useTrafficClient"
 const MAX_STEER = 0.3
 
 interface UseSteeringBehaviourParams {
-    trafficElementId: string
     vehicle: RigidVehicle | null
     guide: Tuple3
     direction: number

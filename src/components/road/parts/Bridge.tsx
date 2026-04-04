@@ -6,7 +6,7 @@ import PlaceGrid from "@data/PlaceGrid"
 import { RockObject } from "@data/store"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
-import { Tuple3 } from "@src/types/global"
+import { GLTFModel, Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
 import { Suspense, useMemo } from "react"
 import { Fragment } from "react/jsx-runtime"
@@ -22,7 +22,7 @@ const railings: ShapeDefinition = [
 ]
 
 export default function BridgePart({ position, depth }) {
-    const { nodes } = useGLTF(model)
+    const { nodes } = useGLTF(model) as unknown as GLTFModel<["railing"]>
     const { rocks } = useMemo(() => {
         const leftGrid = new PlaceGrid([2, 5], 4, [position[0] + 10, 0, position[2] + depth / 2])
         const rightGrid = new PlaceGrid([2, 5], 4, [position[0] - 10, 0, position[2] + depth / 2])

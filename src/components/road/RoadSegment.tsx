@@ -24,7 +24,7 @@ let sharedShape: ShapeDefinition
 
 export default function RoadSegment({ position }) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
-    const shape = useMemo<Shape>(() => {
+    const shape = useMemo<ShapeDefinition>(() => {
         if (sharedShape) {
             return sharedShape
         }

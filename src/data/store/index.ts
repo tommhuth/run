@@ -48,7 +48,7 @@ export interface Message {
     id: string
     text: string
     score?: number
-    color: string
+    color?: string
 }
 
 export interface RunStore {

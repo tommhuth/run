@@ -7,21 +7,8 @@ import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
 import { memo } from "react"
-import { Mesh } from "three"
-import { GLTF } from "three/examples/jsm/Addons.js"
 
 const shape = new Box(new Vec3(.1, 5, .1))
-
-type GLTFResult = GLTF & {
-    nodes: {
-        tree1: Mesh
-        tree2: Mesh
-        tree3: Mesh
-        tree4: Mesh
-        tree5: Mesh
-        tree6: Mesh
-    }
-}
 
 interface TreeProps {
     treeType?: number

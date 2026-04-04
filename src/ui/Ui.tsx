@@ -48,7 +48,7 @@ export default function Ui() {
                         <li
                             key={i.id}
                             style={{
-                                "--color": i.score < 0 ? "#ff0084" : undefined
+                                "--color": i.score && i.score < 0 ? "#ff0084" : undefined
                             } as CSSProperties}
                         >
                             <div>{i.text}</div>
