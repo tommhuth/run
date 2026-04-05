@@ -73,13 +73,18 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
                 float fragmentDepth = getLinearDepth(vWorldPosition, viewMatrix, cameraNear, cameraFar);
   
                 float extraDist = clamp(length(vWorldPosition - playerPosition) / 25., 0., 1.) * .075;
-                float fadeDist = .025 + extraDist; // 150 depth
+                float fadeDist = .025 + extraDist; 
                 float minDist = 0.;   
                 float dist = sceneDepth - fragmentDepth;  
                 float alpha = clamp((dist - minDist) / fadeDist, 0.0, 1.0);
+
+                float fadeEdge = 25.;
+                float fadeEdgeDistance = 5.;
+                float fadeIn  = smoothstep(-fadeEdge, -(fadeEdge - fadeEdgeDistance), vWorldPosition.x);
+                float fadeOut = 1.0 - smoothstep(fadeEdge - fadeEdgeDistance, fadeEdge, vWorldPosition.x);
  
                 gl_FragColor.rgb = vec3(1.);
-                gl_FragColor.a *= easeInOutQuad(alpha) * .9;  
+                gl_FragColor.a *= easeInOutQuad(alpha) * .9 * fadeIn * fadeOut;  
             `
         }
     })

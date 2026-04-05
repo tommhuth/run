@@ -6,15 +6,14 @@ import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useMemo, useRef } from "react"
-import { InstancedMesh, PlaneGeometry } from "three"
+import { InstancedMesh, PlaneGeometry, Vector3 } from "three"
 import { damp } from "three/src/math/MathUtils.js"
 
 import { ROAD_FORWARD_EDGE } from "./const"
 
 interface Cloud {
     id: string
-    index: number
-    position: Tuple3
+    position: Vector3
     scale: Tuple3
     speed: number
     damping: number
@@ -22,10 +21,11 @@ interface Cloud {
 
 const aspect = 255 / 142
 const geometry = new PlaneGeometry(1, 1, 1, 1)
+const horizontalEdge = 40
 
 geometry.rotateY(Math.PI)
 
-export default function CloudSystem({ count = 25 }) {
+export default function CloudSystem({ count = 50 }) {
     const ref = useRef<InstancedMesh>(null)
     const clouds = useMemo(() => {
         return Array.from({ length: count }).map((i, index) => {
@@ -34,12 +34,11 @@ export default function CloudSystem({ count = 25 }) {
 
             return {
                 id: random.id(),
-                index,
-                position: [
-                    random.float(-30, 30),
+                position: new Vector3(
+                    random.float(-horizontalEdge, horizontalEdge),
                     height * .85,
-                    index * (ROAD_FORWARD_EDGE / count)
-                ],
+                    ROAD_FORWARD_EDGE - index * (ROAD_FORWARD_EDGE / count)
+                ),
                 speed: random.float(1, 3),
                 damping: 3,
                 scale: [width, height, 1]
@@ -47,7 +46,7 @@ export default function CloudSystem({ count = 25 }) {
         })
     }, [count])
 
-    useFrame((state, delta) => {
+    useFrame(({ camera }, delta) => {
         const { player: { vehicle } } = store.getState()
 
         if (!ref.current || !vehicle) {
@@ -55,22 +54,17 @@ export default function CloudSystem({ count = 25 }) {
         }
 
         const rotation = extractRotation(vehicle.chassisBody.quaternion)
-        const horizontalEdge = 45
         const backEdge = 10
+        const sortedClouds = clouds.sort((a, b) => {
+            return camera.position.distanceToSquared(b.position)
+                - camera.position.distanceToSquared(a.position)
+        })
 
-        for (const { position, speed, damping, index, scale } of clouds) {
-            position[1] = damp(ref.current.position.y, 1, damping, ndelta(delta))
-            position[0] -= ndelta(delta) * speed
+        for (let index = 0; index < sortedClouds.length; index++) {
+            const { position, speed, damping, scale } = sortedClouds[index]
 
-            if (position[0] < -horizontalEdge) {
-                position[0] = horizontalEdge
-            }
-
-            if (position[2] < vehicle.chassisBody.position.z - backEdge) {
-                position[0] = random.float(-horizontalEdge, horizontalEdge)
-                position[1] = 0
-                position[2] += ROAD_FORWARD_EDGE
-            }
+            position.y = damp(ref.current.position.y, 1, damping, ndelta(delta))
+            position.x -= ndelta(delta) * speed
 
             setMatrixAt({
                 position,
@@ -79,6 +73,16 @@ export default function CloudSystem({ count = 25 }) {
                 instance: ref.current,
                 rotation: [0, rotation.y, 0]
             })
+
+            if (position.x < -horizontalEdge) {
+                position.x = horizontalEdge
+            }
+
+            if (position.z < vehicle.chassisBody.position.z - backEdge) {
+                position.x = random.float(-horizontalEdge, horizontalEdge)
+                position.y = 0
+                position.z += ROAD_FORWARD_EDGE
+            }
         }
     })
 
