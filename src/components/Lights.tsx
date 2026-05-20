@@ -1,5 +1,6 @@
 import { useStore } from "@data/store"
 import { ndelta } from "@data/utils"
+import { SoftShadows } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { useEffect, useRef } from "react"
@@ -43,6 +44,11 @@ export default function Lights() {
 
     return (
         <>
+            <SoftShadows
+                size={25}
+                samples={24}
+                focus={.125}
+            />
             <directionalLight
                 position={[0, 0, 0]}
                 target-position={targetPosition}
@@ -56,7 +62,7 @@ export default function Lights() {
                 shadow-camera-top={40} // top left
                 shadow-camera-bottom={-30} // bottom right
                 shadow-radius={2.5}
-                shadow-bias={-.001}
+                shadow-bias={-.005}
                 intensity={7}
                 color={"#bee6ff"}
             />

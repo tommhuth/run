@@ -8,5 +8,5 @@ export const ROAD_DEPTH = depth
 export const ROAD_CENTER_X = 1.5
 export const ROAD_EDGE_X = ROAD_CENTER_X + 2.25
 export const ROAD_FORWARD_EDGE = 75
-export const ROAD_GAME_OVER_X_EDGE = 17
+export const ROAD_GAME_OVER_X_EDGE = 20
 export const FOG_DISTANCE = 60
