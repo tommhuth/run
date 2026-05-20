@@ -45,16 +45,16 @@ export default function Lights() {
     return (
         <>
             <SoftShadows
-                size={25}
+                size={16}
                 samples={10}
-                focus={.125}
+                focus={.025}
             />
             <directionalLight
                 position={[0, 0, 0]}
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                shadow-mapSize={[768 * viewport.dpr, 768 * viewport.dpr]}
+                shadow-mapSize={[1024, 1024]}
                 shadow-camera-near={-25} // top right side
                 shadow-camera-far={55} // bottom left
                 shadow-camera-left={-35} //backwards z
