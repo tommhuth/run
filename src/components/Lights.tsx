@@ -46,7 +46,7 @@ export default function Lights() {
         <>
             <SoftShadows
                 size={25}
-                samples={24}
+                samples={10}
                 focus={.125}
             />
             <directionalLight
