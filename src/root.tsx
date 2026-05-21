@@ -1,5 +1,4 @@
 import { ROAD_FORWARD_EDGE } from "@components/road/const"
-import { clamp } from "@data/utils"
 import { createRoot, events, RenderProps } from "@react-three/fiber"
 import { lazy, ReactNode } from "react"
 import { createRoot as createUiRoot } from "react-dom/client"
@@ -18,7 +17,7 @@ function getConfiguration() {
         flat: false,
         shadows: "variance",
         events,
-        dpr: clamp(window.devicePixelRatio * .65, 1, 2),
+        dpr: [1, 2],
         size: {
             width: window.innerWidth,
             height: window.innerHeight,

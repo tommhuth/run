@@ -14,8 +14,9 @@ import Config from "@data/Config"
 import PlaceGrid from "@data/PlaceGrid"
 import { useStore } from "@data/store"
 import { setSharedObject } from "@data/store/actions"
+import { AdaptiveDpr } from "@react-three/drei"
 import { extend } from "@react-three/fiber"
-import { lazy } from "react"
+import { lazy, useEffect } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
@@ -30,9 +31,19 @@ extend(extensions)
 
 export default function App() {
     const { showColliders } = useStore(i => i.debug)
+    const loading = useStore(i => i.loading)
+
+    useEffect(() => {
+        const canvas = document.getElementById("canvas")
+
+        if (!loading && canvas) {
+            canvas.style.opacity = "1"
+        }
+    }, [loading])
 
     return (
         <>
+            <AdaptiveDpr pixelated />
             <fog
                 args={["#fff"]}
                 attach={"fog"}
@@ -40,7 +51,11 @@ export default function App() {
                 near={ROAD_FORWARD_EDGE - FOG_DISTANCE}
             />
             <color args={["#fff"]} attach={"background"} />
-            <pointLight name="pointLight" ref={setSharedObject} />
+
+            <pointLight
+                name="pointLight"
+                ref={setSharedObject}
+            />
 
             <CannonProvider debug={showColliders}>
                 <Camera />
@@ -63,10 +78,6 @@ export default function App() {
         </>
     )
 }
-
-/*
-    <Suv position={[-2, 4, 7]} rotation={[0, Math.PI * .6, 0]} /> 
-*/
 
 export function GridDebug({ g, scale = .95 }: { g: PlaceGrid; scale?: number }) {
     return (

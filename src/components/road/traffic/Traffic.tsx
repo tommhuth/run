@@ -1,21 +1,22 @@
 import { useStore } from "@data/store"
-import { useEffect, useState } from "react"
+import { setState } from "@data/store/actions"
+import { useEffect } from "react"
 
 import TrafficElement from "./TrafficElement"
 
 function Traffic() {
     const traffic = useStore(i => i.traffic)
-    const [ready, setReady] = useState(false)
+    const loading = useStore(i => i.loading)
 
     useEffect(() => {
-        const tid = setTimeout(() => setReady(true), 3000)
+        const tid = setTimeout(() => setState({ loading: false }), 2000)
 
         return () => {
             clearTimeout(tid)
         }
     }, [])
 
-    if (!ready) {
+    if (loading) {
         return null
     }
 

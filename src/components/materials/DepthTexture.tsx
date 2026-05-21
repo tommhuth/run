@@ -35,6 +35,7 @@ export default function DepthTexture() {
             }
         })
 
+        // render to depth buffer after hiding clouds
         gl.setRenderTarget(fbo)
         gl.render(scene, camera)
         gl.setRenderTarget(null)
@@ -45,6 +46,7 @@ export default function DepthTexture() {
             }
         })
 
+        // render scene normally
         gl.render(scene, camera)
     }, 1)
 

@@ -79,11 +79,11 @@ function syncVehicle(
 export function useRigidVehicle({
     position = [0, 0, 0],
     rotation: incomingRotation = [0, 0, 0],
-    horizontalStabilityAdjust = .025, // wheel push out
+    horizontalStabilityAdjust = .015, // wheel push out
     verticalStabilityAdjust = 0, // center of mass adjust 
     mass,
     chassis,
-    wheels
+    wheels,
 }: UseRigidVehicleParams, deps: any[] = []) {
     const chassisRef = useRef<Group>(null)
     const wheelsRef = useRef<Group>(null)
@@ -108,6 +108,8 @@ export function useRigidVehicle({
         }
 
         const vehicle = new RigidVehicle({ chassisBody })
+
+        // chassisBody.userData = { type }
 
         for (const [, { position, radius }] of wheels.entries()) {
             const shape = new Sphere(radius)
@@ -138,10 +140,32 @@ export function useRigidVehicle({
     useEffect(() => {
         vehicle.addToWorld(world)
 
+
         return () => {
             vehicle.removeFromWorld(world)
         }
     }, [vehicle, world])
+
+    /*
+    useEffect(() => {
+        const onCollide = (e: { body: Body }) => {
+            if (type === "player" && e.body.userData?.type === "traffic") {
+                //let dir = vehicle.chassisBody.position.clone().vsub(e.body.position).unit()
+
+                //dir.y += .25
+                //e.body.velocity.setZero()
+                //e.body.torque.setZero()
+                // e.body.applyLocalForce(dir.scale(30))
+            }
+        }
+
+        vehicle.chassisBody.addEventListener("collide", onCollide)
+
+        return () => {
+            vehicle.chassisBody.removeEventListener("collide", onCollide)
+        }
+    }, [])
+    */
 
     useLayoutEffect(() => {
         syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, 1, "copy")

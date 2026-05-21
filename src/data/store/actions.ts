@@ -1,4 +1,4 @@
-import { ROAD_CENTER_X, ROAD_HEIGHT } from "@components/road/const"
+import { ROAD_CENTER_X, ROAD_FORWARD_EDGE, ROAD_HEIGHT } from "@components/road/const"
 import Counter from "@data/Counter"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
@@ -152,14 +152,15 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
     })
 }
 
-const tarfficGap = [14, 28, 35, 25, 40]
+const tarfficGap = [25, 15, 35, 45, 55]
 
-export function initializeTraffic() {
-    return [1, -1].map(direction => {
+export function initializeTraffic(countPerDirection = 4) {
+    const directions = [-1, 1] as const
+
+    return directions.map(direction => {
         let z = 10 * direction
-        const count = 4
 
-        return Array.from({ length: count }).fill(null).map((i, index) => {
+        return Array.from({ length: countPerDirection }).fill(null).map((i, index) => {
             z += tarfficGap[index % (tarfficGap.length - 1)]
 
             return {
@@ -175,7 +176,7 @@ export function initializeTraffic() {
                     0,
                     0
                 ] as Tuple3,
-                direction: direction as -1 | 1,
+                direction,
                 rotation: [
                     0,
                     direction === 1 ? 0 : Math.PI,
@@ -188,16 +189,21 @@ export function initializeTraffic() {
 }
 
 export function removeTrafficElement(id: string) {
-    const { traffic } = store.getState()
+    const { traffic, player } = store.getState()
     const item = traffic.find(i => i.id === id)
 
-    if (!item) {
+    if (!item || !player.vehicle) {
         return
     }
 
     const forwardItem = traffic.filter(i => item.direction === i.direction)
         .sort((a, b) => b.position[2] - a.position[2])
         .at(0) as TrafficElement
+    // dont spawn traffic in visibly
+    const forwardZ = Math.max(
+        forwardItem.position[2] + random.pick(...tarfficGap),
+        player.vehicle.chassisBody.position.z + ROAD_FORWARD_EDGE
+    )
 
     setState({
         traffic: [
@@ -208,7 +214,7 @@ export function removeTrafficElement(id: string) {
                 position: [
                     random.float(ROAD_CENTER_X * .9, ROAD_CENTER_X * 1.1) * -item.direction,
                     ROAD_HEIGHT + 1,
-                    forwardItem.position[2] + random.pick(...tarfficGap)
+                    forwardZ
                 ]
             }
         ]

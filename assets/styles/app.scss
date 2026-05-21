@@ -17,6 +17,8 @@ body,
 
 #canvas {
     z-index: 1;
+    transition: opacity .3s;
+    opacity: 0;
 }
 
 html {

@@ -187,8 +187,8 @@ export function CannonProvider({
     }, [world, scene, debug])
 
     useFrame((state, delta) => {
-        // max 15fps as delta
-        const dt = Math.min(delta, 1 / 15)
+        // max 24 fps as delta
+        const dt = Math.min(delta, 1 / 24)
 
         world.fixedStep(dt)
 

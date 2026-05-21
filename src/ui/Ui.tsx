@@ -79,7 +79,8 @@ function Debug() {
                 color: "black",
                 display: "flex",
                 gap: ".5em",
-                flexFlow: "column wrap"
+                flexFlow: "column wrap",
+                pointerEvents: "auto"
             }}
         >
             <div>{state.toUpperCase()}</div>

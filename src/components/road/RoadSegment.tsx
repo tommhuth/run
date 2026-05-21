@@ -31,7 +31,7 @@ export default function RoadSegment({ position }) {
 
         sharedShape = [
             [threeToCannon(nodes.main as any, { type: ShapeType.HULL })?.shape as Shape],
-            [threeToCannon(nodes.lower as any, { type: ShapeType.HULL })?.shape as Shape, new Vec3(0, 0.285 / 2 - ROAD_HEIGHT / 2, 0)],
+            [threeToCannon(nodes.lower as any, { type: ShapeType.HULL })?.shape as Shape, new Vec3(0, 0.2 / 2 - ROAD_HEIGHT / 2, 0)],
         ]
 
         return sharedShape

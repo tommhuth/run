@@ -22,6 +22,7 @@ export default function Player({
 }: PlayerProps) {
     const { motion } = useControls()
     const steering = useStore(i => i.player.steering)
+    const loading = useStore(i => i.loading)
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
@@ -56,17 +57,22 @@ export default function Player({
         }
     })
 
+    if (loading) {
+        return null
+    }
+
     return (
         <Suv
             ref={setVehicle}
             position={position}
             rotation={rotation}
             key={position[2]}
+            type="player"
         >
             <primitive object={target} position={[0, 1, 5]} />
             <spotLight
                 intensity={120}
-                position={[0, 1.5, 1]}
+                position={[0, 1, .15]}
                 color={"#ffc079"}
                 angle={Math.PI * .3}
                 target={target}

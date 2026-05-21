@@ -1,9 +1,9 @@
 import { useStore } from "@data/store"
 import { ndelta } from "@data/utils"
-import { SoftShadows } from "@react-three/drei"
+import { PerformanceMonitor, SoftShadows } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { DirectionalLight } from "three"
 
 const forwardOffset = 16
@@ -13,6 +13,8 @@ export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)
     const { scene, viewport } = useThree()
     const time = useRef(0)
+    const mapsize = viewport.dpr >= 1.5 ? 1024 : 512
+    const [factor, setFactor] = useState(1)
 
     useEffect(() => {
         if (!shadowLightRef.current) {
@@ -44,17 +46,26 @@ export default function Lights() {
 
     return (
         <>
-            <SoftShadows
-                size={16}
-                samples={10}
-                focus={.025}
+            {factor === 1 && (
+                <SoftShadows
+                    size={16}
+                    samples={16}
+                    focus={.025}
+                />
+            )}
+
+            <PerformanceMonitor
+                onDecline={() => setFactor(0)}
+                factor={1}
+                step={1}
+                iterations={5}
             />
             <directionalLight
                 position={[0, 0, 0]}
                 target-position={targetPosition}
                 castShadow
                 ref={shadowLightRef}
-                shadow-mapSize={[1024, 1024]}
+                shadow-mapSize={[mapsize, mapsize]}
                 shadow-camera-near={-25} // top right side
                 shadow-camera-far={55} // bottom left
                 shadow-camera-left={-35} //backwards z

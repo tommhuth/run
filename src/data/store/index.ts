@@ -60,6 +60,7 @@ export interface RunStore {
     road: RoadPart[]
     grid: SpatialHashGrid3D
     messages: Message[]
+    loading: boolean
     debug: {
         showColliders: boolean
         godMode: boolean
@@ -106,6 +107,7 @@ const store = create(
             pointLight: null
         },
         messages: [],
+        loading: true,
         debug: {
             showColliders: false,
             godMode: false,
