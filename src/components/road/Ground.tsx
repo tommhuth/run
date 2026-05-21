@@ -13,7 +13,7 @@ const floorDefinition: ShapeDefinition = [
     [new Plane(), new Vec3(), new Quaternion().setFromEuler(-Math.PI * .5, 0, 0)]
 ]
 const placeholderDepth = 250
-const roadPlaceholder = new Box(new Vec3(ROAD_BASE_WIDTH / 2, ROAD_HEIGHT / 2, placeholderDepth))
+const roadPlaceholder = new Box(new Vec3(ROAD_BASE_WIDTH / 2 - .5, ROAD_HEIGHT / 2, placeholderDepth + ROAD_FORWARD_EDGE))
 
 export default function Ground() {
     const groundRef = useRef<Mesh>(null)
@@ -34,7 +34,7 @@ export default function Ground() {
         if (player && groundRef.current) {
             groundRef.current.position.z = player.position.z
             roadBackup.position.y = ROAD_HEIGHT / 2
-            roadBackup.position.z = player.position.z + ROAD_FORWARD_EDGE + placeholderDepth - 10
+            roadBackup.position.z = player.position.z
         }
     })
 
