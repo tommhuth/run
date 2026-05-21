@@ -179,13 +179,6 @@ export function CannonProvider({
 
         world.broadphase = sap
         world.defaultContactMaterial.restitution = defaultRestitution
-        // potentitally crazy
-        /*
-        world.defaultContactMaterial.frictionEquationStiffness = 5e5
-        world.defaultContactMaterial.frictionEquationRelaxation = 3
-        world.defaultContactMaterial.contactEquationStiffness = 1e5
-        world.defaultContactMaterial.contactEquationRelaxation = 3
-        */
 
         return world
     }, [iterations, ...gravity])
@@ -194,8 +187,8 @@ export function CannonProvider({
     }, [world, scene, debug])
 
     useFrame((state, delta) => {
-        // max 30fps as delta
-        const dt = Math.min(delta, 1 / 30)
+        // max 15fps as delta
+        const dt = Math.min(delta, 1 / 15)
 
         world.fixedStep(dt)
 

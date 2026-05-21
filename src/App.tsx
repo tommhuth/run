@@ -14,7 +14,7 @@ import Config from "@data/Config"
 import PlaceGrid from "@data/PlaceGrid"
 import { useStore } from "@data/store"
 import { setSharedObject } from "@data/store/actions"
-import { extend, useFrame } from "@react-three/fiber"
+import { extend } from "@react-three/fiber"
 import { lazy } from "react"
 
 import Camera from "./components/Camera"
@@ -30,10 +30,6 @@ extend(extensions)
 
 export default function App() {
     const { showColliders } = useStore(i => i.debug)
-
-    useFrame(({ gl, scene, camera }) => {
-        gl.render(scene, camera)
-    })
 
     return (
         <>
