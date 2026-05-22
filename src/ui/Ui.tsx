@@ -1,6 +1,6 @@
 import Config from "@data/Config"
-import { store } from "@data/store"
-import { setDebugData } from "@data/store/actions"
+import { setDebugData } from "@data/store/actions/actions"
+import { store } from "@data/store/store"
 import { CSSProperties, useRef } from "react"
 import useAnimationFrame from "use-animation-frame"
 

@@ -5,7 +5,9 @@ import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
-import { generateForestPart, initializeTraffic, Instance, InstanceName, MaterialName } from "./actions"
+import { Instance, InstanceName, MaterialName } from "./actions/actions"
+import { generateForestPart } from "./actions/road"
+import { initializeTraffic } from "./actions/traffic"
 
 interface RoadObject {
     id: string

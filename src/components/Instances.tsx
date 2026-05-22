@@ -1,7 +1,7 @@
 import streetLightModel from "@assets/models/light-curved.glb"
 import rockModel from "@assets/models/rock.glb"
 import treesModels from "@assets/models/trees.glb"
-import { InstanceName } from "@data/store/actions"
+import { InstanceName } from "@data/store/actions/actions"
 import { useGLTF } from "@react-three/drei"
 
 import { useExternalModel } from "./ExternalModel"

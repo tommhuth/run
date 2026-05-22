@@ -1,5 +1,6 @@
-import { store, useStore } from "@data/store"
-import { clamp, map, ndelta, useLowerPriorityFrame } from "@data/utils"
+import { useLowerPriorityFrame } from "@data/hooks/utils"
+import { store, useStore } from "@data/store/store"
+import { clamp, map, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"

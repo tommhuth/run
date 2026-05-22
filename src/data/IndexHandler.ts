@@ -1,4 +1,4 @@
-export default class Counter {
+export default class IndexHandler {
     public current = 0
     private max = 0
     private start: number

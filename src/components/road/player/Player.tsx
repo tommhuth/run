@@ -1,6 +1,6 @@
-import { store, useStore } from "@data/store"
-import { setState } from "@data/store/actions"
-import { useTransitionedState } from "@data/utils"
+import { useTransitionedState } from "@data/hooks/utils"
+import { setState } from "@data/store/actions/actions"
+import { store, useStore } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
@@ -22,7 +22,6 @@ export default function Player({
 }: PlayerProps) {
     const { motion } = useControls()
     const steering = useStore(i => i.player.steering)
-    const loading = useStore(i => i.loading)
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
@@ -56,10 +55,6 @@ export default function Player({
             vehicle.setSteeringValue(motion.currentSteering, wheel)
         }
     })
-
-    if (loading) {
-        return null
-    }
 
     return (
         <Suv

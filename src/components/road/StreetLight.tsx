@@ -1,7 +1,7 @@
 import { useInstance } from "@components/InstancedMesh"
 import { useBody } from "@data/cannon"
-import { store } from "@data/store"
-import { useTransitionedState } from "@data/utils"
+import { useTransitionedState } from "@data/hooks/utils"
+import { store } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import { Box, Vec3 } from "cannon-es"
 

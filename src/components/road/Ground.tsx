@@ -1,6 +1,6 @@
 import { floorMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useBody } from "@data/cannon"
-import { useStore } from "@data/store"
+import { useStore } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import { Box, Plane, Quaternion, Vec3 } from "cannon-es"
 import { useRef } from "react"

@@ -1,6 +1,6 @@
 import CloudMaterial from "@components/materials/CloudMaterial"
 import { setMatrixAt } from "@components/materials/helpers"
-import { store } from "@data/store"
+import { store } from "@data/store/store"
 import { extractRotation, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"

@@ -1,4 +1,4 @@
-import { store } from "@data/store"
+import { store } from "@data/store/store"
 import { clamp } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"

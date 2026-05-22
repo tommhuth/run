@@ -1,7 +1,7 @@
 import model from "@assets/models/leaf.glb"
 import { setMatrixAt } from "@components/materials/helpers"
 import { leafMaterial } from "@components/materials/shared"
-import { useStore } from "@data/store"
+import { useStore } from "@data/store/store"
 import { clamp, dampFactor, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"

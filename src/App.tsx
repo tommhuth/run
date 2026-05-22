@@ -1,6 +1,5 @@
 import { Instances } from "@components/Instances"
 import Lights from "@components/Lights"
-import DepthTexture from "@components/materials/DepthTexture"
 import MaterialLoader from "@components/materials/MaterialLoader"
 import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
@@ -11,9 +10,10 @@ import Road from "@components/road/Road"
 import Traffic from "@components/road/traffic/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
-import PlaceGrid from "@data/PlaceGrid"
-import { useStore } from "@data/store"
-import { setSharedObject } from "@data/store/actions"
+import useFramerateReady from "@data/hooks/useFramerateReady"
+import useRenderWithDepth from "@data/hooks/useRenderWithDepth"
+import { setSharedObject, setState } from "@data/store/actions/actions"
+import { useStore } from "@data/store/store"
 import { AdaptiveDpr } from "@react-three/drei"
 import { extend } from "@react-three/fiber"
 import { lazy, useEffect } from "react"
@@ -30,8 +30,13 @@ const Perf = lazy(async () => {
 extend(extensions)
 
 export default function App() {
-    const { showColliders } = useStore(i => i.debug)
+    const showColliders = useStore(i => i.debug.showColliders)
     const loading = useStore(i => i.loading)
+
+    useRenderWithDepth()
+    useFramerateReady(() => {
+        setState({ loading: false })
+    })
 
     useEffect(() => {
         const canvas = document.getElementById("canvas")
@@ -71,32 +76,8 @@ export default function App() {
             </CannonProvider>
 
             <MaterialLoader />
-            {/* at the very end */}
-            <DepthTexture />
 
             {Config.STATS && <Perf deepAnalyze antialias={false} />}
-        </>
-    )
-}
-
-export function GridDebug({ g, scale = .95 }: { g: PlaceGrid; scale?: number }) {
-    return (
-        <>
-            <mesh position={g.origin}>
-                <sphereGeometry args={[.5]} />
-                <meshLambertMaterial color={"yellow"} />
-            </mesh>
-
-            <group>
-                {[...g].map(([key, cell]) => {
-                    return (
-                        <mesh key={key} position={cell.position}>
-                            <boxGeometry args={[g.cellSize * scale, .1, g.cellSize * scale]} />
-                            <meshLambertMaterial color={cell.occupied ? "red" : "green"} />
-                        </mesh>
-                    )
-                })}
-            </group>
         </>
     )
 }

@@ -1,6 +1,7 @@
 import Config from "@data/Config"
-import { useStore } from "@data/store"
-import { extractRotation, useLowerPriorityFrame } from "@data/utils"
+import { useLowerPriorityFrame } from "@data/hooks/utils"
+import { useStore } from "@data/store/store"
+import { extractRotation } from "@data/utils"
 import { Tuple3 } from "@src/types/global"
 import { Dispatch, SetStateAction } from "react"
 

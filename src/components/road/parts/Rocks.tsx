@@ -1,5 +1,5 @@
 import PlaceGrid from "@data/PlaceGrid"
-import { RockObject } from "@data/store"
+import { RockObject } from "@data/store/store"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 import { Suspense, useMemo } from "react"

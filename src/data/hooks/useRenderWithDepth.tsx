@@ -1,20 +1,20 @@
-import { setState } from "@data/store/actions"
+import { setState } from "@data/store/actions/actions"
 import { useFBO } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
-import { DepthTexture as ThreeDepthTexture, NearestFilter, UnsignedShortType } from "three"
+import { DepthTexture, NearestFilter, UnsignedShortType } from "three"
 
 const size = 512
 
-export default function DepthTexture() {
+export default function useRenderWithDepth() {
     const { viewport } = useThree()
     const [width, height] = useMemo<Tuple2>(() => [
         Math.ceil(size * viewport.dpr),
         Math.ceil(size * viewport.dpr * (1 / viewport.aspect))
     ], [viewport])
     const depthTexture = useMemo(() => {
-        const dt = new ThreeDepthTexture(width, height)
+        const dt = new DepthTexture(width, height)
 
         dt.type = UnsignedShortType
         dt.minFilter = NearestFilter
@@ -35,7 +35,7 @@ export default function DepthTexture() {
             }
         })
 
-        // render to depth buffer after hiding clouds
+        // render to depth buffer after hiding consuming meshes
         gl.setRenderTarget(fbo)
         gl.render(scene, camera)
         gl.setRenderTarget(null)
@@ -53,6 +53,4 @@ export default function DepthTexture() {
     useEffect(() => {
         setState({ depthTexture: fbo.depthTexture })
     }, [fbo.depthTexture])
-
-    return null
 }

@@ -1,5 +1,5 @@
-import { store } from "@data/store"
-import { MaterialName, setMaterial } from "@data/store/actions"
+import { MaterialName, setMaterial } from "@data/store/actions/actions"
+import { store } from "@data/store/store"
 import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallback, useMemo } from "react"
 import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
 

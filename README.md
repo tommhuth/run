@@ -5,11 +5,7 @@
 - ui 
 - intro 
 - restart/game over 
-- better particles, not child of part 
+- better particles, not child of part  
 
-- less wheel collisions
-- less traffic, less congestion
-- stable traffic, dont spawn in traffic visibly
-- fall back to base nonsoft shadow if pref reg
-- fix road edge akwardness
+- less wheel collisions 
 - pick up points need to be easier to reach with no close obstacles

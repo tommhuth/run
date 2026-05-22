@@ -1,4 +1,4 @@
-import { store } from "@data/store"
+import { store } from "@data/store/store"
 import { clamp, dampFactor, map, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Euler, Quaternion, Vector3 } from "three"

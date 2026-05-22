@@ -1,6 +1,7 @@
-import { useStore } from "@data/store"
-import { extendRoad, setState } from "@data/store/actions"
-import { useLowerPriorityFrame } from "@data/utils"
+import { useLowerPriorityFrame } from "@data/hooks/utils"
+import { setState } from "@data/store/actions/actions"
+import { extendRoad } from "@data/store/actions/road"
+import { useStore } from "@data/store/store"
 
 import { ROAD_FORWARD_EDGE } from "./const"
 import BridgePart from "./parts/Bridge"
