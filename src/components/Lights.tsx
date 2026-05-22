@@ -1,9 +1,9 @@
 import { useStore } from "@data/store"
 import { ndelta } from "@data/utils"
-import { PerformanceMonitor, SoftShadows } from "@react-three/drei"
+import { SoftShadows } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { DirectionalLight } from "three"
 
 const forwardOffset = 16
@@ -14,7 +14,7 @@ export default function Lights() {
     const { scene, viewport } = useThree()
     const time = useRef(0)
     const mapsize = viewport.dpr >= 1.5 ? 1024 : 512
-    const [factor, setFactor] = useState(1)
+    const isSmallScreen = window.matchMedia("(max-width: 850px)").matches
 
     useEffect(() => {
         if (!shadowLightRef.current) {
@@ -46,7 +46,7 @@ export default function Lights() {
 
     return (
         <>
-            {factor === 1 && (
+            {!isSmallScreen && (
                 <SoftShadows
                     size={16}
                     samples={16}
@@ -54,12 +54,6 @@ export default function Lights() {
                 />
             )}
 
-            <PerformanceMonitor
-                onDecline={() => setFactor(0)}
-                factor={1}
-                step={1}
-                iterations={5}
-            />
             <directionalLight
                 position={[0, 0, 0]}
                 target-position={targetPosition}
@@ -89,3 +83,14 @@ export default function Lights() {
         </>
     )
 }
+
+/*
+
+    const [factor, setFactor] = useState(1)
+            <PerformanceMonitor
+                onDecline={() => setFactor(0)}
+                factor={1}
+                step={1}
+                iterations={5}
+            />
+            */
