@@ -21,6 +21,15 @@ body,
     opacity: 0;
 }
 
+#loading {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    z-index: 0;
+    color: black;
+}
+
 html {
     height: 100%;
 
