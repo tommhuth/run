@@ -28,10 +28,10 @@ export default defineConfig({
                 globPatterns: ["**/*.{html,js,css,png,svg,woff,woff2,glb}"]
             },
             manifest: {
-                name: "R3F Boilerplate",
-                short_name: "R3F Boilerplate",
+                name: "Run",
+                short_name: "Run",
                 display: "fullscreen",
-                description: "R3F Boilerplate",
+                description: "Run",
                 orientation: "portrait",
                 theme_color: "#000000",
                 icons: [
