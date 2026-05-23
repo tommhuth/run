@@ -12,14 +12,17 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000">
     <style>
-        @import "/assets/styles/app.scss";
+        @import "/assets/styles/app.css";
     </style>
 </head>
 
-<body>
-    <canvas id="canvas"></canvas>
-    <div id="ui"></div>
-    <div id="loading">Loading...</div>
+<body class="overflow-hidden fixed left-0 block top-0 w-full h-full">
+    <canvas id="canvas"
+        class="overflow-hidden fixed left-0 block top-0 w-full h-full z-1 transition-opacity duration-300 opacity-0"></canvas>
+    <div id="ui" class="z-2 relative block pointer-events-none"></div>
+    <div id="loading" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 text-black">
+        Loading...
+    </div>
     <script>
         if (window.navigator.standalone) {
             document.documentElement.classList.add("standalone")

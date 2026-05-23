@@ -1,6 +1,7 @@
 import Config from "@data/Config"
 import { setDebugData } from "@data/store/actions/actions"
 import { store } from "@data/store/store"
+import clsx from "clsx"
 import { CSSProperties, useRef } from "react"
 import useAnimationFrame from "use-animation-frame"
 
@@ -31,28 +32,60 @@ export default function Ui() {
 
     return (
         <>
-            <div className="distance">
-                <output ref={timeRef} hidden={player.pickupDeadline === Infinity} />
-                <output hidden={!player.score}>{player.score.toLocaleString("en")}</output>
+            <div className="fixed left-4 right-4 bottom-10 text-2xl text-black flex gap-4">
+                <output
+                    aria-label="Score"
+                    className="font-bold"
+                    hidden={!player.score}
+                >
+                    {player.score.toLocaleString("en")}
+                </output>
+                <output
+                    ref={timeRef}
+                    aria-label="Deadline"
+                    hidden={player.pickupDeadline === Infinity}
+                />
             </div>
 
             <div
                 hidden={player.pickupDeadline === Infinity}
                 ref={progressRef}
-                className="progress"
+                className="fixed left-4 right-4 bottom-8 h-0.75 bg-black origin-left rounded-full"
             />
 
-            <ul className="messages">
+            <ul
+                className={clsx(
+                    "absolute top-8 left-1/2 -translate-x-1/2",
+                    "w-[calc(100%-2em)] flex flex-col gap-2 place-items-center",
+                    "text-xl max-md:text-base empty:hidden",
+                )}
+            >
                 {messages.map(i => {
                     return (
                         <li
+                            aria-live="polite"
                             key={i.id}
                             style={{
                                 "--color": i.score && i.score < 0 ? "#ff0084" : undefined
                             } as CSSProperties}
+                            className={clsx(
+                                "flex w-max flex-wrap max-w-full animate-messagein",
+                                "max-md:flex-col-reverse max-md:place-items-center",
+                            )}
                         >
-                            <div>{i.text}</div>
-                            <strong hidden={!i.score}>
+                            <div
+                                className={clsx(
+                                    "bg-black text-white py-3 px-5 rounded-lg",
+                                    "relative z-1 -mr-2",
+                                    "max-md:mr-0 max-md:-mt-1 max-md:-z-1",
+                                )}
+                            >
+                                {i.text}
+                            </div>
+                            <strong
+                                className="font-bold bg-(--color,blue) text-white rounded-lg max-w-max py-3 px-6 empty:hidden"
+                                hidden={!i.score}
+                            >
                                 {((i.score || 0) < 0 ? "−" : "+")}{Math.abs(i.score || 0).toLocaleString("en")}
                             </strong>
                         </li>
@@ -71,23 +104,12 @@ function Debug() {
     const road = store(i => i.road)
 
     return (
-        <div
-            style={{
-                position: "absolute",
-                top: "1em",
-                left: "1em",
-                color: "black",
-                display: "flex",
-                gap: ".5em",
-                flexFlow: "column wrap",
-                pointerEvents: "auto"
-            }}
-        >
+        <div className="absolute top-4 left-4 text-black flex flex-col gap-2 pointer-events-auto">
             <div>{state.toUpperCase()}</div>
             <div>pickupCounter: {player.pickupCounter}</div>
             <div>pickupInterval: {player.pickupInterval}</div>
             <div>
-                <ul style={{ fontSize: ".85em" }}>
+                <ul className="text-md">
                     {road.map((i, index) => <div key={i.id}>{index + 1} {i.type}</div>)}
                 </ul>
             </div>
