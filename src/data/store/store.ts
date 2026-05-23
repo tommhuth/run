@@ -31,7 +31,6 @@ export interface RockObject extends RoadObject {
 
 export interface TrafficElement {
     id: string
-    type: "sedan"
     position: Tuple3
     rotation: Tuple3
     guide: Tuple3

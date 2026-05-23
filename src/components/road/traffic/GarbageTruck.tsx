@@ -1,6 +1,5 @@
 import model from "@assets/models/garbage-truck.glb"
 import { carMaterial } from "@components/materials/shared"
-import Config from "@data/Config"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
 import { Box, RigidVehicle, Vec3 } from "cannon-es"
@@ -92,7 +91,6 @@ function GarbageTruck({ children, ...props }: GarbageTruckProps, ref: ForwardedR
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
                 <mesh
@@ -104,7 +102,6 @@ function GarbageTruck({ children, ...props }: GarbageTruckProps, ref: ForwardedR
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
                 <mesh
@@ -117,7 +114,6 @@ function GarbageTruck({ children, ...props }: GarbageTruckProps, ref: ForwardedR
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
 
@@ -139,7 +135,6 @@ function GarbageTruck({ children, ...props }: GarbageTruckProps, ref: ForwardedR
                             <primitive
                                 attach="material"
                                 object={carMaterial}
-                                wireframe={Config.DEBUG}
                             />
                         </mesh>
                     )

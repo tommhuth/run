@@ -27,7 +27,7 @@ export default function PickupTarget({
     size = 6,
     particleCount = 200,
     pickupId,
-    pickupThreshold = 3.5,
+    pickupThreshold = 4,
 }) {
     const materials = useStore(i => i.materials)
     const points = useMemo(() => {
@@ -76,7 +76,10 @@ export default function PickupTarget({
             return
         }
 
-        if (player.vehicle.chassisBody.position.z > (size / 2 + z) + 6) {
+        const playerPosition = player.vehicle.chassisBody.position
+        const now = Date.now()
+
+        if (playerPosition.z > (size / 2 + z) + 6) {
             const penalty = 10_000
 
             createMessage({
@@ -93,26 +96,26 @@ export default function PickupTarget({
             })
             setMode("missed")
         } else if (
-            Math.abs(player.vehicle.chassisBody.position.x - x) < pickupThreshold
-            && Math.abs(player.vehicle.chassisBody.position.z - z) < pickupThreshold
+            Math.abs(playerPosition.x - x) < pickupThreshold
+            && Math.abs(playerPosition.z - z) < pickupThreshold
         ) {
             const nextActivePickupIndex = road.findIndex(i => i.id !== pickupId && i.type === "pickupPoint")
             const currentIndex = road.findIndex(i => i.id === pickupId)
             const nextIndex = nextActivePickupIndex > -1 ? nextActivePickupIndex : road.length + player.pickupInterval - player.pickupCounter
-            const secondsPerPart = 2.25
+            const secondsPerPart = 1.85
             const targetPartsDistance = nextIndex - currentIndex
 
             if (player.potentialScore > 0) {
-                const diff = (player.pickupDeadline - Date.now())
+                const diff = (player.pickupDeadline - now)
                 const potentialScore = Math.round((player.potentialScore * 1000 + diff) / 10) * 10
                 let message = "Delivered"
 
                 if (diff > 1000) {
-                    message += " with time to spare"
+                    message += " early!"
                 } else if (diff >= 0) {
-                    message += " just in time!"
+                    message += " just in time"
                 } else {
-                    message += " with late delivery penality"
+                    message += " late"
                 }
 
                 createMessage({
@@ -122,7 +125,7 @@ export default function PickupTarget({
 
                 score += potentialScore
             } else {
-                createMessage({ text: "Reach delivery destination in time!" })
+                createMessage({ text: "Go!" })
             }
 
             setState({
@@ -130,7 +133,7 @@ export default function PickupTarget({
                     ...player,
                     score,
                     potentialScore: targetPartsDistance,
-                    pickupDeadline: Date.now() + targetPartsDistance * secondsPerPart * 1_000,
+                    pickupDeadline: now + targetPartsDistance * secondsPerPart * 1_000,
                     time: targetPartsDistance * secondsPerPart * 1_000,
                 }
             })

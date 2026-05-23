@@ -90,7 +90,6 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
                 <mesh
@@ -102,7 +101,6 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
             </group>
@@ -122,7 +120,6 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
                             <primitive
                                 attach="material"
                                 object={carMaterial}
-                                wireframe={Config.DEBUG}
                             />
                         </mesh>
                     )

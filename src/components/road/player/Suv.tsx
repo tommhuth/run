@@ -65,7 +65,8 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
         ...props,
         mass: 13,
         wheels,
-        chassis
+        chassis,
+        type: "player"
     })
 
     useImperativeHandle(ref, () => {
@@ -91,7 +92,6 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
                 <mesh
@@ -103,7 +103,6 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                     <primitive
                         attach="material"
                         object={carMaterial}
-                        wireframe={Config.DEBUG}
                     />
                 </mesh>
 
@@ -122,7 +121,6 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                             <primitive
                                 attach="material"
                                 object={carMaterial}
-                                wireframe={Config.DEBUG}
                             />
                         </mesh>
                     )

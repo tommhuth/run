@@ -35,7 +35,6 @@ export function initializeTraffic(countPerDirection = 4) {
                     direction === 1 ? 0 : Math.PI,
                     0
                 ] as Tuple3,
-                type: "sedan"
             } satisfies TrafficElement
         })
     }).flat()

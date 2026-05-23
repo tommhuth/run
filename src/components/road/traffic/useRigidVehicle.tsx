@@ -17,6 +17,7 @@ interface UseRigidVehicleParams {
     rotation?: Tuple3
     verticalStabilityAdjust?: number
     horizontalStabilityAdjust?: number
+    type?: "traffic" | "player"
 }
 
 const _emptyOffset = new Vec3()
@@ -38,32 +39,34 @@ function syncVehicle(
     delta: number,
     mode: "lerp" | "copy",
 ) {
-    if (!chassisRef.current) {
+    const chassisMesh = chassisRef.current
+
+    if (!chassisMesh) {
         return
     }
 
-    const qk = 21
-    const vk = 19
+    const qk = dampFactor(20, delta)
+    const vk = dampFactor(18, delta)
 
-    chassisRef.current.quaternion.slerp(_quaternion.copy(vehicle.chassisBody.quaternion), dampFactor(qk, delta))
+    chassisMesh.quaternion.slerp(_quaternion.copy(vehicle.chassisBody.quaternion), qk)
 
     if (mode === "lerp") {
-        chassisRef.current.position.lerp(vehicle.chassisBody.position, dampFactor(vk, delta))
+        chassisMesh.position.lerp(vehicle.chassisBody.position, vk)
     } else {
-        chassisRef.current.position.copy(vehicle.chassisBody.position)
+        chassisMesh.position.copy(vehicle.chassisBody.position)
     }
 
     vehicle.chassisBody.quaternion.vmult(_chassisOffset.set(0, -verticalStabilityAdjust, 0), _chassisOffset)
-    chassisRef.current.position.sub(_chassisOffset)
+    chassisMesh.position.sub(_chassisOffset)
 
     for (const [index, wheel] of vehicle.wheelBodies.entries()) {
         const wheelMesh = wheelsRef.current?.children[index] as Mesh
 
         if (wheelMesh) {
-            wheelMesh.quaternion.slerp(_quaternion.copy(wheel.quaternion), dampFactor(qk, delta))
+            wheelMesh.quaternion.slerp(_quaternion.copy(wheel.quaternion), qk)
 
             if (mode === "lerp") {
-                wheelMesh.position.lerp(wheel.position, dampFactor(vk, delta))
+                wheelMesh.position.lerp(wheel.position, vk)
             } else {
                 wheelMesh.position.copy(wheel.position)
             }
@@ -84,6 +87,7 @@ export function useRigidVehicle({
     mass,
     chassis,
     wheels,
+    type = "traffic"
 }: UseRigidVehicleParams, deps: any[] = []) {
     const chassisRef = useRef<Group>(null)
     const wheelsRef = useRef<Group>(null)
@@ -109,7 +113,7 @@ export function useRigidVehicle({
 
         const vehicle = new RigidVehicle({ chassisBody })
 
-        // chassisBody.userData = { type }
+        chassisBody.userData = { type }
 
         for (const [, { position, radius }] of wheels.entries()) {
             const shape = new Sphere(radius)
@@ -146,7 +150,6 @@ export function useRigidVehicle({
         }
     }, [vehicle, world])
 
-    /*
     useEffect(() => {
         const onCollide = (e: { body: Body }) => {
             if (type === "player" && e.body.userData?.type === "traffic") {
@@ -165,14 +168,29 @@ export function useRigidVehicle({
             vehicle.chassisBody.removeEventListener("collide", onCollide)
         }
     }, [])
-    */
 
     useLayoutEffect(() => {
-        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, 1, "copy")
+        syncVehicle(
+            vehicle,
+            verticalStabilityAdjust,
+            horizontalStabilityAdjust,
+            chassisRef,
+            wheelsRef,
+            1,
+            "copy"
+        )
     }, [])
 
     useFrame((state, delta) => {
-        syncVehicle(vehicle, verticalStabilityAdjust, horizontalStabilityAdjust, chassisRef, wheelsRef, ndelta(delta), "lerp")
+        syncVehicle(
+            vehicle,
+            verticalStabilityAdjust,
+            horizontalStabilityAdjust,
+            chassisRef,
+            wheelsRef,
+            ndelta(delta),
+            "lerp"
+        )
     })
 
     return [chassisRef, wheelsRef, vehicle, backWheelsRef] as const

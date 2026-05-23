@@ -13,7 +13,7 @@ export default function PickupPointPart({ position, depth, id }) {
         <Suspense fallback={null}>
             <PickupTarget
                 pickupId={id}
-                position={[side * 9, 0, position[2] + depth / 2]}
+                position={[side * 8.5, 0, position[2] + depth / 2]}
             />
 
             {Array.from({ length: 2 }).map((i, index) => {

@@ -2,17 +2,23 @@ import Cycler from "@data/Cycler"
 import { useTransitionedState } from "@data/hooks/utils"
 import { removeTrafficElement } from "@data/store/actions/traffic"
 import { store, TrafficElement } from "@data/store/store"
+import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { RigidVehicle } from "cannon-es"
 import { memo, Suspense, useMemo } from "react"
 
 import Delivery from "./Delivery"
 import GarbageTruck from "./GarbageTruck"
+import HatchbackSports from "./HatchbackSports"
 import SedanSports from "./SedanSports"
+import SuvLuxury from "./SuvLuxury"
+import Truck from "./Truck"
+import TruckFlat from "./TruckFlat"
 import useSteeringBehaviour from "./useSteeringBehaviour"
 import Van from "./Van"
 
-const cycler = new Cycler([Van, Delivery, GarbageTruck, SedanSports], .1)
+const common = new Cycler([HatchbackSports, SedanSports, SuvLuxury, Truck, TruckFlat, Van], .15)
+const rare = new Cycler([Delivery, GarbageTruck], 0)
 
 export default memo(({
     id,
@@ -23,7 +29,8 @@ export default memo(({
     direction
 }: TrafficElement) => {
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
-    const Component = useMemo(() => cycler.next(), [])
+    const pool = useMemo(() => random.boolean(.75) ? common : rare, [])
+    const Component = useMemo(() => pool.next(), [pool])
 
     useSteeringBehaviour({
         vehicle,

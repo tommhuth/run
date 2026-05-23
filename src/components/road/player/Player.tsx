@@ -26,7 +26,11 @@ export default function Player({
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
 
-    useTrafficClient({ vehicle, type: "player", direction: 1 })
+    useTrafficClient({
+        vehicle,
+        type: "player",
+        direction: 1
+    })
     usePlayerAlive(setPosition)
 
     useEffect(() => {
@@ -62,7 +66,6 @@ export default function Player({
             position={position}
             rotation={rotation}
             key={position[2]}
-            type="player"
         >
             <primitive object={target} position={[0, 1, 5]} />
             <spotLight
