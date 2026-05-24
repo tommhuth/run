@@ -44,10 +44,5 @@
     "include": [
         "src",
         "./app.d.ts"
-    ],
-    "references": [
-        {
-            "path": "./tsconfig.node.json"
-        }
     ]
 }

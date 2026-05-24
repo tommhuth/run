@@ -2,9 +2,10 @@ import ts from "@typescript-eslint/eslint-plugin"
 import tsParser from "@typescript-eslint/parser"
 import react from "eslint-plugin-react"
 import simpleImportSort from "eslint-plugin-simple-import-sort"
-import importPlugin from "eslint-plugin-import"
+import importPlugin from "eslint-plugin-import-x"
 import unusedImports from "eslint-plugin-unused-imports";
 import importAlias from '@dword-design/eslint-plugin-import-alias';
+import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
 
 export default [
     importAlias.configs.recommended,
@@ -49,18 +50,18 @@ export default [
         },
         settings: {
             react: { version: "detect" },
-            "import/resolver": {
-                typescript: {
+            "import-x/resolver-next": [
+                createTypeScriptImportResolver({
                     alwaysTryTypes: true,
                     project: "./tsconfig.json",
-                },
-            },
+                }),
+            ],
         },
         plugins: {
             "@typescript-eslint": ts,
             react,
             "simple-import-sort": simpleImportSort,
-            import: importPlugin,
+            "import-x": importPlugin,
             "unused-imports": unusedImports,
         },
         rules: {
@@ -109,11 +110,11 @@ export default [
             "simple-import-sort/imports": "error",
             "simple-import-sort/exports": "error",
             // Validate import paths & TS aliases
-            "import/no-unresolved": "error",
+            "import-x/no-unresolved": "error",
             "react/prop-types": "off",
             "react/jsx-uses-react": "off",
             "react/react-in-jsx-scope": "off",
-            "import/no-unresolved": [
+            "import-x/no-unresolved": [
                 "error",
                 { ignore: ["virtual:pwa-register"] }
             ],
