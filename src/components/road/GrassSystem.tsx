@@ -2,7 +2,7 @@ import model from "@assets/models/grass3.glb"
 import { setMatrixAt } from "@components/materials/helpers"
 import { grassMaterial } from "@components/materials/shared"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
-import { store } from "@data/store/store"
+import { store, useStore } from "@data/store/store"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { GLTFModel, Tuple3 } from "@src/types/global"
@@ -21,6 +21,7 @@ interface Grass {
 export default function GrassSystem({ count = 250 }) {
     const { nodes } = useGLTF(model) as unknown as GLTFModel<["grass"]>
     const instanceRef = useRef<InstancedMesh>(null)
+    let material = useStore(i => i.materials.road)
     const items = useMemo(() => {
         return Array.from({ length: count }).map((i, index) => {
             return {
@@ -63,12 +64,18 @@ export default function GrassSystem({ count = 250 }) {
         }
     }, 10)
 
+    if (!material) {
+        return null
+    }
+
     return (
         <instancedMesh
-            args={[nodes.grass.geometry, grassMaterial, count]}
+            args={[nodes.grass.geometry, undefined, count]}
             ref={instanceRef}
             frustumCulled={false}
             receiveShadow
-        />
+        >
+            <primitive object={material} attach="material" />
+        </instancedMesh>
     )
 }

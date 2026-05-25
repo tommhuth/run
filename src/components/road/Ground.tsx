@@ -1,6 +1,6 @@
 import { floorMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useBody } from "@data/cannon"
-import { useStore } from "@data/store/store"
+import { store, useStore } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import { Box, Plane, Quaternion, Vec3 } from "cannon-es"
 import { useRef } from "react"
@@ -16,6 +16,7 @@ const placeholderDepth = 250
 const roadPlaceholder = new Box(new Vec3(ROAD_BASE_WIDTH / 2 - .5, ROAD_HEIGHT / 2, placeholderDepth + ROAD_FORWARD_EDGE))
 
 export default function Ground() {
+    const roadMaterial = useStore(i => i.materials.road)
     const groundRef = useRef<Mesh>(null)
     const [, roadBackup] = useBody({
         mass: 0,
@@ -44,7 +45,7 @@ export default function Ground() {
             position-y={-.5}
             castShadow
             receiveShadow
-            material={floorMaterial}
+            material={roadMaterial}
         >
             <boxGeometry args={[size, 1, size, 1, 1, 1]} />
         </mesh>

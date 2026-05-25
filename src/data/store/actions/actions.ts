@@ -11,7 +11,7 @@ export function setState(data: Partial<RunStore>) {
     })
 }
 
-export type MaterialName = string
+export type MaterialName = "road"
 
 export function setMaterial(name: MaterialName, material: Material) {
     store.setState({
