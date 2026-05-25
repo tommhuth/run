@@ -43,6 +43,8 @@ export default function useSteeringBehaviour({
         speeding: 1,
         playerStopTime: 0,
         time: 0,
+        isChicken: random.boolean(.75),
+        chickenLimit: random.float(.85, 1)
     }), [])
 
     useFrame((state, delta) => {
@@ -68,7 +70,11 @@ export default function useSteeringBehaviour({
         const chassis = vehicle.chassisBody
         const error = guide[0] - chassis.position.x
         // simple proportional controller with lateral x velocity counter
-        const steer = clamp(kp * error - kv * chassis.velocity.x, -MAX_STEER, MAX_STEER)
+        let steer = clamp(kp * error - kv * chassis.velocity.x, -MAX_STEER, MAX_STEER)
+
+        if (data.speeding < data.chickenLimit && data.isChicken) {
+            steer = .75 * -direction
+        }
 
         for (const wheel of [0, 1]) {
             vehicle.setSteeringValue(steer * direction, wheel)
