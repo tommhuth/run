@@ -2,6 +2,7 @@ import cloudMap from "@assets/textures/cloud.png"
 import { store, useStore } from "@data/store/store"
 import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
+import depth from "@src/shaders/depth.glsl"
 import easings from "@src/shaders/easings.glsl"
 import { ForwardedRef, forwardRef, useEffect } from "react"
 import { MeshBasicMaterial, Vector2, Vector3 } from "three"
@@ -40,26 +41,7 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
 			uniform sampler2D depthTexture; 
 
             ${easings}
-
-            // thanks chattyman https://chatgpt.com/c/690d05ff-3a88-8325-b817-331a0a2e7eee
-            // --- For sampling from depth buffer (nonlinear) ---
-            float linearizeDepth(float depth, float near, float far) {
-                // Convert depth buffer value [0,1] -> NDC [-1,1]
-                float z = depth * 2.0 - 1.0;
-                // Reconstruct view-space z
-                float viewZ = (2.0 * near * far) / (far + near - z * (far - near));
-                // Convert to linear 0–1 depth (near=0, far=1)
-                return (viewZ - near) / (far - near);
-            }
-
-            // --- For world-space position ---
-            float getLinearDepth(vec3 worldPos, mat4 viewMatrix, float near, float far) {
-                // Transform world -> view
-                vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
-                float viewZ = -viewPos.z; // camera looks down -Z
-                // Normalize to same 0–1 range
-                return (viewZ - near) / (far - near);
-            } 
+            ${depth}
         `,
         vertex: {
             main: glsl`  
@@ -68,14 +50,11 @@ function CloudMaterial(props, ref: ForwardedRef<MeshBasicMaterial>) {
         },
         fragment: {
             main: glsl` 
-                vec2 uv = gl_FragCoord.xy / resolution.xy; 
-                float sceneDepth = linearizeDepth(texture2D(depthTexture, uv).r, cameraNear, cameraFar);
-                float fragmentDepth = getLinearDepth(vWorldPosition, viewMatrix, cameraNear, cameraFar);
+                float dist = getFragmentDepth(vWorldPosition, depthTexture, gl_FragCoord.xy / resolution, viewMatrix, cameraNear, cameraFar);
   
                 float extraDist = clamp(length(vWorldPosition - playerPosition) / 25., 0., 1.) * .075;
                 float fadeDist = .025 + extraDist; 
                 float minDist = 0.;   
-                float dist = sceneDepth - fragmentDepth;  
                 float alpha = clamp((dist - minDist) / fadeDist, 0.0, 1.0);
 
                 float fadeEdge = 25.;
