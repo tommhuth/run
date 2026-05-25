@@ -25,7 +25,7 @@ export default function Target({
             uTime: { value: 0 },
             uColorProgress: { value: 0 },
             uSpeed: { value: 0 },
-            uSize: { value: 2 },
+            uSize: { value: 3 },
             cameraNear: { value: camera.near },
             cameraFar: { value: camera.far },
             resolution: { value: new Vector2(size.width * viewport.dpr, size.height * viewport.dpr) },
