@@ -3,17 +3,12 @@ import { store } from "@data/store/store"
 import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallback, useMemo } from "react"
 import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
 
-import BeamMaterial from "./BeamMaterial"
-import DotMaterial from "./DotMaterial"
-
 function MaterialLoader() {
     const materials = useMemo(() => {
-        return {
-            beam: <BeamMaterial />,
-            dot: <DotMaterial />,
-        } satisfies Record<MaterialName, ReactNode>
+        return {} satisfies Record<MaterialName, ReactNode>
     }, [])
 
+    /*
     return Object.entries(materials).map(([name, material]) => {
         return (
             <MaterialHandler
@@ -24,6 +19,7 @@ function MaterialLoader() {
             </MaterialHandler>
         )
     })
+    */
 }
 
 const geometry = new BoxGeometry()

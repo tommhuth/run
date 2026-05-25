@@ -43,12 +43,12 @@ export default function Ui() {
                 <output
                     ref={timeRef}
                     aria-label="Deadline"
-                    hidden={player.deadline === -1}
+                    hidden={player.deadline === Infinity}
                 />
             </div>
 
             <div
-                hidden={player.deadline === -1}
+                hidden={player.deadline === Infinity}
                 ref={progressRef}
                 className="fixed left-4 right-4 bottom-8 h-0.75 bg-black origin-left rounded-full"
             />

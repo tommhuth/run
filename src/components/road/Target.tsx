@@ -14,7 +14,7 @@ import { Color, Vector2, Vector3 } from "three"
 import { ROAD_WIDTH } from "./const"
 
 export default function Target({
-    height = 60,
+    height = 100,
     width = ROAD_WIDTH * .35
 }) {
     const nextTargetAt = useStore(i => i.player.nextTargetAt)
@@ -72,19 +72,20 @@ export default function Target({
             main: glsl`     
                 // world-space chevrons (v), scrolling down
                 float wave = vPosition.y / uSize + uSpeed + uTime * 2. - abs(vPosition.x) / uSize;
-                float pattern = fract(wave);   
+                float pattern = easeInOutQuad(fract(wave));   
+                float topFadeoutAt = 100.;
  
                 gl_FragColor.rgb = mix(
-                    mix(vec3(.0, 1., 1.), vec3(1.0, .25, 0.), uColorProgress), 
+                    mix(vec3(.0, .7, .7), vec3(1.0, .25, 0.), uColorProgress), 
                     mix(uChevronColor, uTimeoutColor, easeOutQuad(uColorProgress)), 
                     pattern
                 );
                 gl_FragColor.a = pattern;
-                gl_FragColor.a *= easeInQuad(1. - clamp((vPosition.y - 1.) / 75., 0., 1.));
+                gl_FragColor.a *= easeInQuad(1. - clamp((vPosition.y - 1.) / topFadeoutAt, 0., 1.));
 
                 // depth intersection fade
                 float depthDist = getFragmentDepth(vPosition, depthTexture, gl_FragCoord.xy / resolution, viewMatrix, cameraNear, cameraFar);
-                float fadeDist = .01;
+                float fadeDist = .025;
                 float depthFade = clamp(abs(depthDist) / fadeDist, 0.0, 1.0);
                 
                 // Fade out bottom  player is away

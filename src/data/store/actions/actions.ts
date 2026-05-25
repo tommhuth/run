@@ -11,7 +11,7 @@ export function setState(data: Partial<RunStore>) {
     })
 }
 
-export type MaterialName = "beam" | "dot"
+export type MaterialName = string
 
 export function setMaterial(name: MaterialName, material: Material) {
     store.setState({
