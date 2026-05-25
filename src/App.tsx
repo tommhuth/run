@@ -20,6 +20,7 @@ import { lazy, useEffect } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
+import Target from "@components/road/Target"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -56,6 +57,7 @@ export default function App() {
                 near={ROAD_FORWARD_EDGE - FOG_DISTANCE}
             />
             <color args={["#fff"]} attach={"background"} />
+            <Target />
 
             <pointLight
                 name="pointLight"

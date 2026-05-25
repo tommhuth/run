@@ -16,17 +16,17 @@ export default function Ui() {
             return
         }
 
-        const time = Math.floor((player.pickupDeadline - Date.now()) / 100) * 100 / 1000
-        const size = (player.pickupDeadline - Date.now()) / player.time
+        const currentTime = Math.floor((player.deadline - Date.now()) / 100) * 100 / 1000
+        const t = currentTime / player.time
 
-        timeRef.current.value = (time < 0 ? "−" : "") + Math.abs(time).toLocaleString("en") + "s"
+        timeRef.current.value = (currentTime < 0 ? "−" : "") + Math.abs(currentTime).toLocaleString("en") + "s"
 
-        if (size < 0) {
+        if (t < 0) {
             progressRef.current.style.animation = "blink .85s infinite"
             progressRef.current.style.scale = "1 1"
         } else {
             progressRef.current.style.animation = ""
-            progressRef.current.style.scale = `${size > 0 ? size : 1} 1`
+            progressRef.current.style.scale = `${t > 0 ? t : 1} 1`
         }
     })
 
@@ -43,12 +43,12 @@ export default function Ui() {
                 <output
                     ref={timeRef}
                     aria-label="Deadline"
-                    hidden={player.pickupDeadline === Infinity}
+                    hidden={player.deadline === -1}
                 />
             </div>
 
             <div
-                hidden={player.pickupDeadline === Infinity}
+                hidden={player.deadline === -1}
                 ref={progressRef}
                 className="fixed left-4 right-4 bottom-8 h-0.75 bg-black origin-left rounded-full"
             />
@@ -106,8 +106,9 @@ function Debug() {
     return (
         <div className="absolute top-4 left-4 text-black flex flex-col gap-2 pointer-events-auto">
             <div>{state.toUpperCase()}</div>
-            <div>pickupCounter: {player.pickupCounter}</div>
-            <div>pickupInterval: {player.pickupInterval}</div>
+            <div>nextTargetAt: {player.nextTargetAt}</div>
+            <div>targetDistance: {player.targetDistance}</div>
+            <div>time: {player.time.toFixed(1)}</div>
             <div>
                 <ul className="text-md">
                     {road.map((i, index) => <div key={i.id}>{index + 1} {i.type}</div>)}

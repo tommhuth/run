@@ -1,3 +1,4 @@
+import { ROAD_FORWARD_EDGE } from "@components/road/const"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 
@@ -10,17 +11,7 @@ interface PreviousPart {
 }
 
 export function getRandomRoadExtension() {
-    return random.pick(
-        generateForestPart,
-        generateForestPart,
-        generateForestPart,
-        generateForestPart,
-        generateForestPart,
-        generateRocksPart,
-        generateBridgePart,
-        generateForestPart,
-        generateForestPart,
-    )
+    return random.boolean(.85) ? generateForestPart : random.pick(generateRocksPart, generateBridgePart)
 }
 
 export function generateForestPart(previous: PreviousPart): RoadPart {
@@ -62,37 +53,39 @@ export function generateBridgePart(previous: PreviousPart): RoadPart {
     }
 }
 
-export function generatePickupPoint(previous: PreviousPart): RoadPart {
-    return {
-        type: "pickupPoint",
-        id: random.id(),
-        depth: 20,
-        position: [
-            0,
-            0,
-            previous.position[2] + previous.depth
-        ]
-    }
-}
+export function reachDestination() {
+    const player = store.getState().player
+    const nextTargetAt = player.nextTargetAt + random.integer(ROAD_FORWARD_EDGE * 1.5, ROAD_FORWARD_EDGE * 3)
+    const targetDistance = nextTargetAt - player.nextTargetAt
+    const secondsPerMeter = .08
+    const deadlineInSeconds = targetDistance * secondsPerMeter
+    let score = 0
 
-export function extendRoad(previous: PreviousPart) {
-    const { road, player } = store.getState()
-    let generator = getRandomRoadExtension()
-    let pickupCounter = player.pickupCounter
+    if (player.deadline > 0) {
+        const currentTime = (player.deadline - Date.now()) / 1000
 
-    if (pickupCounter === player.pickupInterval) {
-        generator = generatePickupPoint
-        pickupCounter = 0
-    } else {
-        pickupCounter++
+        score = currentTime * player.targetDistance * 100
+        score = Math.round(score)
     }
 
     setState({
         player: {
             ...player,
-            pickupCounter,
-            pickupInterval: pickupCounter === 0 ? random.integer(2, 6) : player.pickupInterval
-        },
+            score,
+            nextTargetAt,
+            targetDistance,
+            deadline: Date.now() + deadlineInSeconds * 1000,
+            time: deadlineInSeconds
+        }
+    })
+}
+
+
+export function extendRoad(previous: PreviousPart) {
+    const { road } = store.getState()
+    const generator = getRandomRoadExtension()
+
+    setState({
         road: [
             ...road,
             generator(previous)

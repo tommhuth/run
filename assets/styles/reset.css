@@ -23,20 +23,6 @@
     overscroll-behavior: none;
 }
 
-body::after {
-    content: "";
-    display: block;
-    left: 0;
-    right: 0;
-    top: 0;
-    position: fixed;
-    height: 35%;
-    z-index: 1;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    background-image: linear-gradient(rgba(46, 98, 131, 0.2) 40%, transparent);
-}
-
 html {
     background-color: var(--background-color);
     font-family: Helvetica, Arial, sans-serif;

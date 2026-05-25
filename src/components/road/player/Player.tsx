@@ -31,6 +31,7 @@ export default function Player({
         type: "player",
         direction: 1
     })
+
     usePlayerAlive(setPosition)
 
     useEffect(() => {

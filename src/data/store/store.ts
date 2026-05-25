@@ -40,7 +40,7 @@ export interface TrafficElement {
 
 export interface RoadPart {
     id: string
-    type: "forest" | "rocks" | "bridge" | "pickupPoint"
+    type: "forest" | "rocks" | "bridge"
     position: Tuple3
     depth: number
 }
@@ -73,13 +73,12 @@ export interface RunStore {
         mesh: Group | null
         vehicle: RigidVehicle | null
         steering: Vector3
-        pickupCounter: number
-        pickupInterval: number
-        pickupDeadline: number
+        nextTargetAt: number
+        targetDistance: number
         score: number
-        potentialScore: number
         time: number
-    }
+        deadline: number
+    },
 }
 
 const store = create(
@@ -89,12 +88,11 @@ const store = create(
             mesh: null,
             vehicle: null,
             steering: new Vector3(),
-            pickupInterval: 4,
-            pickupCounter: 4,
-            pickupDeadline: Infinity,
-            potentialScore: 0,
-            score: 0,
-            time: 0
+            nextTargetAt: 25,
+            targetDistance: 25,
+            deadline: Date.now() + 1000 * 15,
+            score: 10000,
+            time: 1000 * 15,
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),

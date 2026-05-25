@@ -6,7 +6,6 @@ import { useStore } from "@data/store/store"
 import { ROAD_FORWARD_EDGE } from "./const"
 import BridgePart from "./parts/Bridge"
 import ForestPart from "./parts/Forest"
-import PickupPointPart from "./parts/PickupPoint"
 import RocksPart from "./parts/Rocks"
 
 
@@ -39,8 +38,6 @@ export default function Road() {
                 switch (i.type) {
                     case "bridge":
                         return <BridgePart {...i} key={i.id} />
-                    case "pickupPoint":
-                        return <PickupPointPart {...i} key={i.id} />
                     case "forest":
                         return <ForestPart {...i} key={i.id} />
                     case "rocks":
