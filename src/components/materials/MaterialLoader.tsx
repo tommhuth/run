@@ -3,12 +3,15 @@ import { store } from "@data/store/store"
 import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallback, useMemo } from "react"
 import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
 
+import RoadMaterial from "./RoadMaterial"
+
 function MaterialLoader() {
     const materials = useMemo(() => {
-        return {} satisfies Record<MaterialName, ReactNode>
+        return {
+            road: <RoadMaterial />
+        } satisfies Record<MaterialName, ReactNode>
     }, [])
 
-    /*
     return Object.entries(materials).map(([name, material]) => {
         return (
             <MaterialHandler
@@ -19,7 +22,6 @@ function MaterialLoader() {
             </MaterialHandler>
         )
     })
-    */
 }
 
 const geometry = new BoxGeometry()

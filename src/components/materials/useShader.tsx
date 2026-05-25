@@ -7,6 +7,7 @@ import { patchShader } from "./PatchedMaterial"
 export interface ShaderPart {
     head?: string
     main?: string
+    injectAt?: string
 }
 
 type UniformsRecord = Record<string, IUniform>
@@ -57,7 +58,7 @@ export function useShader<T extends UniformsRecord>({
         }
 
         patchShader(shader, { vertex, fragment, shared })
-    }, [vertex?.head, vertex?.main, fragment?.head, fragment?.main])
+    }, [vertex?.head, vertex?.main, fragment?.head, fragment?.main, fragment?.injectAt])
 
     return {
         // aaah why is this cast neccessary ts

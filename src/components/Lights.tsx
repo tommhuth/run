@@ -12,7 +12,7 @@ export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)
     const { scene, viewport } = useThree()
     const time = useRef(0)
-    const mapsize = viewport.dpr >= 1.5 ? 1024 : 512
+    const mapsize = viewport.dpr >= 1.5 ? 2048 : 1024
 
     useEffect(() => {
         if (!shadowLightRef.current) {

@@ -1,7 +1,7 @@
 import model from "@assets/models/road.glb"
-import { floorMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useBody } from "@data/cannon"
 import Config from "@data/Config"
+import { useStore } from "@data/store/store"
 import { useGLTF } from "@react-three/drei"
 import { Shape, Vec3 } from "cannon-es"
 import { useMemo } from "react"
@@ -24,6 +24,7 @@ let sharedShape: ShapeDefinition
 
 export default function RoadSegment({ position }) {
     const { nodes } = useGLTF(model) as unknown as GLTFResult
+    const roadMaterial = useStore(i => i.materials.road)
     const shape = useMemo<ShapeDefinition>(() => {
         if (sharedShape) {
             return sharedShape
@@ -50,7 +51,7 @@ export default function RoadSegment({ position }) {
                 receiveShadow
                 geometry={nodes.main.geometry}
                 dispose={null}
-                material={floorMaterial}
+                material={roadMaterial}
                 position={[position[0], ROAD_HEIGHT / 2, position[2]]}
             />
 

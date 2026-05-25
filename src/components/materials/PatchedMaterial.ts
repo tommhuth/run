@@ -5,6 +5,7 @@ import { glsl } from "./helpers"
 interface ShaderPart {
     main?: string
     head?: string
+    injectAt?: string
 }
 
 interface ShaderParts {
@@ -37,8 +38,8 @@ export function patchShader(
         ${patch?.fragment?.head || ""}
     `)
 
-    shader.fragmentShader = shader.fragmentShader.replace("#include <dithering_fragment>", glsl` 
-        #include <dithering_fragment>
+    shader.fragmentShader = shader.fragmentShader.replace(patch?.fragment?.injectAt || "#include <dithering_fragment>", glsl` 
+        ${patch?.fragment?.injectAt || "#include <dithering_fragment>"}
 
         ${patch?.fragment?.main || ""}
     `)
