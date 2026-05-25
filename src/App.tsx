@@ -7,6 +7,7 @@ import GrassSystem from "@components/road/GrassSystem"
 import Ground from "@components/road/Ground"
 import Player from "@components/road/player/Player"
 import Road from "@components/road/Road"
+import Target from "@components/road/Target"
 import Traffic from "@components/road/traffic/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
@@ -20,7 +21,6 @@ import { lazy, useEffect } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
-import Target from "@components/road/Target"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")

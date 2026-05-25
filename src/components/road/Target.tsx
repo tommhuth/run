@@ -7,7 +7,7 @@ import { clamp, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import easings from "@src/shaders/easings.glsl"
 import noise from "@src/shaders/noise.glsl"
-import { Color } from "three"
+import { Color, DoubleSide } from "three"
 
 import { ROAD_WIDTH } from "./const"
 
@@ -20,14 +20,22 @@ export default function Target({
         uniforms: {
             uTime: { value: 0 },
             uColorProgress: { value: 0 },
-            uBlink: { value: 0 },
-            uTimeoutColor: { value: new Color("#ff0066") }
+            uSpeed: { value: 0 },
+            uSize: { value: 2 },
+            uTimeoutColor: {
+                value: new Color("#e62796")
+            },
+            uChevronColor: {
+                value: new Color("#5757d4")
+            },
         },
         shared: glsl` 
             uniform float uTime;
-            uniform float uBlink;
-            uniform float uColorProgress;
+            uniform float uSpeed;
+            uniform float uSize;
+            uniform float uColorProgress; 
             uniform vec3 uTimeoutColor;
+            uniform vec3 uChevronColor; 
             varying vec3 vPosition;
             varying vec2 vUv;
 
@@ -44,34 +52,18 @@ export default function Target({
             head: glsl` 
                 ${easings} 
             `,
-            main: glsl`   
-                float y = vPosition.y;
-                float dist = 20.; 
-                float fade = clamp(1. - y / dist, 0., 1.) * (clamp((y - .35) / 1., 0., 1.));
-  
-                vec3 color = mix(
-                    vec3(1.0),
-                    gl_FragColor.rgb,
-                    easeOutCubic(clamp(y / 10., 0., 1.))
-                );
-
-                gl_FragColor.rgb = mix( 
-                    color, 
-                    uTimeoutColor,
-                    uColorProgress
-                );
-
-                float n = smoothstep(.2, .8, noise(vPosition * .05 + uTime * .5));
-                float d = 10. + uColorProgress * 10.;
-                float f = easeInQuad(clamp(1. - y / d, 0., 1.));
-
-                gl_FragColor.rgb = mix( 
-                    gl_FragColor.rgb, 
-                    mix(vec3(1., 1., 1.), vec3(1., 1., 0.), uColorProgress),
-                    n * f
-                );
+            main: glsl`     
+                // world-space chevrons (v), scrolling down
+                float wave = vPosition.y / uSize + uSpeed + uTime * 2. - abs(vPosition.x) / uSize;
+                float pattern = fract(wave);   
  
-                gl_FragColor.a = fade * abs(cos(uBlink)) * 1. * clamp((y - 1.) / .25, 0., 1.); 
+                gl_FragColor.rgb = mix(
+                    mix(gl_FragColor.rgb, vec3(1., 1., 0.), uColorProgress), 
+                    mix(uChevronColor, uTimeoutColor, uColorProgress), 
+                    pattern
+                );
+                gl_FragColor.a = pattern;
+                gl_FragColor.a *= easeInQuad(1. - clamp((vPosition.y - 1.) / 25., 0., 1.));
             `
         }
     })
@@ -81,11 +73,11 @@ export default function Target({
 
         const { player } = useStore.getState()
         const t = (player.deadline - Date.now())
-        const f = (1 - clamp(t / 4000)) * 7 + 5
-        const c = 1 - clamp(t / 2000)
+        const f = (1 - clamp(t / 5000)) * 5
+        const c = 1 - clamp(t / 1000)
 
         uniforms.uColorProgress.value = c
-        uniforms.uBlink.value += f * ndelta(delta)
+        uniforms.uSpeed.value += f * delta
     })
 
     useLowerPriorityFrame(() => {
@@ -110,10 +102,8 @@ export default function Target({
             <meshBasicMaterial
                 customProgramCacheKey={customProgramCacheKey}
                 transparent
-                color={"#ffea00"}
-                fog={true}
+                color={"#000"}
                 onBeforeCompile={onBeforeCompile}
-            //depthWrite={false}
 
             />
             <boxGeometry args={[width, height, .1]} />
