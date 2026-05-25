@@ -15,7 +15,7 @@ import { ROAD_WIDTH } from "./const"
 
 export default function Target({
     height = 100,
-    width = ROAD_WIDTH * .35
+    width = ROAD_WIDTH * .3
 }) {
     const nextTargetAt = useStore(i => i.player.nextTargetAt)
     const depthTexture = useStore(i => i.depthTexture)
