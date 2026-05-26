@@ -89,9 +89,9 @@ const store = create(
             steering: new Vector3(),
             nextTargetAt: 12,
             targetDistance: 12,
-            deadline: Date.now() + 12 * 1000,
+            deadline: Infinity,
             score: 0,
-            time: 12 * 1000,
+            time: 0
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
