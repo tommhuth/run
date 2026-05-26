@@ -32,36 +32,36 @@ interface BushProps extends ComponentProps<"group"> {
 
 export default function Bushes({
     position,
-    count = 4,
 }: { position: Tuple3; count?: number; radius?: number }) {
     const bushes = useMemo(() => {
         const brot = .25
         const center = {
             id: random.id(),
-            position: [...position] as Tuple3,
-            radius: random.float(.4, .6),
-            height: random.float(.8, 1.2),
+            position,
+            radius: random.float(.85, 1.25),
+            height: random.float(1.25, 1.65),
             rotation: [
                 random.float(-brot, brot),
                 0,
                 random.float(-brot, brot),
             ] as Tuple3,
         }
+        const count = random.integer(3, 5)
 
         const ring = Array.from({ length: count }).map((_, i) => {
-            const angle = (i / count) * Math.PI * 2 + random.float(-.3, .3)
-            const radius = random.float(.65, 1.25)
-            const r = center.radius + .5 + random.float(-.35, .35)
+            const angle = (i / count) * Math.PI * 2 + random.float(-.1, .1)
+            const radius = random.float(.85, 1.25)
+            const r = center.radius + .35 + random.float(-.25, .25)
 
             return {
                 id: random.id(),
                 position: [
-                    position[0] + Math.cos(angle) * r,
+                    position[0] + Math.cos(angle) * r + random.float(-.5, .5),
                     position[1],
-                    position[2] + Math.sin(angle) * r,
+                    position[2] + Math.sin(angle) * r + random.float(-.5, .5),
                 ] as Tuple3,
                 radius,
-                height: random.float(.35, 1.25),
+                height: random.float(center.height - .75, center.height - .25),
                 bendStrength: 1,
                 maxBend: random.float(.2, .5),
                 stiffness: random.float(35, 40),
