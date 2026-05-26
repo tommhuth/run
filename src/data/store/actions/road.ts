@@ -53,11 +53,9 @@ export function generateBridgePart(previous: PreviousPart): RoadPart {
     }
 }
 
-
-
 export function reachDestination() {
     const player = store.getState().player
-    const nextTargetAt = player.nextTargetAt + random.integer(ROAD_FORWARD_EDGE * 1.5, ROAD_FORWARD_EDGE * 4)
+    const nextTargetAt = player.nextTargetAt + random.integer(ROAD_FORWARD_EDGE * 1.5, ROAD_FORWARD_EDGE * 6)
     const targetDistance = nextTargetAt - player.nextTargetAt
     const secondsPerMeter = .078
     const deadlineInSeconds = targetDistance * secondsPerMeter
