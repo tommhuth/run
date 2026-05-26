@@ -24,8 +24,8 @@ type ReturnUniformsRecord<T extends Record<string, IUniform> | undefined> = T ex
 export interface UseShaderParams<T extends UniformsRecord> {
     uniforms?: T | undefined
     shared?: string
-    vertex?: ShaderPart
-    fragment?: ShaderPart
+    vertex?: ShaderPart | ShaderPart[]
+    fragment?: ShaderPart | ShaderPart[]
 }
 
 interface ReturnUseShader<T extends UniformsRecord | undefined> {
@@ -58,7 +58,7 @@ export function useShader<T extends UniformsRecord>({
         }
 
         patchShader(shader, { vertex, fragment, shared })
-    }, [vertex?.head, vertex?.main, fragment?.head, fragment?.main, fragment?.injectAt])
+    }, [vertex, fragment])
 
     return {
         // aaah why is this cast neccessary ts

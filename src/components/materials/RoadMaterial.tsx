@@ -1,14 +1,19 @@
-import { ROAD_WIDTH } from "@components/road/const"
+import { ROAD_HEIGHT, ROAD_WIDTH } from "@components/road/const"
 import { store } from "@data/store/store"
-import { dampFactor } from "@data/utils"
+import { clamp, dampFactor, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
+import { Vec3 } from "cannon-es"
+import { useEffect } from "react"
 import { Vector3 } from "three"
 
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
-import { useEffect } from "react"
 
 export const MAX_TRAFFIC = 8
+
+
+const _rotation = new Vec3()
+const _position = new Vector3()
 
 export default function RoadMaterial() {
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
@@ -17,7 +22,11 @@ export default function RoadMaterial() {
             uStripeWidth: { value: 0.25 },
             uDashSize: { value: 1.5 },
             uGapSize: { value: 1.5 },
+            uTime: { value: 0 },
+            uDestinationTime: { value: 0 },
+            uTargetPosition: { value: new Vector3() },
             uPlayerPosition: { value: new Vector3() },
+            uPlayerRotation: { value: 0 },
             uTrafficPositions: {
                 value: Array.from({ length: MAX_TRAFFIC }).map(() => new Vector3())
             },
@@ -26,13 +35,19 @@ export default function RoadMaterial() {
             uniform float uRoadWidth;
             uniform float uStripeWidth;
             uniform vec3 uPlayerPosition;
+            uniform vec3 uTargetPosition;
+            uniform float uPlayerRotation;
+            uniform float uDestinationTime;
             uniform float uDashSize;
+            uniform float uTime;
             uniform float uGapSize;
             uniform vec3 uTrafficPositions[${MAX_TRAFFIC}]; 
             varying vec3 vWorldPos;
 
             vec3 calcContactShadow(vec3 color, vec3 contactColor, float amount) {
-                return  mix(color, contactColor, smoothstep(.2, .8, 1. - amount / 2.));
+                float size = 1.65;
+
+                return  mix(color, contactColor, smoothstep(.0, .76, 1. - amount / size));
             } 
         `,
         vertex: {
@@ -40,43 +55,79 @@ export default function RoadMaterial() {
                 vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
             `
         },
-        fragment: {
-            // make sure it happens before shadow calc
-            injectAt: "#include <color_fragment>",
-            main: glsl`
-                float halfRoad = uRoadWidth * 0.5;
-                float x = vWorldPos.x;
-                float z = vWorldPos.z;
+        fragment: [
+            {
+                // make sure it happens before shadow calc
+                injectAt: "#include <color_fragment>",
+                main: glsl`
+                    float halfRoad = uRoadWidth * 0.5;
+                    float x = vWorldPos.x;
+                    float z = vWorldPos.z;
 
-                // Solid edge stripes
-                float leftEdge = step(halfRoad - uStripeWidth, abs(x)) * step(abs(x), halfRoad);
-                float rightEdge = leftEdge;
+                    // Solid edge stripes
+                    float leftEdge = step(halfRoad - uStripeWidth, abs(x)) * step(abs(x), halfRoad);
+                    float rightEdge = leftEdge;
 
-                // Dashed center stripe
-                float centerStripe = step(abs(x), uStripeWidth * 0.5);
-                float dashPattern = step(mod(z, uDashSize + uGapSize), uDashSize);
-                float centerDash = centerStripe * dashPattern;
+                    // Dashed center stripe
+                    float centerStripe = step(abs(x), uStripeWidth * 0.5);
+                    float dashPattern = step(mod(z, uDashSize + uGapSize), uDashSize);
+                    float centerDash = centerStripe * dashPattern;
 
-                float marking = max(leftEdge, centerDash);
+                    float marking = max(leftEdge, centerDash);
 
-                diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0) * 1.5, marking);
+                    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0) * 1.5, marking);
 
-                // fake contact shadow
-                vec3 playerDiff = vWorldPos - uPlayerPosition;
-                float playerContact = length(vec2(playerDiff.x, playerDiff.z * 0.5));
-                float contactShadowStrength = .8;
-                vec3 contactShadowColor = mix(diffuseColor.rgb, vec3(0.), contactShadowStrength);
+                     // fake contact shadow
+                    vec3 playerDiff = vWorldPos - uPlayerPosition;
+                    vec2 local = playerDiff.xz;
 
-                diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, playerContact);
+                    float a = uPlayerRotation;
 
-                for (int i = 0; i < ${MAX_TRAFFIC}; i++) {
-                    vec3 diff = vWorldPos - uTrafficPositions[i];
-                    float trafficContact = length(vec2(diff.x, diff.z * 0.5));
+                    // world -> local
+                    mat2 invRot = mat2(
+                        cos(a), sin(a),
+                        -sin(a), cos(a)
+                    );
 
-                    diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, trafficContact);  
-                }
-            `
-        }
+                    local = invRot * local;
+
+                    float playerContact = length(vec2(local.x, local.y * 0.75));
+                    float contactShadowStrength = .85;
+                    vec3 contactShadowColor = mix(
+                        diffuseColor.rgb,
+                        vec3(0., 0., .1),
+                        contactShadowStrength
+                    );
+
+                    diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, playerContact);
+
+                    for (int i = 0; i < ${MAX_TRAFFIC}; i++) {
+                        vec3 diff = vWorldPos - uTrafficPositions[i];
+                        float trafficContact = length(vec2(diff.x, diff.z * 0.5));
+
+                        diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, trafficContact);  
+                    }
+                `
+            },
+            {
+                injectAt: "#include <dithering_fragment>",
+                main: glsl` 
+                    float lightSize = 4. + abs(cos(uTime * 4.));
+                    float targetLightEffect = 1. - clamp(length(vWorldPos - uTargetPosition) / lightSize, 0., 1.);
+                    vec3 targetLight = mix(
+                        vec3(1., 1., 1.), 
+                        mix(vec3(.0, 0., .5), vec3(1., .85, 0.), uDestinationTime),
+                        smoothstep(0., 1., smoothstep(0., 1., 1. - targetLightEffect))
+                    );
+
+                    gl_FragColor.rgb = mix(
+                        gl_FragColor.rgb, 
+                        targetLight, 
+                        smoothstep(.0, 1., targetLightEffect)
+                    ); 
+                `
+            }
+        ]
     })
 
     useFrame((state, delta) => {
@@ -87,13 +138,20 @@ export default function RoadMaterial() {
             return
         }
 
+        player.vehicle.chassisBody.quaternion.toEuler(_rotation)
+
         uniforms.uPlayerPosition.value.lerp(player.vehicle.chassisBody.position, k)
+        uniforms.uPlayerRotation.value = _rotation.y
 
         for (let i = 0; i < MAX_TRAFFIC; i++) {
             const el = traffic[i]
 
-            uniforms.uTrafficPositions.value[i].lerp(new Vector3(...el.position), k)
+            uniforms.uTrafficPositions.value[i].lerp(_position.set(...el.position), k)
         }
+
+        uniforms.uTargetPosition.value.set(0, ROAD_HEIGHT, player.nextTargetAt)
+        uniforms.uTime.value += ndelta(delta)
+        uniforms.uDestinationTime.value = clamp((Date.now() - player.deadline) / 300, 0, 1)
     })
 
     useEffect(() => {

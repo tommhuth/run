@@ -6,7 +6,6 @@ import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
 import { Instance, InstanceName, MaterialName } from "./actions/actions"
-import { generateForestPart } from "./actions/road"
 import { initializeTraffic } from "./actions/traffic"
 
 interface RoadObject {
@@ -88,16 +87,21 @@ const store = create(
             mesh: null,
             vehicle: null,
             steering: new Vector3(),
-            nextTargetAt: 120,
-            targetDistance: 120,
-            deadline: Infinity,
+            nextTargetAt: 12,
+            targetDistance: 12,
+            deadline: Date.now() + 12 * 1000,
             score: 0,
-            time: 0,
+            time: 12 * 1000,
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
         road: [
-            generateForestPart({ position: [0, 0, -10], depth: 0 }),
+            {
+                type: "forest",
+                id: "start",
+                depth: 20,
+                position: [0, 0, -10],
+            },
         ],
         depthTexture: null,
         materials: {} as RunStore["materials"],

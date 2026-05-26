@@ -1,6 +1,5 @@
 import model from "@assets/models/grass3.glb"
 import { setMatrixAt } from "@components/materials/helpers"
-import { grassMaterial } from "@components/materials/shared"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
 import { store, useStore } from "@data/store/store"
 import random from "@huth/random"
@@ -21,7 +20,7 @@ interface Grass {
 export default function GrassSystem({ count = 250 }) {
     const { nodes } = useGLTF(model) as unknown as GLTFModel<["grass"]>
     const instanceRef = useRef<InstancedMesh>(null)
-    let material = useStore(i => i.materials.road)
+    const material = useStore(i => i.materials.road)
     const items = useMemo(() => {
         return Array.from({ length: count }).map((i, index) => {
             return {

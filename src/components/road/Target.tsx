@@ -135,19 +135,21 @@ export default function Target({
     }, 5)
 
     return (
-        <mesh
-            renderOrder={-1}
-            userData={{ ignoreDepthWrite: true }}
-            position={[0, height / 2, nextTargetAt]}
-        >
-            <meshBasicMaterial
-                customProgramCacheKey={customProgramCacheKey}
-                transparent
-                fog={false}
-                onBeforeCompile={onBeforeCompile}
+        <>
+            <mesh
+                renderOrder={-1}
+                userData={{ ignoreDepthWrite: true }}
+                position={[0, height / 2, nextTargetAt]}
+            >
+                <meshBasicMaterial
+                    customProgramCacheKey={customProgramCacheKey}
+                    transparent
+                    fog={false}
+                    onBeforeCompile={onBeforeCompile}
 
-            />
-            <boxGeometry args={[width, height, .1]} />
-        </mesh>
+                />
+                <boxGeometry args={[width, height, .1]} />
+            </mesh>
+        </>
     )
 }

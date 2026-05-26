@@ -1,6 +1,6 @@
 import Config from "@data/Config"
 import { setDebugData } from "@data/store/actions/actions"
-import { store } from "@data/store/store"
+import { store, useStore } from "@data/store/store"
 import clsx from "clsx"
 import { CSSProperties, useRef } from "react"
 import useAnimationFrame from "use-animation-frame"
@@ -9,17 +9,24 @@ export default function Ui() {
     const player = store(i => i.player)
     const messages = store(i => i.messages)
     const timeRef = useRef<HTMLOutputElement>(null)
+    const distanceRef = useRef<HTMLOutputElement>(null)
     const progressRef = useRef<HTMLDivElement>(null)
 
     useAnimationFrame(() => {
-        if (!timeRef.current || !progressRef.current) {
+        const { player } = useStore.getState()
+
+        if (!distanceRef.current || !timeRef.current || !progressRef.current || !player.vehicle) {
             return
         }
 
-        const currentTime = Math.floor((player.deadline - Date.now()) / 100) * 100 / 1000
+        const currentTime = (player.deadline - Date.now()) / 1000
         const t = currentTime / player.time
+        const displayTime = Math.floor(currentTime * 10) / 10
+        const distance = Math.max(Math.floor(player.vehicle?.chassisBody.position.z), 0)
 
-        timeRef.current.value = (currentTime < 0 ? "−" : "") + Math.abs(currentTime).toLocaleString("en") + "s"
+        timeRef.current.value = (displayTime < 0 ? "−" : "") + Math.abs(displayTime).toLocaleString("en") + "s"
+
+        distanceRef.current.value = distance.toLocaleString("en") + "m"
 
         if (t < 0) {
             progressRef.current.style.animation = "blink .85s infinite"
@@ -32,7 +39,7 @@ export default function Ui() {
 
     return (
         <>
-            <div className="fixed left-4 right-4 bottom-10 text-2xl text-black flex gap-4">
+            <div className="fixed left-6 right-6 bottom-10 text-2xl text-black flex gap-4">
                 <output
                     aria-label="Score"
                     className="font-bold"
@@ -45,12 +52,16 @@ export default function Ui() {
                     aria-label="Deadline"
                     hidden={player.deadline === Infinity}
                 />
+                <output ref={distanceRef} className="ml-auto" />
+                <output>
+                    {player.nextTargetAt.toLocaleString("en")}m
+                </output>
             </div>
 
             <div
                 hidden={player.deadline === Infinity}
                 ref={progressRef}
-                className="fixed left-4 right-4 bottom-8 h-0.75 bg-black origin-left rounded-full"
+                className="fixed left-6 right-6 bottom-8 h-0.75 bg-black origin-left rounded-full"
             />
 
             <ul

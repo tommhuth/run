@@ -10,39 +10,46 @@ interface ShaderPart {
 
 interface ShaderParts {
     shared?: string
-    fragment?: ShaderPart
-    vertex?: ShaderPart
+    fragment?: ShaderPart | ShaderPart[]
+    vertex?: ShaderPart | ShaderPart[]
 }
 
 export function patchShader(
     shader: WebGLProgramParametersWithUniforms,
     patch?: ShaderParts
 ) {
+    const vertexParts = Array.isArray(patch?.vertex) ? patch.vertex : [patch?.vertex]
+    const fragmentParts = Array.isArray(patch?.fragment) ? patch.fragment : [patch?.fragment]
+
     shader.vertexShader = shader.vertexShader.replace("#include <common>", glsl`
         #include <common>
         
         ${patch?.shared || ""}
-        ${patch?.vertex?.head || ""}  
+        ${vertexParts.map((p) => p?.head || "").join("\n")}  
     `)
 
     shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", glsl`
         #include <begin_vertex>
 
-        ${patch?.vertex?.main || ""}  
+        ${vertexParts.map((p) => p?.main || "").join("\n")}  
     `)
 
     shader.fragmentShader = shader.fragmentShader.replace("#include <common>", glsl`
         #include <common>
  
         ${patch?.shared || ""}
-        ${patch?.fragment?.head || ""}
+        ${fragmentParts.map((p) => p?.head || "").join("\n")}
     `)
 
-    shader.fragmentShader = shader.fragmentShader.replace(patch?.fragment?.injectAt || "#include <dithering_fragment>", glsl` 
-        ${patch?.fragment?.injectAt || "#include <dithering_fragment>"}
+    for (const part of fragmentParts) {
+        const injectAt = part?.injectAt || "#include <dithering_fragment>"
 
-        ${patch?.fragment?.main || ""}
-    `)
+        shader.fragmentShader = shader.fragmentShader.replace(injectAt, glsl` 
+            ${injectAt}
+
+            ${part?.main || ""}
+        `)
+    }
 }
 
 export abstract class PatchedPhongMaterial<TUniforms> extends MeshPhongMaterial {
