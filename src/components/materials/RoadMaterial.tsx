@@ -115,8 +115,8 @@ export default function RoadMaterial() {
                     float lightSize = 4. + abs(cos(uTime * 4.));
                     float targetLightEffect = 1. - clamp(length(vWorldPos - uTargetPosition) / lightSize, 0., 1.);
                     vec3 targetLight = mix(
-                        vec3(1., 1., 1.), 
-                        mix(vec3(.0, 0., .5), vec3(1., .85, 0.), uDestinationTime),
+                        mix(vec3(.0, 0.1, .65), vec3(1., .85, 0.), uDestinationTime),
+                        mix(vec3(.0, 0.2, .85), vec3(1., .65, 0.), uDestinationTime),
                         smoothstep(0., 1., smoothstep(0., 1., 1. - targetLightEffect))
                     );
 
@@ -151,7 +151,7 @@ export default function RoadMaterial() {
 
         uniforms.uTargetPosition.value.set(0, ROAD_HEIGHT, player.nextTargetAt)
         uniforms.uTime.value += ndelta(delta)
-        uniforms.uDestinationTime.value = clamp((Date.now() - player.deadline) / 300, 0, 1)
+        uniforms.uDestinationTime.value = clamp(1 - (Date.now() - player.deadline) / -300, 0, 1)
     })
 
     useEffect(() => {
