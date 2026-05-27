@@ -16,19 +16,9 @@ export const grassMaterial = new MeshPhongMaterial({
     dithering: true
 })
 
-export const beam = new MeshPhongMaterial({
-    name: "beam",
-    color: "#ffd296",
-    fog: true,
-    toneMapped: false,
-    emissive: "#ffd296",
-    emissiveIntensity: .85,
-    dithering: true
-})
-
 export const leafMaterial = new MeshPhongMaterial({
     name: "leaf",
-    color: "#bcc7d3",
+    color: "#ebf0f5",
     dithering: true,
     side: DoubleSide
 })

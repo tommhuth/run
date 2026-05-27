@@ -1,13 +1,17 @@
 import model from "@assets/models/bush.glb"
-import { floorMaterial } from "@components/materials/shared"
-import { useStore } from "@data/store/store"
+import { setMatrixAt } from "@components/materials/helpers"
+import { leafMaterial } from "@components/materials/shared"
+import { useLowerPriorityFrame } from "@data/hooks/utils"
+import { spawnLeaves } from "@data/store/actions/leaves"
+import { BushObject, useStore } from "@data/store/store"
 import { clamp, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { Tuple3 } from "@src/types/global"
-import { ComponentProps, useMemo, useRef } from "react"
-import { Euler, Group, Quaternion, Vector3 } from "three"
+import { GLTFModel, Tuple3 } from "@src/types/global"
+import { Vec3 } from "cannon-es"
+import { useMemo, useRef } from "react"
+import { Euler, InstancedMesh, Quaternion, Vector3 } from "three"
 
 const _tmpVec = new Vector3()
 const _tmpVec2 = new Vector3()
@@ -19,91 +23,124 @@ const _up = new Vector3(0, 1, 0)
 const _playerPosition = new Vector3()
 const _lookAhead = new Vector3()
 const _euler = new Euler()
+const _bushPosition = new Vector3()
 
-interface BushProps extends ComponentProps<"group"> {
-    rotation?: Tuple3
-    bendStrength?: number
-    maxBend?: number
-    stiffness?: number
-    damping?: number
-    radius?: number
-    height?: number
+interface BushInstance {
+    position: Tuple3
+    radius: number
+    height: number
+    rotation: Tuple3
+    bendStrength: number
+    maxBend: number
+    stiffness: number
+    damping: number
+    baseRotation: Quaternion
+    currentRotation: Quaternion
+    angularVelocity: Vector3
+    firstFrame: boolean
 }
 
 export default function Bushes({
     position,
-}: { position: Tuple3; count?: number; radius?: number }) {
+    count
+}: Omit<BushObject, "id">) {
+    const ref = useRef<InstancedMesh>(null)
+    const hasTriggeredLeaves = useRef<Record<number, boolean>>({})
+    const { nodes } = useGLTF(model) as unknown as GLTFModel<["bush"]>
     const bushes = useMemo(() => {
         const brot = .25
-        const center = {
-            id: random.id(),
+        const radius = random.float(.5, 1.5)
+        const height = random.float(radius * 4, radius * 3)
+        const centerRotation: Tuple3 = [
+            random.float(-brot, brot),
+            0,
+            random.float(-brot, brot),
+        ]
+        const centerBaseQuat = new Quaternion()
+            .setFromEuler(_euler.set(...centerRotation))
+        const center: BushInstance = {
             position,
-            radius: random.float(.85, 1.25),
-            height: random.float(1.25, 1.65),
-            rotation: [
-                random.float(-brot, brot),
-                0,
-                random.float(-brot, brot),
-            ] as Tuple3,
+            radius,
+            height,
+            rotation: centerRotation,
+            bendStrength: 0,
+            maxBend: 0,
+            stiffness: 40,
+            damping: 4,
+            baseRotation: centerBaseQuat,
+            currentRotation: new Quaternion().copy(centerBaseQuat),
+            angularVelocity: new Vector3(),
+            firstFrame: true,
         }
-        const count = random.integer(3, 5)
 
-        const ring = Array.from({ length: count }).map((_, i) => {
-            const angle = (i / count) * Math.PI * 2 + random.float(-.1, .1)
-            const radius = random.float(.85, 1.25)
-            const r = center.radius + .35 + random.float(-.25, .25)
+        const ring: BushInstance[] = Array.from({ length: count }).map((_, i) => {
+            const angle = (i / count) * Math.PI * 2 + random.float(-.25, .25)
+            const r2 = random.float(.5, 1.5)
+            const r = center.radius + r2
+
+            const rot: Tuple3 = [
+                random.float(-brot, brot),
+                random.float(0, Math.PI * 2),
+                random.float(-brot, brot),
+            ]
+            const baseQuat = new Quaternion().setFromEuler(_euler.set(...rot))
 
             return {
-                id: random.id(),
                 position: [
-                    position[0] + Math.cos(angle) * r + random.float(-.5, .5),
+                    position[0] + Math.cos(angle) * r,
                     position[1],
-                    position[2] + Math.sin(angle) * r + random.float(-.5, .5),
+                    position[2] + Math.sin(angle) * r,
                 ] as Tuple3,
-                radius,
-                height: random.float(center.height - .75, center.height - .25),
+                radius: r2,
+                height: random.float(r2, r2 * 2),
+                rotation: rot,
                 bendStrength: 1,
-                maxBend: random.float(.2, .5),
-                stiffness: random.float(35, 40),
-                damping: random.float(4, 6),
-                rotation: [
-                    random.float(-brot, brot),
-                    random.float(0, Math.PI * 2),
-                    random.float(-brot, brot),
-                ] as Tuple3,
+                maxBend: random.float(.2, .4),
+                stiffness: random.float(35, 45),
+                damping: random.float(4, 8),
+                baseRotation: baseQuat,
+                currentRotation: new Quaternion().copy(baseQuat),
+                angularVelocity: new Vector3(),
+                firstFrame: true,
             }
         })
 
         return [center, ...ring]
     }, [])
 
-    return (
-        <>
-            {bushes.map(({ id, ...bush }) => (
-                <Bush
-                    key={id}
-                    {...bush}
-                />
-            ))}
-        </>
-    )
-}
+    useLowerPriorityFrame(() => {
+        const player = useStore.getState().player.vehicle
+        const threshold = 3
 
-function Bush({
-    rotation: incomingRotation = [0, 0, 0],
-    maxBend = 0,
-    bendStrength = 1,
-    stiffness = 40,
-    damping = 4,
-    radius = .5,
-    height = 1,
-    ...props
-}: BushProps) {
-    const ref = useRef<Group>(null)
-    const baseRotation = useMemo(() => new Quaternion().setFromEuler(_euler.set(...incomingRotation)), incomingRotation)
-    const rotation = useMemo(() => new Quaternion().copy(baseRotation), [baseRotation])
-    const angularVelocity = useMemo(() => new Vector3(), [])
-    const { nodes } = useGLTF(model)
+        if (!player) {
+            return
+        }
+
+        for (let i = 0; i < bushes.length; i++) {
+            const bush = bushes[i]
+            const dist = new Vec3(...bush.position)
+                .distanceSquared(player.chassisBody.position)
+
+            if (dist < threshold) {
+                if (!hasTriggeredLeaves.current[i]) {
+                    hasTriggeredLeaves.current[i] = true
+                    spawnLeaves({
+                        position: [
+                            bush.position[0],
+                            bush.position[1] + bush.height / 2,
+                            bush.position[2]
+                        ],
+                        size: [bush.radius * 2 * 1.5, bush.height, bush.radius * 2 * 1.5],
+                        count: bush.radius * 25,
+                        spread: [1, 1, 1],
+                        velocity: player.chassisBody.velocity.toArray()
+                    })
+                }
+            } else {
+                hasTriggeredLeaves.current[i] = false
+            }
+        }
+    }, 10)
 
     useFrame((_, delta) => {
         const player = useStore.getState().player.vehicle
@@ -120,97 +157,117 @@ function Bush({
         _playerPosition.copy(player.chassisBody.position)
             .add(_lookAhead)
 
-        _tmpVec.copy(_playerPosition)
-            .sub(ref.current.position)
-        const dist = _tmpVec.length()
+        for (let i = 0; i < bushes.length; i++) {
+            const bush = bushes[i]
+            const distanceToPlayer = Math.abs(player.chassisBody.position.z - bush.position[2])
 
-        if (dist === 0) {
-            return
-        }
+            if (distanceToPlayer > 10 && !bush.firstFrame) {
+                continue
+            }
 
-        _tmpVec.normalize()
+            _bushPosition.set(...bush.position)
+            _tmpVec.copy(_playerPosition)
+                .sub(_bushPosition)
+            const dist = _tmpVec.length()
 
-        _tmpVec2.copy(_tmpVec)
-            .negate()
-            .setComponent(1, 1 - maxBend)
+            if (dist === 0) {
+                setMatrixAt({
+                    instance: ref.current,
+                    index: i,
+                    position: bush.position,
+                    rotation: [bush.currentRotation.x, bush.currentRotation.y, bush.currentRotation.z, bush.currentRotation.w],
+                    scale: [bush.radius * 2, bush.height, bush.radius * 2],
+                })
+                continue
+            }
 
-        if (_tmpVec2.lengthSq() === 0) {
-            return
-        }
+            _tmpVec.normalize()
+            _tmpVec2.copy(_tmpVec)
+                .negate()
+                .setComponent(1, 1 - bush.maxBend)
 
-        _tmpVec2.normalize()
+            if (_tmpVec2.lengthSq() === 0) {
+                setMatrixAt({
+                    instance: ref.current,
+                    index: i,
+                    position: bush.position,
+                    rotation: [bush.currentRotation.x, bush.currentRotation.y, bush.currentRotation.z, bush.currentRotation.w],
+                    scale: [bush.radius * 2, bush.height, bush.radius * 2],
+                })
+                continue
+            }
 
-        const maxDist = 1.5
-        const proximity = clamp(1 - dist / maxDist, 0, 1) * bendStrength
+            _tmpVec2.normalize()
+            const maxDist = 1.5
+            const proximity = clamp(1 - dist / maxDist, 0, 1) * bush.bendStrength
+            // velocity-based impulse: push harder when player is moving fast
+            const playerSpeed = player.chassisBody.velocity.length()
+            const impulse = clamp(1 - dist / maxDist, 0, 1) * playerSpeed * 10
 
-        // velocity-based impulse: push harder when player is moving fast
-        const playerSpeed = player.chassisBody.velocity.length()
-        const impulse = clamp(1 - dist / maxDist, 0, 1) * playerSpeed * 10
+            if (impulse > 0) {
+                // push away from player velocity direction
+                _tmpVec4.copy(player.chassisBody.velocity)
+                    .normalize()
+                    .cross(_up)
 
-        if (impulse > 0) {
-            // push away from player velocity direction
-            _tmpVec4.copy(player.chassisBody.velocity)
+                bush.angularVelocity.addScaledVector(_tmpVec4, impulse * dt)
+            }
+
+            // target direction: blend from up toward horizontal away direction
+            _tmpVec3.copy(_up)
+                .lerp(_tmpVec2, proximity)
                 .normalize()
-                .cross(_up)
+            // compute target quaternion, make up point like tmpvec3
+            _tmpQuat.setFromUnitVectors(_up, _tmpVec3)
+            _targetQuat.copy(bush.baseRotation)
+                .premultiply(_tmpQuat)
+            // spring: delta quaternion from current to target
+            _tmpQuat.copy(bush.currentRotation)
+                .invert()
+                .multiply(_targetQuat)
 
-            angularVelocity.addScaledVector(_tmpVec4, impulse * dt)
+            const angle = 2 * Math.acos(clamp(_tmpQuat.w, -1, 1))
+
+            if (angle > 1e-4) {
+                _tmpVec.set(_tmpQuat.x, _tmpQuat.y, _tmpQuat.z)
+                    .normalize()
+
+                // spring acceleration
+                _tmpVec.multiplyScalar(angle * bush.stiffness)
+                // integrate velocity
+                bush.angularVelocity.addScaledVector(_tmpVec, dt)
+            }
+
+            // damping
+            bush.angularVelocity.multiplyScalar(Math.exp(-bush.damping * dt))
+            // apply rotation
+            const speed = bush.angularVelocity.length()
+
+            if (speed > 0) {
+                _tmpVec4.copy(bush.angularVelocity).normalize()
+                _tmpQuat.setFromAxisAngle(_tmpVec4, speed * dt)
+                bush.currentRotation.multiply(_tmpQuat).normalize()
+            }
+
+            setMatrixAt({
+                instance: ref.current,
+                index: i,
+                position: bush.position,
+                rotation: [bush.currentRotation.x, bush.currentRotation.y, bush.currentRotation.z, bush.currentRotation.w],
+                scale: [bush.radius * 2, bush.height, bush.radius * 2],
+            })
+
+            bush.firstFrame = false
         }
-
-        // target direction: blend from up toward horizontal away direction
-        _tmpVec3.copy(_up)
-            .lerp(_tmpVec2, proximity)
-            .normalize()
-
-        // compute target quaternion, make up point like tmpvec3
-        _tmpQuat.setFromUnitVectors(_up, _tmpVec3)
-
-        _targetQuat.copy(baseRotation)
-            .premultiply(_tmpQuat)
-
-        // spring: delta quaternion from current to target
-        _tmpQuat.copy(rotation)
-            .invert()
-            .multiply(_targetQuat)
-
-        const angle = 2 * Math.acos(clamp(_tmpQuat.w, -1, 1))
-
-        if (angle > 1e-4) {
-            _tmpVec.set(_tmpQuat.x, _tmpQuat.y, _tmpQuat.z)
-                .normalize()
-
-            // spring acceleration
-            _tmpVec.multiplyScalar(angle * stiffness)
-
-            // integrate velocity
-            angularVelocity.addScaledVector(_tmpVec, dt)
-        }
-
-        // damping
-        angularVelocity.multiplyScalar(Math.exp(-damping * dt))
-
-        // apply rotation
-        const speed = angularVelocity.length()
-
-        if (speed > 0) {
-            _tmpVec4.copy(angularVelocity).normalize()
-            _tmpQuat.setFromAxisAngle(_tmpVec4, speed * dt)
-            rotation.multiply(_tmpQuat).normalize()
-        }
-
-        ref.current.quaternion.copy(rotation)
     })
 
     return (
-        <mesh
+        <instancedMesh
+            ref={ref}
+            args={[nodes.bush.geometry, leafMaterial, count + 1]}
+            frustumCulled={false}
             castShadow
             receiveShadow
-            geometry={nodes.bush2.geometry}
-            material={floorMaterial}
-            ref={ref}
-            dispose={null}
-            scale={[radius, height, radius]}
-            {...props}
         />
     )
-
 }

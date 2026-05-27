@@ -29,10 +29,10 @@ export function useControls() {
 
     useEffect(() => {
         const onkeydown = (e: KeyboardEvent) => {
-            keys[e.key] = true
+            keys[e.key.toLowerCase()] = true
         }
         const onkeyup = (e: KeyboardEvent) => {
-            keys[e.key] = false
+            keys[e.key.toLowerCase()] = false
         }
 
         window.addEventListener("keydown", onkeydown)

@@ -1,24 +1,27 @@
 import PlaceGrid from "@data/PlaceGrid"
-import { RockObject } from "@data/store/store"
+import { BushObject, RockObject } from "@data/store/store"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 import { Suspense, useMemo } from "react"
 import { Fragment } from "react/jsx-runtime"
 
+import Bushes from "../Bush"
 import RoadSegment from "../RoadSegment"
 import Rock from "../Rock"
 import StreetLight from "../StreetLight"
 
 export default function RocksPart({ position, depth }) {
-    const { rocks } = useMemo(() => {
+    const { rocks, bushes } = useMemo(() => {
         const leftGrid = new PlaceGrid([2, 5], 4, [position[0] + 10, 0, position[2] + depth / 2])
         const rightGrid = new PlaceGrid([2, 5], 4, [position[0] - 10, 0, position[2] + depth / 2])
         const rocks: RockObject[] = []
+        const bushes: BushObject[] = []
 
         for (const side of [-1, 1]) {
             const grid = side === -1 ? leftGrid : rightGrid
             const positions = grid.getRandomPositions()
             const rockCount = random.pick(1, 2, 5)
+            const bushCount = random.integer(0, 2)
 
             for (let i = 0; i < rockCount; i++) {
                 const position = positions.pop() as Tuple3
@@ -40,9 +43,20 @@ export default function RocksPart({ position, depth }) {
                     id: random.id(),
                 })
             }
+
+            for (let i = 0; i < bushCount; i++) {
+                const position = positions.pop() as Tuple3
+                const count = random.integer(1, 4)
+
+                bushes.push({
+                    count,
+                    position,
+                    id: random.id(),
+                })
+            }
         }
 
-        return { rocks, leftGrid, rightGrid }
+        return { rocks, bushes, leftGrid, rightGrid }
     }, [])
 
     return (
@@ -50,6 +64,14 @@ export default function RocksPart({ position, depth }) {
             {rocks.map(i => {
                 return (
                     <Rock
+                        key={i.id}
+                        {...i}
+                    />
+                )
+            })}
+            {bushes.map(i => {
+                return (
+                    <Bushes
                         key={i.id}
                         {...i}
                     />

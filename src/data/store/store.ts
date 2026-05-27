@@ -7,6 +7,7 @@ import { subscribeWithSelector } from "zustand/middleware"
 import { Tuple3 } from "../../types/global"
 import { Instance, InstanceName, MaterialName } from "./actions/actions"
 import { initializeTraffic } from "./actions/traffic"
+import { generateRocksPart } from "./actions/road"
 
 interface RoadObject {
     id: string
@@ -28,6 +29,10 @@ export interface RockObject extends RoadObject {
     scale: Tuple3
 }
 
+export interface BushObject extends Omit<RoadObject, "rotation"> {
+    count: number
+}
+
 export interface TrafficElement {
     id: string
     position: Tuple3
@@ -44,6 +49,15 @@ export interface RoadPart {
     depth: number
 }
 
+export interface Leaf {
+    id: string
+    index: number
+    position: Tuple3
+    velocity: Tuple3
+    scale: number
+    time: number
+}
+
 export interface Message {
     id: string
     text: string
@@ -57,6 +71,7 @@ export interface RunStore {
     depthTexture: null | DepthTexture
     materials: Record<MaterialName, Material>
     traffic: TrafficElement[]
+    leaves: Leaf[]
     road: RoadPart[]
     grid: SpatialHashGrid3D
     messages: Message[]
@@ -95,13 +110,9 @@ const store = create(
         },
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
+        leaves: [],
         road: [
-            {
-                type: "forest",
-                id: "start",
-                depth: 20,
-                position: [0, 0, -10],
-            },
+            generateRocksPart({ position: [0, 0, -10], depth: 0 })
         ],
         depthTexture: null,
         materials: {} as RunStore["materials"],

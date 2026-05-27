@@ -6,6 +6,7 @@ import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
 import GrassSystem from "@components/road/GrassSystem"
 import Ground from "@components/road/Ground"
+import LeafSystem from "@components/road/LeafSystem"
 import Player from "@components/road/player/Player"
 import Road from "@components/road/Road"
 import Target from "@components/road/Target"
@@ -73,6 +74,7 @@ export default function App() {
                 <Player />
                 <GrassSystem />
                 <CloudSystem />
+                <LeafSystem />
 
                 <Ground />
                 <Traffic />
