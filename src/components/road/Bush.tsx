@@ -48,13 +48,13 @@ export default function Bushes({
     const hasTriggeredLeaves = useRef<Record<number, boolean>>({})
     const { nodes } = useGLTF(model) as unknown as GLTFModel<["bush"]>
     const bushes = useMemo(() => {
-        const brot = .25
+        const baseRotation = .2 / 2
         const radius = random.float(.5, 1.5)
         const height = random.float(radius * 4, radius * 3)
         const centerRotation: Tuple3 = [
-            random.float(-brot, brot),
-            0,
-            random.float(-brot, brot),
+            random.float(-baseRotation, baseRotation),
+            random.float(0, Math.PI * 2),
+            random.float(-baseRotation, baseRotation),
         ]
         const centerBaseQuat = new Quaternion()
             .setFromEuler(_euler.set(...centerRotation))
@@ -63,8 +63,8 @@ export default function Bushes({
             radius,
             height,
             rotation: centerRotation,
-            bendStrength: 0,
-            maxBend: 0,
+            bendStrength: 1,
+            maxBend: random.float(.2, .4),
             stiffness: 40,
             damping: 4,
             baseRotation: centerBaseQuat,
@@ -79,9 +79,9 @@ export default function Bushes({
             const r = center.radius + r2
 
             const rot: Tuple3 = [
-                random.float(-brot, brot),
+                random.float(-baseRotation, baseRotation),
                 random.float(0, Math.PI * 2),
-                random.float(-brot, brot),
+                random.float(-baseRotation, baseRotation),
             ]
             const baseQuat = new Quaternion().setFromEuler(_euler.set(...rot))
 
@@ -95,7 +95,7 @@ export default function Bushes({
                 height: random.float(r2, r2 * 2),
                 rotation: rot,
                 bendStrength: 1,
-                maxBend: random.float(.2, .4),
+                maxBend: random.float(.3, .45),
                 stiffness: random.float(35, 45),
                 damping: random.float(4, 8),
                 baseRotation: baseQuat,
@@ -130,8 +130,8 @@ export default function Bushes({
                             bush.position[1] + bush.height / 2,
                             bush.position[2]
                         ],
-                        size: [bush.radius * 2 * 1.5, bush.height, bush.radius * 2 * 1.5],
-                        count: bush.radius * 25,
+                        size: [bush.radius * 2, bush.height, bush.radius * 2],
+                        count: Math.ceil(bush.radius * 30),
                         spread: [1, 1, 1],
                         velocity: player.chassisBody.velocity.toArray()
                     })
@@ -151,6 +151,7 @@ export default function Bushes({
 
         const dt = ndelta(delta)
         const lookAhead = .25
+        const playerSpeed = player.chassisBody.velocity.length()
 
         _lookAhead.copy(player.chassisBody.velocity)
             .multiplyScalar(lookAhead)
@@ -199,25 +200,16 @@ export default function Bushes({
 
             _tmpVec2.normalize()
             const maxDist = 1.5
-            const proximity = clamp(1 - dist / maxDist, 0, 1) * bush.bendStrength
-            // velocity-based impulse: push harder when player is moving fast
-            const playerSpeed = player.chassisBody.velocity.length()
-            const impulse = clamp(1 - dist / maxDist, 0, 1) * playerSpeed * 10
-
-            if (impulse > 0) {
-                // push away from player velocity direction
-                _tmpVec4.copy(player.chassisBody.velocity)
-                    .normalize()
-                    .cross(_up)
-
-                bush.angularVelocity.addScaledVector(_tmpVec4, impulse * dt)
-            }
+            // speed boost: faster player => deeper bend,
+            // so that the effect is visible when travelling fast
+            const speedBoost = 1 + clamp(playerSpeed / 15, 0, 1) * 2
+            const proximity = clamp((1 - dist / maxDist) * speedBoost, 0, 1) * bush.bendStrength
 
             // target direction: blend from up toward horizontal away direction
             _tmpVec3.copy(_up)
                 .lerp(_tmpVec2, proximity)
                 .normalize()
-            // compute target quaternion, make up point like tmpvec3
+            // compute target quaternion, rotate up toward target direction
             _tmpQuat.setFromUnitVectors(_up, _tmpVec3)
             _targetQuat.copy(bush.baseRotation)
                 .premultiply(_tmpQuat)

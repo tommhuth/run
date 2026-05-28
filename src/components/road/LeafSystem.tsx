@@ -8,16 +8,30 @@ import { useEffect, useRef } from "react"
 import { BufferGeometry, Float32BufferAttribute, InstancedMesh } from "three"
 
 const geometry = new BufferGeometry()
-// diamond ish shape
+// rounded leaf with pointy tip and small stem-end point
 const positions = new Float32BufferAttribute([
-    0, 0.09, 0,
-    -0.06, 0, 0,
-    0, -0.09, 0,
-    0.06, 0, 0,
+    0, 0, 0,        // 0 center
+    0, 0.11, 0,     // 1 tip
+    -0.04, 0.06, 0, // 2
+    -0.07, 0, 0,    // 3 widest left
+    -0.05, -0.06, 0,// 4
+    0, -0.09, 0,    // 5 base point
+    0.05, -0.06, 0, // 6
+    0.07, 0, 0,     // 7 widest right
+    0.04, 0.06, 0,  // 8
 ], 3)
 
 geometry.setAttribute("position", positions)
-geometry.setIndex([0, 1, 3, 1, 2, 3])
+geometry.setIndex([
+    0, 1, 2,
+    0, 2, 3,
+    0, 3, 4,
+    0, 4, 5,
+    0, 5, 6,
+    0, 6, 7,
+    0, 7, 8,
+    0, 8, 1,
+])
 geometry.computeVertexNormals()
 
 const GRAVITY = 3
