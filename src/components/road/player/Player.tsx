@@ -10,7 +10,6 @@ import { Object3D } from "three/webgpu"
 import useTrafficClient from "../traffic/useTrafficClient"
 import Suv from "./Suv"
 import { useControls } from "./useControls"
-import usePlayerAlive from "./usePlayerAlive"
 
 interface PlayerProps {
     position?: Tuple3
@@ -32,7 +31,7 @@ export default function Player({
         direction: 1
     })
 
-    usePlayerAlive(setPosition)
+    // usePlayerAlive(setPosition)
 
     useEffect(() => {
         return setState({

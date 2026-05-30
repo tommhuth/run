@@ -9,7 +9,6 @@ import { useGLTF } from "@react-three/drei"
 import { GLTFModel, Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
 import { Suspense, useMemo } from "react"
-import { Fragment } from "react/jsx-runtime"
 
 import { ROAD_BASE_WIDTH, ROAD_DEPTH, ROAD_HEIGHT } from "../const"
 import Rock from "../Rock"
@@ -82,24 +81,14 @@ export default function BridgePart({ position, depth }) {
                 )
             })}
 
-            {Array.from({ length: 2 }).map((i, index) => {
-                const x = 3.75
-                const y = .2
-                const z = position[2] + index * 20
-
-                return (
-                    <Fragment key={index}>
-                        <StreetLight
-                            position={[x, y, z]}
-                            rotation={[0, Math.PI * .5, 0]}
-                        />
-                        <StreetLight
-                            position={[-x, y, z]}
-                            rotation={[0, -Math.PI * .5, 0]}
-                        />
-                    </Fragment>
-                )
-            })}
+            <StreetLight
+                position={[3.75, ROAD_HEIGHT, position[2]]}
+                rotation={[0, Math.PI * .5, 0]}
+            />
+            <StreetLight
+                position={[-3.75, ROAD_HEIGHT, position[2]]}
+                rotation={[0, -Math.PI * .5, 0]}
+            />
 
             {[-1, 1].map(index => {
                 return (

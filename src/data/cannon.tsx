@@ -31,6 +31,7 @@ interface BaseBodyOptions<T = unknown> {
     allowSleep?: boolean
     userData?: Record<string, T>
     active?: boolean
+    collisionResponse?: boolean
 }
 
 const context = React.createContext<World | null>(null)
@@ -101,7 +102,7 @@ function useCannonBody({
             linearDamping,
             ...rest
         })
-    }, [])
+    }, [rest.collisionResponse])
 
     useLayoutEffect(() => {
         body.position.set(x, y, z)

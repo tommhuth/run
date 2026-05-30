@@ -31,7 +31,7 @@ export function Instances() {
                 name="streetLight"
                 geometry={streetLight.geometry}
                 material={streetLightMaterial}
-                count={20}
+                count={40}
                 castShadow
                 receiveShadow
             />
