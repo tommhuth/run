@@ -83,7 +83,7 @@ export function reachDestination() {
 
 export function extendRoad(previous: PreviousPart) {
     const { road } = store.getState()
-    const generator = generateRocksPart // getRandomRoadExtension()
+    const generator = getRandomRoadExtension()
 
     setState({
         road: [
