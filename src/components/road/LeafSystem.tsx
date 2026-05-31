@@ -1,10 +1,11 @@
-import { setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
+import { setMatrixAt } from "@components/materials/helpers"
 import { leafMaterial } from "@components/materials/shared"
+import { useInstanceClear } from "@data/hooks/useInstanceClear"
 import { LEAF_MAX_COUNT, removeLeaves } from "@data/store/actions/leaves"
 import { store } from "@data/store/store"
 import { ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
-import { useEffect, useRef } from "react"
+import { useState } from "react"
 import { BufferGeometry, Float32BufferAttribute, InstancedMesh } from "three"
 
 const geometry = new BufferGeometry()
@@ -37,20 +38,14 @@ geometry.computeVertexNormals()
 const GRAVITY = 3
 
 export default function LeafSystem() {
-    const ref = useRef<InstancedMesh>(null)
+    const [instance, setInstance] = useState<InstancedMesh | null>(null)
 
-    useEffect(() => {
-        if (!ref.current) return
-
-        for (let i = 0; i < LEAF_MAX_COUNT; i++) {
-            setMatrixNullAt(ref.current, i)
-        }
-    }, [])
+    useInstanceClear(instance, LEAF_MAX_COUNT)
 
     useFrame((_, delta) => {
         const { leaves } = store.getState()
 
-        if (!ref.current || leaves.length === 0) {
+        if (!instance || leaves.length === 0) {
             return
         }
 
@@ -85,7 +80,7 @@ export default function LeafSystem() {
             }
 
             setMatrixAt({
-                instance: ref.current,
+                instance,
                 index: leaf.index,
                 position: leaf.position,
                 rotation: [leaf.time * 0.5, leaf.time * 0.3, leaf.time * 0.7],
@@ -100,7 +95,7 @@ export default function LeafSystem() {
 
     return (
         <instancedMesh
-            ref={ref}
+            ref={setInstance}
             args={[geometry, leafMaterial, LEAF_MAX_COUNT]}
             frustumCulled={false}
         />

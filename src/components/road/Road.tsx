@@ -30,7 +30,7 @@ export default function Road() {
         } else if (player.position.z + forwardBuffer > forwardPart.position[2] + forwardPart.depth) {
             extendRoad(forwardPart)
         }
-    }, 10)
+    }, 166)
 
     return (
         <>

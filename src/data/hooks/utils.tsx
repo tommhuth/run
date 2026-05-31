@@ -2,14 +2,18 @@ import random from "@huth/random"
 import { RenderCallback, useFrame } from "@react-three/fiber"
 import { Dispatch, SetStateAction, startTransition, useCallback, useRef, useState } from "react"
 
-export function useLowerPriorityFrame(cb: RenderCallback, frameInterval: number) {
-    const frame = useRef(random.integer(0, frameInterval * 10))
+export function useLowerPriorityFrame(cb: RenderCallback, intervalMs: number) {
+    const elapsed = useRef(random.float(0, intervalMs))
 
     useFrame((...params) => {
-        if (frame.current % frameInterval === 0) {
+        const [, delta] = params
+
+        elapsed.current += delta * 1000
+
+        if (elapsed.current >= intervalMs) {
+            elapsed.current = 0
             cb(...params)
         }
-        frame.current++
     })
 }
 

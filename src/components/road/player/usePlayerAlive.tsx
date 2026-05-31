@@ -27,5 +27,5 @@ export default function usePlayerAlive(setPosition: Dispatch<SetStateAction<Tupl
 
             setPosition([-2, 2, Math.min(...forwards) - 6])
         }
-    }, 10)
+    }, 166)
 }

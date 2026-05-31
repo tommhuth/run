@@ -132,7 +132,7 @@ export default function Target({
         if (vehicle.chassisBody.position.z > nextTargetAt) {
             reachDestination()
         }
-    }, 5)
+    }, 83)
 
     return (
         <>

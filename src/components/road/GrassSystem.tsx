@@ -61,7 +61,7 @@ export default function GrassSystem({ count = 250 }) {
                 instance: instanceRef.current
             })
         }
-    }, 10)
+    }, 166)
 
     if (!material) {
         return null

@@ -23,6 +23,7 @@ type ReturnUniformsRecord<T extends Record<string, IUniform> | undefined> = T ex
 
 export interface UseShaderParams<T extends UniformsRecord> {
     uniforms?: T | undefined
+    defines?: Record<string, string | number | boolean>
     shared?: string
     vertex?: ShaderPart | ShaderPart[]
     fragment?: ShaderPart | ShaderPart[]
@@ -36,6 +37,7 @@ interface ReturnUseShader<T extends UniformsRecord | undefined> {
 
 export function useShader<T extends UniformsRecord>({
     uniforms: incomingUniforms,
+    defines,
     shared = "",
     vertex = {
         head: "",
@@ -55,6 +57,10 @@ export function useShader<T extends UniformsRecord>({
         shader.uniforms = {
             ...shader.uniforms,
             ...uniforms
+        }
+
+        if (defines) {
+            shader.defines = { ...(shader.defines || {}), ...defines }
         }
 
         patchShader(shader, { vertex, fragment, shared })

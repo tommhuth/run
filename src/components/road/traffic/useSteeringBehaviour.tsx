@@ -112,7 +112,7 @@ export default function useSteeringBehaviour({
         }
 
         data.speeding = speeding
-    }, 5)
+    }, 83)
 
     // z
     useFrame(() => {

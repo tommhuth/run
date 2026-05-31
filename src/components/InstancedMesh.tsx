@@ -1,3 +1,4 @@
+import { useInstanceClear } from "@data/hooks/useInstanceClear"
 import { useTransitionedState } from "@data/hooks/utils"
 import { InstanceName, setInstance } from "@data/store/actions/actions"
 import { store, useStore } from "@data/store/store"
@@ -89,17 +90,8 @@ export default function InstancedMesh({
         return new Float32Array(colors ? count * 3 : 0).fill(0)
     }, [count])
     const [instance, setInstanceRef] = useState<InstancedMeshThree | null>(null)
-    const attempts = 0
 
-    useEffect(() => {
-        if (!instance) {
-            return
-        }
-
-        for (let i = 0; i < count; i++) {
-            setMatrixNullAt(instance, i)
-        }
-    }, [attempts, count, instance])
+    useInstanceClear(instance, count)
 
     useEffect(() => {
         if (!instance || store.getState().instances[name]?.mesh === instance) {

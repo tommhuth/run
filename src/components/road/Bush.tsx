@@ -129,7 +129,7 @@ export default function Bushes({
                 hasTriggeredLeaves.current[i] = false
             }
         }
-    }, 10)
+    }, 166)
 
     useFrame((_, delta) => {
         const player = useStore.getState().player.vehicle
