@@ -122,7 +122,7 @@ export default function RoadMaterial() {
 
                     gl_FragColor.rgb = mix(
                         gl_FragColor.rgb, 
-                        targetLight, 
+                        mix(gl_FragColor.rgb, targetLight, smoothstep(0., 1.,  1. - length(vWorldPos - uPlayerPosition) / 60.)), 
                         smoothstep(.0, 1., targetLightEffect)
                     ); 
                 `
