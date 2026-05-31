@@ -32,8 +32,9 @@ export function setDebugData(name: keyof RunStore["debug"], value: boolean) {
 }
 
 type TreeIndex = 1 | 2 | 3 | 4 | 5 | 6
+type StreetLightType = "Dynamic" | "Static"
 
-export type InstanceName = "rock" | "streetLight" | `tree${TreeIndex}`
+export type InstanceName = "rock" | `streetlight${StreetLightType}` | `tree${TreeIndex}`
 
 export interface Instance {
     mesh: InstancedMesh;

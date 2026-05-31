@@ -120,11 +120,6 @@ function Debug() {
             <div>nextTargetAt: {player.nextTargetAt}</div>
             <div>targetDistance: {player.targetDistance}</div>
             <div>time: {player.time.toFixed(1)}</div>
-            <div>
-                <ul className="text-md">
-                    {road.map((i, index) => <div key={i.id}>{index + 1} {i.type}</div>)}
-                </ul>
-            </div>
             <label>
                 <input
                     type="checkbox"
@@ -139,6 +134,11 @@ function Debug() {
                     onChange={e => setDebugData("showColliders", e.currentTarget.checked)}
                 /> Show colliders
             </label>
+            <div>
+                <ul className="text-md">
+                    {road.map((i, index) => <div key={i.id}>{index + 1} {i.type}</div>)}
+                </ul>
+            </div>
         </div>
     )
 }

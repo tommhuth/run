@@ -8,7 +8,7 @@ import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThre
 import { setColorAt, setMatrixAt, setMatrixNullAt } from "./materials/helpers"
 
 interface UseInstanceOptions {
-    clear?: boolean
+    keepAround?: boolean
     color?: ColorRepresentation
     scale?: number | Tuple3
     rotation?: Tuple3 | Tuple4
@@ -16,7 +16,7 @@ interface UseInstanceOptions {
 }
 
 export function useInstance(name: InstanceName, {
-    clear = true,
+    keepAround = false,
     color,
     scale,
     rotation = [0, 0, 0],
@@ -44,12 +44,12 @@ export function useInstance(name: InstanceName, {
     }, [index, ...rotation, ...position, ...(Array.isArray(scale) ? scale : [scale]), instance])
 
     useEffect(() => {
-        if (typeof index === "number" && instance && clear) {
+        if (typeof index === "number" && instance && keepAround) {
             return () => {
                 setMatrixNullAt(instance.mesh, index as number)
             }
         }
-    }, [index, instance, clear])
+    }, [index, instance, keepAround])
 
     useEffect(() => {
         if (instance && typeof index === "number" && color) {

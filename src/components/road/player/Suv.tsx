@@ -9,18 +9,19 @@ import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "
 import { Mesh } from "three"
 import type { GLTF } from "three/examples/jsm/Addons.js"
 
-
-
 const wheelX = .4
 const radius = .3
 const wheelY = 0.3
 
 
-const width = 1.3
-const height = 1
-const depth = 2.35
+const width = 1.1
+const height1 = 1
+const height2 = .5
+const depth1 = 1.75
+const depth2 = .75
 const chassis: Chassis = [
-    [new Box(new Vec3(width / 2, height / 2, depth / 2)), new Vec3(0, height / 2 + wheelY, 0)],
+    [new Box(new Vec3(width / 2, height1 / 2, depth1 / 2)), new Vec3(0, height1 / 2 + wheelY, -.325)],
+    [new Box(new Vec3(width / 2, height2 / 2, depth2 / 2)), new Vec3(0, height2 / 2 + wheelY, 1.)],
 ]
 
 const wheels: Wheel[] = [

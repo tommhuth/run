@@ -1,4 +1,4 @@
-import { useCannonWorld } from "@data/cannon"
+import { CollisionEvent, useCannonWorld } from "@data/cannon"
 import { dampFactor, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
@@ -151,7 +151,7 @@ export function useRigidVehicle({
     }, [vehicle, world])
 
     useEffect(() => {
-        const onCollide = (e: { body: Body }) => {
+        const onCollide = (e: CollisionEvent) => {
             if (type === "player" && e.body.userData?.type === "traffic") {
                 //let dir = vehicle.chassisBody.position.clone().vsub(e.body.position).unit()
 

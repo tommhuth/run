@@ -1,3 +1,4 @@
+import { CollisionEvent } from "@data/cannon"
 import { useTransitionedState } from "@data/hooks/utils"
 import { setState } from "@data/store/actions/actions"
 import { store, useStore } from "@data/store/store"
@@ -30,6 +31,26 @@ export default function Player({
         type: "player",
         direction: 1
     })
+
+    useEffect(() => {
+        if (!vehicle) {
+            return
+        }
+
+        const crashes = new Map<number, boolean>()
+        const onCollide = ({ body }: CollisionEvent) => {
+            if (body.userData?.type === "streetlight" && !crashes.has(body.id)) {
+                vehicle.chassisBody.velocity.scale(.55, vehicle.chassisBody.velocity)
+                crashes.set(body.id, true)
+            }
+        }
+
+        vehicle.chassisBody.addEventListener("collide", onCollide)
+
+        return () => {
+            vehicle.chassisBody.removeEventListener("collide", onCollide)
+        }
+    }, [vehicle])
 
     // usePlayerAlive(setPosition)
 

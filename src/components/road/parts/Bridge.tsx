@@ -84,10 +84,12 @@ export default function BridgePart({ position, depth }) {
             <StreetLight
                 position={[3.75, ROAD_HEIGHT, position[2]]}
                 rotation={[0, Math.PI * .5, 0]}
+                fixed
             />
             <StreetLight
                 position={[-3.75, ROAD_HEIGHT, position[2]]}
                 rotation={[0, -Math.PI * .5, 0]}
+                fixed
             />
 
             {[-1, 1].map(index => {

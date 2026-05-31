@@ -18,7 +18,7 @@ function Rock({
     }, [])
 
     useInstance("rock", {
-        clear: false,
+        keepAround: true,
         position,
         scale: [radius * 2, radius * 2 * scale[1], radius * 2],
         rotation

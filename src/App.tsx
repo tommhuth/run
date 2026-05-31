@@ -1,7 +1,6 @@
 import { Instances } from "@components/Instances"
 import Lights from "@components/Lights"
 import MaterialLoader from "@components/materials/MaterialLoader"
-import Bush from "@components/road/Bush"
 import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
 import GrassSystem from "@components/road/GrassSystem"
@@ -60,8 +59,6 @@ export default function App() {
             />
             <color args={["#fff"]} attach={"background"} />
             <Target />
-
-            <Bush position={[-7, 0, 8]} />
 
             <pointLight
                 name="pointLight"
