@@ -62,13 +62,9 @@ export default function Lights() {
                 color={"#bee6ff"}
             />
             <hemisphereLight
-                color={"#9fd7ff"}
-                groundColor={"#0509ff"}
-                intensity={.9}
-            />
-            <ambientLight
-                intensity={.4}
                 color={"#83acff"}
+                groundColor={"#0509ff"}
+                intensity={1.9}
             />
         </>
     )
