@@ -72,7 +72,6 @@ export default function GrassSystem({ count = 250 }) {
             args={[nodes.grass.geometry, undefined, count]}
             ref={instanceRef}
             frustumCulled={false}
-            receiveShadow
         >
             <primitive object={material} attach="material" />
         </instancedMesh>
