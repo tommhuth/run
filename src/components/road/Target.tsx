@@ -90,7 +90,7 @@ export default function Target({
                 
                 // Fade out bottom  player is away
                 float playerDist = length(vPosition - uPlayerPosition);
-                float distFactor = smoothstep(65.0, 75.0, playerDist);
+                float distFactor = smoothstep(35.0, 50.0, playerDist);
                 float b = clamp(vPosition.y / 16.0, 0.0, 1.0);
                 float bottomFade = mix(1.0, b, distFactor);
 
