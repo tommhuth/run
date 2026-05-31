@@ -14,7 +14,7 @@ import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import useFramerateReady from "@data/hooks/useFramerateReady"
 import useRenderWithDepth from "@data/hooks/useRenderWithDepth"
-import { setSharedObject, setState } from "@data/store/actions/actions"
+import { setState } from "@data/store/actions/actions"
 import { useStore } from "@data/store/store"
 import { AdaptiveDpr } from "@react-three/drei"
 import { extend } from "@react-three/fiber"
@@ -59,11 +59,6 @@ export default function App() {
             />
             <color args={["#fff"]} attach={"background"} />
             <Target />
-
-            <pointLight
-                name="pointLight"
-                ref={setSharedObject}
-            />
 
             <CannonProvider debug={showColliders}>
                 <Camera />
