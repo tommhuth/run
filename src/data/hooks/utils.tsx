@@ -8,10 +8,8 @@ export function useLowerPriorityFrame(cb: RenderCallback, frameInterval: number)
     useFrame((...params) => {
         if (frame.current % frameInterval === 0) {
             cb(...params)
-            frame.current = 0
-        } else {
-            frame.current++
         }
+        frame.current++
     })
 }
 
