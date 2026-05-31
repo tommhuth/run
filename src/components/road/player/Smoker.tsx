@@ -164,7 +164,7 @@ export default function Smoker({ count = 100 }) {
                 id: random.id(),
                 index: data.indexHandler.next(),
                 size: random.float(.1, .25) * speedFactor,
-                targetSize: random.float(.65, 1) + speedFactor * random.float(.1, .3),
+                targetSize: random.float(.5, 1.1) + speedFactor * random.float(.1, .2),
                 position,
                 velocity: _velocity.toArray(),
                 growFactor: random.float(.005, .01),
