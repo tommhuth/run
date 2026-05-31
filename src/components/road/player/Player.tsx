@@ -40,7 +40,7 @@ export default function Player({
         const crashes = new Map<number, boolean>()
         const onCollide = ({ body }: CollisionEvent) => {
             if (body.userData?.type === "streetlight" && !crashes.has(body.id)) {
-                vehicle.chassisBody.velocity.scale(.55, vehicle.chassisBody.velocity)
+                vehicle.chassisBody.velocity.scale(.6, vehicle.chassisBody.velocity)
                 crashes.set(body.id, true)
             }
         }
