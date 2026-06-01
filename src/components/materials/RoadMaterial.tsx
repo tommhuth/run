@@ -8,6 +8,7 @@ import { Vector3 } from "three"
 
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
+import easings from "@src/shaders/easings.glsl"
 
 export const MAX_TRAFFIC = 8
 
@@ -47,8 +48,10 @@ export default function RoadMaterial() {
             vec3 calcContactShadow(vec3 color, vec3 contactColor, float amount) {
                 float size = 1.65;
 
-                return  mix(color, contactColor, smoothstep(.0, .76, 1. - amount / size));
+                return mix(color, contactColor, smoothstep(.0, .76, 1. - amount / size));
             } 
+
+            ${easings}
         `,
         vertex: {
             main: glsl`
@@ -112,7 +115,7 @@ export default function RoadMaterial() {
             {
                 injectAt: "#include <dithering_fragment>",
                 main: glsl` 
-                    float lightSize = 4. + abs(cos(uTime * 4.));
+                    float lightSize = 4.5 + abs(cos(uTime * 4.));
                     float targetLightEffect = 1. - clamp(length(vWorldPos - uTargetPosition) / lightSize, 0., 1.);
                     vec3 targetLight = mix(
                         mix(vec3(.0, 0.1, .65), vec3(1., .85, 0.), uDestinationTime),
@@ -123,7 +126,7 @@ export default function RoadMaterial() {
                     gl_FragColor.rgb = mix(
                         gl_FragColor.rgb, 
                         mix(gl_FragColor.rgb, targetLight, smoothstep(0., 1.,  1. - length(vWorldPos - uPlayerPosition) / 60.)), 
-                        smoothstep(.0, 1., targetLightEffect)
+                        easeInQuad(targetLightEffect)
                     ); 
                 `
             }
