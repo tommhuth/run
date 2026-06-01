@@ -1,6 +1,5 @@
 import model from "@assets/models/road.glb"
 import { ShapeDefinition, useBody } from "@data/cannon"
-import Config from "@data/Config"
 import { useStore } from "@data/store/store"
 import { useGLTF } from "@react-three/drei"
 import { Shape, Vec3 } from "cannon-es"
@@ -9,7 +8,7 @@ import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 import { ShapeType, threeToCannon } from "three-to-cannon"
 
-import { ROAD_CENTER_X, ROAD_HEIGHT } from "./const"
+import { ROAD_HEIGHT } from "./const"
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -45,32 +44,15 @@ export default function RoadSegment({ position }) {
     })
 
     return (
-        <>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.main.geometry}
-                dispose={null}
-                material={roadMaterial}
-                position={[position[0], ROAD_HEIGHT / 2, position[2]]}
-            />
-
-            {Config.DEBUG && false && (
-                <>
-                    <mesh
-                        position={[ROAD_CENTER_X, ROAD_HEIGHT / 2, 0]}
-                    >
-                        <boxGeometry args={[.1, .1, 3000]} />
-                        <meshBasicMaterial color="blue" />
-                    </mesh>
-                    <mesh
-                        position={[-ROAD_CENTER_X, ROAD_HEIGHT / 2, 0]}
-                    >
-                        <boxGeometry args={[.1, .1, 3000]} />
-                        <meshBasicMaterial color="blue" />
-                    </mesh>
-                </>
-            )}
-        </>
+        <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.main.geometry}
+            dispose={null}
+            material={roadMaterial}
+            position={[position[0], ROAD_HEIGHT / 2, position[2]]}
+        />
     )
 }
+
+useGLTF.preload(model)

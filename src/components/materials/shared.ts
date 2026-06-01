@@ -1,20 +1,5 @@
 import carMap from "@assets/textures/car.png"
-import storageMap from "@assets/textures/storage.png"
-import { DoubleSide, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, SRGBColorSpace, TextureLoader } from "three"
-
-export const floorMaterial = new MeshPhongMaterial({
-    name: "floor",
-    color: "#d9e1e9",
-    dithering: true
-})
-
-export const grassMaterial = new MeshLambertMaterial({
-    name: "grass",
-    color: "#bcc7d3",
-    emissive: "#d3dae2",
-    emissiveIntensity: .1,
-    dithering: true
-})
+import { DoubleSide, MeshLambertMaterial, MeshPhongMaterial, SRGBColorSpace, TextureLoader } from "three"
 
 export const leafMaterial = new MeshLambertMaterial({
     name: "leaf",
@@ -41,30 +26,13 @@ export const streetLightMaterial = new MeshLambertMaterial({
     dithering: true
 })
 
-export const whiteMaterial = new MeshBasicMaterial({
-    color: "#fff",
-    name: "white",
-    toneMapped: false
-})
-
 const carTexture = new TextureLoader().load(carMap)
 
 carTexture.colorSpace = SRGBColorSpace
 carTexture.flipY = false
 
-const storageTexture = new TextureLoader().load(storageMap)
-
-storageTexture.colorSpace = SRGBColorSpace
-storageTexture.flipY = false
-
 export const carMaterial = new MeshPhongMaterial({
     name: "car",
     map: carTexture,
-    color: "white",
-})
-
-export const storageMaterial = new MeshPhongMaterial({
-    name: "storage",
-    map: storageTexture,
     color: "white",
 })

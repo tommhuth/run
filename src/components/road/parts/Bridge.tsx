@@ -1,6 +1,5 @@
 
 import model from "@assets/models/railing.glb"
-import { floorMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useBody } from "@data/cannon"
 import PlaceGrid from "@data/PlaceGrid"
 import { RockObject, useStore } from "@data/store/store"
@@ -100,7 +99,7 @@ export default function BridgePart({ position, depth }) {
                         castShadow
                         receiveShadow
                         key={index}
-                        material={floorMaterial}
+                        material={roadMaterial}
                     />
                 )
             })}
@@ -120,3 +119,5 @@ export default function BridgePart({ position, depth }) {
         </Suspense>
     )
 }
+
+useGLTF.preload(model)

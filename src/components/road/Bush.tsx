@@ -212,10 +212,12 @@ export default function Bushes({
     return (
         <instancedMesh
             ref={ref}
-            args={[nodes.bush.geometry, leafMaterial, count + 1]}
+            args={[nodes.bush.geometry, leafMaterial, count]}
             frustumCulled={false}
             castShadow
             receiveShadow
         />
     )
 }
+
+useGLTF.preload(model)

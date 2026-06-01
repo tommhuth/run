@@ -209,9 +209,10 @@ export default function TargetTrail({
                 args={[undefined, undefined, count]}
                 frustumCulled={false}
             >
-                <sphereGeometry args={[1, 8, 8]} />
+                <sphereGeometry args={[1, 6, 6]} />
                 <meshBasicMaterial
                     color="#3a34eb"
+                    name="trail"
                     fog={false}
                     transparent
                     customProgramCacheKey={customProgramCacheKey}

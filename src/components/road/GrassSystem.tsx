@@ -77,3 +77,5 @@ export default function GrassSystem({ count = 250 }) {
         </instancedMesh>
     )
 }
+
+useGLTF.preload(model)

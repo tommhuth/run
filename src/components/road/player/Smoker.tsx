@@ -231,11 +231,12 @@ export default function Smoker({ count = 100 }) {
             frustumCulled={false}
             userData={{ ignoreDepthWrite: true }}
         >
-            <sphereGeometry args={[1, 32, 32]} />
+            <sphereGeometry args={[1, 16, 16]} />
             <meshLambertMaterial
                 transparent
                 emissiveIntensity={.4}
                 emissive={"#fff"}
+                name="smoke"
                 onBeforeCompile={onBeforeCompile}
                 depthWrite={false}
                 customProgramCacheKey={customProgramCacheKey}

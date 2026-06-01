@@ -182,6 +182,7 @@ export default function Target({
                     transparent
                     fog={false}
                     onBeforeCompile={onBeforeCompile}
+                    name="target"
                 />
                 <boxGeometry args={[width, height, .1]} />
             </mesh>

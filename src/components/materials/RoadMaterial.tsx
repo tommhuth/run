@@ -2,13 +2,13 @@ import { ROAD_HEIGHT, ROAD_WIDTH } from "@components/road/const"
 import { store } from "@data/store/store"
 import { clamp, dampFactor, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
+import easings from "@src/shaders/easings.glsl"
 import { Vec3 } from "cannon-es"
 import { useEffect } from "react"
 import { Vector3 } from "three"
 
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
-import easings from "@src/shaders/easings.glsl"
 
 export const MAX_TRAFFIC = 8
 
@@ -175,6 +175,7 @@ export default function RoadMaterial() {
             customProgramCacheKey={customProgramCacheKey}
             onBeforeCompile={onBeforeCompile}
             color={"#d9e1e9"}
+            name="road"
             dithering
         />
     )

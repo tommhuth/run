@@ -1,6 +1,5 @@
 import model from "@assets/models/sedan-sports.glb"
 import { carMaterial } from "@components/materials/shared"
-import Config from "@data/Config"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
 import { Box, RigidVehicle, Vec3 } from "cannon-es"
@@ -77,10 +76,6 @@ function SedanSports({ position, rotation }: SedanSportsProps, ref: ForwardedRef
                 ref={chassisRef}
                 dispose={null}
             >
-                <mesh visible={Config.DEBUG}>
-                    <sphereGeometry args={[.125]} />
-                    <meshBasicMaterial color="red" />
-                </mesh>
                 <mesh
                     castShadow
                     receiveShadow
