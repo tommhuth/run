@@ -8,10 +8,13 @@ import { useFrame, useThree } from "@react-three/fiber"
 import depth from "@src/shaders/depth.glsl"
 import easings from "@src/shaders/easings.glsl"
 import noise from "@src/shaders/noise.glsl"
-import { useEffect } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Color, Vector2, Vector3 } from "three"
 
 import { ROAD_WIDTH } from "./const"
+import TargetTrail from "./TargetTrail"
+
+const FADE_IN_DURATION = 0.35
 
 export default function Target({
     height = 100,
@@ -20,10 +23,14 @@ export default function Target({
     const nextTargetAt = useStore(i => i.player.nextTargetAt)
     const depthTexture = useStore(i => i.depthTexture)
     const { camera, size, viewport } = useThree()
+    const [prevTargetAt, setPrevTargetAt] = useState(nextTargetAt)
+    const fadeStartRef = useRef(0)
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
         uniforms: {
             uTime: { value: 0 },
             uColorProgress: { value: 0 },
+            uFadeIn: { value: 1 },
+            uHeight: { value: height },
             uSpeed: { value: 0 },
             uSize: { value: 3 },
             cameraNear: { value: camera.near },
@@ -45,6 +52,8 @@ export default function Target({
             uniform float uSpeed;
             uniform float uSize;
             uniform float uColorProgress; 
+            uniform float uFadeIn;
+            uniform float uHeight;
             uniform float cameraNear;
             uniform float cameraFar;
             uniform vec2 resolution;
@@ -94,7 +103,11 @@ export default function Target({
                 float b = clamp(vPosition.y / 16.0, 0.0, 1.0);
                 float bottomFade = mix(1.0, b, distFactor);
 
-                gl_FragColor.a *= depthFade * bottomFade; 
+                // bottom-up reveal driven by uFadeIn (0 = hidden, 1 = fully revealed)
+                float reveal = uFadeIn * (uHeight + 4.0);
+                float revealMask = 1.0 - smoothstep(reveal - 4.0, reveal + 4.0, vPosition.y);
+
+                gl_FragColor.a *= depthFade * bottomFade * revealMask; 
             `
         }
     })
@@ -104,6 +117,21 @@ export default function Target({
         uniforms.resolution.value.set(size.width, size.height)
             .multiplyScalar(viewport.dpr)
     }, [size, depthTexture])
+
+    useEffect(() => {
+        if (prevTargetAt === nextTargetAt) {
+            return
+        }
+
+        uniforms.uFadeIn.value = 0
+        uniforms.uHeight.value = height
+        fadeStartRef.current = 0
+        setPrevTargetAt(nextTargetAt)
+    }, [nextTargetAt, prevTargetAt, height, uniforms])
+
+    const handleTrailComplete = useCallback(() => {
+        fadeStartRef.current = performance.now() / 1000
+    }, [])
 
     useFrame((state, delta) => {
         const { player } = useStore.getState()
@@ -120,6 +148,14 @@ export default function Target({
         uniforms.uColorProgress.value = c
         uniforms.uSpeed.value += f * delta
         uniforms.uPlayerPosition.value.copy(player.vehicle.chassisBody.position)
+
+        const fadeStart = fadeStartRef.current
+
+        if (fadeStart > 0 && uniforms.uFadeIn.value < 1) {
+            const now = performance.now() / 1000
+
+            uniforms.uFadeIn.value = clamp((now - fadeStart) / FADE_IN_DURATION)
+        }
     })
 
     useLowerPriorityFrame(() => {
@@ -146,10 +182,16 @@ export default function Target({
                     transparent
                     fog={false}
                     onBeforeCompile={onBeforeCompile}
-
                 />
                 <boxGeometry args={[width, height, .1]} />
             </mesh>
+            <TargetTrail
+                from={prevTargetAt}
+                to={nextTargetAt}
+                width={width}
+                height={height}
+                onComplete={handleTrailComplete}
+            />
         </>
     )
 }
