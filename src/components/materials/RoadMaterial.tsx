@@ -135,7 +135,7 @@ export default function RoadMaterial() {
 
     useFrame((state, delta) => {
         const { player, traffic } = store.getState()
-        const k = dampFactor(20, delta)
+        const k = dampFactor(20, ndelta(delta))
 
         if (!player.vehicle) {
             return

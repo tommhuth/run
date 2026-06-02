@@ -1,4 +1,5 @@
 import { setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
+import { physicsDelta } from "@data/utils"
 import { useFrame, useThree } from "@react-three/fiber"
 import {
     Body as CannonBody,
@@ -188,11 +189,7 @@ export function CannonProvider({
     }, [world, scene, debug])
 
     useFrame((state, delta) => {
-        // max 24 fps as delta
-        const dt = Math.min(delta, 1 / 24)
-
-        world.fixedStep(dt)
-        //world.step(1 / 60, dt)
+        world.fixedStep(physicsDelta(delta))
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()

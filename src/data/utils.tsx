@@ -10,14 +10,20 @@ export function clamp(value: number, min = 0, max = 1) {
     return threeClamp(value, min, max)
 }
 
+// loose cap: only catches tab-return / multi-second spikes. damping is
+// numerically stable at any dt, so we don't need a tight ceiling here
 export function ndelta(delta: number) {
-    const nDelta = clamp(delta, 0, 1 / 30)
-
-    return nDelta
+    return clamp(delta, 0, 1 / 10)
 }
 
-export function dampFactor(k: number, delta: number) {
-    return 1 - Math.exp(-k * ndelta(delta))
+// strict cap for physics to prevent tunneling on hitches
+export function physicsDelta(delta: number) {
+    return clamp(delta, 0, 1 / 20)
+}
+
+// expects an already-clamped dt (use ndelta once per frame and reuse)
+export function dampFactor(k: number, dt: number) {
+    return 1 - Math.exp(-k * dt)
 }
 
 const _euler = new Euler()
