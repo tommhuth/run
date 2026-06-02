@@ -7,7 +7,7 @@ import { setState } from "./actions"
 
 const tarfficGap = [20, 15, 35, 45, 55]
 
-export function initializeTraffic(countPerDirection = 4) {
+export function initializeTraffic(countPerDirection = 3) {
     const directions = [-1, 1] as const
 
     return directions.map(direction => {

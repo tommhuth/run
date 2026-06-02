@@ -191,8 +191,8 @@ export function CannonProvider({
         // max 24 fps as delta
         const dt = Math.min(delta, 1 / 24)
 
-        //world.fixedStep(dt)
-        world.step(1 / 60, dt)
+        world.fixedStep(dt)
+        //world.step(1 / 60, dt)
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()

@@ -10,7 +10,7 @@ import { Vector3 } from "three"
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
 
-export const MAX_TRAFFIC = 8
+export const MAX_TRAFFIC = 6
 
 
 const _rotation = new Vec3()
