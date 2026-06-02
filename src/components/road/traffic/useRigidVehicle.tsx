@@ -59,7 +59,10 @@ function syncVehicle(
     vehicle.chassisBody.quaternion.vmult(_chassisOffset.set(0, -verticalStabilityAdjust, 0), _chassisOffset)
     chassisMesh.position.sub(_chassisOffset)
 
-    for (const [index, wheel] of vehicle.wheelBodies.entries()) {
+    const wheelBodies = vehicle.wheelBodies
+
+    for (let index = 0; index < wheelBodies.length; index++) {
+        const wheel = wheelBodies[index]
         const wheelMesh = wheelsRef.current?.children[index] as Mesh
 
         if (wheelMesh) {

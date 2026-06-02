@@ -107,8 +107,8 @@ export default function Bushes({
 
         for (let i = 0; i < bushes.length; i++) {
             const bush = bushes[i]
-            const dist = new Vec3(...bush.position)
-                .distanceSquared(player.chassisBody.position)
+            const dist = _bushPosition.set(...bush.position)
+                .distanceToSquared(player.chassisBody.position)
 
             if (dist < threshold) {
                 if (!hasTriggeredLeaves.current[i]) {
