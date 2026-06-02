@@ -80,7 +80,7 @@ export default function Target({
             `,
             main: glsl`     
                 // world-space chevrons (v), scrolling down
-                float wave = vPosition.y / uSize + uSpeed + uTime * 2. - abs(vPosition.x) / uSize;
+                float wave = vPosition.y / uSize + uSpeed + uTime * 1. - abs(vPosition.x) / uSize;
                 float pattern = easeInOutQuad(fract(wave));   
                 float topFadeoutAt = 100.;
  
