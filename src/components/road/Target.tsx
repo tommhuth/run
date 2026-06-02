@@ -139,6 +139,7 @@ export default function Target({
         if (!player.vehicle) {
             return
         }
+
         uniforms.uTime.value += ndelta(delta)
 
         const t = (player.deadline - Date.now())

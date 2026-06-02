@@ -134,9 +134,9 @@ export default function TargetTrail({
         }
 
         const length = curve.getLength()
-        const baseDuration = length / 80
+        const baseDuration = length / 60
 
-        data.completeAt = now + baseDuration * 0.8
+        data.completeAt = now + baseDuration * 0.5
         data.completed = false
 
         for (const particle of particles) {
@@ -152,7 +152,7 @@ export default function TargetTrail({
                 midY + by ** 3 * halfY,
                 bz ** 3
             ]
-            particle.duration = baseDuration * random.float(.8, 1.4)
+            particle.duration = baseDuration * random.float(.65, 1)
             particle.startTime = now + random.float(0, 0.35)
             particle.scale = random.float(0.02, .2)
             particle.active = true
@@ -199,7 +199,7 @@ export default function TargetTrail({
                 instance,
                 index: particle.index,
                 position,
-                scale: (particle.scale + eased * .35) * clamp(1 - (t - .6) / .4, 0, 1),
+                scale: (particle.scale + eased * .35) * clamp(1 - (t - .7) / .3, 0, 1),
             })
         }
     })
