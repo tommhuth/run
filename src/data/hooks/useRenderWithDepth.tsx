@@ -5,13 +5,11 @@ import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
 import { DepthTexture, NearestFilter, UnsignedShortType } from "three"
 
-const size = 1024
-
 export default function useRenderWithDepth() {
     const { viewport } = useThree()
     const [width, height] = useMemo<Tuple2>(() => [
-        size,
-        Math.ceil(size * (1 / viewport.aspect))
+        Math.ceil(window.innerWidth * viewport.dpr * .5),
+        Math.ceil(window.innerHeight * viewport.dpr * .5),
     ], [viewport])
     const depthTexture = useMemo(() => {
         const dt = new DepthTexture(width, height)
@@ -27,6 +25,7 @@ export default function useRenderWithDepth() {
         depthBuffer: true,
         depthTexture,
     })
+
 
     useFrame(({ gl, scene, camera }) => {
         scene.traverse(i => {
