@@ -5,7 +5,7 @@ import { Tuple3 } from "@src/types/global"
 import { store, TrafficElement } from "../store"
 import { setState } from "./actions"
 
-const tarfficGap = [20, 15, 35, 45, 55]
+const tarfficGap = [20, 8, 35, 45, 55]
 
 export function initializeTraffic(countPerDirection = 3) {
     const directions = [-1, 1] as const

@@ -9,10 +9,7 @@ const size = 512
 
 export default function useRenderWithDepth() {
     const { viewport } = useThree()
-    const [width, height] = useMemo<Tuple2>(() => [
-        Math.ceil(size * viewport.dpr),
-        Math.ceil(size * viewport.dpr * (1 / viewport.aspect))
-    ], [viewport])
+    const [width, height] = useMemo<Tuple2>(() => [size, size], [viewport])
     const depthTexture = useMemo(() => {
         const dt = new DepthTexture(width, height)
 

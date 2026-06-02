@@ -1,5 +1,5 @@
 import { ROAD_FORWARD_EDGE } from "@components/road/const"
-import { createRoot, events, RenderProps } from "@react-three/fiber"
+import { createRoot, RenderProps } from "@react-three/fiber"
 import { lazy, ReactNode } from "react"
 import { createRoot as createUiRoot } from "react-dom/client"
 import { registerSW } from "virtual:pwa-register"
@@ -16,8 +16,7 @@ function getConfiguration() {
         },
         flat: false,
         shadows: "variance",
-        events,
-        dpr: [1, Math.max(window.devicePixelRatio * .75, 1)],
+        dpr: Math.max(Math.pow(window.devicePixelRatio, 0.65), 1),
         size: {
             width: window.innerWidth,
             height: window.innerHeight,

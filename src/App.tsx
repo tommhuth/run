@@ -16,7 +16,6 @@ import useFramerateReady from "@data/hooks/useFramerateReady"
 import useRenderWithDepth from "@data/hooks/useRenderWithDepth"
 import { setState } from "@data/store/actions/actions"
 import { useStore } from "@data/store/store"
-import { AdaptiveDpr } from "@react-three/drei"
 import { extend } from "@react-three/fiber"
 import { lazy, useEffect } from "react"
 
@@ -50,7 +49,6 @@ export default function App() {
 
     return (
         <>
-            <AdaptiveDpr pixelated />
             <fog
                 args={["#fff"]}
                 attach={"fog"}

@@ -25,7 +25,7 @@ const horizontalEdge = 40
 
 geometry.rotateY(Math.PI)
 
-export default function CloudSystem({ count = 50 }) {
+export default function CloudSystem({ count = 30 }) {
     const ref = useRef<InstancedMesh>(null)
     const clouds = useMemo(() => {
         return Array.from({ length: count }).map((i, index) => {
