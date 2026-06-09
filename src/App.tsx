@@ -47,12 +47,12 @@ export default function App() {
             canvas.style.opacity = "1"
         }
 
-        canvas?.addEventListener("touchmove", disable, { passive: false })
-        canvas?.addEventListener("touchstart", disable, { passive: false })
+        window?.addEventListener("touchmove", disable, { passive: false })
+        window?.addEventListener("touchstart", disable, { passive: false })
 
         return () => {
-            canvas?.removeEventListener("touchmove", disable)
-            canvas?.removeEventListener("touchstart", disable)
+            window?.removeEventListener("touchmove", disable)
+            window?.removeEventListener("touchstart", disable)
         }
     }, [loading])
 
