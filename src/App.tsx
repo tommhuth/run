@@ -41,9 +41,18 @@ export default function App() {
 
     useEffect(() => {
         const canvas = document.getElementById("canvas")
+        const disable = (e: TouchEvent) => e.preventDefault()
 
         if (!loading && canvas) {
             canvas.style.opacity = "1"
+        }
+
+        canvas?.addEventListener("touchmove", disable, { passive: false })
+        canvas?.addEventListener("touchstart", disable, { passive: false })
+
+        return () => {
+            canvas?.removeEventListener("touchmove", disable)
+            canvas?.removeEventListener("touchstart", disable)
         }
     }, [loading])
 
