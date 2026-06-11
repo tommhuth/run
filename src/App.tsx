@@ -44,8 +44,13 @@ export default function App() {
             setState({ state: "running" })
         }
 
-        window.addEventListener("click", start)
+        window.addEventListener("pointerdown", start)
         window.addEventListener("keydown", start)
+
+        return () => {
+            window.removeEventListener("pointerdown", start)
+            window.removeEventListener("keydown", start)
+        }
     }, [])
 
     useEffect(() => {
