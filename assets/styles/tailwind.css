@@ -2,19 +2,19 @@
 @import "tailwindcss/utilities" layer(utilities);
 
 @theme {
-    --animate-messagein: messagein .35s both;
     --animate-blink: blink .85s infinite;
+    --animate-intro: intro 1.5s 1s cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
-@keyframes messagein {
-    from {
+@keyframes intro {
+    0% {
         opacity: 0;
-        translate: 0 1em;
+        translate: -50% -85%;
     }
 
-    to {
+    100% {
         opacity: 1;
-        translate: 0 0;
+        translate: -50% -50%;
     }
 }
 

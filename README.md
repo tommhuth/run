@@ -1,7 +1,9 @@
-# R3F boilerplate
- 
-- jump part?
+# Run
+  
 - ui 
-- intro 
-- restart/game over  
+- road sign
+- forest part force dense
+- edge blocker
+- intro part
+- (better) restart logic 
  

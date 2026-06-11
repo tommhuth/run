@@ -6,7 +6,7 @@ import { subscribeWithSelector } from "zustand/middleware"
 
 import { Tuple3 } from "../../types/global"
 import { Instance, InstanceName, MaterialName } from "./actions/actions"
-import { generateRocksPart } from "./actions/road"
+import { generateForestPart } from "./actions/road"
 import { initializeTraffic } from "./actions/traffic"
 
 interface RoadObject {
@@ -58,13 +58,6 @@ export interface Leaf {
     time: number
 }
 
-export interface Message {
-    id: string
-    text: string
-    score?: number
-    color?: string
-}
-
 export interface RunStore {
     state: "intro" | "gameover" | "running"
     instances: Record<InstanceName, Instance>
@@ -74,7 +67,6 @@ export interface RunStore {
     leaves: Leaf[]
     road: RoadPart[]
     grid: SpatialHashGrid3D
-    messages: Message[]
     loading: boolean
     debug: {
         showColliders: boolean
@@ -102,8 +94,8 @@ const store = create(
             mesh: null,
             vehicle: null,
             steering: new Vector3(),
-            nextTargetAt: 12,
-            targetDistance: 12,
+            nextTargetAt: 200,
+            targetDistance: 200,
             deadline: Infinity,
             score: 0,
             time: 0
@@ -111,16 +103,17 @@ const store = create(
         grid: new SpatialHashGrid3D([4, 4, 4]),
         traffic: initializeTraffic(),
         leaves: [],
-        road: [
-            generateRocksPart({ position: [0, 0, -10], depth: 0 })
-        ],
+        road: [generateForestPart, generateForestPart, generateForestPart].map((generator, index) => {
+            const startZ = -30
+
+            return generator({ position: [0, 0, startZ + index * 20], depth: 20 })
+        }),
         depthTexture: null,
         materials: {} as RunStore["materials"],
         instances: {} as RunStore["instances"],
         shared: {
             pointLight: null
         },
-        messages: [],
         loading: true,
         debug: {
             showColliders: false,

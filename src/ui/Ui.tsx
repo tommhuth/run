@@ -1,13 +1,13 @@
 import Config from "@data/Config"
 import { setDebugData } from "@data/store/actions/actions"
 import { store, useStore } from "@data/store/store"
-import clsx from "clsx"
-import { CSSProperties, useRef } from "react"
+import { useRef } from "react"
 import useAnimationFrame from "use-animation-frame"
 
 export default function Ui() {
     const player = store(i => i.player)
-    const messages = store(i => i.messages)
+    const loading = store(i => i.loading)
+    const state = store(i => i.state)
     const timeRef = useRef<HTMLOutputElement>(null)
     const distanceRef = useRef<HTMLOutputElement>(null)
     const progressRef = useRef<HTMLDivElement>(null)
@@ -37,6 +37,18 @@ export default function Ui() {
         }
     })
 
+    if (loading) {
+        return null
+    }
+
+    if (state === "intro") {
+        return (
+            <h1 className="fixed tracking-tighter text text-[#050038] animate-intro left-[50%] top-[50%] text-[20vw] translate-[-50%]">
+                Run
+            </h1>
+        )
+    }
+
     return (
         <>
             <div className="fixed left-6 right-6 bottom-10 text-2xl text-black flex gap-4">
@@ -52,8 +64,12 @@ export default function Ui() {
                     aria-label="Deadline"
                     hidden={player.deadline === Infinity}
                 />
-                <output ref={distanceRef} className="ml-auto" />
-                <output>
+                <output
+                    aria-label="Player position"
+                    ref={distanceRef}
+                    className="ml-auto"
+                />
+                <output aria-label="Next target at">
                     {player.nextTargetAt.toLocaleString("en")}m
                 </output>
             </div>
@@ -64,45 +80,6 @@ export default function Ui() {
                 className="fixed left-6 right-6 bottom-8 h-0.75 bg-black origin-left rounded-full"
             />
 
-            <ul
-                className={clsx(
-                    "absolute top-8 left-1/2 -translate-x-1/2",
-                    "w-[calc(100%-2em)] flex flex-col gap-2 place-items-center",
-                    "text-xl max-md:text-base empty:hidden",
-                )}
-            >
-                {messages.map(i => {
-                    return (
-                        <li
-                            aria-live="polite"
-                            key={i.id}
-                            style={{
-                                "--color": i.score && i.score < 0 ? "#ff0084" : undefined
-                            } as CSSProperties}
-                            className={clsx(
-                                "flex w-max flex-wrap max-w-full animate-messagein",
-                                "max-md:flex-col-reverse max-md:place-items-center",
-                            )}
-                        >
-                            <div
-                                className={clsx(
-                                    "bg-black text-white py-3 px-5 rounded-lg",
-                                    "relative z-1 -mr-2",
-                                    "max-md:mr-0 max-md:-mt-1 max-md:-z-1",
-                                )}
-                            >
-                                {i.text}
-                            </div>
-                            <strong
-                                className="font-bold bg-(--color,blue) text-white rounded-lg max-w-max py-3 px-6 empty:hidden"
-                                hidden={!i.score}
-                            >
-                                {((i.score || 0) < 0 ? "−" : "+")}{Math.abs(i.score || 0).toLocaleString("en")}
-                            </strong>
-                        </li>
-                    )
-                })}
-            </ul>
             {Config.DEBUG && <Debug />}
         </>
     )

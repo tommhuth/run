@@ -40,19 +40,19 @@ export default function App() {
     })
 
     useEffect(() => {
+        const start = () => {
+            setState({ state: "running" })
+        }
+
+        window.addEventListener("click", start)
+        window.addEventListener("keydown", start)
+    }, [])
+
+    useEffect(() => {
         const canvas = document.getElementById("canvas")
-        const disable = (e: TouchEvent) => e.preventDefault()
 
         if (!loading && canvas) {
             canvas.style.opacity = "1"
-        }
-
-        window?.addEventListener("touchmove", disable, { passive: false })
-        window?.addEventListener("touchstart", disable, { passive: false })
-
-        return () => {
-            window?.removeEventListener("touchmove", disable)
-            window?.removeEventListener("touchstart", disable)
         }
     }, [loading])
 

@@ -20,7 +20,7 @@ interface PlayerProps {
 }
 
 export default function Player({
-    rotation,
+    rotation = [0, .45, 0],
 }: PlayerProps) {
     const { motion } = useControls()
     const breaklightRef1 = useRef<PointLight>(null)
@@ -28,8 +28,9 @@ export default function Player({
     const steering = useStore(i => i.player.steering)
     const [vehicle, setVehicle] = useTransitionedState<RigidVehicle | null>(null)
     const target = useMemo(() => new Object3D(), [])
-    const [position, setPosition] = useTransitionedState<Tuple3>([-1.25, 2, 0])
+    const [position, setPosition] = useTransitionedState<Tuple3>([-1.5, 2, 0])
 
+    // usePlayerAlive(setPosition)
     useTrafficClient({
         vehicle,
         type: "player",
@@ -55,8 +56,6 @@ export default function Player({
             vehicle.chassisBody.removeEventListener("collide", onCollide)
         }
     }, [vehicle])
-
-    // usePlayerAlive(setPosition)
 
     useEffect(() => {
         return setState({
