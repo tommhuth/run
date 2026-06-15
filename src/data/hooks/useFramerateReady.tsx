@@ -11,8 +11,8 @@ export default function useFramerateReady(
     onReady: () => void,
     {
         threshold = .15,
-        sampleSize = 40,
-        timeout = 8_000,
+        sampleSize = 60,
+        timeout = 12_000,
     }: UseFramerateReadyOptions = {},
 ) {
     const samples = useRef<number[]>([])
