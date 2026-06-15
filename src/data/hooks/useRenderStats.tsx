@@ -41,9 +41,9 @@ export function useRenderStats() {
 
     useFrame((state, delta) => {
         const nd = delta * 1000
-        const logInterval = 5_000
+        const logInterval = 15_000
 
-        if (nd > 1000) {
+        if (nd > 1_000) {
             return
         }
 
