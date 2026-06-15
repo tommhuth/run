@@ -18,6 +18,7 @@ export function getStats(gl: WebGLRenderer, viewport: Viewport) {
         width: Math.ceil(window.innerWidth * viewport.dpr),
         height: Math.ceil(window.innerHeight * viewport.dpr),
         dpr: window.devicePixelRatio,
+        userAgent: navigator.userAgent,
         renderDpr: viewport.dpr
     }
 }
