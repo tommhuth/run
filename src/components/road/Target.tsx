@@ -1,5 +1,6 @@
 import { glsl } from "@components/materials/helpers"
 import { useShader } from "@components/materials/useShader"
+import { depthIgnoreLayers } from "@data/hooks/useRenderWithDepth"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
 import { reachDestination } from "@data/store/actions/road"
 import { useStore } from "@data/store/store"
@@ -175,7 +176,7 @@ export default function Target({
         <>
             <mesh
                 renderOrder={-1}
-                userData={{ ignoreDepthWrite: true }}
+                layers={depthIgnoreLayers}
                 position={[0, height / 2, nextTargetAt]}
             >
                 <meshBasicMaterial

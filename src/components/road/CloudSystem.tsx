@@ -1,5 +1,6 @@
 import CloudMaterial from "@components/materials/CloudMaterial"
 import { setMatrixAt } from "@components/materials/helpers"
+import { depthIgnoreLayers } from "@data/hooks/useRenderWithDepth"
 import { store } from "@data/store/store"
 import { extractRotation, ndelta } from "@data/utils"
 import random from "@huth/random"
@@ -89,7 +90,7 @@ export default function CloudSystem({ count = 30 }) {
     return (
         <instancedMesh
             ref={ref}
-            userData={{ ignoreDepthWrite: true }}
+            layers={depthIgnoreLayers}
             args={[geometry, undefined, count]}
             frustumCulled={false}
         >

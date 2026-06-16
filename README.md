@@ -1,9 +1,10 @@
 # Run
   
-- ui 
-- road sign
-- forest part force dense
-- edge blocker
-- intro part
 - (better) restart logic 
+- ui 
+- edge blocker + backward blocker
+- forest part force dense
+- intro part
+- horizon
+- road sign
  

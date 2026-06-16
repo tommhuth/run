@@ -1,6 +1,7 @@
 import { glsl, setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
 import { useShader } from "@components/materials/useShader"
 import { useInstanceClear } from "@data/hooks/useInstanceClear"
+import { depthIgnoreLayers } from "@data/hooks/useRenderWithDepth"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
 import IndexHandler from "@data/IndexHandler"
 import { useStore } from "@data/store/store"
@@ -229,7 +230,7 @@ export default function Smoker({ count = 100 }) {
             ref={setInstance}
             args={[undefined, undefined, count]}
             frustumCulled={false}
-            userData={{ ignoreDepthWrite: true }}
+            layers={depthIgnoreLayers}
         >
             <sphereGeometry args={[1, 16, 16]} />
             <meshLambertMaterial

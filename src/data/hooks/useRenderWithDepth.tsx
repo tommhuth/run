@@ -3,7 +3,15 @@ import { useFBO } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
 import { useEffect, useMemo } from "react"
-import { DepthTexture, NearestFilter, UnsignedShortType } from "three"
+import { DepthTexture, Layers, NearestFilter, UnsignedShortType } from "three"
+
+// Objects on this layer only are rendered in the normal pass but excluded
+// from the depth prepass, replacing per-frame scene traversal.
+export const DEPTH_IGNORE_LAYER = 1
+
+export const depthIgnoreLayers = new Layers()
+
+depthIgnoreLayers.set(DEPTH_IGNORE_LAYER)
 
 export default function useRenderWithDepth() {
     const { viewport } = useThree()
@@ -28,22 +36,16 @@ export default function useRenderWithDepth() {
 
 
     useFrame(({ gl, scene, camera }) => {
-        scene.traverse(i => {
-            if (i.userData?.ignoreDepthWrite) {
-                i.visible = false
-            }
-        })
+        // exclude depth-ignored objects (they live only on DEPTH_IGNORE_LAYER)
+        camera.layers.disable(DEPTH_IGNORE_LAYER)
 
-        // render to depth buffer after hiding consuming meshes
+        // render to depth buffer
         gl.setRenderTarget(fbo)
         gl.render(scene, camera)
         gl.setRenderTarget(null)
 
-        scene.traverse(i => {
-            if (i.userData?.ignoreDepthWrite) {
-                i.visible = true
-            }
-        })
+        // re-include them for the normal pass
+        camera.layers.enable(DEPTH_IGNORE_LAYER)
 
         // render scene normally
         gl.render(scene, camera)
