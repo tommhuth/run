@@ -1,5 +1,5 @@
 import Cycler from "@data/Cycler"
-import { useTransitionedState } from "@data/hooks/utils"
+import { useLowerPriorityFrame, useTransitionedState } from "@data/hooks/utils"
 import { removeTrafficElement } from "@data/store/actions/traffic"
 import { store, TrafficElement } from "@data/store/store"
 import random from "@huth/random"
@@ -50,7 +50,7 @@ export default memo(({
         position[2] = vehicle.chassisBody.position.z
     })
 
-    useFrame(() => {
+    useLowerPriorityFrame(() => {
         const { player } = store.getState()
         const backbuffer = 6
 
@@ -61,7 +61,7 @@ export default memo(({
         if (vehicle.chassisBody.position.z < player.vehicle?.chassisBody.position.z - backbuffer) {
             removeTrafficElement(id)
         }
-    })
+    }, 250)
 
     return (
         <Suspense fallback={null}>
