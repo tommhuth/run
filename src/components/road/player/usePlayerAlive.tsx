@@ -15,16 +15,16 @@ const _orientation = new Vec3()
 
 export default function usePlayerAlive(setPosition: Dispatch<SetStateAction<Tuple3>>) {
     useLowerPriorityFrame(() => {
-        const { player: { vehicle }, traffic } = useStore.getState()
-        const disabled = false
+        const { player: { vehicle }, traffic, debug } = useStore.getState()
 
-        if (!vehicle || disabled) {
+        if (!vehicle || debug.godMode) {
             return
         }
 
         const rotation = Math.abs(extractRotation(vehicle.chassisBody.quaternion).y)
         const offside = Math.abs(vehicle.chassisBody.position.x)
-        const playerOrientation = vehicle.chassisBody.quaternion.vmult(_up, _orientation)
+        const playerOrientation = vehicle.chassisBody.quaternion
+            .vmult(_up, _orientation)
             .dot(_up)
 
         if (
