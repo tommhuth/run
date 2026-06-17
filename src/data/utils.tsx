@@ -16,12 +16,7 @@ export function ndelta(delta: number) {
     return clamp(delta, 0, 1 / 10)
 }
 
-// strict cap for physics to prevent tunneling on hitches
-export function physicsDelta(delta: number) {
-    return clamp(delta, 0, 1 / 20)
-}
-
-// expects an already-clamped dt (use ndelta once per frame and reuse)
+// expects an already-clamped dt  
 export function dampFactor(k: number, dt: number) {
     return 1 - Math.exp(-k * dt)
 }

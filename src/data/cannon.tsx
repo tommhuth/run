@@ -1,5 +1,4 @@
 import { setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
-import { physicsDelta } from "@data/utils"
 import { useFrame, useThree } from "@react-three/fiber"
 import {
     Body as CannonBody,
@@ -8,17 +7,20 @@ import {
     GSSolver,
     Material,
     Quaternion as CannonQuaternion,
+    Quaternion,
     SAPBroadphase,
     Shape,
     SplitSolver,
     Vec3,
-    World,
-    Quaternion
+    World
 } from "cannon-es"
 import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Tuple3 } from "src/types/global"
 import { InstancedMesh, Mesh } from "three"
+
+import { useStore } from "./store/store"
+import { ndelta } from "./utils"
 
 export type ShapeDefinition = Shape | [Shape, Vec3?, CannonQuaternion?][]
 
@@ -219,7 +221,14 @@ export function CannonProvider({
     }, [world, scene, debug])
 
     useFrame((state, delta) => {
-        world.fixedStep(physicsDelta(delta))
+        const { loading } = useStore.getState()
+
+        if (loading) {
+            return
+        }
+
+        // world.step(1 / 60, delta)
+        world.fixedStep(ndelta(delta))
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()
