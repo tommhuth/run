@@ -71,6 +71,7 @@ export interface RunStore {
     debug: {
         showColliders: boolean
         godMode: boolean
+        physicsTime: number
     }
     shared: {
         pointLight: null | PointLight
@@ -118,6 +119,8 @@ const store = create(
         debug: {
             showColliders: false,
             godMode: false,
+            renderTime: 0,
+            physicsTime: 0,
         },
     } satisfies RunStore))
 )

@@ -13,7 +13,7 @@ export function clamp(value: number, min = 0, max = 1) {
 // loose cap: only catches tab-return / multi-second spikes. damping is
 // numerically stable at any dt, so we don't need a tight ceiling here
 export function ndelta(delta: number) {
-    return clamp(delta, 0, 1 / 10)
+    return clamp(delta, 0, 1 / 20)
 }
 
 // expects an already-clamped dt  

@@ -87,7 +87,7 @@ export default function Ui() {
 
 function Debug() {
     const state = store(i => i.state)
-    const { godMode, showColliders } = store(i => i.debug)
+    const { godMode, showColliders, physicsTime } = store(i => i.debug)
     const player = store(i => i.player)
     const road = store(i => i.road)
 
@@ -97,6 +97,7 @@ function Debug() {
             <div>nextTargetAt: {player.nextTargetAt}</div>
             <div>targetDistance: {player.targetDistance}</div>
             <div>time: {player.time.toFixed(1)}</div>
+            <div>physicsTime: {physicsTime.toFixed(3)}ms</div>
             <label>
                 <input
                     type="checkbox"

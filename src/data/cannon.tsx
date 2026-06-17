@@ -21,6 +21,8 @@ import { InstancedMesh, Mesh } from "three"
 
 import { useStore } from "./store/store"
 import { ndelta } from "./utils"
+import { setState } from "./store/actions/actions"
+import Config from "./Config"
 
 export type ShapeDefinition = Shape | [Shape, Vec3?, CannonQuaternion?][]
 
@@ -41,8 +43,6 @@ interface BaseBodyOptions<T = unknown> {
 const context = React.createContext<World | null>(null)
 
 export type CollisionEvent = { body: Body, target: Body, contact: ContactEquation }
-
-
 
 export function resetBody(
     body: CannonBody,
@@ -220,15 +220,24 @@ export function CannonProvider({
         return debug ? createCannonDebugger(scene, world, { color: "red" }) : null
     }, [world, scene, debug])
 
-    useFrame((state, delta) => {
-        const { loading } = useStore.getState()
+    useFrame(() => {
+        const { loading, debug } = useStore.getState()
+        const time = performance.now()
 
         if (loading) {
             return
         }
 
-        // world.step(1 / 60, delta)
-        world.fixedStep(ndelta(delta))
+        // simulation independently of framerate every 1 / 60 ms
+        world.fixedStep()
+
+        if (Config.DEBUG) {
+            const physicsTime = performance.now() - time
+
+            setState({
+                debug: { ...debug, physicsTime }
+            })
+        }
 
         if (world.hasActiveBodies && cannonDebugger) {
             cannonDebugger.update()
