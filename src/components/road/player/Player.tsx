@@ -13,6 +13,7 @@ import useTrafficClient from "../traffic/useTrafficClient"
 import Smoker from "./Smoker"
 import Suv from "./Suv"
 import { useControls } from "./useControls"
+import usePlayerAlive from "./usePlayerAlive"
 
 interface PlayerProps {
     position?: Tuple3
@@ -30,7 +31,7 @@ export default function Player({
     const target = useMemo(() => new Object3D(), [])
     const [position, setPosition] = useTransitionedState<Tuple3>([-1.5, 2, 0])
 
-    // usePlayerAlive(setPosition)
+    usePlayerAlive(setPosition)
     useTrafficClient({
         vehicle,
         type: "player",

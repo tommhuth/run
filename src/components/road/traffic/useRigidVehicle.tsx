@@ -6,7 +6,7 @@ import { Quaternion, RigidVehicle, Shape, Vec3 } from "cannon-es"
 import { RefObject, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { Group, Mesh, Object3D, Quaternion as ThreeQuaternion } from "three"
 
-import { acquireVehicle, releaseVehicle } from "./vehiclePool"
+import { acquireVehicle, addVehicleToWorld, releaseVehicle, removeVehicleFromWorld } from "./vehiclePool"
 
 export type Chassis = [Shape, Vec3?, Quaternion?][]
 export type Wheel = { radius: number; position: Tuple3 }
@@ -116,10 +116,10 @@ export function useRigidVehicle({
     }, [world, ...deps])
 
     useEffect(() => {
-        vehicle.addToWorld(world)
+        addVehicleToWorld(world, vehicle)
 
         return () => {
-            vehicle.removeFromWorld(world)
+            removeVehicleFromWorld(world, vehicle)
             releaseVehicle(chassis, vehicle)
         }
     }, [vehicle, world])

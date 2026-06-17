@@ -1,6 +1,6 @@
 import { Body, resetBody } from "@data/cannon"
 import { Tuple3 } from "@src/types/global"
-import { Material, Quaternion, RigidVehicle, Sphere, Vec3 } from "cannon-es"
+import { Material, Quaternion, RigidVehicle, Sphere, Vec3, World } from "cannon-es"
 
 import type { Chassis, Wheel } from "./useRigidVehicle"
 
@@ -26,6 +26,24 @@ const MAX_VEHICLE_PER_TYPE = 6
 // Per-vehicle wheel offsets (local to chassis), needed to reposition wheel
 // bodies on reset exactly where the constraint expects them.
 const wheelOffsets = new WeakMap<RigidVehicle, Vec3[]>()
+
+// cannon-es RigidVehicle.addToWorld registers its preStep listener via
+// `this._update.bind(this)` (a fresh function every call) and removeFromWorld
+// never removes it. Because vehicles are pooled and re-added on every reset,
+// that leaks a listener per reuse, applying wheel forces N times per step.
+// We keep a single stable listener per vehicle and manage it ourselves.
+const wheelForceUpdaters = new WeakMap<RigidVehicle, () => void>()
+
+function getWheelForceUpdater(vehicle: RigidVehicle) {
+    let updater = wheelForceUpdaters.get(vehicle)
+
+    if (!updater) {
+        updater = (vehicle as unknown as { _update: () => void })._update.bind(vehicle)
+        wheelForceUpdaters.set(vehicle, updater)
+    }
+
+    return updater
+}
 
 function createVehicle(
     {
@@ -138,4 +156,34 @@ export function releaseVehicle(chassis: Chassis, vehicle: RigidVehicle) {
         // push vehicle to list for reuse
         vehicles.push(vehicle)
     }
+}
+
+// Add the vehicle to the world with a single, stable preStep listener so reused
+// vehicles never accumulate duplicate wheel-force updaters.
+export function addVehicleToWorld(world: World, vehicle: RigidVehicle) {
+    for (const body of vehicle.wheelBodies) {
+        world.addBody(body)
+    }
+
+    world.addBody(vehicle.chassisBody)
+
+    for (const constraint of vehicle.constraints) {
+        world.addConstraint(constraint)
+    }
+
+    world.addEventListener("preStep", getWheelForceUpdater(vehicle))
+}
+
+export function removeVehicleFromWorld(world: World, vehicle: RigidVehicle) {
+    for (const body of vehicle.wheelBodies) {
+        world.removeBody(body)
+    }
+
+    world.removeBody(vehicle.chassisBody)
+
+    for (const constraint of vehicle.constraints) {
+        world.removeConstraint(constraint)
+    }
+
+    world.removeEventListener("preStep", getWheelForceUpdater(vehicle))
 }
