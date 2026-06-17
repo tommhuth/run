@@ -19,10 +19,9 @@ import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useR
 import { Tuple3 } from "src/types/global"
 import { InstancedMesh, Mesh } from "three"
 
-import { useStore } from "./store/store"
-import { ndelta } from "./utils"
-import { setState } from "./store/actions/actions"
 import Config from "./Config"
+import { setState } from "./store/actions/actions"
+import { useStore } from "./store/store"
 
 export type ShapeDefinition = Shape | [Shape, Vec3?, CannonQuaternion?][]
 
