@@ -1,5 +1,6 @@
 # Run
   
+- seconds jank?
 - (better) restart logic 
 - ui 
 - edge blocker + backward blocker

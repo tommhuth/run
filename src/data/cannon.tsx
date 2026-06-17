@@ -12,7 +12,8 @@ import {
     Shape,
     SplitSolver,
     Vec3,
-    World
+    World,
+    Quaternion
 } from "cannon-es"
 import createCannonDebugger from "cannon-es-debugger"
 import React, { ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
@@ -39,6 +40,35 @@ const context = React.createContext<World | null>(null)
 
 export type CollisionEvent = { body: Body, target: Body, contact: ContactEquation }
 
+
+
+export function resetBody(
+    body: CannonBody,
+    x: number,
+    y: number,
+    z: number,
+    quaternion: Quaternion
+) {
+    body.position.set(x, y, z)
+    body.previousPosition.set(x, y, z)
+    body.interpolatedPosition.set(x, y, z)
+    body.initPosition.set(x, y, z)
+
+    body.quaternion.copy(quaternion)
+    body.previousQuaternion.copy(quaternion)
+    body.interpolatedQuaternion.copy(quaternion)
+    body.initQuaternion.copy(quaternion)
+
+    body.velocity.setZero()
+    body.initVelocity.setZero()
+    body.angularVelocity.setZero()
+    body.initAngularVelocity.setZero()
+    body.force.setZero()
+    body.torque.setZero()
+
+    body.aabbNeedsUpdate = true
+    body.wakeUp()
+}
 
 export class Body<T = unknown> extends CannonBody {
     userData: Record<string, T> = {}
