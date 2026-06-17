@@ -130,10 +130,6 @@ export default function Target({
         setPrevTargetAt(nextTargetAt)
     }, [nextTargetAt, prevTargetAt, height, uniforms])
 
-    const handleTrailComplete = useCallback(() => {
-        fadeStartRef.current = performance.now() / 1000
-    }, [])
-
     useFrame((state, delta) => {
         const { player } = useStore.getState()
 
@@ -188,13 +184,6 @@ export default function Target({
                 />
                 <boxGeometry args={[width, height, .1]} />
             </mesh>
-            <TargetTrail
-                from={prevTargetAt}
-                to={nextTargetAt}
-                width={width}
-                height={height}
-                onComplete={handleTrailComplete}
-            />
         </>
     )
 }
