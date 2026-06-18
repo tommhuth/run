@@ -96,7 +96,7 @@ function Debug() {
     const road = store(i => i.road)
     const partsRef = useRef<HTMLUListElement>(null)
     const trafficRef = useRef<HTMLDivElement>(null)
-    const yoff = 85
+    const playerOrigin = 85
     const scale = .0085
 
     useAnimationFrame(() => {
@@ -128,7 +128,7 @@ function Debug() {
             const y = (vehicle.chassisBody.position.z - playerZ) * scale
             const el = trafficRef.current.children[direction === 1 ? 1 : 0].querySelector("#t" + id) as HTMLElement
 
-            el.style.top = (-y * 100 + yoff) + "%"
+            el.style.top = (-y * 100 + playerOrigin) + "%"
             el.style.rotate = extractRotation(vehicle.chassisBody.quaternion).y + "rad"
         }
     })
@@ -186,11 +186,11 @@ function Debug() {
                 })}
                 <div
                     className="h-px z-1 w-full bg-[lime] absolute left-0"
-                    style={{ top: `${yoff}%` }}
+                    style={{ top: `${playerOrigin}%` }}
                 />
                 <div
                     className="h-px z-1 w-full bg-[white] absolute left-0"
-                    style={{ top: `${-ROAD_FORWARD_EDGE * scale * 100 + yoff}%` }}
+                    style={{ top: `${-ROAD_FORWARD_EDGE * scale * 100 + playerOrigin}%` }}
                 />
                 <div
                     className="border-l border-y-0 border-r-0 z-1 h-full border-l-white border-dashed absolute left-[50%]"
