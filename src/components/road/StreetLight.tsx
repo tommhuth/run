@@ -20,27 +20,23 @@ const boxBig: ShapeDefinition = [
 
 interface StreetLightProps {
     position: Tuple3
-    fixed?: boolean
     rotation: Tuple3
 }
 
-const _impulse = new Vec3()
-
 export default function StreetLight({
     position,
-    fixed = false,
     rotation
 }: StreetLightProps) {
     const [active, setActive] = useTransitionedState(false)
-    const [collisionResponse, setCollisionResponse] = useTransitionedState(fixed)
+    const [collisionResponse, setCollisionResponse] = useTransitionedState(false)
     const y = position[1] + height / 2
-    const [index, instance] = useInstance(fixed || !collisionResponse ? "streetlightStatic" : "streetlightDynamic", {
+    const [index, instance] = useInstance(!collisionResponse ? "streetlightStatic" : "streetlightDynamic", {
         rotation,
         position: [position[0], y, position[2]],
         keepAround: true
     })
     const [body] = useInstancedBody({
-        mass: collisionResponse && !fixed ? 1 : 0,
+        mass: collisionResponse ? 1 : 0,
         collisionResponse,
         position: [position[0], y, position[2]],
         rotation,
@@ -49,11 +45,11 @@ export default function StreetLight({
         userData: { type: "streetlight" },
         instance,
         keepAround: false,
-        definition: collisionResponse || fixed ? box : boxBig
+        definition: collisionResponse ? box : boxBig
     })
 
     useEffect(() => {
-        if (collisionResponse || !body || fixed) {
+        if (collisionResponse || !body) {
             return
         }
 
@@ -66,19 +62,7 @@ export default function StreetLight({
         return () => {
             body.removeEventListener("collide", onCollide)
         }
-    }, [body, fixed, collisionResponse])
-
-    useEffect(() => {
-        if (body && collisionResponse && !fixed) {
-            const player = store.getState().player.vehicle
-
-            if (player) {
-                _impulse.copy(player.chassisBody.velocity).unit()
-                _impulse.scale(25)
-                //body.applyImpulse(_impulse)
-            }
-        }
-    }, [body, fixed, collisionResponse])
+    }, [body, collisionResponse])
 
     useFrame(() => {
         const { player: { vehicle } } = store.getState()
