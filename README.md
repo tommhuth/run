@@ -1,9 +1,9 @@
 # Run
   
-- seconds jank?
-- (better) restart logic 
+- seconds jank? 
+- restart if stuck?
 - ui 
-- edge blocker + backward blocker
+- backward blocker
 - forest part force dense
 - intro part
 - horizon

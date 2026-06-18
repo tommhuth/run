@@ -39,6 +39,7 @@ export interface TrafficElement {
     rotation: Tuple3
     guide: Tuple3
     velocity?: number
+    vehicle: RigidVehicle | null
     direction: 1 | -1
 }
 
@@ -72,6 +73,7 @@ export interface RunStore {
         showColliders: boolean
         godMode: boolean
         physicsTime: number
+        bodies: number
     }
     shared: {
         pointLight: null | PointLight
@@ -119,8 +121,8 @@ const store = create(
         debug: {
             showColliders: false,
             godMode: false,
-            renderTime: 0,
             physicsTime: 0,
+            bodies: 0
         },
     } satisfies RunStore))
 )

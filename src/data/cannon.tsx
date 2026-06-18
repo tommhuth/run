@@ -234,7 +234,11 @@ export function CannonProvider({
             const physicsTime = performance.now() - time
 
             setState({
-                debug: { ...debug, physicsTime }
+                debug: {
+                    ...debug,
+                    physicsTime,
+                    bodies: world.bodies.length
+                }
             })
         }
 

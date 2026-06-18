@@ -1,20 +1,21 @@
+import Config from "@data/Config"
 import Cycler from "@data/Cycler"
 import { useLowerPriorityFrame, useTransitionedState } from "@data/hooks/utils"
-import { removeTrafficElement } from "@data/store/actions/traffic"
+import { removeTrafficElement, setTrafficElementVehicle } from "@data/store/actions/traffic"
 import { store, TrafficElement } from "@data/store/store"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
 import { RigidVehicle } from "cannon-es"
-import { memo, Suspense, useMemo } from "react"
+import { memo, Suspense, useEffect, useMemo } from "react"
 
 import Delivery from "./Delivery"
 import GarbageTruck from "./GarbageTruck"
 import HatchbackSports from "./HatchbackSports"
+import useSteeringBehaviour from "./hooks/useSteeringBehaviour"
 import SedanSports from "./SedanSports"
 import SuvLuxury from "./SuvLuxury"
 import Truck from "./Truck"
 import TruckFlat from "./TruckFlat"
-import useSteeringBehaviour from "./hooks/useSteeringBehaviour"
 import Van from "./Van"
 
 const common = new Cycler([HatchbackSports, SedanSports, SuvLuxury, Truck, TruckFlat, Van], .15)
@@ -39,6 +40,14 @@ export default memo(({
         maxVelocity: velocity,
         wheelForce: 20
     })
+
+    useEffect(() => {
+        if (!vehicle || !Config.DEBUG) {
+            return
+        }
+
+        setTrafficElementVehicle(id, vehicle)
+    }, [vehicle])
 
     useFrame(() => {
         if (!vehicle) {

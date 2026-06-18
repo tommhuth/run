@@ -10,7 +10,6 @@ import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { GLTFModel, Tuple3 } from "@src/types/global"
-import { Vec3 } from "cannon-es"
 import { useMemo, useRef } from "react"
 import { Euler, InstancedMesh, Quaternion, Vector3 } from "three"
 

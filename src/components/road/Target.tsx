@@ -9,11 +9,10 @@ import { useFrame, useThree } from "@react-three/fiber"
 import depth from "@src/shaders/depth.glsl"
 import easings from "@src/shaders/easings.glsl"
 import noise from "@src/shaders/noise.glsl"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Color, Vector2, Vector3 } from "three"
 
 import { ROAD_WIDTH } from "./const"
-import TargetTrail from "./TargetTrail"
 
 const FADE_IN_DURATION = 0.35
 

@@ -1,6 +1,7 @@
 import { ROAD_CENTER_X, ROAD_FORWARD_EDGE, ROAD_HEIGHT } from "@components/road/const"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
+import { RigidVehicle } from "cannon-es"
 
 import { store, TrafficElement } from "../store"
 import { setState } from "./actions"
@@ -35,9 +36,24 @@ export function initializeTraffic(countPerDirection = 3) {
                     direction === 1 ? 0 : Math.PI,
                     0
                 ] as Tuple3,
+                vehicle: null
             } satisfies TrafficElement
         })
     }).flat()
+}
+
+export function setTrafficElementVehicle(id: string, vehicle: RigidVehicle) {
+    const { traffic } = store.getState()
+
+    setState({
+        traffic: [
+            ...traffic.filter(i => i.id !== id),
+            {
+                ...traffic.find(i => i.id === id) as TrafficElement,
+                vehicle
+            }
+        ]
+    })
 }
 
 export function removeTrafficElement(id: string) {
@@ -67,7 +83,8 @@ export function removeTrafficElement(id: string) {
                     random.float(ROAD_CENTER_X * .9, ROAD_CENTER_X * 1.1) * -item.direction,
                     ROAD_HEIGHT + 1,
                     forwardZ
-                ]
+                ],
+                vehicle: null
             }
         ]
     })
