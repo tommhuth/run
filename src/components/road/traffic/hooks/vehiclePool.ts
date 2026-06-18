@@ -2,7 +2,7 @@ import { Body, resetBody } from "@data/cannon"
 import { Tuple3 } from "@src/types/global"
 import { Material, Quaternion, RigidVehicle, Sphere, Vec3, World } from "cannon-es"
 
-import type { Chassis, Wheel } from "./useRigidVehicle"
+import type { Chassis, Wheel } from "./hooks/useRigidVehicle"
 
 export interface VehicleSpec {
     mass: number

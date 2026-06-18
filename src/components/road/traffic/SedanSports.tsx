@@ -7,7 +7,7 @@ import { ForwardedRef, forwardRef, memo, ReactNode, useImperativeHandle } from "
 import { Mesh } from "three"
 import { GLTF } from "three/examples/jsm/Addons.js"
 
-import { Chassis, useRigidVehicle, Wheel, wheelKey } from "./useRigidVehicle"
+import { Chassis, useRigidVehicle, Wheel, wheelKey } from "./hooks/useRigidVehicle"
 
 const wheelX = .4
 const radius = .3

@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from "react"
 import { damp } from "three/src/math/MathUtils.js"
 import { Object3D, PointLight } from "three/webgpu"
 
-import useTrafficClient from "../traffic/useTrafficClient"
+import useTrafficClient from "../traffic/hooks/useTrafficClient"
 import Smoker from "./Smoker"
 import Suv from "./Suv"
 import { useControls } from "./useControls"

@@ -14,7 +14,7 @@ import SedanSports from "./SedanSports"
 import SuvLuxury from "./SuvLuxury"
 import Truck from "./Truck"
 import TruckFlat from "./TruckFlat"
-import useSteeringBehaviour from "./useSteeringBehaviour"
+import useSteeringBehaviour from "./hooks/useSteeringBehaviour"
 import Van from "./Van"
 
 const common = new Cycler([HatchbackSports, SedanSports, SuvLuxury, Truck, TruckFlat, Van], .15)

@@ -24,6 +24,6 @@ export function dampFactor(k: number, dt: number) {
 const _euler = new Euler()
 const _quaternion = new Quaternion()
 
-export function extractRotation(quat: CannonQuaternion) {
-    return _euler.setFromQuaternion(_quaternion.copy(quat))
+export function extractRotation(quat: CannonQuaternion, _target = _euler) {
+    return _target.setFromQuaternion(_quaternion.copy(quat))
 }

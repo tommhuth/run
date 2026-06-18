@@ -7,7 +7,7 @@ import { Tuple3 } from "@src/types/global"
 import { RigidVehicle, Vec3 } from "cannon-es"
 import { useMemo } from "react"
 
-import { ROAD_CENTER_X } from "../const"
+import { ROAD_CENTER_X } from "../../const"
 import useTrafficClient from "./useTrafficClient"
 
 const MAX_STEER = 0.3

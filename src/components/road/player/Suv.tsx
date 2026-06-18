@@ -1,6 +1,6 @@
 import model from "@assets/models/suv.glb"
 import { carMaterial } from "@components/materials/shared"
-import { Chassis, useRigidVehicle, Wheel, wheelKey } from "@components/road/traffic/useRigidVehicle"
+import { Chassis, useRigidVehicle, Wheel, wheelKey } from "@components/road/traffic/hooks/useRigidVehicle"
 import { useGLTF } from "@react-three/drei"
 import { Tuple3 } from "@src/types/global"
 import { Box, RigidVehicle, Vec3 } from "cannon-es"
