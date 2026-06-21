@@ -20,6 +20,7 @@ export default function RoadMaterial() {
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
         uniforms: {
             uRoadWidth: { value: ROAD_WIDTH * .53 },
+            uRoadHeight: { value: ROAD_HEIGHT },
             uStripeWidth: { value: 0.25 },
             uDashSize: { value: 1.5 },
             uGapSize: { value: 1.5 },
@@ -34,6 +35,7 @@ export default function RoadMaterial() {
         },
         shared: glsl`
             uniform float uRoadWidth;
+            uniform float uRoadHeight;
             uniform float uStripeWidth;
             uniform vec3 uPlayerPosition;
             uniform vec3 uTargetPosition;
@@ -78,6 +80,7 @@ export default function RoadMaterial() {
 
                     float marking = max(leftEdge, centerDash);
 
+                    diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * .7, smoothstep(0., 1., vWorldPos.y / uRoadHeight));
                     diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0) * 1.5, marking);
 
                      // fake contact shadow

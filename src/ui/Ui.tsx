@@ -129,9 +129,9 @@ function Debug() {
             const y = (vehicle.chassisBody.position.z - playerZ) * scale
             const element = trafficRef.current.children[direction === 1 ? 1 : 0].querySelector("#t" + id) as HTMLElement
 
-            element.style.top = (-y * 100 + playerOrigin).toFixed(3) + "%"
-            element.style.left = (50 + (-vehicle.chassisBody.position.x / ROAD_BASE_WIDTH) * 100).toFixed(3) + "%"
-            element.style.rotate = extractRotation(vehicle.chassisBody.quaternion).y.toFixed(5) + "rad"
+            element.style.top = (-y * 100 + playerOrigin).toFixed(2) + "%"
+            element.style.left = (50 + (-vehicle.chassisBody.position.x / ROAD_BASE_WIDTH) * 100).toFixed(2) + "%"
+            element.style.rotate = extractRotation(vehicle.chassisBody.quaternion).y.toFixed(4) + "rad"
         }
     })
 
