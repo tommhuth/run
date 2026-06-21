@@ -10,6 +10,12 @@ interface PreviousPart {
     depth: number
 }
 
+const generators: Record<RoadPart["type"], (previous: PreviousPart) => RoadPart> = {
+    "bridge": generateBridgePart,
+    "forest": generateForestPart,
+    "rocks": generateRocksPart,
+}
+
 export function getRandomRoadExtension() {
     return random.boolean(.85) ? generateForestPart : random.pick(generateRocksPart, generateBridgePart)
 }
@@ -80,15 +86,26 @@ export function reachDestination() {
     })
 }
 
-
 export function extendRoad(previous: PreviousPart) {
-    const { road } = store.getState()
-    const generator = getRandomRoadExtension()
+    const { road, debug } = store.getState()
+    let generator = getRandomRoadExtension()
+
+    if (debug.nextPartOverride) {
+        generator = generators[debug.nextPartOverride]
+    }
 
     setState({
         road: [
             ...road,
             generator(previous)
         ]
+    })
+}
+
+export function removeRoadPart(id: string) {
+    const { road } = store.getState()
+
+    setState({
+        road: road.filter(i => i.id !== id)
     })
 }

@@ -22,7 +22,7 @@ export function setMaterial(name: MaterialName, material: Material) {
     })
 }
 
-export function setDebugData(name: keyof RunStore["debug"], value: boolean) {
+export function setDebugData<T extends keyof RunStore["debug"]>(name: T, value: RunStore["debug"][T]) {
     store.setState({
         debug: {
             ...store.getState().debug,

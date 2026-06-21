@@ -1,4 +1,3 @@
-
 import model from "@assets/models/railing.glb"
 import { ShapeDefinition, useBody } from "@data/cannon"
 import PlaceGrid from "@data/PlaceGrid"
@@ -7,17 +6,20 @@ import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { GLTFModel, Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
-import { Suspense, useMemo } from "react"
+import { Fragment, Suspense, useMemo } from "react"
+import { BoxGeometry } from "three"
 
 import { ROAD_BASE_WIDTH, ROAD_DEPTH, ROAD_HEIGHT } from "../const"
 import Rock from "../Rock"
 import StreetLight from "../StreetLight"
 
-const roadBase = new Box(new Vec3(ROAD_BASE_WIDTH / 2, ROAD_HEIGHT / 2, ROAD_DEPTH / 2))
+const widthBuffer = .95
+const roadBase = new Box(new Vec3((ROAD_BASE_WIDTH) / 2 + widthBuffer, ROAD_HEIGHT / 2, ROAD_DEPTH / 2))
 const railings: ShapeDefinition = [
-    [new Box(new Vec3(.25 / 2, .5 / 2, ROAD_DEPTH / 2)), new Vec3(ROAD_BASE_WIDTH / 2 * .95, 0, 0)],
-    [new Box(new Vec3(.25 / 2, .5 / 2, ROAD_DEPTH / 2)), new Vec3(-ROAD_BASE_WIDTH / 2 * .95, 0, 0)],
+    [new Box(new Vec3(.25 / 2, .5 / 2, ROAD_DEPTH / 2)), new Vec3((ROAD_BASE_WIDTH + widthBuffer) / 2 * .95, 0, 0)],
+    [new Box(new Vec3(.25 / 2, .5 / 2, ROAD_DEPTH / 2)), new Vec3(-(ROAD_BASE_WIDTH + widthBuffer) / 2 * .95, 0, 0)],
 ]
+const roadGeometry = new BoxGeometry(ROAD_BASE_WIDTH + widthBuffer, ROAD_HEIGHT, ROAD_DEPTH)
 
 export default function BridgePart({ position, depth }) {
     const { nodes } = useGLTF(model) as unknown as GLTFModel<["railing"]>
@@ -80,25 +82,25 @@ export default function BridgePart({ position, depth }) {
                 )
             })}
 
-            <StreetLight
-                position={[3.75, ROAD_HEIGHT, position[2]]}
-                rotation={[0, Math.PI * .5, 0]}
-            />
-            <StreetLight
-                position={[-3.75, ROAD_HEIGHT, position[2]]}
-                rotation={[0, -Math.PI * .5, 0]}
-            />
-
             {[-1, 1].map(index => {
                 return (
-                    <mesh
-                        position={[ROAD_BASE_WIDTH / 2 * index * .95, ROAD_HEIGHT + .5, position[2] + depth / 2]}
-                        geometry={nodes.railing.geometry}
-                        castShadow
-                        receiveShadow
-                        key={index}
-                        material={roadMaterial}
-                    />
+                    <Fragment key={index}>
+                        <StreetLight
+                            position={[3.75 * index, ROAD_HEIGHT, position[2]]}
+                            rotation={[0, Math.PI * .5 * index, 0]}
+                        />
+                        <mesh
+                            position={[
+                                (ROAD_BASE_WIDTH / 2 + widthBuffer * .5) * index * .95,
+                                ROAD_HEIGHT + .5,
+                                position[2] + depth / 2
+                            ]}
+                            geometry={nodes.railing.geometry}
+                            castShadow
+                            receiveShadow
+                            material={roadMaterial}
+                        />
+                    </Fragment>
                 )
             })}
 
@@ -111,9 +113,8 @@ export default function BridgePart({ position, depth }) {
                 castShadow
                 receiveShadow
                 material={roadMaterial}
-            >
-                <boxGeometry args={[ROAD_BASE_WIDTH, ROAD_HEIGHT, ROAD_DEPTH]} />
-            </mesh>
+                geometry={roadGeometry}
+            />
         </Suspense>
     )
 }

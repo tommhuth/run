@@ -1,13 +1,11 @@
 import { useLowerPriorityFrame } from "@data/hooks/utils"
-import { setState } from "@data/store/actions/actions"
-import { extendRoad } from "@data/store/actions/road"
+import { extendRoad, removeRoadPart } from "@data/store/actions/road"
 import { useStore } from "@data/store/store"
 
 import { ROAD_FORWARD_EDGE } from "./const"
 import BridgePart from "./parts/Bridge"
 import ForestPart from "./parts/Forest"
 import RocksPart from "./parts/Rocks"
-
 
 export default function Road() {
     const parts = useStore(i => i.road)
@@ -26,24 +24,20 @@ export default function Road() {
         const player = vehicle.chassisBody
 
         if (backwardPart.position[2] + backwardPart.depth < player.position.z - backwardBuffer) {
-            setState({ road: road.slice(1) })
+            removeRoadPart(backwardPart.id)
         } else if (player.position.z + forwardBuffer > forwardPart.position[2] + forwardPart.depth) {
             extendRoad(forwardPart)
         }
     }, 166)
 
-    return (
-        <>
-            {parts.map(i => {
-                switch (i.type) {
-                    case "bridge":
-                        return <BridgePart {...i} key={i.id} />
-                    case "forest":
-                        return <ForestPart {...i} key={i.id} />
-                    case "rocks":
-                        return <RocksPart {...i} key={i.id} />
-                }
-            })}
-        </>
-    )
+    return parts.map(i => {
+        switch (i.type) {
+            case "bridge":
+                return <BridgePart {...i} key={i.id} />
+            case "forest":
+                return <ForestPart {...i} key={i.id} />
+            case "rocks":
+                return <RocksPart {...i} key={i.id} />
+        }
+    })
 }

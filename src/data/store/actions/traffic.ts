@@ -1,4 +1,4 @@
-import { ROAD_CENTER_X, ROAD_FORWARD_EDGE, ROAD_HEIGHT } from "@components/road/const"
+import { ROAD_FORWARD_EDGE, ROAD_HEIGHT,ROAD_LANE_CENTER_X } from "@components/road/const"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 import { RigidVehicle } from "cannon-es"
@@ -20,13 +20,13 @@ export function initializeTraffic(countPerDirection = 3) {
             return {
                 id: random.id(),
                 position: [
-                    random.float(ROAD_CENTER_X * .9, ROAD_CENTER_X * 1.1) * -direction,
+                    random.float(ROAD_LANE_CENTER_X * .9, ROAD_LANE_CENTER_X * 1.1) * -direction,
                     ROAD_HEIGHT + 1,
                     z
                 ] as Tuple3,
                 velocity: 6,
                 guide: [
-                    ROAD_CENTER_X * -direction + random.float(-.85, .85),
+                    ROAD_LANE_CENTER_X * -direction + random.float(-.85, .85),
                     0,
                     0
                 ] as Tuple3,
@@ -80,7 +80,7 @@ export function removeTrafficElement(id: string) {
                 ...item,
                 id: random.id(),
                 position: [
-                    random.float(ROAD_CENTER_X * .9, ROAD_CENTER_X * 1.1) * -item.direction,
+                    random.float(ROAD_LANE_CENTER_X * .9, ROAD_LANE_CENTER_X * 1.1) * -item.direction,
                     ROAD_HEIGHT + 1,
                     forwardZ
                 ],

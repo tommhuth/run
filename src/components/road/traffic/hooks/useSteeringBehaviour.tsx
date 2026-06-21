@@ -7,7 +7,7 @@ import { Tuple3 } from "@src/types/global"
 import { RigidVehicle, Vec3 } from "cannon-es"
 import { useMemo } from "react"
 
-import { ROAD_CENTER_X } from "../../const"
+import { ROAD_LANE_CENTER_X } from "../../const"
 import useTrafficClient from "./useTrafficClient"
 
 const MAX_STEER = 0.3
@@ -151,7 +151,7 @@ export default function useSteeringBehaviour({
         data.time += ndelta(delta) * 1000
 
         if (data.time > data.adjustAt) {
-            guide[0] = ROAD_CENTER_X * -direction + random.pick(.25, .65, 1) * random.pick(-1, 1)
+            guide[0] = ROAD_LANE_CENTER_X * -direction + random.pick(.25, .65, 1) * random.pick(-1, 1)
             data.time = 0
             data.adjustAt = random.integer(...adjustInterval)
         }

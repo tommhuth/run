@@ -1,8 +1,9 @@
-import { ROAD_FORWARD_EDGE } from "@components/road/const"
+import { ROAD_BASE_WIDTH, ROAD_FORWARD_EDGE } from "@components/road/const"
 import Config from "@data/Config"
 import { setDebugData } from "@data/store/actions/actions"
+import { removeRoadPart } from "@data/store/actions/road"
 import { removeTrafficElement } from "@data/store/actions/traffic"
-import { store, useStore } from "@data/store/store"
+import { RoadPart, store, useStore } from "@data/store/store"
 import { extractRotation } from "@data/utils"
 import { useRef } from "react"
 import useAnimationFrame from "use-animation-frame"
@@ -90,7 +91,7 @@ export default function Ui() {
 
 function Debug() {
     const state = store(i => i.state)
-    const { godMode, showColliders, physicsTime, bodies } = store(i => i.debug)
+    const { godMode, showColliders, physicsTime, bodies, nextPartOverride } = store(i => i.debug)
     const traffic = store(i => i.traffic)
     const player = store(i => i.player)
     const road = store(i => i.road)
@@ -126,10 +127,11 @@ function Debug() {
             }
 
             const y = (vehicle.chassisBody.position.z - playerZ) * scale
-            const el = trafficRef.current.children[direction === 1 ? 1 : 0].querySelector("#t" + id) as HTMLElement
+            const element = trafficRef.current.children[direction === 1 ? 1 : 0].querySelector("#t" + id) as HTMLElement
 
-            el.style.top = (-y * 100 + playerOrigin) + "%"
-            el.style.rotate = extractRotation(vehicle.chassisBody.quaternion).y + "rad"
+            element.style.top = (-y * 100 + playerOrigin).toFixed(3) + "%"
+            element.style.left = (50 + (-vehicle.chassisBody.position.x / ROAD_BASE_WIDTH) * 100).toFixed(3) + "%"
+            element.style.rotate = extractRotation(vehicle.chassisBody.quaternion).y.toFixed(5) + "rad"
         }
     })
 
@@ -174,7 +176,7 @@ function Debug() {
                                             id={"t" + id}
                                             onClick={() => removeTrafficElement(id)}
                                             title={"#" + id.substring(id.length - 4)}
-                                            className="border-black border cursor-pointer w-2 h-3 rounded-sm translate-[-50%] absolute left-[50%] bg-[yellow]"
+                                            className="border-black border cursor-pointer w-2 h-3 rounded-sm translate-[-50%] absolute bg-[yellow]"
                                         />
                                     )
                                 }
@@ -196,14 +198,25 @@ function Debug() {
                     className="border-l border-y-0 border-r-0 z-1 h-full border-l-white border-dashed absolute left-[50%]"
                 />
             </div>
-            <ul className="text-md gap-1 mt-2 flex flex-col" ref={partsRef}>
+            <select
+                className="border-black p-1 border mt-2 rounded-sm"
+                onChange={e => setDebugData("nextPartOverride", (e.currentTarget.value as RoadPart["type"]) || null)}
+            >
+                {["", "forest", "rocks", "bridge"].map(type => {
+                    return (
+                        <option value={type} key={type}>{type || "No override"}</option>
+                    )
+                })}
+            </select>
+            <ul className="text-md gap-2 mt-2 flex flex-col" ref={partsRef}>
                 {road.map(({ type, id }, index) => {
                     return (
-                        <li key={id}>
+                        <li key={id} onClick={() => removeRoadPart(id)}>
                             {index + 1}. {type} [#{id.substring(id.length - 4)}]
                         </li>
                     )
                 })}
+                {nextPartOverride && <li className="opacity-35">{road.length + 1}. {nextPartOverride}</li>}
             </ul>
         </div>
     )
