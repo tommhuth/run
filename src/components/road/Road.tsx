@@ -30,14 +30,14 @@ export default function Road() {
         }
     }, 166)
 
-    return parts.map(i => {
-        switch (i.type) {
+    return parts.map(part => {
+        switch (part.type) {
             case "bridge":
-                return <BridgePart {...i} key={i.id} />
+                return <BridgePart {...part} key={part.id} />
             case "forest":
-                return <ForestPart {...i} key={i.id} />
+                return <ForestPart {...part} key={part.id} />
             case "rocks":
-                return <RocksPart {...i} key={i.id} />
+                return <RocksPart {...part} key={part.id} />
         }
     })
 }

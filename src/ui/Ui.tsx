@@ -120,14 +120,19 @@ function Debug() {
         }
 
         for (let i = 0; i < traffic.length; i++) {
-            const { vehicle, direction, id } = traffic[i]
+            const { vehicle, id } = traffic[i]
 
             if (!vehicle) {
-                break
+                continue
+            }
+
+            const element = trafficRef.current.querySelector("#t" + id) as HTMLElement | null
+
+            if (!element) {
+                continue
             }
 
             const y = (vehicle.chassisBody.position.z - playerZ) * scale
-            const element = trafficRef.current.children[direction === 1 ? 1 : 0].querySelector("#t" + id) as HTMLElement
 
             element.style.top = (-y * 100 + playerOrigin).toFixed(2) + "%"
             element.style.left = (50 + (-vehicle.chassisBody.position.x / ROAD_BASE_WIDTH) * 100).toFixed(2) + "%"
@@ -160,30 +165,22 @@ function Debug() {
             </label>
             <div
                 ref={trafficRef}
-                className="mt-2 h-60 w-[50%] relative flex bg-[#000A] rounded-sm"
+                className="mt-2 h-60 w-[50%] relative bg-[#000A] rounded-sm"
             >
-                {[-1, 1].map(side => {
+                {traffic.map(({ direction, id, vehicle }) => {
+                    if (!vehicle) {
+                        return null
+                    }
+
                     return (
                         <div
-                            key={side}
-                            className="h-full relative flex-1"
-                        >
-                            {traffic.map(({ direction, id, vehicle }) => {
-                                if (direction === side && vehicle) {
-                                    return (
-                                        <div
-                                            key={id}
-                                            id={"t" + id}
-                                            onClick={() => removeTrafficElement(id)}
-                                            title={"#" + id.substring(id.length - 4)}
-                                            className="border-black border cursor-pointer w-2 h-3 rounded-sm translate-[-50%] absolute bg-[yellow]"
-                                        />
-                                    )
-                                }
-
-                                return null
-                            })}
-                        </div>
+                            key={id}
+                            id={"t" + id}
+                            onClick={() => removeTrafficElement(id)}
+                            title={"#" + id.substring(id.length - 4)}
+                            className="border-black border cursor-pointer w-2 h-3 rounded-sm translate-[-50%] absolute z-1"
+                            style={{ background: direction === 1 ? "yellow" : "orange" }}
+                        />
                     )
                 })}
                 <div
