@@ -206,10 +206,10 @@ function Debug() {
                 })}
             </select>
             <ul className="text-md gap-2 mt-2 flex flex-col" ref={partsRef}>
-                {road.map(({ type, id }, index) => {
+                {road.map(({ type, id, position }, index) => {
                     return (
                         <li key={id} onClick={() => removeRoadPart(id)}>
-                            {index + 1}. {type} [#{id.substring(id.length - 4)}]
+                            {index + 1}. {type} [#{id.substring(id.length - 4)}] @{position[2]}
                         </li>
                     )
                 })}

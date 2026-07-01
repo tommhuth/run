@@ -8,6 +8,7 @@ import { Tuple3 } from "../../types/global"
 import { Instance, InstanceName, MaterialName } from "./actions/actions"
 import { generateForestPart } from "./actions/road"
 import { initializeTraffic } from "./actions/traffic"
+import { ROAD_DEPTH } from "@components/road/const"
 
 interface RoadObject {
     id: string
@@ -108,9 +109,12 @@ const store = create(
         traffic: initializeTraffic(),
         leaves: [],
         road: [generateForestPart, generateForestPart, generateForestPart].map((generator, index) => {
-            const startZ = -30
+            const startZ = -40
 
-            return generator({ position: [0, 0, startZ + index * 20], depth: 20 })
+            return generator({
+                position: [0, 0, startZ + index * ROAD_DEPTH],
+                depth: ROAD_DEPTH
+            })
         }),
         depthTexture: null,
         materials: {} as RunStore["materials"],
