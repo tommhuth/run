@@ -120,7 +120,7 @@ export default function RoadMaterial() {
                         vec3 diff = vWorldPos - uTrafficPositions[i];
                         float trafficContact = length(vec2(diff.x, diff.z * 0.5));
 
-                        //diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, trafficContact);  
+                        diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, trafficContact);  
                     }
 
                     diffuseColor.rgb = mix(contactShadowColor, diffuseColor.rgb, aoSample);
