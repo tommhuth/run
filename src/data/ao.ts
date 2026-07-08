@@ -4,8 +4,8 @@ import { Camera } from "@react-three/fiber"
 import { DoubleSide, Matrix4, Mesh, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Texture, Vector2, WebGLRenderer, WebGLRenderTarget } from "three"
 
 export const aoMatrix = new Matrix4()
-export const AO_TEXTURE_WIDTH = 512
-export const AO_TEXTURE_HEIGHT = 1024
+export const AO_TEXTURE_WIDTH = 256
+export const AO_TEXTURE_HEIGHT = AO_TEXTURE_WIDTH * 2
 
 const aoCamera = new OrthographicCamera(-20, 20, 40, -40, 0, 100)
 
@@ -99,7 +99,7 @@ export function renderAO({
     ao,
     shadowBlur,
     shadowBlurHorizontal,
-    blurScale = 3,
+    blurScale = 2,
     blurIterations = 2
 }: RenderAOParams) {
     const z = camera.position.z + ROAD_FORWARD_EDGE / 2
