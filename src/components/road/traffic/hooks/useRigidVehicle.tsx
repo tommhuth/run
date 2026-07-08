@@ -1,3 +1,4 @@
+import { AO_LAYER } from "@components/Instances"
 import { useCannonWorld } from "@data/cannon"
 import { dampFactor, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
@@ -135,6 +136,11 @@ export function useRigidVehicle({
             "copy"
         )
     }, [])
+
+    useLayoutEffect(() => {
+        chassisRef.current?.traverse(o => o.layers.enable(AO_LAYER))
+        wheelsRef.current?.traverse(o => o.layers.enable(AO_LAYER))
+    }, [vehicle])
 
     useFrame((state, delta) => {
         syncVehicle(

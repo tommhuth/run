@@ -1,4 +1,5 @@
 import model from "@assets/models/bush.glb"
+import { aoLayers } from "@components/Instances"
 import { setMatrixAt } from "@components/materials/helpers"
 import { leafMaterial } from "@components/materials/shared"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
@@ -215,6 +216,7 @@ export default function Bushes({
             frustumCulled={false}
             castShadow
             receiveShadow
+            layers={aoLayers}
         />
     )
 }

@@ -2,20 +2,29 @@ import rockModel from "@assets/models/rock.glb"
 import streetLightModels from "@assets/models/streetlight.glb"
 import treesModels from "@assets/models/trees.glb"
 import { InstanceName } from "@data/store/actions/actions"
+import { useStore } from "@data/store/store"
 import { useGLTF } from "@react-three/drei"
+import { Layers } from "three"
 
 import { useExternalModel } from "./ExternalModel"
 import InstancedMesh from "./InstancedMesh"
-import { rockMaterial, streetLightMaterial, treeMaterial } from "./materials/shared"
+import { rockMaterial, streetLightMaterial } from "./materials/shared"
 
 for (const model of [streetLightModels, rockModel, treesModels]) {
     useGLTF.preload(model)
 }
 
+export const AO_LAYER = 2
+
+export const aoLayers = new Layers()
+
+aoLayers.set(AO_LAYER)
+
 export function Instances() {
     const rock = useExternalModel(rockModel, "rock")
     const trees = useExternalModel(treesModels)
     const streetLights = useExternalModel(streetLightModels)
+    const treeMataterial = useStore(i => i.materials.tree)
 
     return (
         <>
@@ -25,6 +34,7 @@ export function Instances() {
                 material={rockMaterial}
                 count={40}
                 castShadow
+                layers={aoLayers}
                 receiveShadow
             />
             {Object.entries(streetLights).map(([name, { geometry }]) => (
@@ -34,6 +44,7 @@ export function Instances() {
                     geometry={geometry}
                     material={streetLightMaterial}
                     count={20}
+                    layers={aoLayers}
                     castShadow
                     receiveShadow
                 />
@@ -44,7 +55,8 @@ export function Instances() {
                         name={name as InstanceName}
                         key={name}
                         geometry={geometry}
-                        material={treeMaterial}
+                        material={treeMataterial}
+                        layers={aoLayers}
                         count={20}
                         castShadow
                         receiveShadow

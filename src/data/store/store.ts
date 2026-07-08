@@ -1,6 +1,7 @@
+import { ROAD_DEPTH } from "@components/road/const"
 import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
 import { RigidVehicle } from "cannon-es"
-import { DepthTexture, Group, Material, PointLight, Vector3 } from "three"
+import { DepthTexture, Group, Material, PointLight, Texture, Vector3 } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
@@ -8,7 +9,6 @@ import { Tuple3 } from "../../types/global"
 import { Instance, InstanceName, MaterialName } from "./actions/actions"
 import { generateForestPart } from "./actions/road"
 import { initializeTraffic } from "./actions/traffic"
-import { ROAD_DEPTH } from "@components/road/const"
 
 interface RoadObject {
     id: string
@@ -64,6 +64,7 @@ export interface RunStore {
     state: "intro" | "gameover" | "running"
     instances: Record<InstanceName, Instance>
     depthTexture: null | DepthTexture
+    aoTexture: null | Texture
     materials: Record<MaterialName, Material>
     traffic: TrafficElement[]
     leaves: Leaf[]
@@ -117,6 +118,7 @@ const store = create(
             })
         }),
         depthTexture: null,
+        aoTexture: null,
         materials: {} as RunStore["materials"],
         instances: {} as RunStore["instances"],
         shared: {

@@ -4,11 +4,13 @@ import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallba
 import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
 
 import RoadMaterial from "./RoadMaterial"
+import TreeMaterial from "./TreeMaterial"
 
 function MaterialLoader() {
     const materials = useMemo(() => {
         return {
-            road: <RoadMaterial />
+            road: <RoadMaterial />,
+            tree: <TreeMaterial />,
         } satisfies Record<MaterialName, ReactNode>
     }, [])
 

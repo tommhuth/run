@@ -1,4 +1,5 @@
 import model from "@assets/models/suv.glb"
+import { aoLayers } from "@components/Instances"
 import { carMaterial } from "@components/materials/shared"
 import { Chassis, useRigidVehicle, Wheel, wheelKey } from "@components/road/traffic/hooks/useRigidVehicle"
 import { useGLTF } from "@react-three/drei"
@@ -84,6 +85,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                     receiveShadow
                     geometry={nodes.body.geometry}
                     position={[0, .2, 0]}
+                    layers={aoLayers}
                 >
                     <primitive
                         attach="material"
@@ -95,6 +97,7 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
                     receiveShadow
                     geometry={nodes["wheel-back"].geometry}
                     position={[0, 0.5, -1.05]}
+                    layers={aoLayers}
                 >
                     <primitive
                         attach="material"
@@ -104,7 +107,9 @@ function Suv({ children, ...props }: SuvProps, ref: ForwardedRef<RigidVehicle>) 
 
                 {children}
             </group>
-            <group ref={wheelsRef}>
+            <group
+                ref={wheelsRef}
+            >
                 {Array.from({ length: 4 }).map((i, index) => {
                     return (
                         <mesh

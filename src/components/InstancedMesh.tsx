@@ -4,7 +4,7 @@ import { InstanceName, setInstance } from "@data/store/actions/actions"
 import { store, useStore } from "@data/store/store"
 import { Tuple3, Tuple4 } from "@src/types/global"
 import { ReactNode, useEffect, useMemo, useState } from "react"
-import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThree, Material } from "three"
+import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThree, Layers, Material } from "three"
 
 import { setColorAt, setMatrixAt, setMatrixNullAt } from "./materials/helpers"
 
@@ -72,6 +72,7 @@ interface InstancedMeshProps {
     renderOrder?: number
     geometry?: BufferGeometry
     material?: Material
+    layers?: Layers
 }
 
 export default function InstancedMesh({
@@ -84,6 +85,7 @@ export default function InstancedMesh({
     name,
     renderOrder,
     geometry,
+    layers,
     material
 }: InstancedMeshProps) {
     const colorData = useMemo(() => {
@@ -109,6 +111,7 @@ export default function InstancedMesh({
             ref={setInstanceRef}
             visible={visible}
             frustumCulled={false}
+            layers={layers}
             renderOrder={renderOrder}
         >
             {colors && (

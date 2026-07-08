@@ -1,7 +1,7 @@
 import { glsl, setMatrixAt, setMatrixNullAt } from "@components/materials/helpers"
 import { useShader } from "@components/materials/useShader"
+import { depthIgnoreLayers } from "@data/depth"
 import { useInstanceClear } from "@data/hooks/useInstanceClear"
-import { depthIgnoreLayers } from "@data/hooks/useRenderWithDepth"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
 import IndexHandler from "@data/IndexHandler"
 import { useStore } from "@data/store/store"

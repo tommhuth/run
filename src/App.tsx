@@ -13,8 +13,8 @@ import Traffic from "@components/road/traffic/Traffic"
 import { CannonProvider } from "@data/cannon"
 import Config from "@data/Config"
 import useFramerateReady from "@data/hooks/useFramerateReady"
+import useRenderer from "@data/hooks/useRenderer"
 import { getStats, useRenderStats } from "@data/hooks/useRenderStats"
-import useRenderWithDepth from "@data/hooks/useRenderWithDepth"
 import { setState } from "@data/store/actions/actions"
 import { useStore } from "@data/store/store"
 import { extend, useThree } from "@react-three/fiber"
@@ -43,10 +43,11 @@ const start = Date.now()
 export default function App() {
     const showColliders = useStore(i => i.debug.showColliders)
     const loading = useStore(i => i.loading)
+    const aoTexture = useStore(i => i.aoTexture)
     const { gl, viewport } = useThree()
 
     useRenderStats()
-    useRenderWithDepth()
+    useRenderer()
     useFramerateReady(() => {
         setState({ loading: false })
         metrics.gauge("load_time", (Date.now() - start) / 1000, {
@@ -87,6 +88,13 @@ export default function App() {
             />
             <color args={["#fff"]} attach={"background"} />
             <Target />
+
+            {Config.DEBUG && (
+                <mesh position={[0, 2.1, 0]}>
+                    <boxGeometry args={[5, .1, 5]} />
+                    <meshBasicMaterial map={aoTexture} />
+                </mesh>
+            )}
 
             <CannonProvider debug={showColliders}>
                 <Camera />

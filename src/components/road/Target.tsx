@@ -1,6 +1,6 @@
 import { glsl } from "@components/materials/helpers"
 import { useShader } from "@components/materials/useShader"
-import { depthIgnoreLayers } from "@data/hooks/useRenderWithDepth"
+import { depthIgnoreLayers } from "@data/depth"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
 import { reachDestination } from "@data/store/actions/road"
 import { useStore } from "@data/store/store"

@@ -1,25 +1,28 @@
 import { ROAD_HEIGHT, ROAD_WIDTH } from "@components/road/const"
-import { store } from "@data/store/store"
+import { aoMatrix } from "@data/ao"
+import { store, useStore } from "@data/store/store"
 import { clamp, dampFactor, ndelta } from "@data/utils"
 import { useFrame } from "@react-three/fiber"
 import easings from "@src/shaders/easings.glsl"
 import { Vec3 } from "cannon-es"
 import { useEffect } from "react"
-import { Vector3 } from "three"
+import { Matrix4, Vector3 } from "three"
 
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
 
 export const MAX_TRAFFIC = 6
 
-
 const _rotation = new Vec3()
 const _position = new Vector3()
 
 export default function RoadMaterial() {
+    const aoTexture = useStore(i => i.aoTexture)
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
         uniforms: {
             uRoadWidth: { value: ROAD_WIDTH * .53 },
+            uAOTexture: { value: aoTexture },
+            uAOMatrix: { value: new Matrix4() },
             uRoadHeight: { value: ROAD_HEIGHT },
             uStripeWidth: { value: 0.25 },
             uDashSize: { value: 1.5 },
@@ -37,6 +40,8 @@ export default function RoadMaterial() {
             uniform float uRoadWidth;
             uniform float uRoadHeight;
             uniform float uStripeWidth;
+            uniform sampler2D uAOTexture;
+            uniform mat4 uAOMatrix;
             uniform vec3 uPlayerPosition;
             uniform vec3 uTargetPosition;
             uniform float uPlayerRotation;
@@ -65,6 +70,10 @@ export default function RoadMaterial() {
                 // make sure it happens before shadow calc
                 injectAt: "#include <color_fragment>",
                 main: glsl`
+                    vec4 aoClip = uAOMatrix * vec4(vWorldPos, 1.0);
+                    vec2 aoUV = aoClip.xy / aoClip.w * 0.5 + 0.5;
+                    float aoSample = texture2D(uAOTexture, aoUV).r * .5;
+
                     float halfRoad = uRoadWidth * 0.5;
                     float x = vWorldPos.x;
                     float z = vWorldPos.z;
@@ -98,11 +107,11 @@ export default function RoadMaterial() {
                     local = invRot * local;
 
                     float playerContact = length(vec2(local.x, local.y * 0.75));
-                    float contactShadowStrength = .85;
+                    float aoStrength = .75;
                     vec3 contactShadowColor = mix(
                         diffuseColor.rgb,
                         vec3(0., 0., .1),
-                        contactShadowStrength
+                        aoStrength
                     );
 
                     diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, playerContact);
@@ -111,8 +120,11 @@ export default function RoadMaterial() {
                         vec3 diff = vWorldPos - uTrafficPositions[i];
                         float trafficContact = length(vec2(diff.x, diff.z * 0.5));
 
-                        diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, trafficContact);  
+                        //diffuseColor.rgb = calcContactShadow(diffuseColor.rgb, contactShadowColor, trafficContact);  
                     }
+
+                    diffuseColor.rgb = mix(contactShadowColor, diffuseColor.rgb, aoSample);
+
                 `
             },
             {
@@ -136,9 +148,15 @@ export default function RoadMaterial() {
         ]
     })
 
+    useEffect(() => {
+        uniforms.uAOTexture.value = aoTexture
+    }, [aoTexture])
+
     useFrame((state, delta) => {
         const { player, traffic } = store.getState()
         const k = dampFactor(20, ndelta(delta))
+
+        uniforms.uAOMatrix.value.copy(aoMatrix)
 
         if (!player.vehicle) {
             return
