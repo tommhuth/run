@@ -8,18 +8,6 @@ export const leafMaterial = new MeshLambertMaterial({
     side: DoubleSide
 })
 
-export const rockMaterial = new MeshLambertMaterial({
-    color: "#8c9fb4",
-    name: "rock",
-    dithering: true
-})
-
-export const treeMaterial = new MeshLambertMaterial({
-    color: "#fff",
-    name: "tree",
-    dithering: true
-})
-
 export const streetLightMaterial = new MeshLambertMaterial({
     color: "#86a7cf",
     name: "streetlight",

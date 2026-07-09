@@ -18,11 +18,13 @@ const _position = new Vector3()
 
 export default function RoadMaterial() {
     const aoTexture = useStore(i => i.aoTexture)
+    const aoEnabled = useStore(i => i.debug.aoEnabled)
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
         uniforms: {
             uRoadWidth: { value: ROAD_WIDTH * .53 },
             uAOTexture: { value: aoTexture },
             uAOMatrix: { value: new Matrix4() },
+            uAOEnabled: { value: aoEnabled ? 1 : 0 },
             uRoadHeight: { value: ROAD_HEIGHT },
             uStripeWidth: { value: 0.25 },
             uDashSize: { value: 1.5 },
@@ -42,6 +44,7 @@ export default function RoadMaterial() {
             uniform float uStripeWidth;
             uniform sampler2D uAOTexture;
             uniform mat4 uAOMatrix;
+            uniform float uAOEnabled;
             uniform vec3 uPlayerPosition;
             uniform vec3 uTargetPosition;
             uniform float uPlayerRotation;
@@ -72,7 +75,9 @@ export default function RoadMaterial() {
                 main: glsl`
                     vec4 aoClip = uAOMatrix * vec4(vWorldPos, 1.0);
                     vec2 aoUV = aoClip.xy / aoClip.w * 0.5 + 0.5;
-                    float aoSample = texture2D(uAOTexture, aoUV).r * .5;
+                    float aoSample = texture2D(uAOTexture, aoUV).r;
+
+                    aoSample = mix(1.0, aoSample, uAOEnabled);
 
                     float halfRoad = uRoadWidth * 0.5;
                     float x = vWorldPos.x;
@@ -151,6 +156,10 @@ export default function RoadMaterial() {
     useEffect(() => {
         uniforms.uAOTexture.value = aoTexture
     }, [aoTexture])
+
+    useEffect(() => {
+        uniforms.uAOEnabled.value = aoEnabled ? 1 : 0
+    }, [aoEnabled])
 
     useFrame((state, delta) => {
         const { player, traffic } = store.getState()

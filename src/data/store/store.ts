@@ -74,6 +74,8 @@ export interface RunStore {
     debug: {
         showColliders: boolean
         godMode: boolean
+        aoEnabled: boolean
+        showAoDebug: boolean
         physicsTime: number
         bodies: number
         nextPartOverride: RoadPart["type"] | null
@@ -128,6 +130,8 @@ const store = create(
         debug: {
             showColliders: false,
             godMode: false,
+            aoEnabled: true,
+            showAoDebug: false,
             physicsTime: 0,
             bodies: 0,
             nextPartOverride: null

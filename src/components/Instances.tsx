@@ -8,7 +8,7 @@ import { Layers } from "three"
 
 import { useExternalModel } from "./ExternalModel"
 import InstancedMesh from "./InstancedMesh"
-import { rockMaterial, streetLightMaterial } from "./materials/shared"
+import { streetLightMaterial } from "./materials/shared"
 
 for (const model of [streetLightModels, rockModel, treesModels]) {
     useGLTF.preload(model)
@@ -25,6 +25,7 @@ export function Instances() {
     const trees = useExternalModel(treesModels)
     const streetLights = useExternalModel(streetLightModels)
     const treeMataterial = useStore(i => i.materials.tree)
+    const rockMaterial = useStore(i => i.materials.rock)
 
     return (
         <>

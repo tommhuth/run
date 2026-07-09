@@ -29,11 +29,12 @@ const aoMaterial = new ShaderMaterial({
     fragmentShader: /* glsl */ `
         varying vec3 vWorldPosition;
 
-        void main() { 
-            // plain mask  
-            float height = 1. - step(0., vWorldPosition.y);
+        void main() {
+            // plain mask
+            float mask = 1. - step(0., vWorldPosition.y);
+            float height = clamp(vWorldPosition.y / 15., 0., 1.);
 
-            gl_FragColor = vec4(height, height, height, 1.);
+            gl_FragColor = vec4(mask, height, 0., 1.);
         }
     `,
 })
@@ -99,7 +100,7 @@ export function renderAO({
     ao,
     shadowBlur,
     shadowBlurHorizontal,
-    blurScale = 2,
+    blurScale = 2.5,
     blurIterations = 2
 }: RenderAOParams) {
     const z = camera.position.z + ROAD_FORWARD_EDGE / 2

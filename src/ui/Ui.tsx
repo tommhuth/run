@@ -91,7 +91,7 @@ export default function Ui() {
 
 function Debug() {
     const state = store(i => i.state)
-    const { godMode, showColliders, physicsTime, bodies, nextPartOverride } = store(i => i.debug)
+    const { godMode, showColliders, aoEnabled, showAoDebug, physicsTime, bodies, nextPartOverride } = store(i => i.debug)
     const traffic = store(i => i.traffic)
     const player = store(i => i.player)
     const road = store(i => i.road)
@@ -162,6 +162,20 @@ function Debug() {
                     checked={showColliders}
                     onChange={e => setDebugData("showColliders", e.currentTarget.checked)}
                 /> Show colliders
+            </label>
+            <label className="relative z-1">
+                <input
+                    type="checkbox"
+                    checked={aoEnabled}
+                    onChange={e => setDebugData("aoEnabled", e.currentTarget.checked)}
+                /> Fake AO
+            </label>
+            <label className="relative z-1">
+                <input
+                    type="checkbox"
+                    checked={showAoDebug}
+                    onChange={e => setDebugData("showAoDebug", e.currentTarget.checked)}
+                /> Show AO texture
             </label>
             <div
                 ref={trafficRef}

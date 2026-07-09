@@ -7,7 +7,7 @@ import { Matrix4 } from "three"
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
 
-export default function TreeMaterial() {
+export default function RockMaterial() {
     const aoTexture = useStore(i => i.aoTexture)
     const aoEnabled = useStore(i => i.debug.aoEnabled)
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
@@ -51,8 +51,10 @@ export default function TreeMaterial() {
                 );
                 // only add shadow if not facing towards sky
                 float facing = clamp(vWorldNormal.y, 0.0, 1.0);
-                float below = smoothstep(aoSample.g * 15. * .85,aoSample.g * 15., vWorldPos.y);
-                float ao = mix(aoSample.r, 1.0, min(facing, below));                ao = mix(1.0, ao, uAOEnabled);
+                float below = smoothstep(aoSample.g * 15. * .85, aoSample.g * 15., vWorldPos.y);
+                float ao = mix(aoSample.r, 1.0, max(facing, below));
+                ao = mix(1.0, ao, uAOEnabled);
+
                 diffuseColor.rgb = mix(aoColor, diffuseColor.rgb, ao);
             `
         }
@@ -74,8 +76,8 @@ export default function TreeMaterial() {
         <meshLambertMaterial
             customProgramCacheKey={customProgramCacheKey}
             onBeforeCompile={onBeforeCompile}
-            color={"#fff"}
-            name="tree"
+            color={"#8c9fb4"}
+            name="rock"
             dithering
         />
     )

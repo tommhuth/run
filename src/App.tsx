@@ -42,6 +42,7 @@ const start = Date.now()
 
 export default function App() {
     const showColliders = useStore(i => i.debug.showColliders)
+    const showAoDebug = useStore(i => i.debug.showAoDebug)
     const loading = useStore(i => i.loading)
     const aoTexture = useStore(i => i.aoTexture)
     const { gl, viewport } = useThree()
@@ -89,9 +90,9 @@ export default function App() {
             <color args={["#fff"]} attach={"background"} />
             <Target />
 
-            {Config.DEBUG && (
-                <mesh position={[0, 2.1, 0]}>
-                    <boxGeometry args={[5, .1, 5]} />
+            {showAoDebug && (
+                <mesh position={[0, 2.1, 5]}>
+                    <boxGeometry args={[5, .1, 10]} />
                     <meshBasicMaterial map={aoTexture} />
                 </mesh>
             )}

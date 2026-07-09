@@ -4,6 +4,7 @@ import { cloneElement, memo, ReactElement, ReactNode, startTransition, useCallba
 import { BoxGeometry, BufferGeometry, Material, Mesh } from "three"
 
 import RoadMaterial from "./RoadMaterial"
+import RockMaterial from "./RockMaterial"
 import TreeMaterial from "./TreeMaterial"
 
 function MaterialLoader() {
@@ -11,6 +12,7 @@ function MaterialLoader() {
         return {
             road: <RoadMaterial />,
             tree: <TreeMaterial />,
+            rock: <RockMaterial />,
         } satisfies Record<MaterialName, ReactNode>
     }, [])
 
