@@ -1,6 +1,7 @@
 import { AO_TEXTURE_HEIGHT, AO_TEXTURE_WIDTH, renderAO } from "@data/ao"
 import { DEPTH_IGNORE_LAYER } from "@data/depth"
 import { setState } from "@data/store/actions/actions"
+import { store } from "@data/store/store"
 import { useFBO } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Tuple2 } from "@src/types/global"
@@ -48,15 +49,17 @@ export default function useRenderer() {
     })
 
     useFrame(({ gl, scene, camera }) => {
-        // render ao texture
-        renderAO({
-            gl,
-            scene,
-            camera,
-            shadowBlur,
-            shadowBlurHorizontal,
-            ao
-        })
+        if (store.getState().debug.aoEnabled) {
+            // render ao texture
+            renderAO({
+                gl,
+                scene,
+                camera,
+                shadowBlur,
+                shadowBlurHorizontal,
+                ao
+            })
+        }
 
         // render to depth buffer, excluding depth-ignored objects 
         camera.layers.enableAll()
