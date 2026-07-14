@@ -8,7 +8,7 @@ import { Layers } from "three"
 
 import { useExternalModel } from "./ExternalModel"
 import InstancedMesh from "./InstancedMesh"
-import { streetLightMaterial } from "./materials/shared"
+import { carMaterial } from "./materials/shared"
 
 for (const model of [streetLightModels, rockModel, treesModels]) {
     useGLTF.preload(model)
@@ -43,7 +43,7 @@ export function Instances() {
                     key={name}
                     name={name as InstanceName}
                     geometry={geometry}
-                    material={streetLightMaterial}
+                    material={carMaterial}
                     count={20}
                     layers={aoLayers}
                     castShadow

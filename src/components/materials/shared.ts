@@ -1,5 +1,5 @@
 import carMap from "@assets/textures/car.png"
-import { DoubleSide, MeshLambertMaterial, MeshPhongMaterial, SRGBColorSpace, TextureLoader } from "three"
+import { DoubleSide, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, SRGBColorSpace, TextureLoader } from "three"
 
 export const leafMaterial = new MeshLambertMaterial({
     name: "leaf",
@@ -8,10 +8,9 @@ export const leafMaterial = new MeshLambertMaterial({
     side: DoubleSide
 })
 
-export const streetLightMaterial = new MeshLambertMaterial({
-    color: "#86a7cf",
-    name: "streetlight",
-    dithering: true
+export const bulbMaterial = new MeshBasicMaterial({
+    color: "#fff",
+    toneMapped: false
 })
 
 const carTexture = new TextureLoader().load(carMap)

@@ -1,13 +1,9 @@
 # Run
   
-- more intelligent chicken
-- traffic lights
+- more intelligent chicken 
 - ui  
 - horizon
-- road sign
-- lightbulbs
-- restart if stuck?
- 
-- seconds jank? 
+- road sign  
+  
 - forest part force dense
 - intro part

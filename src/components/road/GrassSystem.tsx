@@ -1,4 +1,4 @@
-import model from "@assets/models/grass3.glb"
+import model from "@assets/models/grass.glb"
 import { setMatrixAt } from "@components/materials/helpers"
 import { useLowerPriorityFrame } from "@data/hooks/utils"
 import { store, useStore } from "@data/store/store"

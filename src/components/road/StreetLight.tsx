@@ -1,4 +1,5 @@
 import { useInstance } from "@components/InstancedMesh"
+import { bulbMaterial } from "@components/materials/shared"
 import { ShapeDefinition, useInstancedBody } from "@data/cannon"
 import { useTransitionedState } from "@data/hooks/utils"
 import { store } from "@data/store/store"
@@ -6,9 +7,12 @@ import { useFrame } from "@react-three/fiber"
 import { Tuple3 } from "@src/types/global"
 import { Box, Vec3 } from "cannon-es"
 import { useEffect } from "react"
+import { SphereGeometry } from "three"
 
 const height = 4.1
 const width = .75
+
+const bulbGeometry = new SphereGeometry(1, 16, 16)
 
 const box: ShapeDefinition = [
     [new Box(new Vec3(.15, height / 2, .15)), new Vec3(0, 0, 0)],
@@ -80,5 +84,17 @@ export default function StreetLight({
         }
     })
 
-    return null
-} 
+    return (
+        <group
+            position={[position[0], y, position[2]]}
+            rotation={rotation}
+        >
+            <mesh
+                geometry={bulbGeometry}
+                material={bulbMaterial}
+                scale={[.125, .1, .25]}
+                position={[0, height / 2 - .15, -width - .25]}
+            />
+        </group>
+    )
+}
