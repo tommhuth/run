@@ -84,6 +84,10 @@ export default function StreetLight({
         }
     })
 
+    if (collisionResponse) {
+        return null
+    }
+
     return (
         <group
             position={[position[0], y, position[2]]}

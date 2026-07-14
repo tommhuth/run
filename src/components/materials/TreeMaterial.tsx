@@ -1,8 +1,9 @@
+import { ROAD_FORWARD_EDGE } from "@components/road/const"
 import { aoMatrix } from "@data/ao"
-import { useStore } from "@data/store/store"
+import { store, useStore } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import { useEffect } from "react"
-import { Matrix4 } from "three"
+import { Matrix4, Vector3 } from "three"
 
 import { glsl } from "./helpers"
 import { useShader } from "./useShader"
@@ -15,11 +16,15 @@ export default function TreeMaterial() {
             uAOTexture: { value: aoTexture },
             uAOMatrix: { value: new Matrix4() },
             uAOEnabled: { value: aoEnabled ? 1 : 0 },
+            uFadeEdge: { value: ROAD_FORWARD_EDGE },
+            uPlayerPosition: { value: new Vector3() },
         },
         shared: glsl`
             uniform sampler2D uAOTexture;
             uniform mat4 uAOMatrix;
             uniform float uAOEnabled;
+            uniform float uFadeEdge;
+            uniform vec3 uPlayerPosition;
             varying vec3 vWorldPos;
             varying vec3 vWorldNormal;
         `,
@@ -52,8 +57,12 @@ export default function TreeMaterial() {
                 // only add shadow if not facing towards sky
                 float facing = clamp(vWorldNormal.y, 0.0, 1.0);
                 float below = smoothstep(aoSample.g * 15. * .85,aoSample.g * 15., vWorldPos.y);
-                float ao = mix(aoSample.r, 1.0, min(facing, below));                ao = mix(1.0, ao, uAOEnabled);
+                float ao = mix(aoSample.r, 1.0, min(facing, below));  
+                              
+                ao = mix(1.0, ao, uAOEnabled);
+
                 diffuseColor.rgb = mix(aoColor, diffuseColor.rgb, ao);
+                diffuseColor.a = smoothstep(75., 70., vWorldPos.z - uPlayerPosition.z);
             `
         }
     })
@@ -68,6 +77,12 @@ export default function TreeMaterial() {
 
     useFrame(() => {
         uniforms.uAOMatrix.value.copy(aoMatrix)
+
+        const { player } = store.getState()
+
+        if (player.vehicle) {
+            uniforms.uPlayerPosition.value.copy(player.vehicle.chassisBody.position)
+        }
     })
 
     return (
@@ -76,6 +91,7 @@ export default function TreeMaterial() {
             onBeforeCompile={onBeforeCompile}
             color={"#fff"}
             name="tree"
+            transparent
             dithering
         />
     )

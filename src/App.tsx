@@ -23,6 +23,7 @@ import { lazy, useEffect } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
+import { Sky } from "@components/road/Sky"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -89,6 +90,8 @@ export default function App() {
             />
             <color args={["#fff"]} attach={"background"} />
             <Target />
+
+            <Sky />
 
             {showAoDebug && (
                 <mesh position={[0, 2.1, 5]}>
