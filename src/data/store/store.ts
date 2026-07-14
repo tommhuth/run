@@ -51,6 +51,11 @@ export interface RoadPart {
     depth: number
 }
 
+export interface ForestPart extends Omit<RoadPart, "type"> {
+    dense: boolean
+    type: "forest"
+}
+
 export interface Leaf {
     id: string
     index: number
@@ -116,8 +121,8 @@ const store = create(
 
             return generator({
                 position: [0, 0, startZ + index * ROAD_DEPTH],
-                depth: ROAD_DEPTH
-            })
+                depth: ROAD_DEPTH,
+            }, true)
         }),
         depthTexture: null,
         aoTexture: null,

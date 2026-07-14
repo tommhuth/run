@@ -1,5 +1,5 @@
 import PlaceGrid from "@data/PlaceGrid"
-import { RockObject, TreeObject } from "@data/store/store"
+import { ForestPart, RoadPart, RockObject, TreeObject } from "@data/store/store"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 import { Suspense, useMemo } from "react"
@@ -10,7 +10,11 @@ import Rock from "../Rock"
 import StreetLight from "../StreetLight"
 import Tree from "../Tree"
 
-export default function ForestPart({ position, depth }) {
+export default function ForestPart({
+    position,
+    depth,
+    dense
+}: ForestPart) {
     const { trees, rocks } = useMemo(() => {
         const leftGrid = new PlaceGrid([2, 5], 4, [position[0] + 10, 0, position[2] + depth / 2])
         const rightGrid = new PlaceGrid([2, 5], 4, [position[0] - 10, 0, position[2] + depth / 2])
@@ -18,7 +22,7 @@ export default function ForestPart({ position, depth }) {
         const rocks: RockObject[] = []
 
         for (const side of [-1, 1]) {
-            const treeCount = random.pick(3, 2, 2, 6, 8)
+            const treeCount = dense ? 8 : random.pick(3, 2, 2, 6, 8)
             const grid = side === -1 ? leftGrid : rightGrid
             const positions = grid.getRandomPositions()
 

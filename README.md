@@ -2,8 +2,7 @@
   
 - more intelligent chicken 
 - ui  
-- horizon
+- horizon 
+
 - road sign  
   
-- forest part force dense
-- intro part

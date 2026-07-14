@@ -2,7 +2,7 @@ import { ROAD_FORWARD_EDGE } from "@components/road/const"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 
-import { RoadPart, store } from "../store"
+import { ForestPart, RoadPart, store } from "../store"
 import { setState } from "./actions"
 
 interface PreviousPart {
@@ -20,11 +20,15 @@ export function getRandomRoadExtension() {
     return random.boolean(.85) ? generateForestPart : random.pick(generateRocksPart, generateBridgePart)
 }
 
-export function generateForestPart(previous: PreviousPart): RoadPart {
+export function generateForestPart(
+    previous: PreviousPart,
+    dense = false
+): ForestPart {
     return {
         type: "forest",
         id: random.id(),
         depth: 20,
+        dense,
         position: [
             0,
             0,
