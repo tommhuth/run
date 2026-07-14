@@ -74,7 +74,7 @@ const material = new ShaderMaterial({
 
             float clouds = fbm(cloudUv);
             // Threshold + soft edges so clouds look like puffs rather than a haze.
-            clouds = smoothstep(0.3, 0.6, clouds);
+            clouds = smoothstep(0.4, 0.7, clouds);
 
             // Fade clouds out below the horizon and at the zenith so the gradient reads cleanly.
             float horizonMask = smoothstep(0.05, 0.35, dir.y) * smoothstep(1.0, 0.6, dir.y);
