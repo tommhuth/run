@@ -49,7 +49,7 @@ const material = new ShaderMaterial({
             float value = 0.0;
             float amp = 0.5;
 
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 3; i++) {
                 value += amp * noise(p);
                 p *= 2.0;
                 amp *= 0.5;
