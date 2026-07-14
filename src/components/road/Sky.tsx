@@ -2,15 +2,17 @@ import { store } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import noise from "@src/shaders/noise.glsl"
 import { useRef } from "react"
-import { Color, DoubleSide, Mesh, ShaderMaterial, Vector3 } from "three"
+import { BackSide, Color, LessEqualDepth, Mesh, ShaderMaterial, Vector3 } from "three"
 
 import { ROAD_FORWARD_EDGE } from "./const"
 
 const RADIUS = ROAD_FORWARD_EDGE + 10
 
 const material = new ShaderMaterial({
-    side: DoubleSide,
+    side: BackSide,
     depthWrite: false,
+    depthTest: true,
+    depthFunc: LessEqualDepth,
     wireframe: false,
     uniforms: {
         topColor: { value: new Color("#dae3eb") },
@@ -25,7 +27,10 @@ const material = new ShaderMaterial({
 
         void main() {
             vWorldPosition = position;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            vec4 clip = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            // Force depth to the far plane so any drawn geometry occludes the sky.
+            clip.z = clip.w;
+            gl_Position = clip;
         }
       `,
     fragmentShader: /* glsl */`
@@ -104,7 +109,7 @@ export function Sky() {
             ref={ref}
             material={material}
             frustumCulled={false}
-            renderOrder={-1000}
+            renderOrder={1000}
             scale={[1, .5, 1]}
         >
             <sphereGeometry args={[RADIUS, 32, 32]} />
