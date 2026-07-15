@@ -1,8 +1,7 @@
 # Run
   
 - more intelligent chicken 
-- ui   
-- target update
+- ui    
 
 - road sign  
   

@@ -9,28 +9,24 @@ import { useFrame, useThree } from "@react-three/fiber"
 import depth from "@src/shaders/depth.glsl"
 import easings from "@src/shaders/easings.glsl"
 import noise from "@src/shaders/noise.glsl"
-import { useEffect, useRef, useState } from "react"
-import { Color, Vector2, Vector3 } from "three"
+import { useEffect, useRef } from "react"
+import { Color, InstancedMesh, Vector2, Vector3 } from "three"
+import { damp } from "three/src/math/MathUtils.js"
 
 import { ROAD_WIDTH } from "./const"
-
-const FADE_IN_DURATION = 0.35
 
 export default function Target({
     height = 100,
     width = ROAD_WIDTH * .25
 }) {
+    const ref = useRef<InstancedMesh>(null)
     const nextTargetAt = useStore(i => i.player.nextTargetAt)
     const depthTexture = useStore(i => i.depthTexture)
     const { camera, size, viewport } = useThree()
-    const [prevTargetAt, setPrevTargetAt] = useState(nextTargetAt)
-    const fadeStartRef = useRef(0)
     const { uniforms, onBeforeCompile, customProgramCacheKey } = useShader({
         uniforms: {
             uTime: { value: 0 },
             uColorProgress: { value: 0 },
-            uFadeIn: { value: 1 },
-            uHeight: { value: height },
             uSpeed: { value: 0 },
             uSize: { value: 3 },
             cameraNear: { value: camera.near },
@@ -51,9 +47,7 @@ export default function Target({
             uniform float uTime;
             uniform float uSpeed;
             uniform float uSize;
-            uniform float uColorProgress; 
-            uniform float uFadeIn;
-            uniform float uHeight;
+            uniform float uColorProgress;  
             uniform float cameraNear;
             uniform float cameraFar;
             uniform vec2 resolution;
@@ -99,15 +93,10 @@ export default function Target({
                 
                 // Fade out bottom  player is away
                 float playerDist = length(vPosition - uPlayerPosition);
-                float distFactor = smoothstep(35.0, 50.0, playerDist);
-                float b = clamp(vPosition.y / 16.0, 0.0, 1.0);
-                float bottomFade = mix(1.0, b, distFactor);
+                float distFactor = smoothstep(35.0, 50.0, playerDist); 
+                float bottomFade = mix(1.0, clamp(vPosition.y / 16.0, 0.0, 1.0), distFactor); 
 
-                // bottom-up reveal driven by uFadeIn (0 = hidden, 1 = fully revealed)
-                float reveal = uFadeIn * (uHeight + 4.0);
-                float revealMask = 1.0 - smoothstep(reveal - 4.0, reveal + 4.0, vPosition.y);
-
-                gl_FragColor.a *= depthFade * bottomFade * revealMask; 
+                gl_FragColor.a *= depthFade * bottomFade  ; 
             `
         }
     })
@@ -118,25 +107,15 @@ export default function Target({
             .multiplyScalar(viewport.dpr)
     }, [size, depthTexture])
 
-    useEffect(() => {
-        if (prevTargetAt === nextTargetAt) {
-            return
-        }
-
-        uniforms.uFadeIn.value = 0
-        uniforms.uHeight.value = height
-        fadeStartRef.current = 0
-        setPrevTargetAt(nextTargetAt)
-    }, [nextTargetAt, prevTargetAt, height, uniforms])
-
     useFrame((state, delta) => {
         const { player } = useStore.getState()
+        const nd = ndelta(delta)
 
-        if (!player.vehicle) {
+        if (!player.vehicle || !ref.current) {
             return
         }
 
-        uniforms.uTime.value += ndelta(delta)
+        uniforms.uTime.value += nd
 
         const t = (player.deadline - Date.now())
         const f = (1 - clamp(t / 5000)) * 5
@@ -146,13 +125,7 @@ export default function Target({
         uniforms.uSpeed.value += f * delta
         uniforms.uPlayerPosition.value.copy(player.vehicle.chassisBody.position)
 
-        const fadeStart = fadeStartRef.current
-
-        if (fadeStart > 0 && uniforms.uFadeIn.value < 1) {
-            const now = performance.now() / 1000
-
-            uniforms.uFadeIn.value = clamp((now - fadeStart) / FADE_IN_DURATION)
-        }
+        ref.current.position.z = damp(ref.current.position.z, nextTargetAt, 2, nd)
     })
 
     useLowerPriorityFrame(() => {
@@ -172,7 +145,8 @@ export default function Target({
             <mesh
                 renderOrder={-1}
                 layers={depthIgnoreLayers}
-                position={[0, height / 2, nextTargetAt]}
+                position-y={height / 2}
+                ref={ref}
             >
                 <meshBasicMaterial
                     customProgramCacheKey={customProgramCacheKey}
