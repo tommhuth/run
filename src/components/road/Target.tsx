@@ -27,6 +27,7 @@ export default function Target({
         uniforms: {
             uTime: { value: 0 },
             uColorProgress: { value: 0 },
+            uHitProgress: { value: 0 },
             uSpeed: { value: 0 },
             uSize: { value: 3 },
             cameraNear: { value: camera.near },
@@ -45,6 +46,7 @@ export default function Target({
         },
         shared: glsl` 
             uniform float uTime;
+            uniform float uHitProgress;
             uniform float uSpeed;
             uniform float uSize;
             uniform float uColorProgress;  
@@ -73,30 +75,39 @@ export default function Target({
                 ${easings} 
             `,
             main: glsl`     
-                // world-space chevrons (v), scrolling down
+                // world-space chevrons (v) scrolling down
                 float wave = vPosition.y / uSize + uSpeed + uTime * 1. - abs(vPosition.x) / uSize;
-                float pattern = easeInOutQuad(fract(wave));   
-                float topFadeoutAt = 100.;
- 
+                float pattern = easeInOutQuad(fract(wave));  
+                vec3 arrowColor = mix(uChevronColor, uTimeoutColor, easeOutQuad(uColorProgress));
+                
                 gl_FragColor.rgb = mix(
                     mix(vec3(.0, .7, .7), vec3(1.0, .25, 0.), uColorProgress), 
-                    mix(uChevronColor, uTimeoutColor, easeOutQuad(uColorProgress)), 
+                    arrowColor, 
                     pattern
-                );
-                gl_FragColor.a = pattern;
-                gl_FragColor.a *= easeInQuad(1. - clamp((vPosition.y - 1.) / topFadeoutAt, 0., 1.));
+                ); 
+
+                float hit = smoothstep(.2, 1., uHitProgress / 1200.);
+
+                gl_FragColor.rgb = mix(arrowColor, gl_FragColor.rgb, hit);
+
+                // top fade 
+                float topFadeoutAt = 100.;
+                float topFade = 1. - smoothstep(1., topFadeoutAt, vPosition.y);
 
                 // depth intersection fade
                 float depthDist = getFragmentDepth(vPosition, depthTexture, gl_FragCoord.xy / resolution, viewMatrix, cameraNear, cameraFar);
                 float fadeDist = .025;
                 float depthFade = clamp(abs(depthDist) / fadeDist, 0.0, 1.0);
                 
-                // Fade out bottom  player is away
+                // Fade out bottom far away from player
                 float playerDist = length(vPosition - uPlayerPosition);
                 float distFactor = smoothstep(35.0, 50.0, playerDist); 
-                float bottomFade = mix(1.0, clamp(vPosition.y / 16.0, 0.0, 1.0), distFactor); 
+                float bottomFade = mix(1.0, smoothstep(0., 16., vPosition.y), distFactor); 
 
-                gl_FragColor.a *= depthFade * bottomFade  ; 
+                gl_FragColor.a = mix(1., pattern, hit) 
+                    * topFade 
+                    * depthFade 
+                    * bottomFade;
             `
         }
     })
@@ -106,6 +117,10 @@ export default function Target({
         uniforms.resolution.value.set(size.width, size.height)
             .multiplyScalar(viewport.dpr)
     }, [size, depthTexture])
+
+    useEffect(() => {
+        uniforms.uHitProgress.value = 0
+    }, [nextTargetAt])
 
     useFrame((state, delta) => {
         const { player } = useStore.getState()
@@ -117,13 +132,14 @@ export default function Target({
 
         uniforms.uTime.value += nd
 
-        const t = (player.deadline - Date.now())
+        const t = player.deadline - Date.now()
         const f = (1 - clamp(t / 5000)) * 5
         const c = 1 - clamp(t / 400)
 
         uniforms.uColorProgress.value = c
         uniforms.uSpeed.value += f * delta
         uniforms.uPlayerPosition.value.copy(player.vehicle.chassisBody.position)
+        uniforms.uHitProgress.value += nd * 1000
 
         ref.current.position.z = damp(ref.current.position.z, nextTargetAt, 2, nd)
     })
