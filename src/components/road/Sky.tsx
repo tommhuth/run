@@ -43,8 +43,7 @@ const material = new ShaderMaterial({
         varying vec3 vWorldPosition;
 
         ${noise}
-
-        // layered noise for soft cloud puffs.
+ 
         float fbm(vec2 p) {
             float value = 0.0;
             float amp = 0.5;
