@@ -6,3 +6,9 @@ export const ROAD_LANE_CENTER_X = 1.5
 export const ROAD_FORWARD_EDGE = 75
 export const ROAD_GAME_OVER_X_EDGE = 20
 export const FOG_DISTANCE = 60
+
+export const ROAD_SLOPE_START_X = 3.04
+export const ROAD_SLOPE_END_X = 5.5
+
+
+export const ROAD_SLOPE_ANGLE = Math.atan2(ROAD_HEIGHT, ROAD_SLOPE_END_X - ROAD_SLOPE_START_X)

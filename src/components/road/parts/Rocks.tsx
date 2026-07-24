@@ -1,5 +1,5 @@
 import PlaceGrid from "@data/PlaceGrid"
-import { BushObject, RockObject } from "@data/store/store"
+import type { BushObject, RockObject, RocksPart } from "@data/store/store"
 import random from "@huth/random"
 import { Tuple3 } from "@src/types/global"
 import { Suspense, useMemo } from "react"
@@ -10,7 +10,7 @@ import RoadSegment from "../RoadSegment"
 import Rock from "../Rock"
 import StreetLight from "../StreetLight"
 
-export default function RocksPart({ position, depth }) {
+export default function RocksPart({ position, depth }: RocksPart) {
     const { rocks, bushes } = useMemo(() => {
         const leftGrid = new PlaceGrid([2, 5], 4, [position[0] + 10, 0, position[2] + depth / 2])
         const rightGrid = new PlaceGrid([2, 5], 4, [position[0] - 10, 0, position[2] + depth / 2])

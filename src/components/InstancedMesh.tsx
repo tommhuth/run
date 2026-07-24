@@ -2,9 +2,9 @@ import { useInstanceClear } from "@data/hooks/useInstanceClear"
 import { useTransitionedState } from "@data/hooks/utils"
 import { InstanceName, setInstance } from "@data/store/actions/actions"
 import { store, useStore } from "@data/store/store"
-import { Tuple3, Tuple4 } from "@src/types/global"
+import { Tuple3 } from "@src/types/global"
 import { ReactNode, useEffect, useMemo, useState } from "react"
-import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThree, Layers, Material } from "three"
+import { BufferGeometry, ColorRepresentation, InstancedMesh as InstancedMeshThree, Layers, Material, QuaternionLike } from "three"
 
 import { setColorAt, setMatrixAt, setMatrixNullAt } from "./materials/helpers"
 
@@ -12,7 +12,7 @@ interface UseInstanceOptions {
     keepAround?: boolean
     color?: ColorRepresentation
     scale?: number | Tuple3
-    rotation?: Tuple3 | Tuple4
+    rotation?: Tuple3 | QuaternionLike
     position?: Tuple3
 }
 
@@ -42,7 +42,7 @@ export function useInstance(name: InstanceName, {
                 rotation,
             })
         }
-    }, [index, ...rotation, ...position, ...(Array.isArray(scale) ? scale : [scale]), instance])
+    }, [index, instance])
 
     useEffect(() => {
         if (typeof index === "number" && instance && keepAround) {

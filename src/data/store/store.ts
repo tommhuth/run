@@ -44,15 +44,25 @@ export interface TrafficElement {
     direction: 1 | -1
 }
 
-export interface RoadPart {
+export type RoadPart = ForestPart | RocksPart | BridgePart
+
+export interface BaseRoadPart {
     id: string
-    type: "forest" | "rocks" | "bridge"
     position: Tuple3
     depth: number
 }
 
-export interface ForestPart extends Omit<RoadPart, "type"> {
+export interface RocksPart extends BaseRoadPart {
+    type: "rocks"
+}
+
+export interface BridgePart extends BaseRoadPart {
+    type: "bridge"
+}
+
+export interface ForestPart extends BaseRoadPart {
     dense: boolean
+    leafAnchor: boolean
     type: "forest"
 }
 

@@ -1,4 +1,4 @@
-import { Tuple2, Tuple3, Tuple4 } from "src/types/global"
+import { Tuple2, Tuple3 } from "src/types/global"
 import {
     BufferAttribute,
     BufferGeometry,
@@ -8,7 +8,9 @@ import {
     InstancedMesh,
     Matrix4,
     Quaternion,
-    Vector3
+    QuaternionLike,
+    Vector3,
+    Vector3Like
 } from "three"
 
 export function glsl(strings: TemplateStringsArray, ...variables) {
@@ -31,8 +33,8 @@ const _euler = new Euler()
 interface SetMatrixAtParams {
     instance: InstancedMesh
     index: number
-    position?: Tuple3 | Vector3
-    rotation?: Tuple3 | Tuple4
+    position?: Tuple3 | Vector3Like
+    rotation?: Tuple3 | QuaternionLike
     scale?: Tuple3 | number
 }
 
@@ -44,8 +46,8 @@ export function setMatrixAt({
     scale = [1, 1, 1],
 }: SetMatrixAtParams) {
     instance.setMatrixAt(index, _matrix.compose(
-        Array.isArray(position) ? _position.set(...position) : position,
-        rotation.length === 3 ? _quaternion.setFromEuler(_euler.set(...rotation, "XYZ")) : _quaternion.set(...rotation),
+        Array.isArray(position) ? _position.set(...position) : _position.copy(position),
+        Array.isArray(rotation) ? _quaternion.setFromEuler(_euler.set(...rotation, "XYZ")) : _quaternion.copy(rotation),
         Array.isArray(scale) ? _scale.set(...scale) : _scale.set(scale, scale, scale),
     ))
     instance.instanceMatrix.needsUpdate = true

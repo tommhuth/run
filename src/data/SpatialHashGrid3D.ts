@@ -1,5 +1,6 @@
 import { RigidVehicle } from "cannon-es"
 import { Tuple3 } from "src/types/global"
+import { Vector3Like } from "three"
 
 export interface Client {
     position: Tuple3
@@ -31,10 +32,14 @@ export class SpatialHashGrid3D {
         ]
     }
 
-    private getCellBounds(position: Tuple3, size: Tuple3): [min: Tuple3, max: Tuple3] {
+    private getCellBounds(position: Tuple3 | Vector3Like, size: Tuple3): [min: Tuple3, max: Tuple3] {
+        const x = Array.isArray(position) ? position[0] : position.x
+        const y = Array.isArray(position) ? position[1] : position.y
+        const z = Array.isArray(position) ? position[2] : position.z
+
         return [
-            this.getCellIndex(position[0] - size[0] / 2, position[1] - size[1] / 2, position[2] - size[2] / 2),
-            this.getCellIndex(position[0] + size[0] / 2, position[1] + size[1] / 2, position[2] + size[2] / 2),
+            this.getCellIndex(x - size[0] / 2, y - size[1] / 2, z - size[2] / 2),
+            this.getCellIndex(x + size[0] / 2, y + size[1] / 2, z + size[2] / 2),
         ]
     }
 
@@ -64,7 +69,7 @@ export class SpatialHashGrid3D {
         }
     }
 
-    public findNear(position: Tuple3, size: Tuple3) {
+    public findNear(position: Tuple3 | Vector3Like, size: Tuple3) {
         const [min, max] = this.getCellBounds(position, size)
         const result: Client[] = []
 

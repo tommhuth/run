@@ -201,7 +201,7 @@ export default function Bushes({
                 instance: ref.current,
                 index,
                 position: bush.position,
-                rotation: bush.spring.toArray(),
+                rotation: bush.spring.current,
                 scale: [bush.radius * 2, bush.height, bush.radius * 2],
             })
         }

@@ -8,7 +8,7 @@ import { useFrame } from "@react-three/fiber"
 import { useState } from "react"
 import { BufferGeometry, Float32BufferAttribute, InstancedMesh } from "three"
 
-const geometry = new BufferGeometry()
+const leafGeometry = new BufferGeometry()
 // rounded leaf with pointy tip and small stem-end point
 const positions = new Float32BufferAttribute([
     0, 0, 0,        // 0 center
@@ -22,8 +22,8 @@ const positions = new Float32BufferAttribute([
     0.04, 0.06, 0,  // 8
 ], 3)
 
-geometry.setAttribute("position", positions)
-geometry.setIndex([
+leafGeometry.setAttribute("position", positions)
+leafGeometry.setIndex([
     0, 1, 2,
     0, 2, 3,
     0, 3, 4,
@@ -33,9 +33,11 @@ geometry.setIndex([
     0, 7, 8,
     0, 8, 1,
 ])
-geometry.computeVertexNormals()
+leafGeometry.computeVertexNormals()
 
 const GRAVITY = 3
+
+export { leafGeometry }
 
 export default function LeafSystem() {
     const [instance, setInstance] = useState<InstancedMesh | null>(null)
@@ -96,7 +98,7 @@ export default function LeafSystem() {
     return (
         <instancedMesh
             ref={setInstance}
-            args={[geometry, leafMaterial, LEAF_MAX_COUNT]}
+            args={[leafGeometry, leafMaterial, LEAF_MAX_COUNT]}
             frustumCulled={false}
         />
     )

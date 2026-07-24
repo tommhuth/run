@@ -330,8 +330,8 @@ export function useInstancedBody({
             setMatrixAt({
                 index,
                 instance,
-                position: body.position.toArray(),
-                rotation: body.quaternion.toArray(),
+                position: body.position,
+                rotation: body.quaternion,
                 scale
             })
         }

@@ -8,7 +8,7 @@ const _step = new Quaternion()
 export default class QuaternionSpring {
     private stiffness: number
     private damping: number
-    private current = new Quaternion()
+    public current = new Quaternion()
     private velocity = new Vector3()
 
     constructor(stiffness: number, damping: number, base?: Quaternion) {

@@ -91,9 +91,9 @@ export function useControls() {
 
         if (typeof keys.touchY === "number") {
             motion.wheelForce = config.baseForce * keys.touchY * forceScaler
-        } else if (keys.w || keys.ArrowUp) {
+        } else if (keys.w || keys.arrowup) {
             motion.wheelForce = config.baseForce * forceScaler
-        } else if (keys.s || keys.ArrowDown) {
+        } else if (keys.s || keys.arrowdown) {
             motion.wheelForce = -config.baseForce * forceScaler
         } else {
             motion.wheelForce = 0
@@ -101,9 +101,9 @@ export function useControls() {
 
         if (typeof keys.touchX === "number") {
             motion.steering = config.baseSteering * keys.touchX
-        } else if (keys.a) {
+        } else if (keys.a || keys.arrowleft) {
             motion.steering = config.baseSteering
-        } else if (keys.d) {
+        } else if (keys.d || keys.arrowright) {
             motion.steering = -config.baseSteering
         } else {
             motion.steering = 0

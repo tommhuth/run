@@ -29,6 +29,7 @@ export function generateForestPart(
         id: random.id(),
         depth: 20,
         dense,
+        leafAnchor: random.boolean(.5),
         position: [
             0,
             0,

@@ -5,9 +5,11 @@ import CloudSystem from "@components/road/CloudSystem"
 import { FOG_DISTANCE, ROAD_FORWARD_EDGE } from "@components/road/const"
 import GrassSystem from "@components/road/GrassSystem"
 import Ground from "@components/road/Ground"
+import GroundLeafSystem from "@components/road/GroundLeafSystem"
 import LeafSystem from "@components/road/LeafSystem"
 import Player from "@components/road/player/Player"
 import Road from "@components/road/Road"
+import { Sky } from "@components/road/Sky"
 import Target from "@components/road/Target"
 import Traffic from "@components/road/traffic/Traffic"
 import { CannonProvider } from "@data/cannon"
@@ -23,7 +25,6 @@ import { lazy, useEffect } from "react"
 
 import Camera from "./components/Camera"
 import extensions from "./extensions"
-import { Sky } from "@components/road/Sky"
 
 const Perf = lazy(async () => {
     const { Perf } = await import("r3f-perf")
@@ -106,6 +107,7 @@ export default function App() {
                 <Player />
                 <GrassSystem />
                 <CloudSystem />
+                <GroundLeafSystem />
                 <LeafSystem />
 
                 <Ground />

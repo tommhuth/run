@@ -1,7 +1,7 @@
 import model from "@assets/models/railing.glb"
 import { ShapeDefinition, useBody } from "@data/cannon"
 import PlaceGrid from "@data/PlaceGrid"
-import { RockObject, useStore } from "@data/store/store"
+import { type BridgePart, type RockObject, useStore } from "@data/store/store"
 import random from "@huth/random"
 import { useGLTF } from "@react-three/drei"
 import { GLTFModel, Tuple3 } from "@src/types/global"
@@ -21,7 +21,7 @@ const railings: ShapeDefinition = [
 ]
 const roadGeometry = new BoxGeometry(ROAD_BASE_WIDTH + widthBuffer, ROAD_HEIGHT, ROAD_DEPTH)
 
-export default function BridgePart({ position, depth }) {
+export default function BridgePart({ position, depth }: BridgePart) {
     const { nodes } = useGLTF(model) as unknown as GLTFModel<["railing"]>
     const roadMaterial = useStore(i => i.materials.road)
     const { rocks } = useMemo(() => {
