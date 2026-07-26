@@ -87,7 +87,7 @@ export default function Ui() {
                 hidden={player.deadline === Infinity}
                 ref={progressRef}
                 style={{ display: hideHud ? "none" : undefined }}
-                className="fixed left-6 right-6 md:left-[5vw] md:right-[5vw] md:bottom-[7vh] bottom-12 h-0.5 bg-[currentColor] origin-left rounded-full"
+                className="fixed left-8 right-8 md:left-[6vw] md:right-[6vw] md:bottom-[7vh] bottom-10 h-0.5 bg-[currentColor] origin-left rounded-full"
             />
 
             {Config.DEBUG && <Debug />}
