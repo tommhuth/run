@@ -72,7 +72,7 @@ export function reachDestination() {
     const deadlineInSeconds = targetDistance * secondsPerMeter
     let score = 0
 
-    if (player.deadline > 0) {
+    if (Number.isFinite(player.deadline) && player.deadline > 0) {
         const currentTime = (player.deadline - Date.now()) / 1000
 
         score = currentTime * player.targetDistance * 100
