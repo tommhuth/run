@@ -1,7 +1,6 @@
 import IndexHandler from "@data/IndexHandler"
 import { startTransition } from "react"
 import { InstancedMesh, Material } from "three"
-import { Object3D } from "three/webgpu"
 
 import { RunStore, store } from "../store"
 
@@ -55,11 +54,3 @@ export function setInstance(name: string, mesh: InstancedMesh, maxCount: number)
     })
 }
 
-export function setSharedObject(object: Object3D) {
-    setState({
-        shared: {
-            ...store.getState().shared,
-            [object.name]: object
-        }
-    })
-}

@@ -1,7 +1,7 @@
 import { ROAD_DEPTH } from "@components/road/const"
 import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
 import { RigidVehicle } from "cannon-es"
-import { DepthTexture, Group, Material, PointLight, Texture, Vector3 } from "three"
+import { DepthTexture, Group, Material, Texture, Vector3 } from "three"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
@@ -95,9 +95,6 @@ export interface RunStore {
         bodies: number
         nextPartOverride: RoadPart["type"] | null
     }
-    shared: {
-        pointLight: null | PointLight
-    }
     player: {
         mesh: Group | null
         vehicle: RigidVehicle | null
@@ -128,19 +125,17 @@ const store = create(
         leaves: [],
         road: [generateForestPart, generateForestPart, generateForestPart].map((generator, index) => {
             const startZ = -40
-
-            return generator({
+            const previousPart: Parameters<typeof generator>[0] = {
                 position: [0, 0, startZ + index * ROAD_DEPTH],
                 depth: ROAD_DEPTH,
-            }, true)
+            }
+
+            return generator(previousPart, true)
         }),
         depthTexture: null,
         aoTexture: null,
         materials: {} as RunStore["materials"],
         instances: {} as RunStore["instances"],
-        shared: {
-            pointLight: null
-        },
         loading: true,
         debug: {
             showColliders: false,
