@@ -1,5 +1,5 @@
 import { useTransitionedState } from "@data/hooks/utils"
-import { Client } from "@data/SpatialHashGrid3D"
+import { Client } from "@data/SpatialHashGrid2D"
 import { useStore } from "@data/store/store"
 import { useFrame } from "@react-three/fiber"
 import { useEffect } from "react"
@@ -17,7 +17,7 @@ export default function useTrafficClient({
         }
 
         const { grid } = useStore.getState()
-        const client = grid.createClient(vehicle.chassisBody.position.toArray(), [1.5, 2, 3], {
+        const client = grid.createClient(vehicle.chassisBody.position.toArray(), [1.5, 3], {
             type,
             direction,
             vehicle
@@ -37,7 +37,9 @@ export default function useTrafficClient({
 
         const { grid } = useStore.getState()
 
-        client.position = vehicle.chassisBody.position.toArray()
+        client.position[0] = vehicle.chassisBody.position.x
+        client.position[1] = vehicle.chassisBody.position.y
+        client.position[2] = vehicle.chassisBody.position.z
         grid.updateClient(client)
     })
 

@@ -316,8 +316,8 @@ export function useInstancedBody({
     useLayoutEffect(() => {
         if (instance && typeof index === "number" && active) {
             setMatrixAt({
-                index,
                 instance,
+                index,
                 position,
                 rotation,
                 scale,
@@ -328,11 +328,11 @@ export function useInstancedBody({
     useFrame(() => {
         if (instance && typeof index === "number" && mass > 0 && active) {
             setMatrixAt({
-                index,
                 instance,
+                index,
                 position: body.position,
                 rotation: body.quaternion,
-                scale
+                scale,
             })
         }
     })

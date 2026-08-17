@@ -3,7 +3,7 @@ import { store, useStore } from "@data/store/store"
 import { clamp, map, ndelta } from "@data/utils"
 import random from "@huth/random"
 import { useFrame } from "@react-three/fiber"
-import { Tuple3 } from "@src/types/global"
+import { Tuple2, Tuple3 } from "@src/types/global"
 import { RigidVehicle, Vec3 } from "cannon-es"
 import { useMemo } from "react"
 
@@ -44,7 +44,8 @@ export default function useSteeringBehaviour({
         playerStopTime: 0,
         time: 0,
         isChicken: random.boolean(.75),
-        chickenLimit: random.float(.85, 1)
+        chickenLimit: random.float(.85, 1),
+        searchArea: [10, 10] satisfies Tuple2
     }), [])
 
     useFrame((state, delta) => {
@@ -89,8 +90,7 @@ export default function useSteeringBehaviour({
 
         const grid = useStore.getState().grid
         const vehiclePosition = vehicle.chassisBody.position
-        const size = 10
-        const near = grid.findNear(vehiclePosition.toArray(), [size, 5, size])
+        const near = grid.findNear(vehiclePosition, data.searchArea)
         let speeding = 1
 
         for (const clientNear of near) {

@@ -56,7 +56,7 @@ export default function TreeMaterial() {
                 );
                 // only add shadow if not facing towards sky
                 float facing = clamp(vWorldNormal.y, 0.0, 1.0);
-                float below = smoothstep(aoSample.g * 15. * .85,aoSample.g * 15., vWorldPos.y);
+                float below = smoothstep(aoSample.g * 15. * .85, aoSample.g * 15., vWorldPos.y);
                 float ao = mix(aoSample.r, 1.0, min(facing, below));  
                               
                 ao = mix(1.0, ao, uAOEnabled);

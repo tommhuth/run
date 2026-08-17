@@ -86,9 +86,9 @@ interface RenderAOParams {
     camera: Camera
     gl: WebGLRenderer
     scene: Scene
-    ao: WebGLRenderTarget<Texture<unknown>>
-    shadowBlur: WebGLRenderTarget<Texture<unknown>>
-    shadowBlurHorizontal: WebGLRenderTarget<Texture<unknown>>
+    ao: WebGLRenderTarget<Texture>
+    shadowBlur: WebGLRenderTarget<Texture>
+    shadowBlurHorizontal: WebGLRenderTarget<Texture>
     blurScale?: number
     blurIterations?: number
 }

@@ -1,6 +1,6 @@
 import { setMatrixAt } from "@components/materials/helpers"
 import { leafMaterial } from "@components/materials/shared"
-import { Client, SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
+import { Client, SpatialHashGrid2D } from "@data/SpatialHashGrid2D"
 import { ForestPart, RoadPart, store } from "@data/store/store"
 import { dampFactor, map, ndelta } from "@data/utils"
 import random from "@huth/random"
@@ -11,7 +11,7 @@ import { Euler, InstancedMesh, Quaternion, Vector3 } from "three"
 import { ROAD_HEIGHT, ROAD_SLOPE_ANGLE } from "./const"
 import { leafGeometry } from "./LeafSystem"
 
-const VEHICLE_SEARCH_SIZE: [number, number, number] = [5, 2, 5]
+const VEHICLE_SEARCH_SIZE: [number, number] = [5, 5]
 const VEHICLE_HIT_RADIUS = 1.25
 const VEHICLE_HIT_LIFT_VELOCITY = .7
 const VEHICLE_HIT_COOLDOWN = 2
@@ -28,18 +28,21 @@ const _slope = new Quaternion()
 const _final = new Quaternion()
 const _euler = new Euler()
 
-function findNearestVehicle(grid: SpatialHashGrid3D, position: Vector3, maxRadius: number): Client | null {
+function findNearestVehicle(
+    grid: SpatialHashGrid2D,
+    position: Vector3,
+    maxRadius: number
+): Client | null {
     const clients = grid.findNear(position, VEHICLE_SEARCH_SIZE)
-    const withVehicle = clients.filter(c => c.data.vehicle)
-
-    if (withVehicle.length === 0) {
-        return null
-    }
 
     let nearest: Client | null = null
     let nearestDistSq = maxRadius * maxRadius
 
-    for (const client of withVehicle) {
+    for (const client of clients) {
+        if (!client.data.vehicle) {
+            continue
+        }
+
         const [x, y, z] = client.position
         const distSq = (x - position.x) ** 2
             + (y - position.y) ** 2
@@ -186,7 +189,11 @@ export default function GroundLeafSystem({ count = 120 }) {
             }
 
             const maxHeight = map(Math.abs(item.position.x), 3.04, 5.5, ROAD_HEIGHT, 0)
-            const nearest = findNearestVehicle(grid, item.position, VEHICLE_HIT_RADIUS)
+            const nearest = findNearestVehicle(
+                grid,
+                item.position,
+                VEHICLE_HIT_RADIUS
+            )
             const canBeTouched = clock.elapsedTime - item.lastTouchedAt > VEHICLE_HIT_COOLDOWN
 
             if (nearest && canBeTouched && nearest.data.vehicle) {
@@ -235,11 +242,11 @@ export default function GroundLeafSystem({ count = 120 }) {
             }
 
             setMatrixAt({
+                instance,
                 index: item.index,
                 position: item.position,
-                scale: item.scale,
                 rotation: getLeafRotation(item.position, item.rotation, maxHeight),
-                instance
+                scale: item.scale,
             })
         }
     })

@@ -1,5 +1,5 @@
 import { ROAD_DEPTH } from "@components/road/const"
-import { SpatialHashGrid3D } from "@data/SpatialHashGrid3D"
+import { SpatialHashGrid2D } from "@data/SpatialHashGrid2D"
 import { RigidVehicle } from "cannon-es"
 import { DepthTexture, Group, Material, Texture, Vector3 } from "three"
 import { create } from "zustand"
@@ -84,7 +84,7 @@ export interface RunStore {
     traffic: TrafficElement[]
     leaves: Leaf[]
     road: RoadPart[]
-    grid: SpatialHashGrid3D
+    grid: SpatialHashGrid2D
     loading: boolean
     debug: {
         showColliders: boolean
@@ -120,7 +120,7 @@ const store = create(
             score: 0,
             time: 0
         },
-        grid: new SpatialHashGrid3D([4, 4, 4]),
+        grid: new SpatialHashGrid2D([4, 4]),
         traffic: initializeTraffic(),
         leaves: [],
         road: [generateForestPart, generateForestPart, generateForestPart].map((generator, index) => {
