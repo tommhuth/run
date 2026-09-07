@@ -12,7 +12,7 @@ export default function Lights() {
     const shadowLightRef = useRef<DirectionalLight>(null)
     const { scene, viewport } = useThree()
     const time = useRef(0)
-    const mapsize = viewport.dpr >= 1.5 ? 2048 : 1024
+    const mapsize = Math.ceil(viewport.dpr * 512)
 
     useEffect(() => {
         if (!shadowLightRef.current) {
@@ -56,7 +56,7 @@ export default function Lights() {
                 shadow-camera-right={45} // forwards z
                 shadow-camera-top={40} // top left
                 shadow-camera-bottom={-30} // bottom right
-                shadow-radius={3}
+                shadow-radius={5}
                 shadow-bias={-.005}
                 intensity={7}
                 color={"#bee6ff"}

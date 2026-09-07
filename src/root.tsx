@@ -17,7 +17,7 @@ function getConfiguration() {
         },
         flat: false,
         shadows: "variance",
-        dpr: Math.max(Math.pow(window.devicePixelRatio, 0.65), 1),
+        dpr: Math.max(Math.pow(window.devicePixelRatio, 0.5), 1),
         size: {
             width: window.innerWidth,
             height: window.innerHeight,
